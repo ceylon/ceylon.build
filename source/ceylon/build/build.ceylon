@@ -2,44 +2,21 @@ import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
 String taskNames({Task*} tasks) => "[``", ".join({for (task in tasks) task.name})``]";
 
+
 shared void build(TasksDefinitions tasks) {
-    print("analyzing tasks definitions");
-    value cycleFound = analyzeDependenciesCycles(tasks);
-    if (!cycleFound) {
+    print("# ceylon.build");
+    value dependencies = buildDependencies(tasks);
+    value cycles = analyzeDependencyCycles(dependencies);
+    if (cycles.empty) {
         value tasksToRun = buildTaskExecutionList(tasks, process.arguments);
         runTasks(tasksToRun, tasks.keys);
-    }    
-}
-
-Boolean analyzeDependenciesCycles(TasksDefinitions definitions) {
-    variable Boolean cycleFound = false;
-    for (task -> taskDependencies in definitions) {
-        if (checkCycle(task, definitions)) {
-            cycleFound = true;
-            print("task dependency cycle found");
-        }
+    } else {
+         print("task dependency cycle found between: ``cycles``");
     }
-    return cycleFound;
 }
 
-Boolean checkCycle(Task task, TasksDefinitions definitions) {
-    variable Boolean cycleFound = false;
-    MutableSet<Task> tasks = HashSet<Task>();
-    tasks.add(task);
-    assert (exists taskDependencies = definitions[task]);
-    for (Task dependency in taskDependencies) {
-        if (checkRecursiveCycle(task, tasks, dependency, definitions)) {
-            cycleFound = true;
-        }
-    }
-    return cycleFound;
-}
-
-Boolean checkRecursiveCycle(Task task, MutableSet<Task> tasks, Task dependency, TasksDefinitions definitions) {
-    // TODO implement this check
-    return false;    
-}
-
+{Dependency*} buildDependencies(TasksDefinitions tasks) =>
+    { for (task -> dependencies in tasks) Dependency(task, dependencies) };
 
 {Task*} buildTaskExecutionList(TasksDefinitions definitions, String[] arguments) {
     MutableList<Task> tasks = LinkedList<Task>();
@@ -86,7 +63,7 @@ void runTasks({Task*} tasks, {Task*} definitions) {
     print("no task to run");
     print("available tasks are: ``taskNames(definitions)``");
     } else {
-        print("running tasks: ``taskNames(tasks)``");
+        print("running tasks: ``taskNames(tasks)`` in order");
         for (task in tasks) {
             task.process();
         }
