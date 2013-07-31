@@ -1,34 +1,33 @@
-import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
+import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet, HashMap }
 
-String taskNames({Task*} tasks) => "[``", ".join({for (task in tasks) task.name})``]";
+shared alias TasksDefinitions => {Entry<Task, {Task*}>*};
+shared alias TasksDefinitionsMap => Map<Task, {Task*}>;
 
-
-shared void build(TasksDefinitions tasks) {
-    print("# ceylon.build");
-    value dependencies = buildDependencies(tasks);
-    value cycles = analyzeDependencyCycles(dependencies);
+shared void build(TasksDefinitions tasksDefinitions) {
+    print("## ceylon.build");
+    value tasks = HashMap<Task, {Task*}>(tasksDefinitions);
+    value cycles = analyzeDependencyCycles(tasks);
     if (cycles.empty) {
         value tasksToRun = buildTaskExecutionList(tasks, process.arguments);
-        runTasks(tasksToRun, tasks.keys);
+        runTasks(tasksToRun, process.arguments, tasks.keys);
     } else {
-         print("task dependency cycle found between: ``cycles``");
+        print("# task dependency cycle found between: ``cycles``");
     }
 }
 
-{Dependency*} buildDependencies(TasksDefinitions tasks) =>
-    { for (task -> dependencies in tasks) Dependency(task, dependencies) };
+String argumentPrefix = "-D";
 
-{Task*} buildTaskExecutionList(TasksDefinitions definitions, String[] arguments) {
+{Task*} buildTaskExecutionList(TasksDefinitionsMap definitions, String[] arguments) {
     MutableList<Task> tasks = LinkedList<Task>();
     for (taskName in arguments) {
-        if (!taskName.startsWith("-D")) {
+        if (!taskName.startsWith(argumentPrefix)) {
             for (task -> taskDependencies in definitions) {
                 if (task.name.equals(taskName)) {
                     tasks.addAll(linearize(task, definitions));
                     break;
                 }
             } else {
-                print("task '``taskName``' not found");
+                print("# task '``taskName``' not found, stopping");
                 return {};
             }
         }
@@ -36,7 +35,7 @@ shared void build(TasksDefinitions tasks) {
     return reduce(tasks);
 }
 
-{Task*} linearize(Task task, TasksDefinitions definitions) {
+{Task*} linearize(Task task, TasksDefinitionsMap definitions) {
     MutableList<Task> tasks = LinkedList<Task>();
     assert (exists taskDependencies = definitions[task]);
     for (Task dependency in taskDependencies) {
@@ -58,14 +57,27 @@ shared void build(TasksDefinitions tasks) {
     return reducedTasks;
 }
 
-void runTasks({Task*} tasks, {Task*} definitions) {
+String tasksNames({Task*} tasks) => "[``", ".join({for (task in tasks) task.name})``]";
+
+void runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks) {
     if (tasks.empty) {
-    print("no task to run");
-    print("available tasks are: ``taskNames(definitions)``");
+        print("# no task to run, available tasks are: ``tasksNames(availableTasks)``");
     } else {
-        print("running tasks: ``taskNames(tasks)`` in order");
+        print("# running tasks: ``tasks`` in order");
         for (task in tasks) {
-            task.process();
+            value taskArguments = filterArgumentsForTask(task, arguments);
+            print("# running ``task.name``(``", ".join(taskArguments)``)");
+            task.process(taskArguments);
+            // TODO handle tasks failure
         }
     }
+}
+
+String[] filterArgumentsForTask(Task task, String[] arguments) {
+    String prefix = "``argumentPrefix````task.name``:";
+    return [
+        for (argument in arguments)
+            if (argument.startsWith(prefix))
+                argument.spanFrom(prefix.size)
+    ]; 
 }

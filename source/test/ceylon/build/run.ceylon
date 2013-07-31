@@ -1,4 +1,6 @@
-import ceylon.build { analyzeDependencyCycles, Dependency, Task }
+import ceylon.build { analyzeDependencyCycles, Task }
+import ceylon.collection { HashMap }
+
 "Run the module `test.ceylon.build`."
 void run() {
     testDependenciesCycles();
@@ -13,36 +15,36 @@ void shouldNotFoundCycle() {
     value a = createTask("a");
     value b = createTask("b");
     value c = createTask("c");
-    assert (analyzeDependencyCycles([]).empty);
-    assert (analyzeDependencyCycles({
-        Dependency(a),
-        Dependency(b),
-        Dependency(c)
+    assert (analyzeDependencyCycles(HashMap {}).empty);
+    assert (analyzeDependencyCycles(HashMap {
+        a -> [],
+        b -> [],
+        c -> []
     }).empty);
-    assert (analyzeDependencyCycles({
-        Dependency(a, [b]),
-        Dependency(b),
-        Dependency(c)
+    assert (analyzeDependencyCycles(HashMap {
+        a -> [b],
+        b -> [],
+        c -> []
     }).empty);
-    assert (analyzeDependencyCycles({
-        Dependency(a, [b, c]),
-        Dependency(b),
-        Dependency(c)
+    assert (analyzeDependencyCycles(HashMap {
+        a -> [b,c],
+        b -> [],
+        c -> []
     }).empty);
-    assert (analyzeDependencyCycles({
-        Dependency(a, [b]),
-        Dependency(b, [c]),
-        Dependency(c)
+    assert (analyzeDependencyCycles(HashMap {
+        a -> [b],
+        b -> [c],
+        c -> []
     }).empty);
-    assert (analyzeDependencyCycles({
-        Dependency(a, [b, c]),
-        Dependency(b, [c]),
-        Dependency(c)
+    assert (analyzeDependencyCycles(HashMap {
+        a -> [b, c],
+        b -> [c],
+        c -> []
     }).empty);
-    assert (!analyzeDependencyCycles({
-        Dependency(a, [b, c]),
-        Dependency(b, [c]),
-        Dependency(c, [a])
+    assert (!analyzeDependencyCycles(HashMap {
+        a -> [b, c],
+        b -> [c],
+        c -> [a]
     }).empty);
     
 }
@@ -50,7 +52,7 @@ void shouldNotFoundCycle() {
 Task createTask(String taskName) {
     object task satisfies Task {
         shared actual String name = taskName;
-        shared actual void process() {}
+        shared actual void process(String[] arguments) {}
     }
     return task;
 }
