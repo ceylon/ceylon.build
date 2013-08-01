@@ -37,8 +37,6 @@ void shouldNotFoundCycle() {
         b -> [c],
         c -> []
     }).empty);
-    
-    
 }
 
 void shouldFoundCycle() {

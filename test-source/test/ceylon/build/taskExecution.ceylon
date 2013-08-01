@@ -1,4 +1,4 @@
-import ceylon.build { Task, filterArgumentsForTask }
+import ceylon.build { Task, Builder }
 import ceylon.test { assertEquals }
 
 void testTasksExecution() {
@@ -6,14 +6,14 @@ void testTasksExecution() {
 }
 void testArgumentFiltering() {
     Task a = createTask("a");
-    assertEquals([], filterArgumentsForTask(a, []));
-    assertEquals([], filterArgumentsForTask(a, ["clean", "compile"]));
-    assertEquals([], filterArgumentsForTask(a, ["clean", "compile", "-D"]));
-    assertEquals([], filterArgumentsForTask(a, ["clean", "compile", "-Da"]));
-    assertEquals([], filterArgumentsForTask(a, ["clean", "compile", "-Daa"]));
-    assertEquals([""], filterArgumentsForTask(a, ["clean", "compile", "-Da:"]));
-    assertEquals(["foo"], filterArgumentsForTask(a, ["clean", "compile", "-Da:foo"]));
-    assertEquals(["foo=bar"], filterArgumentsForTask(a, ["clean", "compile", "-Da:foo=bar"]));
-    assertEquals(["foo=bar", "baz=toto"], filterArgumentsForTask(a, ["clean", "compile", "-Da:foo=bar", "-Da:baz=toto"]));
-    assertEquals(["foo=bar", "baz=toto"], filterArgumentsForTask(a, ["clean", "compile", "-Da:foo=bar", "-Db:xxx=yyy", "-Da:baz=toto"]));
+    assertEquals([], Builder().filterArgumentsForTask(a, []));
+    assertEquals([], Builder().filterArgumentsForTask(a, ["clean", "compile"]));
+    assertEquals([], Builder().filterArgumentsForTask(a, ["clean", "compile", "-D"]));
+    assertEquals([], Builder().filterArgumentsForTask(a, ["clean", "compile", "-Da"]));
+    assertEquals([], Builder().filterArgumentsForTask(a, ["clean", "compile", "-Daa"]));
+    assertEquals([""], Builder().filterArgumentsForTask(a, ["clean", "compile", "-Da:"]));
+    assertEquals(["foo"], Builder().filterArgumentsForTask(a, ["clean", "compile", "-Da:foo"]));
+    assertEquals(["foo=bar"], Builder().filterArgumentsForTask(a, ["clean", "compile", "-Da:foo=bar"]));
+    assertEquals(["foo=bar", "baz=toto"], Builder().filterArgumentsForTask(a, ["clean", "compile", "-Da:foo=bar", "-Da:baz=toto"]));
+    assertEquals(["foo=bar", "baz=toto"], Builder().filterArgumentsForTask(a, ["clean", "compile", "-Da:foo=bar", "-Db:xxx=yyy", "-Da:baz=toto"]));
 }
