@@ -4,5 +4,7 @@ import ceylon.test { suite }
 void run() {
     suite("ceylon.test",
             "tasks" -> testTasks,
-            "dependencies cycles" -> testDependenciesCycles);
+            "tasks dependencies cycles" -> testDependenciesCycles,
+            "tasks orchestration" -> testTasksOrchestration,
+            "tasks execution" -> testTasksExecution);
 }

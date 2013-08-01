@@ -1,4 +1,5 @@
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet, HashMap }
+import ceylon.process { Output }
 
 shared alias TasksDefinitions => {Entry<Task, {Task*}>*};
 shared alias TasksDefinitionsMap => Map<Task, {Task*}>;
@@ -35,7 +36,7 @@ String argumentPrefix = "-D";
     return reduce(tasks);
 }
 
-{Task*} linearize(Task task, TasksDefinitionsMap definitions) {
+shared {Task*} linearize(Task task, TasksDefinitionsMap definitions) {
     MutableList<Task> tasks = LinkedList<Task>();
     assert (exists taskDependencies = definitions[task]);
     for (Task dependency in taskDependencies) {
@@ -45,7 +46,7 @@ String argumentPrefix = "-D";
     return tasks;
 }
 
-{Task*} reduce({Task*} tasks) {
+shared {Task*} reduce({Task*} tasks) {
     MutableSet<Task> reducedTasksSet = HashSet<Task>();
     MutableList<Task> reducedTasks = LinkedList<Task>();
     for (Task task in tasks) {
@@ -73,7 +74,7 @@ void runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks) {
     }
 }
 
-String[] filterArgumentsForTask(Task task, String[] arguments) {
+shared String[] filterArgumentsForTask(Task task, String[] arguments) {
     String prefix = "``argumentPrefix````task.name``:";
     return [
         for (argument in arguments)
