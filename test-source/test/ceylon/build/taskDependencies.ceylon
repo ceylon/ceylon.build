@@ -2,23 +2,15 @@ import ceylon.build { analyzeDependencyCycles, Task }
 import ceylon.collection { HashMap }
 import ceylon.test { assertTrue }
 
-Task createTask(String taskName) {
-    object task satisfies Task {
-        shared actual String name = taskName;
-        shared actual void process(String[] arguments) {}
-    }
-    return task;
-}
-Task a = createTask("a");
-Task b = createTask("b");
-Task c = createTask("c");
-    
 void testDependenciesCycles() {
     shouldNotFoundCycle();
     shouldFoundCycle();
 }
 
 void shouldNotFoundCycle() {
+    Task a = createTask("a");
+    Task b = createTask("b");
+    Task c = createTask("c");
     assertTrue(analyzeDependencyCycles(HashMap {}).empty);
     assertTrue(analyzeDependencyCycles(HashMap {
         a -> [],
@@ -50,6 +42,9 @@ void shouldNotFoundCycle() {
 }
 
 void shouldFoundCycle() {
+    Task a = createTask("a");
+    Task b = createTask("b");
+    Task c = createTask("c");
     assertTrue(!analyzeDependencyCycles(HashMap {
         a -> [b, c],
         b -> [c],

@@ -1,4 +1,5 @@
 import ceylon.process { Process, createProcess, currentOutput, currentError }
+
 shared interface Task satisfies Identifiable {
     
     shared formal String name;
@@ -34,7 +35,6 @@ shared Task createCompileTask(String moduleName) {
             print("compiling: ``cmd``");
             Process process = createProcess {
                 command = cmd;
-                //command = "ls --tata";
                 output = currentOutput;
                 error = currentError;
             };
