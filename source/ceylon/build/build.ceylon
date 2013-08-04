@@ -19,7 +19,6 @@ object consoleWriter satisfies Writer {
         process.writeErrorLine(message);
     }
     shared actual void exception(Exception exception) {
-        print(exception);
         exception.printStackTrace();
     }
 }
@@ -103,7 +102,7 @@ void runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks, Writer 
             try {
                 task.process(taskArguments, writer);
             } catch (Exception exception) {
-                writer.error("Error during task execution ``task``");
+                writer.error("# error during task execution ``task``, stopping");
                 writer.exception(exception);
                 break;
             }
