@@ -8,9 +8,9 @@ void testDependenciesCycles() {
 }
 
 void shouldNotFoundCycle() {
-    Task a = createTask("a");
-    Task b = createTask("b");
-    Task c = createTask("c");
+    Task a = createTestTask("a");
+    Task b = createTestTask("b");
+    Task c = createTestTask("c");
     assertTrue(analyzeDependencyCycles(HashMap {}).empty);
     assertTrue(analyzeDependencyCycles(HashMap {
         a -> [],
@@ -40,9 +40,9 @@ void shouldNotFoundCycle() {
 }
 
 void shouldFoundCycle() {
-    Task a = createTask("a");
-    Task b = createTask("b");
-    Task c = createTask("c");
+    Task a = createTestTask("a");
+    Task b = createTestTask("b");
+    Task c = createTestTask("c");
     assertTrue(!analyzeDependencyCycles(HashMap {
         a -> [b, c],
         b -> [c],

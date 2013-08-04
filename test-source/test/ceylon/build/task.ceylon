@@ -1,20 +1,16 @@
-import ceylon.build { Task }
+import ceylon.build { Task, createTask, Writer }
 import ceylon.test { assertNotEquals, assertEquals }
 
-void noop(String[] arguments) { }
+void noop(String[] arguments, Writer writer) { }
 
-Task createTask(String taskName, void processTask(String[] arguments) => noop(arguments)) {
-    object task satisfies Task {
-        shared actual String name = taskName;
-        shared actual void process(String[] arguments) => processTask(arguments);
-    }
-    return task;
+Task createTestTask(String taskName) {
+    return createTask(taskName, noop);
 }
 
 void testTasks() {
-    Task a = createTask("a");
-    Task b = createTask("b");
-    Task aBis = createTask("a");
+    Task a = createTestTask("a");
+    Task b = createTestTask("b");
+    Task aBis = createTestTask("a");
     assertEquals(a, aBis);
     assertNotEquals(a, b);
     assertNotEquals(b, aBis);

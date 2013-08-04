@@ -4,7 +4,7 @@ shared interface Task satisfies Identifiable {
     
     shared formal String name;
     
-    shared formal void process(String[] arguments);
+    shared formal void process(String[] arguments, Writer writer);
     
     shared default String help() => "";
     
@@ -20,18 +20,19 @@ shared interface Task satisfies Identifiable {
     }
 }
 
-shared object clean satisfies Task {
-    name = "clean";
-    shared actual void process(String[] arguments) {
-        print("cleaning");
+shared Task createTask(String taskName, void method(String[] arguments, Writer writer)) {
+    object task satisfies Task {
+        name = taskName;
+        process = method;  
     }
+    return task;
 }
 
 shared Task createCompileTask(String moduleName) {
     object compile satisfies Task {
         name = "compile";
-        shared actual void process(String[] arguments) {
-            String cmd = "ceylon compile ``moduleName``";
+        shared actual void process(String[] arguments, Writer writer) {
+            String cmd = "ceylon compile ``moduleName`` ``" ".join(arguments)``";
             print("compiling: ``cmd``");
             Process process = createProcess {
                 command = cmd;
