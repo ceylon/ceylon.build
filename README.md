@@ -46,7 +46,7 @@ void run() {
 }
 ```
 
-When this build module is launched, it will build the task graph and run the requested tasks and their dependencies.
+When this build module is launched, it will build the task graph and run requested tasks and their dependencies.
 
 Using the above tasks declarations, launching `ceylon run mybuildmodule/1.0.0 test doc` will result in the execution of task `compile`, `test` and `doc`.
 
