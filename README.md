@@ -38,10 +38,10 @@ void run() {
     value doc = ceylonTaskBuilder.createDocTask();
     value run = ceylonTaskBuilder.createRunTask();
     build({
-        compile -> [],
+        compile,
         test -> [compile],
-        doc -> [],
-        run -> []
+        doc,
+        run
     });
 }
 ```
