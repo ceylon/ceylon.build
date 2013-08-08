@@ -23,17 +23,26 @@ object consoleWriter satisfies Writer {
     }
 }
 
-shared void build(TasksDefinitions tasksDefinitions) {
-    buildTasks(HashMap<Task, {Task*}>(tasksDefinitions), consoleWriter);
+object exitCode {
+    shared Integer success = 0;
+    shared Integer dependencyCycleFound = 1;
+    shared Integer noTaskToRun = 2;
+    shared Integer errorOnTaskExecution = 3;
 }
 
-shared void buildTasks(TasksDefinitionsMap tasks, Writer writer) {
+shared void build(TasksDefinitions tasksDefinitions) {
+    Integer exitCode = buildTasks(HashMap<Task, {Task*}>(tasksDefinitions), consoleWriter);
+    process.exit(exitCode);
+}
+
+shared Integer buildTasks(TasksDefinitionsMap tasks, Writer writer) {
     writer.info("## ceylon.build");
     value cycles = analyzeDependencyCycles(tasks);
     if (cycles.empty) {
         value tasksToRun = buildTaskExecutionList(tasks, process.arguments, writer);
-        runTasks(tasksToRun, process.arguments, tasks.keys, writer);
+        return runTasks(tasksToRun, process.arguments, tasks.keys, writer);
     } else {
         writer.error("# task dependency cycle found between: ``cycles``");
+        return exitCode.dependencyCycleFound;
     }
 }

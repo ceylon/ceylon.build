@@ -1,22 +1,27 @@
 
 String argumentPrefix = "-D";
 
-void runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks, Writer writer) {
+Integer runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks, Writer writer) {
     if (tasks.empty) {
         writer.error("# no task to run, available tasks are: ``tasksNames(availableTasks)``");
+        return exitCode.noTaskToRun;
     } else {
         writer.info("# running tasks: ``tasks`` in order");
         for (task in tasks) {
             value taskArguments = filterArgumentsForTask(task, arguments);
             writer.info("# running ``task.name``(``", ".join(taskArguments)``)");
             try {
-                task.process(taskArguments, writer);
+                if (!task.process(taskArguments, writer)) {
+                    writer.error("# task ``task`` failure, stopping");
+                    return exitCode.errorOnTaskExecution;
+                }
             } catch (Exception exception) {
                 writer.error("# error during task execution ``task``, stopping");
                 writer.exception(exception);
-                break;
+                return exitCode.errorOnTaskExecution;
             }
         }
+        return exitCode.success;
     }
 }
 
