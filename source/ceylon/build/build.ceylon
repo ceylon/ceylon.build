@@ -1,6 +1,6 @@
 import ceylon.collection { HashMap }
 
-shared alias TasksDefinitions => {Entry<Task, {Task*}>*};
+shared alias TasksDefinitions => {<<Task -> {Task*}>|Task>*};
 shared alias TasksDefinitionsMap => Map<Task, {Task*}>;
 
 shared interface Writer {
@@ -31,8 +31,21 @@ object exitCode {
 }
 
 shared void build(TasksDefinitions tasksDefinitions) {
-    Integer exitCode = buildTasks(HashMap<Task, {Task*}>(tasksDefinitions), consoleWriter);
+    Integer exitCode = buildTasks(taskDefinitionMap(tasksDefinitions), consoleWriter);
     process.exit(exitCode);
+}
+
+shared TasksDefinitionsMap taskDefinitionMap(TasksDefinitions tasksDefinitions) {
+    HashMap<Task, {Task*}> definitions = HashMap<Task, {Task*}>();
+    for (definition in tasksDefinitions) {
+        if (is Task definition) {
+            definitions.put(definition, []);
+        }
+        else if (is <Task -> {Task*}> definition) {
+            definitions.put(definition.key, definition.item);
+        } 
+    }
+    return definitions;
 }
 
 shared Integer buildTasks(TasksDefinitionsMap tasks, Writer writer) {
