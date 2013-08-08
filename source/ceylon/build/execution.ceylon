@@ -1,7 +1,7 @@
 
 String argumentPrefix = "-D";
 
-Integer runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks, Writer writer) {
+shared Integer runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks, Writer writer) {
     if (tasks.empty) {
         writer.error("# no task to run, available tasks are: ``tasksNames(availableTasks)``");
         return exitCode.noTaskToRun;

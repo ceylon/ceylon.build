@@ -1,11 +1,5 @@
-import ceylon.build { Task, Writer, createTask }
+import ceylon.build { Task }
 import ceylon.test { assertNotEquals, assertEquals }
-
-Boolean noop(String[] arguments, Writer writer) => true;
-
-Task createTestTask(String taskName) {
-    return createTask(taskName, noop);
-}
 
 void testTasks() {
     Task a = createTestTask("a");
