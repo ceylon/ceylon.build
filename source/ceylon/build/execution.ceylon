@@ -1,0 +1,28 @@
+
+String argumentPrefix = "-D";
+
+void runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks, Writer writer) {
+    if (tasks.empty) {
+        writer.error("# no task to run, available tasks are: ``tasksNames(availableTasks)``");
+    } else {
+        writer.info("# running tasks: ``tasks`` in order");
+        for (task in tasks) {
+            value taskArguments = filterArgumentsForTask(task, arguments);
+            writer.info("# running ``task.name``(``", ".join(taskArguments)``)");
+            try {
+                task.process(taskArguments, writer);
+            } catch (Exception exception) {
+                writer.error("# error during task execution ``task``, stopping");
+                writer.exception(exception);
+                break;
+            }
+        }
+    }
+}
+
+String tasksNames({Task*} tasks) => "[``", ".join({for (task in tasks) task.name})``]";
+
+shared String[] filterArgumentsForTask(Task task, String[] arguments) {
+    String prefix = "``argumentPrefix````task.name``:";
+    return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)]; 
+}
