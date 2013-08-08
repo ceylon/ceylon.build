@@ -29,25 +29,26 @@ Create a build module.
 A build module is a standard ceylon module that has in its `run()` function a call to `build(TasksDefinitions)`.
 
 ```ceylon
+import ceylon.build { build, CeylonModuleTaskBuilder }
+
 void run() {
-    Task clean = createTask("clean", ...);
-    Task compile = createTask("compile", ...);
-    Task test = createTask("test", ...);
-    Task doc = createTask("doc", ...);
-    Task deploy = createTask("deploy", ...);
+    value ceylonTaskBuilder = CeylonModuleTaskBuilder("mymodule");
+    value compile = ceylonTaskBuilder.createCompileTask();
+    value test = ceylonTaskBuilder.createTestTask();
+    value doc = ceylonTaskBuilder.createDocTask();
+    value run = ceylonTaskBuilder.createRunTask();
     build({
-        clean -> [],
-        compile -> [clean],
+        compile -> [],
         test -> [compile],
         doc -> [],
-        deploy -> [compile]
+        run -> []
     });
 }
 ```
 
 When this build module is launched, it will build the task graph and run the requested tasks and their dependencies.
 
-Using the above tasks declarations, launching `ceylon run mybuildmodule/1.0.0 test doc` will result in the execution of task `clean`, `compile`, `test` and `doc`.
+Using the above tasks declarations, launching `ceylon run mybuildmodule/1.0.0 test doc` will result in the execution of task `compile`, `test` and `doc`.
 
 Arguments can be passed to each task using the `-Dtask:argument`.
 
