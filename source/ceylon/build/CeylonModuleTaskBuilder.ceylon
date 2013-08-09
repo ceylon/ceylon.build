@@ -9,7 +9,7 @@ shared class CeylonModuleTaskBuilder(
         String testModuleSrc = "test-``moduleSrc``") {
     
     Boolean execute(Writer writer, String title, String cmd) {
-        value commandToExecute = cmd.trimTrailingCharacters(" ");
+        value commandToExecute = cmd.trimmed;
         writer.info("``title``: '``commandToExecute``'");
         Process process = createProcess {
             command = commandToExecute;
