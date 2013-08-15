@@ -1,24 +1,4 @@
-import ceylon.collection { HashMap }
-
-"Iterable of `Task` with their eventual dependencies.
- 
- A `TasksDefinitions` is an iterable of:
- - `Task -> {Task*}`: corresponds to the declaration of a task with its ordered dependencies.
- 
- or
- 
- - `Task`: corresponds to a task without any dependencies.
-  
- Order of tasks in this iterable doesn't matter.
- 
- What is important is the order of tasks in the dependencies part of a `Task -> {Task*}` declaration."
-shared alias TasksDefinitions => {<<Task -> {Task*}>|Task>*};
-
-"Map of `Task` with their dependencies `{Task*}`.
- 
- As for `TasksDefinitions`, order of dependencies is important."
-shared alias TasksDefinitionsMap => Map<Task, {Task*}>;
-
+import ceylon.collection { HashMap, HashSet, MutableSet }
 
 """Launch the task based engine using `TasksDefinitions`.
    
@@ -52,8 +32,11 @@ shared alias TasksDefinitionsMap => Map<Task, {Task*}>;
    ```
    Launching the program with tasks `a, b, c` (in order) will result in the execution of `a, d, c, b` (still in order) 
    """
-shared void build(TasksDefinitions tasksDefinitions) {
-    Integer exitCode = buildTasks(taskDefinitionMap(tasksDefinitions), process.arguments, consoleWriter);
+shared void build(
+		String project,
+		String rootPath,
+		{Task*} tasks) {
+    Integer exitCode = buildTasks(tasksSet(tasks), process.arguments, consoleWriter);
     process.exit(exitCode);
 }
 
@@ -61,17 +44,8 @@ shared void build(TasksDefinitions tasksDefinitions) {
  
  Items in `TasksDefinitions` without any dependencies defined (i.e. `Task` and not `Task -> {Task*}`) will be used with
  an empty dependencies list."
-shared TasksDefinitionsMap taskDefinitionMap(TasksDefinitions tasksDefinitions) {
-    HashMap<Task, {Task*}> definitions = HashMap<Task, {Task*}>();
-    for (definition in tasksDefinitions) {
-        if (is Task definition) {
-            definitions.put(definition, []);
-        }
-        else if (is <Task -> {Task*}> definition) {
-            definitions.put(definition.key, definition.item);
-        } 
-    }
-    return definitions;
+shared Set<Task> tasksSet({Task*} tasks) {
+    return HashSet<Task>(tasks);
 }
 
 "List of program exit code"
@@ -91,12 +65,12 @@ object exitCode {
     shared Integer errorOnTaskExecution = 3;
 }
 
-shared Integer buildTasks(TasksDefinitionsMap tasks, String[] arguments, Writer writer) {
+shared Integer buildTasks(Set<Task> tasks, String[] arguments, Writer writer) {
     writer.info("## ceylon.build");
     value cycles = analyzeDependencyCycles(tasks);
     if (cycles.empty) {
         value tasksToRun = buildTaskExecutionList(tasks, process.arguments, writer);
-        return runTasks(tasksToRun, arguments, tasks.keys, writer);
+        return runTasks(tasksToRun, arguments, tasks, writer);
     } else {
         writer.error("# task dependency cycle found between: ``cycles``");
         return exitCode.dependencyCycleFound;

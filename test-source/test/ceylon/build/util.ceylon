@@ -1,10 +1,10 @@
-import ceylon.build { Task, Writer, createTask  }
+import ceylon.build { Task, Writer }
 import ceylon.collection { LinkedList, MutableList }
 
-Boolean noop(String[] arguments, Writer writer) => true;
+Boolean noOp(String[] arguments, Writer writer) => true;
 
-Task createTestTask(String taskName) {
-    return createTask(taskName, noop);
+Task createTestTask(String name, {Task*} dependencies = []) {
+    return Task(name, noOp, dependencies);
 }
 
 class MockWriter() satisfies Writer {

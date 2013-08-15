@@ -10,8 +10,8 @@ shared class Dependency(task, {Task*} taskDependencies = []) {
     string => "``task.name`` -> ``dependencies``";
 }
 
-shared {Dependency*}  analyzeDependencyCycles(TasksDefinitionsMap tasks) {
-    value definitions = { for (task -> dependencies in tasks) Dependency(task, dependencies) };
+shared {Dependency*}  analyzeDependencyCycles(Set<Task> tasks) {
+    value definitions = { for (task in tasks) Dependency(task, task.dependencies) };
     variable value remainingDefinitions = definitions;
     while (!remainingDefinitions.empty) {
         value toRemove = LinkedList<Dependency>();

@@ -1,4 +1,4 @@
-import ceylon.build { Task, filterArgumentsForTask, runTasks, createTask, Writer }
+import ceylon.build { Task, filterArgumentsForTask, runTasks, Writer }
 import ceylon.test { assertEquals, assertTrue }
 
 void testTasksExecution() {
@@ -42,7 +42,7 @@ void shouldExitWithErrorWhenNoTasksToRun() {
 void shouldExitOnTaskFailure() {
     value writer = MockWriter();
     value a = createTestTask("a");
-    value b = createTask("b", (String[] arguments, Writer writer) => false);
+    value b = Task("b", (String[] arguments, Writer writer) => false);
     value c = createTestTask("c");
     value d = createTestTask("d");
     assertEquals(3, runTasks([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
@@ -59,7 +59,7 @@ void shouldExitOnTaskError() {
     Boolean throwException(String[] arguments, Writer writer) { 
         throw Exception("ex");
     }
-    value b = createTask("b", throwException);
+    value b = Task("b", throwException);
     value c = createTestTask("c");
     value d = createTestTask("d");
     assertEquals(3, runTasks([a, b, c], ["-Da:foo"], [a, b, c, d], writer));

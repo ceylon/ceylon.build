@@ -1,6 +1,6 @@
 import ceylon.build { Task, findTasksToExecute, linearize, reduce }
 import ceylon.test { assertEquals }
-import ceylon.collection { HashMap }
+import ceylon.collection { HashSet }
 
 void testTasksOrchestration() {
     testFindTasksToExecute();
@@ -12,74 +12,46 @@ void testFindTasksToExecute() {
     value writer = MockWriter();
     Task a = createTestTask("a");
     Task b = createTestTask("b");
-    assertEquals([], findTasksToExecute(HashMap {
-        a -> []
-    }, [], writer));
+    assertEquals([], findTasksToExecute(HashSet({ a }), [], writer));
     assertEquals([], writer.infoMessages);
     assertEquals([], writer.errorMessages);
     writer.clear();
-    assertEquals([a], findTasksToExecute(HashMap {
-        a -> []
-    }, ["a"], writer));
+    assertEquals([a], findTasksToExecute(HashSet({ a }), ["a"], writer));
     assertEquals([], writer.infoMessages);
     assertEquals([], writer.errorMessages);
     writer.clear();
-    assertEquals([], findTasksToExecute(HashMap {
-        a -> []
-    }, ["a", "b"], writer));
+    assertEquals([], findTasksToExecute(HashSet({ a }), ["a", "b"], writer));
     assertEquals([], writer.infoMessages);
     assertEquals(["# task 'b' not found, stopping"], writer.errorMessages);
     writer.clear();
-    assertEquals([a, b], findTasksToExecute(HashMap {
-        a -> [],
-        b -> []
-    }, ["a", "b"], writer));
+    assertEquals([a, b], findTasksToExecute(HashSet({ a, b }), ["a", "b"], writer));
     assertEquals([], writer.infoMessages);
     assertEquals([], writer.errorMessages);
     writer.clear();
-    assertEquals([a, b], findTasksToExecute(HashMap {
-        a -> [],
-        b -> []
-    }, ["a", "b", "-Dfoo=bar"], writer));
+    assertEquals([a, b], findTasksToExecute(HashSet({ a, b }), ["a", "b", "-Dfoo=bar"], writer));
     assertEquals([], writer.infoMessages);
     assertEquals([], writer.errorMessages);
     writer.clear();
-    assertEquals([a], findTasksToExecute(HashMap {
-        a -> [],
-        b -> []
-    }, ["a"], writer));
+    assertEquals([a], findTasksToExecute(HashSet({ a, b }), ["a"], writer));
     assertEquals([], writer.infoMessages);
     assertEquals([], writer.errorMessages);
     writer.clear();
-    assertEquals([a], findTasksToExecute(HashMap {
-        a -> [b],
-        b -> []
-    }, ["a"], writer));
+    Task c = createTestTask("c");
+    Task d = createTestTask("d", [c]);
+    assertEquals([d], findTasksToExecute(HashSet({ c, d }), ["d"], writer));
     assertEquals([], writer.infoMessages);
     assertEquals([], writer.errorMessages);
 }
 
 void testTasksLinearization() {
     Task a = createTestTask("a");
-    Task b = createTestTask("b");
-    Task c = createTestTask("c");
-    assertEquals([a], linearize(a, HashMap {
-        a -> []
-    }));
-    assertEquals([b, a], linearize(a, HashMap {
-        a -> [b],
-        b -> []
-    }));
-    assertEquals([c, b, a], linearize(a, HashMap {
-        a -> [b],
-        b -> [c],
-        c -> []
-    }));
-    assertEquals([c, b, c, a], linearize(a, HashMap {
-        a -> [b, c],
-        b -> [c],
-        c -> []
-    }));
+    Task b = createTestTask("b", [a]);
+    Task c = createTestTask("c", [b]);
+    Task d = createTestTask("d", [b, a]);
+    assertEquals([a], linearize(a, HashSet({ a })));
+    assertEquals([a, b], linearize(b, HashSet({ a, b })));
+    assertEquals([a, b, c], linearize(c, HashSet({ a, c, b })));
+    assertEquals([a, b, a, d], linearize(d, HashSet ({ a, b, c, d })));
 }
 
 void testTasksReduction() {

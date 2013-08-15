@@ -1,10 +1,10 @@
-shared interface Task satisfies Identifiable {
+shared class Task(name, process, dependencies = []) satisfies Identifiable {
     
-    shared formal String name;
+    shared String name;
     
-    shared formal Boolean process(String[] arguments, Writer writer);
+    shared Boolean process(String[] arguments, Writer writer);
     
-    shared default String help() => "";
+    shared {Task*} dependencies;
     
     string => name;
     
@@ -16,12 +16,4 @@ shared interface Task satisfies Identifiable {
         }
         return false;
     }
-}
-
-shared Task createTask(String taskName, Boolean method(String[] arguments, Writer writer)) {
-    object task satisfies Task {
-        name = taskName;
-        process = method;  
-    }
-    return task;
 }

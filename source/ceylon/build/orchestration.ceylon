@@ -1,6 +1,6 @@
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
-shared {Task*} buildTaskExecutionList(TasksDefinitionsMap definitions, String[] arguments, Writer writer) {
+shared {Task*} buildTaskExecutionList(Set<Task> definitions, String[] arguments, Writer writer) {
     value tasksRequested = findTasksToExecute(definitions, arguments, writer);
     MutableList<Task> tasksToExecute = LinkedList<Task>();
     for (task in tasksRequested) {
@@ -9,11 +9,11 @@ shared {Task*} buildTaskExecutionList(TasksDefinitionsMap definitions, String[] 
     return reduce(tasksToExecute);
 }
 
-shared {Task*} findTasksToExecute(TasksDefinitionsMap definitions, String[] arguments, Writer writer) {
+shared {Task*} findTasksToExecute(Set<Task> definitions, String[] arguments, Writer writer) {
     MutableList<Task> tasks = LinkedList<Task>();
     for (taskName in arguments) {
         if (!taskName.startsWith(argumentPrefix)) {
-            for (task -> taskDependencies in definitions) {
+            for (task in definitions) {
                 if (task.name.equals(taskName)) {
                     tasks.add(task);
                     break;
@@ -27,10 +27,9 @@ shared {Task*} findTasksToExecute(TasksDefinitionsMap definitions, String[] argu
     return tasks;
 }
 
-shared {Task*} linearize(Task task, TasksDefinitionsMap definitions) {
+shared {Task*} linearize(Task task, Set<Task> definitions) {
     MutableList<Task> tasks = LinkedList<Task>();
-    assert (exists taskDependencies = definitions[task]);
-    for (Task dependency in taskDependencies) {
+    for (Task dependency in task.dependencies) {
         tasks.addAll(linearize(dependency, definitions));
     }
     tasks.add(task);

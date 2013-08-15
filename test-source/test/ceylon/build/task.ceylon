@@ -1,6 +1,4 @@
-import ceylon.build { taskDefinitionMap }
 import ceylon.test { assertNotEquals, assertEquals }
-import ceylon.collection { HashMap }
 
 void testTasks() {
     value a = createTestTask("a");
@@ -16,11 +14,11 @@ void testTasksDefinitions() {
     value b = createTestTask("b");
     value c = createTestTask("c");
     value d = createTestTask("d");
-    assertEquals(HashMap {}, taskDefinitionMap({}));
-    assertEquals(HashMap { a -> [] }, taskDefinitionMap({ a }));
-    assertEquals(HashMap { a -> [] }, taskDefinitionMap({ a -> [] }));
-    assertEquals(HashMap { a -> [], b -> [] }, taskDefinitionMap({ a, b }));
-    assertEquals(HashMap { a -> [], b -> [] }, taskDefinitionMap({ a -> [], b -> [] }));
-    assertEquals(HashMap { a -> [], b -> [] }, taskDefinitionMap({ a, b -> [] }));
-    assertEquals(HashMap { a -> [], b -> [c, d], c -> [], d -> [a] }, taskDefinitionMap({ a, b -> [c, d], c, d -> [a] }));
+    assertEquals(LazySet {}, LazySet({}));
+    assertEquals(LazySet { a }, LazySet({ a }));
+    assertEquals(LazySet { a }, LazySet({ createTestTask("a") }));
+    assertEquals(LazySet { a, b }, LazySet({ a, createTestTask("b") }));
+    assertEquals(LazySet { a, b }, LazySet({ createTestTask("a"), b }));
+    assertEquals(LazySet { a, b }, LazySet({ a, b }));
+    assertEquals(LazySet { a, b, c, d }, LazySet({ a, b, createTestTask("c"), createTestTask("d") }));
 }
