@@ -1,4 +1,4 @@
-import ceylon.collection { HashMap, HashSet, MutableSet }
+import ceylon.collection { HashSet }
 
 """Launch the task based engine using `TasksDefinitions`.
    
@@ -36,16 +36,8 @@ shared void build(
 		String project,
 		String rootPath,
 		{Task*} tasks) {
-    Integer exitCode = buildTasks(tasksSet(tasks), process.arguments, consoleWriter);
+    Integer exitCode = buildTasks(HashSet(tasks), process.arguments, consoleWriter);
     process.exit(exitCode);
-}
-
-"Convert a `TasksDefinitions` to a `TasksDefinitionsMap`.
- 
- Items in `TasksDefinitions` without any dependencies defined (i.e. `Task` and not `Task -> {Task*}`) will be used with
- an empty dependencies list."
-shared Set<Task> tasksSet({Task*} tasks) {
-    return HashSet<Task>(tasks);
 }
 
 "List of program exit code"
