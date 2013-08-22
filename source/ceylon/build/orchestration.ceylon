@@ -1,15 +1,15 @@
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
-shared {Task*} buildTaskExecutionList(Set<Task> definitions, String[] arguments, Writer writer) {
+shared {Task*} buildTaskExecutionList({Task+} definitions, String[] arguments, Writer writer) {
     value tasksRequested = findTasksToExecute(definitions, arguments, writer);
     MutableList<Task> tasksToExecute = LinkedList<Task>();
     for (task in tasksRequested) {
-        tasksToExecute.addAll(linearize(task, definitions));
+        tasksToExecute.addAll(linearize(task));
     }
     return reduce(tasksToExecute);
 }
 
-shared {Task*} findTasksToExecute(Set<Task> definitions, String[] arguments, Writer writer) {
+shared {Task*} findTasksToExecute({Task+} definitions, String[] arguments, Writer writer) {
     MutableList<Task> tasks = LinkedList<Task>();
     for (taskName in arguments) {
         if (!taskName.startsWith(argumentPrefix)) {
@@ -27,10 +27,10 @@ shared {Task*} findTasksToExecute(Set<Task> definitions, String[] arguments, Wri
     return tasks;
 }
 
-shared {Task*} linearize(Task task, Set<Task> definitions) {
+shared {Task*} linearize(Task task) {
     MutableList<Task> tasks = LinkedList<Task>();
     for (Task dependency in task.dependencies) {
-        tasks.addAll(linearize(dependency, definitions));
+        tasks.addAll(linearize(dependency));
     }
     tasks.add(task);
     return tasks;

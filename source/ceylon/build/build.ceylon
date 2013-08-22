@@ -1,4 +1,4 @@
-import ceylon.collection { HashSet }
+import ceylon.collection { HashSet, HashMap }
 
 """Launch the task engine using.
    
@@ -53,8 +53,8 @@ import ceylon.collection { HashSet }
 shared void build(
 		String project,
 		String rootPath,
-		{Task*} tasks) {
-    Integer exitCode = buildTasks(HashSet(tasks), process.arguments, consoleWriter);
+		{Task+} tasks) {
+    Integer exitCode = buildTasks(tasks, process.arguments, consoleWriter);
     process.exit(exitCode);
 }
 
@@ -73,16 +73,35 @@ object exitCode {
     
     "Exit code returned when a task failed"
     shared Integer errorOnTaskExecution = 3;
+    
+    "Exit code returned when a dependency cycle has been found in the given `TasksDefinitions`"
+    shared Integer duplicateTasksFound = 4;
 }
 
-shared Integer buildTasks(Set<Task> tasks, String[] arguments, Writer writer) {
+shared Integer buildTasks({Task+} tasks, String[] arguments, Writer writer) {
     writer.info("## ceylon.build");
-    value cycles = analyzeDependencyCycles(tasks);
-    if (cycles.empty) {
-        value tasksToRun = buildTaskExecutionList(tasks, process.arguments, writer);
-        return runTasks(tasksToRun, arguments, tasks, writer);
+    value duplicateTasks = findDuplicateTasks(tasks);
+    if (duplicateTasks.empty) {
+        value cycles = analyzeDependencyCycles(tasks);
+        if (cycles.empty) {
+            value tasksToRun = buildTaskExecutionList(tasks, process.arguments, writer);
+            return runTasks(tasksToRun, arguments, tasks, writer);
+        } else {
+            writer.error("# task dependency cycle found between: ``cycles``");
+            return exitCode.dependencyCycleFound;
+        }
     } else {
-        writer.error("# task dependency cycle found between: ``cycles``");
-        return exitCode.dependencyCycleFound;
+        writer.error("# duplicate task names found: ``duplicateTasks``");
+        return exitCode.duplicateTasksFound;
     }
+}
+
+shared {String*} findDuplicateTasks({Task+} tasks) {
+    value map = HashMap<String, Integer>();
+    for (task in tasks) {
+        String name = task.name;
+        Integer count = map.get(name) else 0;
+        map.put(name, count + 1);
+    }
+    return [ for (name -> count in map) if (count > 1) name ];
 }
