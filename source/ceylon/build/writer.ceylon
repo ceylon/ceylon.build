@@ -1,4 +1,4 @@
-"Abstraction of output and error output streams"
+"Abstraction of standard output and error output streams"
 shared interface Writer {
     "Write a message on information output stream"
     shared formal void info(String message);

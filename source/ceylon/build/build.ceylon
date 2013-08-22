@@ -1,6 +1,6 @@
 import ceylon.collection { HashSet }
 
-"""Launch the task based engine using `TasksDefinitions`.
+"""Launch the task engine using.
    
    Command line arguments retrieved by `process.arguments` will be used to determine which tasks in `TasksDefinitions`
    have to be run.
@@ -9,28 +9,46 @@ import ceylon.collection { HashSet }
    Except ones starting with `"-D"` which will be understood as task parameters.
    
    Given a list of arguments, program will look for task names in argument list and will try to find the corresponding
-   `Task`in `tasksDefinitions`.
+   `Task`.
    If no corresponding task is found, an error will be raised and program will exit.
    
    For each task found, dependencies will be linearized to ensure that if task `a` depends on task `b`, task `b`
    will be executed before `a` even if only `a` was asked for.
-   Tasks execution list will then be reduced so that one task is only executed once during program execution.
+   Tasks execution list will then be reduced so that a task is only executed once during program execution.
    If tasks dependencies cycle are found, an error will be raised and program will exit.
    
    Tasks will be run in the order they were given to the command line, except if one task before in the command line has
-   a dependency on a later task. In a such case, later task will be moved before in order to be consistent
-   with dependencies.
+   a dependency on a later task. In a such case, later task will be moved before in order to maintain dependencies
+   consistency
+   
    Example:
    Consider the following tasks with their dependencies:
    ```ceylon
-   build({
-       a -> [],
-       b -> [c, d],
-       c -> [d],
-       d -> []
+   value a = Task {
+       name = "a";
+       doA;
+   };
+   value b = Task {
+       name = "b";
+       doD;
+   };
+   value c = Task {
+       name = "c";
+       doC;
+       dependencies = [b];
+   };
+   value d = Task {
+       name = "d";
+       doB;
+       dependencies = [c, b];
+   };
+   build(
+       project = "My Project";
+       rootPath = ".";
+       a, b, c, d
    });
    ```
-   Launching the program with tasks `a, b, c` (in order) will result in the execution of `a, d, c, b` (still in order) 
+   Launching the program with tasks `a, d, c` (in order) will result in the execution of `a, b, c, d` (still in order) 
    """
 shared void build(
 		String project,
