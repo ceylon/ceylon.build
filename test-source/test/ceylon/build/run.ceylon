@@ -1,4 +1,5 @@
 import ceylon.test { suite }
+import test.ceylon.build.tasks.ceylon { testCommandsBuilder }
 
 "Run the module `test.ceylon.build`."
 void run() {
@@ -7,5 +8,6 @@ void run() {
             "tasks definitions" -> testTasksDefinitions,
             "tasks dependencies cycles" -> testDependenciesCycles,
             "tasks orchestration" -> testTasksOrchestration,
-            "tasks execution" -> testTasksExecution);
+            "tasks execution" -> testTasksExecution,
+            "ceylon commands" -> testCommandsBuilder);
 }
