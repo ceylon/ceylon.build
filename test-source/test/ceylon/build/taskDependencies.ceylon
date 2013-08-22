@@ -1,6 +1,5 @@
 import ceylon.build { analyzeDependencyCycles, Task }
 import ceylon.test { assertTrue }
-import ceylon.collection { HashSet }
 
 void testDependenciesCycles() {
     shouldNotFoundCycle();
@@ -14,12 +13,10 @@ void shouldNotFoundCycle() {
     Task d = createTestTask("d", [c]);
     Task e = createTestTask("e", [b, c]);
     Task f = createTestTask("f", [d]);
-    assertTrue(analyzeDependencyCycles(HashSet({})).empty);
-    assertTrue(analyzeDependencyCycles(HashSet({})).empty);
-    assertTrue(analyzeDependencyCycles(HashSet({ a, c, d })).empty);
-    assertTrue(analyzeDependencyCycles(HashSet({ b, c, e })).empty);
-    assertTrue(analyzeDependencyCycles(HashSet({ c, d, f })).empty);
-    assertTrue(analyzeDependencyCycles(HashSet({ a, b, c, d, e, f })).empty);
+    assertTrue(analyzeDependencyCycles({ a, c, d }).empty);
+    assertTrue(analyzeDependencyCycles({ b, c, e }).empty);
+    assertTrue(analyzeDependencyCycles({ c, d, f }).empty);
+    assertTrue(analyzeDependencyCycles({ a, b, c, d, e, f }).empty);
 }
 
 // TODO not possible since dependencies are declared at task creation.

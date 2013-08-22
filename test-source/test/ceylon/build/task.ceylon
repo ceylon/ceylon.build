@@ -1,4 +1,5 @@
 import ceylon.test { assertNotEquals, assertEquals }
+import ceylon.build { findDuplicateTasks }
 
 void testTasks() {
     value a = createTestTask("a");
@@ -21,4 +22,10 @@ void testTasksDefinitions() {
     assertEquals(LazySet { a, b }, LazySet({ createTestTask("a"), b }));
     assertEquals(LazySet { a, b }, LazySet({ a, b }));
     assertEquals(LazySet { a, b, c, d }, LazySet({ a, b, createTestTask("c"), createTestTask("d") }));
+}
+
+void testDuplicateTasks() {
+    assertEquals([], findDuplicateTasks([createTestTask("a"), createTestTask("b"), createTestTask("c")]));
+    assertEquals(["b"], findDuplicateTasks([createTestTask("a"), createTestTask("b"), createTestTask("c"), createTestTask("b")]));
+    assertEquals(["a", "b"], findDuplicateTasks([createTestTask("a"), createTestTask("b"), createTestTask("b"), createTestTask("a")]));
 }
