@@ -1,4 +1,5 @@
-import ceylon.collection { HashSet, HashMap }
+import ceylon.collection { HashMap }
+import ceylon.build { Writer }
 
 """Launch the task engine using.
    
@@ -54,7 +55,7 @@ shared void build(
 		String project,
 		String rootPath,
 		{Task+} tasks) {
-    Integer exitCode = buildTasks(tasks, process.arguments, consoleWriter);
+    Integer exitCode = buildTasks(project, tasks, process.arguments, consoleWriter);
     process.exit(exitCode);
 }
 
@@ -63,23 +64,36 @@ object exitCode {
     "Success exit code as per standard conventions"
     shared Integer success = 0;
     
-    "Exit code returned when a dependency cycle has been found in the given `TasksDefinitions`"
+    "Exit code returned when a dependency cycle has been found"
     shared Integer dependencyCycleFound = 1;
     
     "Exit code returned when there is no task to be run.
      
-     This could be because no task has been requested or because the requested task doesn't exists."
+     This happens because no task has been requested or because the requested task doesn't exists."
     shared Integer noTaskToRun = 2;
     
     "Exit code returned when a task failed"
     shared Integer errorOnTaskExecution = 3;
     
-    "Exit code returned when a dependency cycle has been found in the given `TasksDefinitions`"
+    "Exit code returned when multiples `Task` have the same name"
     shared Integer duplicateTasksFound = 4;
 }
 
-shared Integer buildTasks({Task+} tasks, String[] arguments, Writer writer) {
-    writer.info("## ceylon.build");
+shared Integer buildTasks(String project, {Task+} tasks, String[] arguments, Writer writer) {
+    Integer startTime = process.milliseconds;
+    writer.info("## ceylon.build: ``project``");
+    value code = processTasks(tasks, arguments, writer);
+    Integer endTime = process.milliseconds;
+    String duration = "duration ``(endTime - startTime) / 1000``s";
+    if (code == exitCode.success) {
+        writer.info("## success - ``duration``");
+    } else {
+        writer.error("## failure - ``duration``");
+    }
+    return code;
+}
+
+Integer processTasks({Task+} tasks, String[] arguments, Writer writer) {
     value duplicateTasks = findDuplicateTasks(tasks);
     if (duplicateTasks.empty) {
         value cycles = analyzeDependencyCycles(tasks);
