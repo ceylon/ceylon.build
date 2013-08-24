@@ -1,7 +1,9 @@
 import ceylon.build { Writer }
 import ceylon.process { Process, createProcess, currentOutput, currentError }
 
+String ceylonExecutable = "ceylon";
 String defaultModuleVersion = "1.0.0";
+[String+] testSourceDirectory = ["test-source"];
 
 shared interface CompileVerboseMode of loader | ast | code | cmrloader | benchmark {}
 shared object loader satisfies CompileVerboseMode {
@@ -38,7 +40,7 @@ shared Boolean(String[], Writer) compile(
         Boolean offline = false,
         Boolean disableModuleRepository = false,
         {CompileVerboseMode*} verboseModes = [],
-        String ceylon = "ceylon"
+        String ceylon = ceylonExecutable
 ) {
     return function(String[] arguments, Writer writer) {
         value command = buildCompileCommand {
@@ -79,7 +81,7 @@ shared Boolean(String[], Writer) compileJs(
         Boolean profile = false,
         Boolean skipSourceArchive = false,
         Boolean verbose = false,
-        String ceylon = "ceylon"
+        String ceylon = ceylonExecutable
 ) {
     return function(String[] arguments, Writer writer) {
         value command = buildCompileJsCommand {
@@ -120,7 +122,7 @@ shared Boolean(String[], Writer) doc(
         String? link = null,
         Boolean includeNonShared = false,
         Boolean includeSourceCode = false,
-        String ceylon = "ceylon"
+        String ceylon = ceylonExecutable
         ) {
     return function(String[] arguments, Writer writer) {
         value command = buildDocCommand {
@@ -151,7 +153,7 @@ shared Boolean(String[], Writer) runModule(
         String? systemRepository = null,
         String? functionNameToRun = null,
         {RunVerboseMode*} verboseModes = [],
-        String ceylon = "ceylon") {
+        String ceylon = ceylonExecutable) {
     return function(String[] arguments, Writer writer) {
         value command = buildRunCommand {
             ceylon;
@@ -178,7 +180,7 @@ shared Boolean(String[], Writer) runJsModule(
         String? functionNameToRun = null,
         String? debug = null,
         String? pathToNodeJs = null,
-        String ceylon = "ceylon") {
+        String ceylon = ceylonExecutable) {
     return function(String[] arguments, Writer writer) {
         value command = buildRunJsCommand {
             ceylon;
@@ -196,17 +198,76 @@ shared Boolean(String[], Writer) runJsModule(
     };
 }
 
-shared Boolean(String[], Writer) test(
+shared Boolean(String[], Writer) compileTests(
         String moduleName,
-        String version = defaultModuleVersion,
-        String ceylon = "ceylon") {
-    Boolean execute(String[] arguments, Writer writer) {
-        if (!executeCommand(writer, "compiling tests", "ceylon compile ``moduleName`` --src=test-source")) {
-            return false;
-        }
-        return executeCommand(writer, "running tests", "ceylon run ``moduleName``/``version``");
-    }
-    return execute;
+        String? encoding = "",
+        String? javacOptions = null,
+        String? outputModuleRepository = null,
+        String? dependenciesRepository = null,
+        String? systemRepository = null,
+        String? user = null,
+        String? password = null,
+        Boolean offline = false,
+        Boolean disableModuleRepository = false,
+        {CompileVerboseMode*} verboseModes = [],
+        String ceylon = ceylonExecutable
+) {
+    return compile {
+        moduleName;
+        encoding;
+        testSourceDirectory;
+        javacOptions;
+        outputModuleRepository;
+        dependenciesRepository;
+        systemRepository;
+        user;
+        password;
+        offline;
+        disableModuleRepository;
+        verboseModes;
+        ceylon;
+    };
+}
+
+shared Boolean(String[], Writer) compileJsTests(
+        String moduleName,
+        String? encoding = null,
+        String? outputModuleRepository = null,
+        String? dependenciesRepository = null,
+        String? systemRepository = null,
+        String? user = null,
+        String? password = null,
+        Boolean offline = false,
+        Boolean compact = false,
+        Boolean noComments = false,
+        Boolean noIndent = false,
+        Boolean noModule = false,
+        Boolean optimize = false,
+        Boolean profile = false,
+        Boolean skipSourceArchive = false,
+        Boolean verbose = false,
+        String ceylon = ceylonExecutable
+) {
+    return compileJs {
+        moduleName;
+        encoding;
+        testSourceDirectory;
+        outputModuleRepository;
+        dependenciesRepository;
+        systemRepository;
+        user;
+        password;
+        offline;
+        compact;
+        noComments;
+        noIndent;
+        noModule;
+        optimize;
+        profile;
+        skipSourceArchive;
+        verbose;
+        ceylon;
+    };
 }
 
 Boolean executeCommand(Writer writer, String title, String cmd) {
