@@ -1,7 +1,7 @@
-import ceylon.build { Task, Writer }
+import ceylon.build { Task, Writer, Context }
 import ceylon.collection { LinkedList, MutableList }
 
-Boolean noOp(String[] arguments, Writer writer) => true;
+Boolean noOp(Context context) => true;
 
 Task createTestTask(String name, {Task*} dependencies = []) {
     return Task(name, noOp, dependencies);

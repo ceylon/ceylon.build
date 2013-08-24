@@ -92,8 +92,8 @@ void appendPathToNodeJs(StringBuilder sb, String? pathToNodeJs) {
 }
 
         
-void appendArguments(StringBuilder sb, String[] arguments) {
-    if (nonempty arguments) {
+void appendArguments(StringBuilder sb, {String*} arguments) {
+    if (!arguments.empty) {
         sb.append(" ");
         sb.append(" ".join(arguments));
     }

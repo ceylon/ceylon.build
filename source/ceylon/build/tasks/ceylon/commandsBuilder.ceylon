@@ -12,7 +12,7 @@ shared String buildCompileCommand(
         Boolean offline,
         Boolean disableModuleRepository,
         {CompileVerboseMode*} verboseModes,
-        String[] arguments
+        {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
@@ -53,7 +53,7 @@ shared String buildCompileJsCommand(
         Boolean profile,
         Boolean skipSourceArchive,
         Boolean verbose,
-        String[] arguments
+        {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
@@ -94,7 +94,7 @@ shared String buildDocCommand(
         String? link,
         Boolean includeNonShared,
         Boolean includeSourceCode,
-        String[] arguments
+        {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
@@ -126,7 +126,7 @@ shared String buildRunCommand(
         String? systemRepository,
         String? functionNameToRun,
         {RunVerboseMode*} verboseModes,
-        String[] arguments
+        {String*} arguments
         ) { 
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
@@ -155,7 +155,7 @@ shared String buildRunJsCommand(
         String? functionNameToRun,
         String? debug,
         String? pathToNodeJs,
-        String[] arguments
+        {String*} arguments
         ) { 
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);

@@ -11,7 +11,7 @@ shared Integer runTasks({Task*} tasks, String[] arguments, {Task*} availableTask
             value taskArguments = filterArgumentsForTask(task, arguments);
             writer.info("# running ``task.name``(``", ".join(taskArguments)``)");
             try {
-                if (!task.process(taskArguments, writer)) {
+                if (!task.process(Context(taskArguments, writer))) {
                     writer.error("# task ``task`` failure, stopping");
                     return exitCode.errorOnTaskExecution;
                 }

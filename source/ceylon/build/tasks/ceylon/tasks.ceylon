@@ -1,4 +1,4 @@
-import ceylon.build { Writer }
+import ceylon.build { Context, TaskDefinition, Writer }
 import ceylon.process { Process, createProcess, currentOutput, currentError }
 
 String ceylonExecutable = "ceylon";
@@ -27,7 +27,7 @@ shared object cmr satisfies RunVerboseMode {
     string => "cmr";
 }
 
-shared Boolean(String[], Writer) compile(
+shared TaskDefinition compile(
         String moduleName,
         String? encoding = "",
         {String*} sourceDirectories = [],
@@ -42,7 +42,7 @@ shared Boolean(String[], Writer) compile(
         {CompileVerboseMode*} verboseModes = [],
         String ceylon = ceylonExecutable
 ) {
-    return function(String[] arguments, Writer writer) {
+    return function(Context context) {
         value command = buildCompileCommand {
             ceylon;
             moduleName;
@@ -57,13 +57,13 @@ shared Boolean(String[], Writer) compile(
             offline;
             disableModuleRepository;
             verboseModes;
-            arguments;
+            context.arguments;
         };
-        return executeCommand(writer, "compiling", command);
+        return executeCommand(context.writer, "compiling", command);
     };
 }
 
-shared Boolean(String[], Writer) compileJs(
+shared TaskDefinition compileJs(
         String moduleName,
         String? encoding = null,
         {String*} sourceDirectories = [],
@@ -83,7 +83,7 @@ shared Boolean(String[], Writer) compileJs(
         Boolean verbose = false,
         String ceylon = ceylonExecutable
 ) {
-    return function(String[] arguments, Writer writer) {
+    return function(Context context) {
         value command = buildCompileJsCommand {
             ceylon;
             moduleName;
@@ -103,13 +103,13 @@ shared Boolean(String[], Writer) compileJs(
             profile;
             skipSourceArchive;
             verbose;
-            arguments;
+            context.arguments;
         };
-        return executeCommand(writer, "compiling", command);
+        return executeCommand(context.writer, "compiling", command);
     };
 }
 
-shared Boolean(String[], Writer) doc(
+shared TaskDefinition doc(
         String moduleName,
         String? encoding = null,
         {String*} sourceDirectories = [],
@@ -124,7 +124,7 @@ shared Boolean(String[], Writer) doc(
         Boolean includeSourceCode = false,
         String ceylon = ceylonExecutable
         ) {
-    return function(String[] arguments, Writer writer) {
+    return function(Context context) {
         value command = buildDocCommand {
             ceylon;
             moduleName;
@@ -139,12 +139,12 @@ shared Boolean(String[], Writer) doc(
             link;
             includeNonShared;
             includeSourceCode;
-            arguments;
+            context.arguments;
         };
-        return executeCommand(writer, "documenting", command);
+        return executeCommand(context.writer, "documenting", command);
     };
 }
-shared Boolean(String[], Writer) runModule(
+shared TaskDefinition runModule(
         String moduleName,
         String version = defaultModuleVersion,
         Boolean disableModuleRepository = false,
@@ -154,7 +154,7 @@ shared Boolean(String[], Writer) runModule(
         String? functionNameToRun = null,
         {RunVerboseMode*} verboseModes = [],
         String ceylon = ceylonExecutable) {
-    return function(String[] arguments, Writer writer) {
+    return function(Context context) {
         value command = buildRunCommand {
             ceylon;
             moduleName;
@@ -165,13 +165,13 @@ shared Boolean(String[], Writer) runModule(
             systemRepository;
             functionNameToRun;
             verboseModes;
-            arguments;
+            context.arguments;
         };
-        return executeCommand(writer, "running", command);
+        return executeCommand(context.writer, "running", command);
     };
 }
 
-shared Boolean(String[], Writer) runJsModule(
+shared TaskDefinition runJsModule(
         String moduleName,
         String version = defaultModuleVersion,
         Boolean offline = false,
@@ -181,7 +181,7 @@ shared Boolean(String[], Writer) runJsModule(
         String? debug = null,
         String? pathToNodeJs = null,
         String ceylon = ceylonExecutable) {
-    return function(String[] arguments, Writer writer) {
+    return function(Context context) {
         value command = buildRunJsCommand {
             ceylon;
             moduleName;
@@ -192,13 +192,13 @@ shared Boolean(String[], Writer) runJsModule(
             functionNameToRun;
             debug;
             pathToNodeJs;
-            arguments;
+            context.arguments;
         };
-        return executeCommand(writer, "running", command);
+        return executeCommand(context.writer, "running", command);
     };
 }
 
-shared Boolean(String[], Writer) compileTests(
+shared TaskDefinition compileTests(
         String moduleName,
         String? encoding = "",
         String? javacOptions = null,
@@ -229,7 +229,7 @@ shared Boolean(String[], Writer) compileTests(
     };
 }
 
-shared Boolean(String[], Writer) compileJsTests(
+shared TaskDefinition compileJsTests(
         String moduleName,
         String? encoding = null,
         String? outputModuleRepository = null,

@@ -1,8 +1,17 @@
+shared class Context(arguments, writer) {
+    
+    shared {String*} arguments;
+    
+    shared Writer writer;
+}
+
+shared alias TaskDefinition => Boolean(Context);
+
 shared class Task(name, process, dependencies = []) satisfies Identifiable {
     
     shared String name;
     
-    shared Boolean process(String[] arguments, Writer writer);
+    shared TaskDefinition process;
     
     shared {Task*} dependencies;
     
