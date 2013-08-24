@@ -53,7 +53,6 @@ import ceylon.build { Writer }
    """
 shared void build(
 		String project,
-		String rootPath,
 		{Task+} tasks) {
     Integer exitCode = buildTasks(project, tasks, process.arguments, consoleWriter);
     process.exit(exitCode);
