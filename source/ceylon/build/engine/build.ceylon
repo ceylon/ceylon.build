@@ -1,4 +1,4 @@
-import ceylon.build.task { Task, Writer, consoleWriter }
+import ceylon.build.task { Task, Writer }
 
 """Launch the task engine using.
    
