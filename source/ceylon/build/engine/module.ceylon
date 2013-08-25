@@ -80,7 +80,6 @@ shared module ceylon.build.engine '0.1' {
     shared import ceylon.build.task '0.1';
     
     import ceylon.collection '0.6';
-    import ceylon.process '0.6';
     
     import java.base '7'; // needed for regular expression support
     import ceylon.interop.java '0.6';

@@ -1,5 +1,5 @@
 import ceylon.test { assertEquals }
-import ceylon.build.engine.tasks.ceylon { buildCompileCommand, loader, cmrloader, benchmark, code, ast, buildCompileJsCommand, buildDocCommand, buildRunCommand, buildRunJsCommand, cmr }
+import ceylon.build.tasks.ceylon { buildCompileCommand, loader, cmrloader, benchmark, code, ast, buildCompileJsCommand, buildDocCommand, buildRunCommand, buildRunJsCommand, cmr }
 
 shared void testCommandsBuilder() {
     shouldCreateCompileCommand();
