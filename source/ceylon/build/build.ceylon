@@ -59,23 +59,28 @@ shared void build(
 }
 
 "List of program exit code"
-object exitCode {
+shared object exitCode {
     "Success exit code as per standard conventions"
     shared Integer success = 0;
     
+    "Exit code returned when an invalid `Task` is found
+     
+     This can happen if a task name contains forbidden characters"
+    shared Integer invalidTasksFound = 1;
+    
+    "Exit code returned when multiples `Task` have the same name"
+    shared Integer duplicateTasksFound = 2;
+    
     "Exit code returned when a dependency cycle has been found"
-    shared Integer dependencyCycleFound = 1;
+    shared Integer dependencyCycleFound = 3;
     
     "Exit code returned when there is no task to be run.
      
      This happens because no task has been requested or because the requested task doesn't exists."
-    shared Integer noTaskToRun = 2;
+    shared Integer noTaskToRun = 4;
     
     "Exit code returned when a task failed"
-    shared Integer errorOnTaskExecution = 3;
-    
-    "Exit code returned when multiples `Task` have the same name"
-    shared Integer duplicateTasksFound = 4;
+    shared Integer errorOnTaskExecution = 5;
 }
 
 shared Integer buildTasks(String project, {Task+} tasks, String[] arguments, Writer writer) {
@@ -93,6 +98,12 @@ shared Integer buildTasks(String project, {Task+} tasks, String[] arguments, Wri
 }
 
 Integer processTasks({Task+} tasks, String[] arguments, Writer writer) {
+    value invalidTasks = invalidTasksName(tasks);
+    if (!invalidTasks.empty) {
+        writer.error("# invalid tasks found ``invalidTasks``");
+        writer.error("# tasks name should match following format: `[a-z][a-zA-Z0-9-]*`");
+        return exitCode.invalidTasksFound;
+    }
     value duplicateTasks = findDuplicateTasks(tasks);
     if (duplicateTasks.empty) {
         value cycles = analyzeDependencyCycles(tasks);
@@ -107,14 +118,4 @@ Integer processTasks({Task+} tasks, String[] arguments, Writer writer) {
         writer.error("# duplicate task names found: ``duplicateTasks``");
         return exitCode.duplicateTasksFound;
     }
-}
-
-shared {String*} findDuplicateTasks({Task+} tasks) {
-    value map = HashMap<String, Integer>();
-    for (task in tasks) {
-        String name = task.name;
-        Integer count = map.get(name) else 0;
-        map.put(name, count + 1);
-    }
-    return [ for (name -> count in map) if (count > 1) name ];
 }
