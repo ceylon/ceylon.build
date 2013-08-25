@@ -1,7 +1,7 @@
 import ceylon.test { suite }
-import test.ceylon.build.tasks.ceylon { testCommandsBuilder }
+import test.ceylon.build.engine.tasks.ceylon { testCommandsBuilder }
 
-"Run the module `test.ceylon.build`."
+"Run the module `test.ceylon.build.engine`."
 void run() {
     suite("ceylon.test",
             "tasks" -> testTasks,

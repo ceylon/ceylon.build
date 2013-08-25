@@ -1,4 +1,5 @@
-import ceylon.build { Task, findTasksToExecute, linearize, reduce }
+import ceylon.build.engine { findTasksToExecute, linearize, reduce }
+import ceylon.build.task { Task }
 import ceylon.test { assertEquals }
 
 void testTasksOrchestration() {

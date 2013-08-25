@@ -9,39 +9,56 @@
    A build module is a standard ceylon module that has in its `run()` function a call to `build(TasksDefinitions)`.
    
    ```ceylon
-   import ceylon.build { Task, build }
-   import ceylon.build.tasks.ceylon { compile, doc, test, runModule, ast, benchmark }
+   import ceylon.build.engine { build }
+   import ceylon.build.engine.tasks.ceylon { compile, compileTests, doc, runModule }
+   import ceylon.build.task { Task }
    
    void run() {
-       value compileTask = Task {
+       String myModule = "mod";
+       String myTestModule = "test.mod";
+           value compileTask = Task {
            name = "compile";
-           compile {
-               moduleName = "mod";
-               verboseModes = { ast, benchmark };
+               compile {
+               moduleName = myModule;
+           };
+       };
+       value compileTestsTask = Task {
+           name = "compile-tests";
+           compileTests {
+               moduleName = myTestModule;
            };
        };
        build {
            project = "My Build Project";
-           rootPath = ".";
            compileTask,
+           compileTestsTask,
            Task {
                name = "test";
-               test {
-                   moduleName = "test.mod";
+               runModule {
+                   moduleName = myTestModule;
+                   version = "1.0.0";
                };
-               dependencies = [compileTask];
+               dependencies = [compileTask, compileTestsTask];
            },
            Task {
                name = "doc";
                doc {
-                   moduleName = "mod";
+                   moduleName = myModule;
+                   includeSourceCode = true;
                };
            },
            Task {
                name = "run";
                runModule {
-                   moduleName = "mod";
+                   moduleName = myModule;
                    version = "1.0";
+               };
+           },
+           Task {
+               name = "publish-local";
+               compile {
+                   moduleName = myModule;
+                   outputModuleRepository = "~/.ceylon/repo";
                };
            }
        };
@@ -59,7 +76,9 @@
    arguments, then, the following command can be used:
    `ceylon run mybuildmodule/1.0.0 test doc -Dcompile:--javac=-g:source,lines,vars -Ddoc:--non-shared -Ddoc:--source-code`
    """
-shared module ceylon.build '0.1' {
+shared module ceylon.build.engine '0.1' {
+    shared import ceylon.build.task '0.1';
+    
     import ceylon.collection '0.6';
     import ceylon.process '0.6';
     

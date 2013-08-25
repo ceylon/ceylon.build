@@ -1,5 +1,4 @@
-import ceylon.collection { HashMap }
-import ceylon.build { Writer }
+import ceylon.build.task { Task, Writer, consoleWriter }
 
 """Launch the task engine using.
    

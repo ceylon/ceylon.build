@@ -1,4 +1,4 @@
-import ceylon.build { Task, Writer, Context }
+import ceylon.build.task { Task, Writer, Context }
 import ceylon.collection { LinkedList, MutableList }
 
 Boolean noOp(Context context) => true;

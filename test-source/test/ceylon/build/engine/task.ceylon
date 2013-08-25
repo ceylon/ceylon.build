@@ -1,5 +1,5 @@
 import ceylon.test { assertNotEquals, assertEquals }
-import ceylon.build { findDuplicateTasks, invalidTaskName, invalidTasksName }
+import ceylon.build.engine { findDuplicateTasks, invalidTaskName, invalidTasksName }
 
 void testTasks() {
     value a = createTestTask("a");

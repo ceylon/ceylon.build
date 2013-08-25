@@ -1,4 +1,4 @@
-import ceylon.build { Context, TaskDefinition, Writer }
+import ceylon.build.task { Context, TaskDefinition, Writer }
 import ceylon.process { Process, createProcess, currentOutput, currentError }
 
 String ceylonExecutable = "ceylon";

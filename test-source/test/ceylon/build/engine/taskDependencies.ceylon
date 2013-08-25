@@ -1,4 +1,5 @@
-import ceylon.build { analyzeDependencyCycles, Task }
+import ceylon.build.engine { analyzeDependencyCycles }
+import ceylon.build.task { Task }
 import ceylon.test { assertTrue }
 
 void testDependenciesCycles() {

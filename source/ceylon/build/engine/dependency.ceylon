@@ -1,3 +1,4 @@
+import ceylon.build.task { Task }
 import ceylon.collection { LinkedList }
 
 shared class Dependency(task, {Task*} taskDependencies = []) {

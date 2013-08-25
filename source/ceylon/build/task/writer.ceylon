@@ -14,7 +14,7 @@ shared interface Writer {
  
  Outputs are standard output for `info(String)` and
  standard error output for `error(String)` and `exception(Exception)`"
-object consoleWriter satisfies Writer {
+shared object consoleWriter satisfies Writer {
     
     "Write a message to standard output"
     shared actual void info(String message) {

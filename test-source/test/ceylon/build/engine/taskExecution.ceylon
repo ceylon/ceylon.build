@@ -1,4 +1,5 @@
-import ceylon.build { Task, filterArgumentsForTask, runTasks, Writer, TaskDefinition, Context, exitCode }
+import ceylon.build.task { Task, TaskDefinition, Context }
+import ceylon.build.engine { filterArgumentsForTask, runTasks, exitCode }
 import ceylon.test { assertEquals, assertTrue }
 
 void testTasksExecution() {

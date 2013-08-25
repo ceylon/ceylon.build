@@ -1,3 +1,4 @@
+import ceylon.build.task { Task, Writer }
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
 shared {Task*} buildTaskExecutionList({Task+} definitions, String[] arguments, Writer writer) {

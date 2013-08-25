@@ -1,3 +1,4 @@
+import ceylon.build.task { Task, Context, Writer }
 
 String argumentPrefix = "-D";
 

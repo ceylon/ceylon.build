@@ -1,3 +1,4 @@
+import ceylon.build.task { Task }
 import ceylon.collection { HashMap }
 import java.util.regex { Pattern { compilePattern = compile } }
 import ceylon.interop.java { javaString }
