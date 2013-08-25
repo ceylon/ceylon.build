@@ -1,4 +1,4 @@
-import ceylon.build { Task, filterArgumentsForTask, runTasks, Writer, TaskDefinition, Context }
+import ceylon.build { Task, filterArgumentsForTask, runTasks, Writer, TaskDefinition, Context, exitCode }
 import ceylon.test { assertEquals, assertTrue }
 
 void testTasksExecution() {
@@ -28,13 +28,13 @@ void testRunTasks() {
 
 void shouldExitWithErrorWhenNoTasksToRun() {
     value writer = MockWriter();
-    assertEquals(2, runTasks([], [], [], writer));
+    assertEquals(exitCode.noTaskToRun, runTasks([], [], [], writer));
     assertEquals([], writer.infoMessages);
     assertEquals(["# no task to run, available tasks are: []"], writer.errorMessages);
     writer.clear();
     value a = createTestTask("a");
     value b = createTestTask("b");
-    assertEquals(2, runTasks([], ["-Da:foo"], [a, b], writer));
+    assertEquals(exitCode.noTaskToRun, runTasks([], ["-Da:foo"], [a, b], writer));
     assertEquals([], writer.infoMessages);
     assertEquals(["# no task to run, available tasks are: [a, b]"], writer.errorMessages);
 }
@@ -45,7 +45,7 @@ void shouldExitOnTaskFailure() {
     value b = Task("b", (Context context) => false);
     value c = createTestTask("c");
     value d = createTestTask("d");
-    assertEquals(3, runTasks([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
+    assertEquals(exitCode.errorOnTaskExecution, runTasks([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
     assertEquals([
         "# running tasks: [a, b, c] in order",
         "# running a(foo)",
@@ -62,7 +62,7 @@ void shouldExitOnTaskError() {
     value b = Task("b", throwException);
     value c = createTestTask("c");
     value d = createTestTask("d");
-    assertEquals(3, runTasks([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
+    assertEquals(exitCode.errorOnTaskExecution, runTasks([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
     assertEquals([
         "# running tasks: [a, b, c] in order",
         "# running a(foo)",
@@ -77,7 +77,7 @@ void shouldRunTasks(){
     value b = createTestTask("b");
     value c = createTestTask("c");
     value d = createTestTask("d");
-    assertEquals(0, runTasks([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
+    assertEquals(exitCode.success, runTasks([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
     assertEquals([
         "# running tasks: [a, b, c] in order",
         "# running a(foo)",
