@@ -10,8 +10,8 @@
    
    ```ceylon
    import ceylon.build.engine { build }
-   import ceylon.build.engine.tasks.ceylon { compile, compileTests, doc, runModule }
    import ceylon.build.task { Task }
+   import ceylon.build.tasks.ceylon { compile, compileTests, doc, runModule }
    
    void run() {
        String myModule = "mod";
