@@ -27,6 +27,23 @@ shared object cmr satisfies RunVerboseMode {
     string => "cmr";
 }
 
+"""Compiles a Ceylon module using `ceylon compile` command line.
+   
+   Function parameter --> Ceylon command parameter correspondence
+   * `encoding` --> `--encoding`
+   * `sourceDirectories` --> `--src`
+   * `javacOptions` --> `--javac`
+   * `outputModuleRepository` --> `--out`
+   * `dependenciesRepository` --> `--rep`
+   * `systemRepository` --> `--sysrep`
+   * `user` --> `--user`
+   * `password` --> `--pass`
+   * `offline` --> `--offline`
+   * `disableModuleRepository` --> `--d`
+   * `verboseModes` --> `--verbose`
+   
+   `ceylon` ceylon executable that will be used.
+   """
 shared TaskDefinition compile(
         String moduleName,
         String? encoding = "",
@@ -63,6 +80,27 @@ shared TaskDefinition compile(
     };
 }
 
+"""Compiles a Ceylon module to javascript using `ceylon compile-js` command line.
+   
+   Function parameter --> Ceylon command parameter correspondence
+   * `encoding` --> `--encoding`
+   * `sourceDirectories` --> `--src`
+   * `outputModuleRepository` --> `--out`
+   * `dependenciesRepository` --> `--rep`
+   * `systemRepository` --> `--sysrep`
+   * `user` --> `--user`
+   * `password` --> `--pass`
+   * `offline` --> `--offline`
+   * `noComments` --> `--no-comments`
+   * `noIndent` --> `--no-indent`
+   * `noModule` --> `--no-module`
+   * `optimize` --> `--optimize`
+   * `profile` --> `--profile`
+   * `skipSourceArchive` --> `--skip-src-archive`
+   * `verbose` --> `--verbose`
+   
+   `ceylon` ceylon executable that will be used.
+   """
 shared TaskDefinition compileJs(
         String moduleName,
         String? encoding = null,
@@ -109,6 +147,25 @@ shared TaskDefinition compileJs(
     };
 }
 
+
+"""Documents a Ceylon module using `ceylon doc` command line.
+   
+   Function parameter --> Ceylon command parameter correspondence
+   * `encoding` --> `--encoding`
+   * `sourceDirectories` --> `--src`
+   * `outputModuleRepository` --> `--out`
+   * `dependenciesRepository` --> `--rep`
+   * `systemRepository` --> `--sysrep`
+   * `user` --> `--user`
+   * `password` --> `--pass`
+   * `offline` --> `--offline`
+   * `link` --> `--link`
+   * `includeNonShared` --> `--non-shared`
+   * `includeSourceCode` --> `--source-code`
+   * `verboseModes` --> `--verbose`
+   
+   `ceylon` ceylon executable that will be used.
+   """
 shared TaskDefinition doc(
         String moduleName,
         String? encoding = null,
@@ -144,6 +201,19 @@ shared TaskDefinition doc(
         return executeCommand(context.writer, "documenting", command);
     };
 }
+
+"""Runs a Ceylon module using `ceylon run` command line.
+   
+   Function parameter --> Ceylon command parameter correspondence
+   * `disableModuleRepository` --> `--d`
+   * `offline` --> `--offline`
+   * `dependenciesRepository` --> `--rep`
+   * `systemRepository` --> `--sysrep`
+   * `functionNameToRun` --> `--run`
+   * `verboseModes` --> `--verbose`
+   
+   `ceylon` ceylon executable that will be used.
+   """
 shared TaskDefinition runModule(
         String moduleName,
         String version = defaultModuleVersion,
@@ -171,6 +241,18 @@ shared TaskDefinition runModule(
     };
 }
 
+"""Runs a Ceylon module on node.js using `ceylon run-js` command line.
+   
+   Function parameter --> Ceylon command parameter correspondence
+   * `offline` --> `--offline`
+   * `dependenciesRepository` --> `--rep`
+   * `systemRepository` --> `--sysrep`
+   * `functionNameToRun` --> `--run`
+   * `debug` --> `--debug`
+   * `pathToNodeJs` --> `--node-exe`
+   
+   `ceylon` ceylon executable that will be used.
+   """
 shared TaskDefinition runJsModule(
         String moduleName,
         String version = defaultModuleVersion,
@@ -198,6 +280,25 @@ shared TaskDefinition runJsModule(
     };
 }
 
+"""Compiles a Ceylon test module using `ceylon compile` command line.
+   
+   Function parameter --> Ceylon command parameter correspondence
+   * `encoding` --> `--encoding`
+   * `sourceDirectories` --> `--src`
+   * `javacOptions` --> `--javac`
+   * `outputModuleRepository` --> `--out`
+   * `dependenciesRepository` --> `--rep`
+   * `systemRepository` --> `--sysrep`
+   * `user` --> `--user`
+   * `password` --> `--pass`
+   * `offline` --> `--offline`
+   * `disableModuleRepository` --> `--d`
+   * `verboseModes` --> `--verbose`
+   
+   `--src` command line parameter is set to `"test-source"`
+   
+   `ceylon` ceylon executable that will be used.
+   """
 shared TaskDefinition compileTests(
         String moduleName,
         String? encoding = "",
@@ -229,6 +330,29 @@ shared TaskDefinition compileTests(
     };
 }
 
+"""Compiles a Ceylon test module to javascript using `ceylon compile-js` command line.
+   
+   Function parameter --> Ceylon command parameter correspondence
+   * `encoding` --> `--encoding`
+   * `sourceDirectories` --> `--src`
+   * `outputModuleRepository` --> `--out`
+   * `dependenciesRepository` --> `--rep`
+   * `systemRepository` --> `--sysrep`
+   * `user` --> `--user`
+   * `password` --> `--pass`
+   * `offline` --> `--offline`
+   * `noComments` --> `--no-comments`
+   * `noIndent` --> `--no-indent`
+   * `noModule` --> `--no-module`
+   * `optimize` --> `--optimize`
+   * `profile` --> `--profile`
+   * `skipSourceArchive` --> `--skip-src-archive`
+   * `verbose` --> `--verbose`
+   
+   `--src` command line parameter is set to `"test-source"`
+   
+   `ceylon` ceylon executable that will be used.
+   """
 shared TaskDefinition compileJsTests(
         String moduleName,
         String? encoding = null,
