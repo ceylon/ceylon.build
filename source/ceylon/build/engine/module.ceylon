@@ -16,7 +16,7 @@
    void run() {
        String myModule = "mod";
        String myTestModule = "test.mod";
-           value compileTask = Task {
+       value compileTask = Task {
            name = "compile";
                compile {
                moduleName = myModule;
@@ -76,7 +76,7 @@
    arguments, then, the following command can be used:
    `ceylon run mybuildmodule/1.0.0 test doc -Dcompile:--javac=-g:source,lines,vars -Ddoc:--non-shared -Ddoc:--source-code`
    """
-shared module ceylon.build.engine '0.1' {
+module ceylon.build.engine '0.1' {
     shared import ceylon.build.task '0.1';
     
     import ceylon.collection '0.6';
