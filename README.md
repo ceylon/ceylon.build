@@ -46,7 +46,7 @@ import ceylon.build.tasks.ceylon { compile, compileTests, doc, runModule }
 void run() {
     String myModule = "mod";
     String myTestModule = "test.mod";
-        value compileTask = Task {
+    value compileTask = Task {
         name = "compile";
             compile {
             moduleName = myModule;
