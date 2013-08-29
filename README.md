@@ -18,9 +18,17 @@ agree to license your contribution under the license mentioned above.
 Compilation and tests
 ----------------------
 
-* Compile the module: `ceylon compile ceylon.build.engine`
-* Compile tests: `ceylon compile test.ceylon.build.engine --src=test-source`
-* Run tests: `ceylon run test.ceylon.build.engine/X.Y` where `X.Y` is the current test module version
+* Compile task API module: `ceylon compile ceylon.build.task`
+* Compile task API test module: `ceylon compile test.ceylon.build.tasks --src=test-source`
+* Run task API module tests: `ceylon run test.ceylon.build.task`
+
+* Compile engine module: `ceylon compile ceylon.build.engine`
+* Compile engine test module: `ceylon compile test.ceylon.build.engine --src=test-source`
+* Run engine module tests: `ceylon run test.ceylon.build.engine`
+
+* Compile Ceylon tasks module: `ceylon compile ceylon.build.tasks.ceylon`
+* Compile Ceylon tasks test module: `ceylon compile test.ceylon.build.tasks.ceylon --src=test-source`
+* Run Ceylon tasks module tests: `ceylon run test.ceylon.build.tasks.ceylon`
 
 Usage
 -----
@@ -85,13 +93,14 @@ void run() {
 }
 ```
 
-When this `yourbuildmodule` is launched, it will build the task graph and run requested tasks and their dependencies.
+When `yourbuildmodule` is launched, the engine will build the task graph and run requested tasks and their dependencies.
 
 Using the above tasks declarations, launching `ceylon run yourbuildmodule/1.0.0 test doc` will result in the
 execution of task `compile`, `compile-tests`, `test` and `doc` in this order.
 
-Arguments can be passed to each task using the `-Dtask:argument`.
+Arguments can be passed to each task using the `-Dtask:argument` syntax.
 
 For example, `compile` task has support for `--javac` argument and `doc` task for `--non-shared` and `--source-code`
 arguments, then, the following command can be used:
 `ceylon run mybuildmodule/1.0.0 test doc -Dcompile:--javac=-g:source,lines,vars -Ddoc:--non-shared -Ddoc:--source-code`
+
