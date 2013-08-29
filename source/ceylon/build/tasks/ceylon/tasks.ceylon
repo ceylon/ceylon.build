@@ -1,5 +1,6 @@
 import ceylon.build.task { Context, TaskDefinition, Writer }
 import ceylon.process { Process, createProcess, currentOutput, currentError }
+import ceylon.build.tasks.commandline { executeCommand }
 
 String ceylonExecutable = "ceylon";
 String defaultModuleVersion = "1.0.0";
@@ -76,7 +77,7 @@ shared TaskDefinition compile(
             verboseModes;
             context.arguments;
         };
-        return executeCommand(context.writer, "compiling", command);
+        return execute(context.writer, "compiling", command);
     };
 }
 
@@ -143,7 +144,7 @@ shared TaskDefinition compileJs(
             verbose;
             context.arguments;
         };
-        return executeCommand(context.writer, "compiling", command);
+        return execute(context.writer, "compiling", command);
     };
 }
 
@@ -198,7 +199,7 @@ shared TaskDefinition doc(
             includeSourceCode;
             context.arguments;
         };
-        return executeCommand(context.writer, "documenting", command);
+        return execute(context.writer, "documenting", command);
     };
 }
 
@@ -237,7 +238,7 @@ shared TaskDefinition runModule(
             verboseModes;
             context.arguments;
         };
-        return executeCommand(context.writer, "running", command);
+        return execute(context.writer, "running", command);
     };
 }
 
@@ -276,7 +277,7 @@ shared TaskDefinition runJsModule(
             pathToNodeJs;
             context.arguments;
         };
-        return executeCommand(context.writer, "running", command);
+        return execute(context.writer, "running", command);
     };
 }
 
@@ -394,17 +395,9 @@ shared TaskDefinition compileJsTests(
     };
 }
 
-Boolean executeCommand(Writer writer, String title, String cmd) {
-    value commandToExecute = cmd.trimmed;
+Boolean execute(Writer writer, String title, String command) {
+    value commandToExecute = command.trimmed;
     writer.info("``title``: '``commandToExecute``'");
-    Process process = createProcess {
-        command = commandToExecute;
-        output = currentOutput;
-        error = currentError;
-    };
-    process.waitForExit();
-    if (exists exitCode = process.exitCode) {
-        return exitCode == 0;
-    }
-    return false;
+    Integer? exitCode = executeCommand(commandToExecute);
+    return (exitCode else 0) == 0;
 }
