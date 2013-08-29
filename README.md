@@ -26,6 +26,8 @@ Compilation and tests
 * Compile engine test module: `ceylon compile test.ceylon.build.engine --src=test-source`
 * Run engine module tests: `ceylon run test.ceylon.build.engine`
 
+* Compile command line task module: `ceylon compile ceylon.build.tasks.commandline`
+
 * Compile Ceylon tasks module: `ceylon compile ceylon.build.tasks.ceylon`
 * Compile Ceylon tasks test module: `ceylon compile test.ceylon.build.tasks.ceylon --src=test-source`
 * Run Ceylon tasks module tests: `ceylon run test.ceylon.build.tasks.ceylon`
