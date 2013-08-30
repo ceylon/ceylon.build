@@ -17,17 +17,20 @@ agree to license your contribution under the license mentioned above.
 
 Compilation and tests
 ----------------------
-
+Task API:
 * Compile task API module: `ceylon compile ceylon.build.task`
 * Compile task API test module: `ceylon compile test.ceylon.build.tasks --src=test-source`
 * Run task API module tests: `ceylon run test.ceylon.build.task`
 
+Engine:
 * Compile engine module: `ceylon compile ceylon.build.engine`
 * Compile engine test module: `ceylon compile test.ceylon.build.engine --src=test-source`
 * Run engine module tests: `ceylon run test.ceylon.build.engine`
 
+Command line TaskDefinition:
 * Compile command line task module: `ceylon compile ceylon.build.tasks.commandline`
 
+Ceylon TaskDefinitions:
 * Compile Ceylon tasks module: `ceylon compile ceylon.build.tasks.ceylon`
 * Compile Ceylon tasks test module: `ceylon compile test.ceylon.build.tasks.ceylon --src=test-source`
 * Run Ceylon tasks module tests: `ceylon run test.ceylon.build.tasks.ceylon`
