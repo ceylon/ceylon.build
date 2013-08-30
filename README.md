@@ -41,7 +41,7 @@ A build module is a standard ceylon module that has in its `run()` function a ca
 ```ceylon
 import ceylon.build.engine { build }
 import ceylon.build.task { Task }
-import ceylon.build.tasks.ceylon { compile, compileTests, doc, runModule }
+import ceylon.build.tasks.ceylon { compile, compileTests, document, runModule }
 
 void run() {
     String myModule = "mod";
@@ -72,7 +72,7 @@ void run() {
         },
         Task {
             name = "doc";
-            doc {
+            document {
                 moduleName = myModule;
                 includeSourceCode = true;
             };
