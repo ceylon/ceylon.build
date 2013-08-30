@@ -1,5 +1,5 @@
 import ceylon.test { assertEquals }
-import ceylon.build.tasks.ceylon { buildCompileCommand, loader, cmrloader, benchmark, code, ast, buildCompileJsCommand, buildDocCommand, buildRunCommand, buildRunJsCommand, cmr }
+import ceylon.build.tasks.ceylon { buildCompileCommand, all, loader, cmrloader, benchmark, code, ast, buildCompileJsCommand, buildDocCommand, buildRunCommand, buildRunJsCommand, cmr }
 
 shared void testCommandsBuilder() {
     shouldCreateCompileCommand();
@@ -26,6 +26,25 @@ void shouldCreateCompileCommand() {
             offline = false;
             disableModuleRepository = false;
             verboseModes = [];
+            arguments = [];
+        };
+    };
+    assertEquals{
+        expected = "ceylon compile --verbose mymodule";
+        actual = buildCompileCommand {
+            ceylon = "ceylon";
+            moduleName = "mymodule";
+            encoding = null;
+            sourceDirectories = [];
+            javacOptions = null;
+            outputModuleRepository = null;
+            dependenciesRepository = null;
+            systemRepository = null;
+            user = null;
+            password = null;
+            offline = false;
+            disableModuleRepository = false;
+            verboseModes = all;
             arguments = [];
         };
     };
@@ -170,6 +189,21 @@ void shouldCreateRunCommand() {
             systemRepository = null;
             functionNameToRun = null;
             verboseModes = [];
+            arguments = [];
+        };
+    };
+    assertEquals{
+        expected = "ceylon run --verbose mymodule/1.0.0";
+        actual = buildRunCommand {
+            ceylon = "ceylon";
+            moduleName = "mymodule";
+            version = "1.0.0";
+            disableModuleRepository = false;
+            offline = false;
+            dependenciesRepository = null;
+            systemRepository = null;
+            functionNameToRun = null;
+            verboseModes = all;
             arguments = [];
         };
     };
