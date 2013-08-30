@@ -40,7 +40,7 @@ void appendOfflineMode(StringBuilder sb, Boolean offline) {
     appendFlag(sb, "offline", offline);
 }
 
-void appendVerboseModes(StringBuilder sb, {<CompileVerboseMode|RunVerboseMode>*}|VerboseMode verboseModes) {
+void appendVerboseModes(StringBuilder sb, {<CompileVerboseMode|RunVerboseMode>*}|AllVerboseModes verboseModes) {
     if (is {<CompileVerboseMode|RunVerboseMode>*} verboseModes) {
         appendList(sb, "verbose", verboseModes);
     } else {

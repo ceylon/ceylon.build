@@ -1,3 +1,5 @@
+String ceylonExecutable = "ceylon";
+
 shared String buildCompileCommand(
         String ceylon,
         String moduleName,
@@ -11,7 +13,7 @@ shared String buildCompileCommand(
         String? password,
         Boolean offline,
         Boolean disableModuleRepository,
-        {CompileVerboseMode*}|VerboseMode verboseModes,
+        {CompileVerboseMode*}|AllVerboseModes verboseModes,
         {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
@@ -125,7 +127,7 @@ shared String buildRunCommand(
         String? dependenciesRepository,
         String? systemRepository,
         String? functionNameToRun,
-        {RunVerboseMode*}|VerboseMode verboseModes,
+        {RunVerboseMode*}|AllVerboseModes verboseModes,
         {String*} arguments
         ) { 
     StringBuilder sb = StringBuilder();
