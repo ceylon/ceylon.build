@@ -11,7 +11,7 @@ shared String buildCompileCommand(
         String? password,
         Boolean offline,
         Boolean disableModuleRepository,
-        {CompileVerboseMode*} verboseModes,
+        {CompileVerboseMode*}|VerboseMode verboseModes,
         {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
@@ -125,7 +125,7 @@ shared String buildRunCommand(
         String? dependenciesRepository,
         String? systemRepository,
         String? functionNameToRun,
-        {RunVerboseMode*} verboseModes,
+        {RunVerboseMode*}|VerboseMode verboseModes,
         {String*} arguments
         ) { 
     StringBuilder sb = StringBuilder();

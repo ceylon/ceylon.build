@@ -40,8 +40,12 @@ void appendOfflineMode(StringBuilder sb, Boolean offline) {
     appendFlag(sb, "offline", offline);
 }
 
-void appendVerboseModes(StringBuilder sb, {<CompileVerboseMode|RunVerboseMode>*} verboseModes) {
-    appendList(sb, "verbose", verboseModes);
+void appendVerboseModes(StringBuilder sb, {<CompileVerboseMode|RunVerboseMode>*}|VerboseMode verboseModes) {
+    if (is {<CompileVerboseMode|RunVerboseMode>*} verboseModes) {
+        appendList(sb, "verbose", verboseModes);
+    } else {
+        appendFlag(sb, "verbose");
+    }
 }
 
 void appendCompact(StringBuilder sb, Boolean compact) {
@@ -99,7 +103,7 @@ void appendArguments(StringBuilder sb, {String*} arguments) {
     }
 }
 
-void appendFlag(StringBuilder sb, String flag, Boolean appendFlag) {
+void appendFlag(StringBuilder sb, String flag, Boolean appendFlag = true) {
     if (appendFlag) {
         sb.append(" --");
         sb.append(flag);

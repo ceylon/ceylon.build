@@ -5,6 +5,9 @@ String ceylonExecutable = "ceylon";
 String defaultModuleVersion = "1.0.0";
 [String+] testSourceDirectory = ["test-source"];
 
+shared interface VerboseMode {}
+shared object all satisfies VerboseMode {}
+
 doc("Verbose modes for jvm backend compilation")
 shared interface CompileVerboseMode of loader | ast | code | cmrloader | benchmark {}
 
@@ -64,7 +67,7 @@ shared TaskDefinition compile(
         Boolean disableModuleRepository = false,
         doc("Produce verbose output.
              (corresponding command line parameter: `--verbose=<flags>`)")
-        {CompileVerboseMode*} verboseModes = [],
+        {CompileVerboseMode*}|VerboseMode verboseModes = [],
         doc("Ceylon executable that will be used")
         String ceylon = ceylonExecutable
 ) {
@@ -277,7 +280,7 @@ shared TaskDefinition runModule(
         String? functionNameToRun = null,
         doc("Produce verbose output.
              (corresponding command line parameter: `--verbose=<flags>`)")
-        {RunVerboseMode*} verboseModes = [],
+        {RunVerboseMode*}|VerboseMode verboseModes = [],
         doc("Ceylon executable that will be used")
         String ceylon = ceylonExecutable
 ) {
