@@ -39,7 +39,8 @@ Usage
 -----
 
 Create a build module.
-A build module is a standard ceylon module that has in its `run()` function a call to `build(TasksDefinitions)`.
+A build module is a standard ceylon module that has in its `run()` function a call to
+`build(String project, {Task+} tasks)`.
 
 ```ceylon
 import ceylon.build.engine { build }
