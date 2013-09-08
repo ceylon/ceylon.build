@@ -1,23 +1,23 @@
-import ceylon.build.task { Task, Context, Writer }
+import ceylon.build.task { Goal, Context, Writer }
 
 String argumentPrefix = "-D";
 
-shared Integer runTasks({Task*} tasks, String[] arguments, {Task*} availableTasks, Writer writer) {
-    if (tasks.empty) {
-        writer.error("# no task to run, available tasks are: ``tasksNames(availableTasks)``");
-        return exitCode.noTaskToRun;
+shared Integer runGoals({Goal*} goals, String[] arguments, {Goal*} availableGoals, Writer writer) {
+    if (goals.empty) {
+        writer.error("# no goal to run, available goals are: ``goalsNames(availableGoals)``");
+        return exitCode.noGoalToRun;
     } else {
-        writer.info("# running tasks: ``tasks`` in order");
-        for (task in tasks) {
-            value taskArguments = filterArgumentsForTask(task, arguments);
-            writer.info("# running ``task.name``(``", ".join(taskArguments)``)");
+        writer.info("# running goals: ``goals`` in order");
+        for (goal in goals) {
+            value goalArguments = filterArgumentsForGoal(goal, arguments);
+            writer.info("# running ``goal.name``(``", ".join(goalArguments)``)");
             try {
-                if (!task.process(Context(taskArguments, writer))) {
-                    writer.error("# task ``task`` failure, stopping");
+                if (!goal.task(Context(goalArguments, writer))) {
+                    writer.error("# goal ``goal`` failure, stopping");
                     return exitCode.errorOnTaskExecution;
                 }
             } catch (Exception exception) {
-                writer.error("# error during task execution ``task``, stopping");
+                writer.error("# error during goal execution ``goal``, stopping");
                 writer.exception(exception);
                 return exitCode.errorOnTaskExecution;
             }
@@ -26,9 +26,9 @@ shared Integer runTasks({Task*} tasks, String[] arguments, {Task*} availableTask
     }
 }
 
-String tasksNames({Task*} tasks) => "[``", ".join({for (task in tasks) task.name})``]";
+String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name})``]";
 
-shared String[] filterArgumentsForTask(Task task, String[] arguments) {
-    String prefix = "``argumentPrefix````task.name``:";
+shared String[] filterArgumentsForGoal(Goal goal, String[] arguments) {
+    String prefix = "``argumentPrefix````goal.name``:";
     return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)]; 
 }

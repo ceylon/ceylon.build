@@ -1,4 +1,4 @@
-import ceylon.build.task { Context, TaskDefinition }
+import ceylon.build.task { Context, Task }
 import ceylon.process {
     Process, createProcess,
     Input, currentInput,
@@ -11,7 +11,7 @@ import ceylon.file { current, Path }
 "Returns a TaskDefinition that will run the given command in a new a new process.
  Waits for process termination and return its exit code."
 see(`executeCommand`)
-shared TaskDefinition command(
+shared Task command(
         doc("The _command_ to be run in the new
              process, usually a program with a list
              of its arguments.")

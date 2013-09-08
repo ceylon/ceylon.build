@@ -1,50 +1,50 @@
-import ceylon.build.task { Task, Writer }
+import ceylon.build.task { Goal, Writer }
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
-shared {Task*} buildTaskExecutionList({Task+} definitions, String[] arguments, Writer writer) {
-    value tasksRequested = findTasksToExecute(definitions, arguments, writer);
-    MutableList<Task> tasksToExecute = LinkedList<Task>();
-    for (task in tasksRequested) {
-        tasksToExecute.addAll(linearize(task));
+shared {Goal*} buildGoalExecutionList({Goal+} definitions, String[] arguments, Writer writer) {
+    value goalsRequested = findGoalsToExecute(definitions, arguments, writer);
+    MutableList<Goal> goalsToExecute = LinkedList<Goal>();
+    for (goal in goalsRequested) {
+        goalsToExecute.addAll(linearize(goal));
     }
-    return reduce(tasksToExecute);
+    return reduce(goalsToExecute);
 }
 
-shared {Task*} findTasksToExecute({Task+} definitions, String[] arguments, Writer writer) {
-    MutableList<Task> tasks = LinkedList<Task>();
-    for (taskName in arguments) {
-        if (!taskName.startsWith(argumentPrefix)) {
-            for (task in definitions) {
-                if (task.name.equals(taskName)) {
-                    tasks.add(task);
+shared {Goal*} findGoalsToExecute({Goal+} definitions, String[] arguments, Writer writer) {
+    MutableList<Goal> goals = LinkedList<Goal>();
+    for (goalName in arguments) {
+        if (!goalName.startsWith(argumentPrefix)) {
+            for (goal in definitions) {
+                if (goal.name.equals(goalName)) {
+                    goals.add(goal);
                     break;
                 }
             } else {
-                writer.error("# task '``taskName``' not found, stopping");
+                writer.error("# goal '``goalName``' not found, stopping");
                 return {};
             }
         }
     }
-    return tasks;
+    return goals;
 }
 
-shared {Task*} linearize(Task task) {
-    MutableList<Task> tasks = LinkedList<Task>();
-    for (Task dependency in task.dependencies) {
-        tasks.addAll(linearize(dependency));
+shared {Goal*} linearize(Goal goal) {
+    MutableList<Goal> goals = LinkedList<Goal>();
+    for (Goal dependency in goal.dependencies) {
+        goals.addAll(linearize(dependency));
     }
-    tasks.add(task);
-    return tasks;
+    goals.add(goal);
+    return goals;
 }
 
-shared {Task*} reduce({Task*} tasks) {
-    MutableSet<Task> reducedTasksSet = HashSet<Task>();
-    MutableList<Task> reducedTasks = LinkedList<Task>();
-    for (Task task in tasks) {
-        if (!reducedTasksSet.contains(task)) {
-            reducedTasks.add(task);
-            reducedTasksSet.add(task);
+shared {Goal*} reduce({Goal*} goals) {
+    MutableSet<Goal> reducedGoalsSet = HashSet<Goal>();
+    MutableList<Goal> reducedGoals = LinkedList<Goal>();
+    for (Goal goal in goals) {
+        if (!reducedGoalsSet.contains(goal)) {
+            reducedGoals.add(goal);
+            reducedGoalsSet.add(goal);
         }
     }
-    return reducedTasks;
+    return reducedGoals;
 }

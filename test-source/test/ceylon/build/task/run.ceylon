@@ -2,9 +2,9 @@ import ceylon.test { suite }
 
 void run() {
     suite("ceylon.build.engine",
-        "tasks" -> shouldHaveGivenName,
-        "tasks equality" -> tasksWithSameNamesAreEquals,
-        "tasks inequality" -> tasksWithDifferentNamesAreNotEquals,
-        "tasks hash equality" -> tasksWithSameNamesHaveSameHash,
-        "tasks hash inequality" -> tasksWithDifferentNamesHashHaveDifferentHash);
+        "goals" -> shouldHaveGivenName,
+        "goals equality" -> goalsWithSameNamesAreEquals,
+        "goals inequality" -> goalsWithDifferentNamesAreNotEquals,
+        "goals hash equality" -> goalsWithSameNamesHaveSameHash,
+        "goals hash inequality" -> goalsWithDifferentNamesHashHaveDifferentHash);
 }

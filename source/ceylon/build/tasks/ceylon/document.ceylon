@@ -1,7 +1,7 @@
-import ceylon.build.task { TaskDefinition, Context }
+import ceylon.build.task { Task, Context }
 
 "Documents a Ceylon module using `ceylon doc` command line."
-shared TaskDefinition document(
+shared Task document(
         doc("name of module to document")
         String moduleName,
         doc("encoding used for reading source files

@@ -1,10 +1,10 @@
-import ceylon.build.task { Task, Writer, Context }
+import ceylon.build.task { Goal, Writer, Context }
 import ceylon.collection { LinkedList, MutableList }
 
 Boolean noOp(Context context) => true;
 
-Task createTestTask(String name, {Task*} dependencies = []) {
-    return Task(name, noOp, dependencies);
+Goal createTestGoal(String name, {Goal*} dependencies = []) {
+    return Goal(name, noOp, dependencies);
 }
 
 class MockWriter() satisfies Writer {

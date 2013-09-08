@@ -1,11 +1,11 @@
-import ceylon.build.task { TaskDefinition }
+import ceylon.build.task { Task }
 
 [String+] testSourceDirectory = ["test-source"];
 
 """Compiles a Ceylon test module using `ceylon compile` command line.
    
    `--src` command line parameter is set to `"test-source"`"""
-shared TaskDefinition compileTests(
+shared Task compileTests(
         doc("name of module to compile")
         String moduleName,
         doc("encoding used for reading source files
@@ -66,7 +66,7 @@ shared TaskDefinition compileTests(
 """Compiles a Ceylon test module to javascript using `ceylon compile-js` command line.
    
    `--src` command line parameter is set to `"test-source"`"""
-shared TaskDefinition compileJsTests(
+shared Task compileJsTests(
         doc("name of module to compile")
         String moduleName,
         doc("encoding used for reading source files

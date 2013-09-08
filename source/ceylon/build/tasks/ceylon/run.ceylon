@@ -1,9 +1,9 @@
-import ceylon.build.task { TaskDefinition, Context }
+import ceylon.build.task { Task, Context }
 
 String defaultModuleVersion = "1.0.0";
 
 "Runs a Ceylon module using `ceylon run` command line."
-shared TaskDefinition runModule(
+shared Task runModule(
         doc("name of module to run")
         String moduleName,
         doc("version of module to run")
@@ -49,7 +49,7 @@ shared TaskDefinition runModule(
 }
 
 "Runs a Ceylon module on node.js using `ceylon run-js` command line"
-shared TaskDefinition runJsModule(
+shared Task runJsModule(
         doc("name of module to run")
         String moduleName,
         doc("version of module to run")

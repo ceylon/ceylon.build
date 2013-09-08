@@ -5,25 +5,27 @@
    It will also provide helpers to create your own tasks.
    
    --------
+   A `Goal` is a `Task` with a name and dependencies (possibly empty) to other goals.
+   A goal can be referenced by its name from command line.
    
    A build module is a standard ceylon module that has in its `run()` function a call to
-   `build(String project, {Task+} tasks)`.
+   `build(String project, {Goal+} goals)`.
    
    ```ceylon
    import ceylon.build.engine { build }
-   import ceylon.build.task { Task }
+   import ceylon.build.task { Goal }
    import ceylon.build.tasks.ceylon { compile, compileTests, document, runModule }
    
    void run() {
        String myModule = "mod";
        String myTestModule = "test.mod";
-       value compileTask = Task {
+       value compileGoal = Goal {
            name = "compile";
                compile {
                moduleName = myModule;
            };
        };
-       value compileTestsTask = Task {
+       value compileTestsGoal = Goal {
            name = "compile-tests";
            compileTests {
                moduleName = myTestModule;
@@ -31,31 +33,31 @@
        };
        build {
            project = "My Build Project";
-           compileTask,
-           compileTestsTask,
-           Task {
+           compileGoal,
+           compileTestsGoal,
+           Goal {
                name = "test";
                runModule {
                    moduleName = myTestModule;
                    version = "1.0.0";
                };
-               dependencies = [compileTask, compileTestsTask];
+               dependencies = [compileGoal, compileTestsGoal];
            },
-           Task {
+           Goal {
                name = "doc";
                document {
                    moduleName = myModule;
                    includeSourceCode = true;
                };
            },
-           Task {
+           Goal {
                name = "run";
                runModule {
                    moduleName = myModule;
                    version = "1.0";
                };
            },
-           Task {
+           Goal {
                name = "publish-local";
                compile {
                    moduleName = myModule;
@@ -66,12 +68,13 @@
    }
    ```
    
-   When this `yourbuildmodule` is launched, it will build the task graph and run requested tasks and their dependencies.
+   When this `yourbuildmodule` is launched, it will build the goal graph and run requested goal's task and their
+   dependencies.
    
-   Using the above tasks declarations, launching `ceylon run yourbuildmodule/1.0.0 test doc` will result in the
-   execution of task `compile`, `test` and `doc` in this order.
+   Using the above goals declarations, launching `ceylon run yourbuildmodule/1.0.0 test doc` will result in the
+   execution of goal `compile`, `test` and `doc` in this order.
    
-   Arguments can be passed to each task using the `-Dtask:argument`.
+   Arguments can be passed to each goal task using the `-Dgoal:argument`.
    
    For example, `compile` task has support for `--javac` argument and `doc` task for `format` and `--source-code`
    arguments, then, the following command can be used:

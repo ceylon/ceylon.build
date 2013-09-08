@@ -1,11 +1,11 @@
-import ceylon.build.task { TaskDefinition, Context }
+import ceylon.build.task { Task, Context }
 import ceylon.file { Path, Resource, Nil, File, Directory, Visitor }
 
 shared class IOException(String message) extends Exception(message) {}
 shared class CreateDirectoryException(String message) extends IOException(message) {}
 shared class FileCopyException(String message) extends IOException(message) {}
 
-"""Returns a `TaskDefinition` to copy files and directories from `source` to `destination`
+"""Returns a `Task` to copy files and directories from `source` to `destination`
    
    All files in `source` matching `filter` will be copied to same relative path from `source` into `destination`.
    
@@ -19,7 +19,7 @@ throws(
 throws(
     `CreateDirectoryException`,
     "If destination doesn't exist and can't be created because parent element in path is not a `Directory`")
-shared TaskDefinition copy(
+shared Task copy(
         "Source path from where files will be taken"
         Path source,
         "Destination path where files will be copied"

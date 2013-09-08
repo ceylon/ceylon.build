@@ -1,11 +1,11 @@
 """This module defines the base elements of `ceylon.build` for declaring tasks.
    
-   A simple `Task` can be created as below
+   A simple `Goal` can be created as below
    
    ```ceylon 
-   Task hello = Task {
+   Goal hello = Goal {
        name = "hello";
-       process = function(Context context) {
+       task = function(Context context) {
            context.writer.info("Hello World!");
            return true;
        };

@@ -1,18 +1,18 @@
-import ceylon.build.task { Task }
+import ceylon.build.task { Goal }
 import ceylon.collection { LinkedList }
 
-shared class Dependency(task, {Task*} taskDependencies = []) {
-    shared Task task;
-    value dependencies = LinkedList<Task>(taskDependencies);
+shared class Dependency(goal, {Goal*} goals = []) {
+    shared Goal goal;
+    value dependencies = LinkedList<Goal>(goals);
     shared Boolean hasDependencies => dependencies.empty;
-    shared void removeDependency(Task dependency) {
+    shared void removeDependency(Goal dependency) {
         dependencies.removeElement(dependency);
     }
-    string => "``task.name`` -> ``dependencies``";
+    string => "``goal.name`` -> ``dependencies``";
 }
 
-shared {Dependency*}  analyzeDependencyCycles({Task+} tasks) {
-    value definitions = { for (task in tasks) Dependency(task, task.dependencies) };
+shared {Dependency*}  analyzeDependencyCycles({Goal+} goals) {
+    value definitions = { for (goal in goals) Dependency(goal, goal.dependencies) };
     variable {Dependency*} remainingDefinitions = definitions;
     while (!remainingDefinitions.empty) {
         value toRemove = LinkedList<Dependency>();
@@ -29,7 +29,7 @@ shared {Dependency*}  analyzeDependencyCycles({Task+} tasks) {
         }
         for (definition in filteredDefinitions) {
             for (definitionToRemove in toRemove) {
-                definition.removeDependency(definitionToRemove.task);
+                definition.removeDependency(definitionToRemove.goal);
             }
         }
         remainingDefinitions = filteredDefinitions;

@@ -1,7 +1,7 @@
-import ceylon.build.task { TaskDefinition, Context }
+import ceylon.build.task { Task, Context }
 
 "Compiles a Ceylon module using `ceylon compile` command line."
-shared TaskDefinition compile(
+shared Task compile(
         doc("name of module to compile")
         String moduleName,
         doc("encoding used for reading source files
@@ -67,7 +67,7 @@ shared TaskDefinition compile(
 }
 
 "Compiles a Ceylon module to javascript using `ceylon compile-js` command line."
-shared TaskDefinition compileJs(
+shared Task compileJs(
         doc("name of module to compile")
         String moduleName,
         doc("encoding used for reading source files
