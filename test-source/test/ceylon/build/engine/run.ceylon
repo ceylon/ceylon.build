@@ -6,5 +6,6 @@ void run() {
             "goals duplication" -> testDuplicateGoals,
             "goals dependencies cycles" -> testDependenciesCycles,
             "goals orchestration" -> testGoalsOrchestration,
-            "goals execution" -> testGoalsExecution);
+            "goals execution" -> testGoalsExecution,
+            "goals set merge" -> testMergeGoalSet);
 }
