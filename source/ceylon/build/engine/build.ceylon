@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, Writer }
+import ceylon.build.task { Goal, GoalSet, Writer }
 
 """Launch the task engine using.
    
@@ -48,10 +48,9 @@ import ceylon.build.task { Goal, Writer }
    ```
    Launching the program with goals `a, d, c` (in order) will result in the execution of `a, b, c, d` (still in order) 
    """
-shared void build(
-		String project,
-		{Goal+} goals) {
-    Integer exitCode = buildTasks(project, goals, process.arguments, consoleWriter);
+shared void build(String project, {<Goal|GoalSet>+} goals) {
+    {Goal+} mergedGoals = mergeGoalSetsWithGoals(goals);
+    Integer exitCode = buildTasks(project, mergedGoals, process.arguments, consoleWriter);
     process.exit(exitCode);
 }
 
