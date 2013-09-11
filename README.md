@@ -17,25 +17,33 @@ agree to license your contribution under the license mentioned above.
 
 Compilation and tests
 ----------------------
-Goal/Task API:
+All modules can be compiled in one command: `ceylon compile ceylon.build`
+Same for test modules compilation: `ceylon compile --src=test-source test.ceylon.build`
+
+### Goal/Task API:
+API to define your own `Task`/`Goal`/`GoalSet`
 * Compile task API module: `ceylon compile ceylon.build.task`
-* Compile task API test module: `ceylon compile test.ceylon.build.tasks --src=test-source`
+* Compile task API test module: `ceylon compile --src=test-source test.ceylon.build.tasks`
 * Run task API module tests: `ceylon run test.ceylon.build.task`
 
-Engine:
+### Engine:
+Command line interface managing goals, dependencies and execution
 * Compile engine module: `ceylon compile ceylon.build.engine`
-* Compile engine test module: `ceylon compile test.ceylon.build.engine --src=test-source`
+* Compile engine test module: `ceylon compile --src=test-source test.ceylon.build.engine`
 * Run engine module tests: `ceylon run test.ceylon.build.engine`
 
-Command line tasks:
+### Command line tasks:
+Task to launch a command in a new process
 * Compile command line task module: `ceylon compile ceylon.build.tasks.commandline`
 
-Ceylon tasks:
+### Ceylon tasks:
+Tasks to compile, run, test, document ceylon modules
 * Compile Ceylon tasks module: `ceylon compile ceylon.build.tasks.ceylon`
-* Compile Ceylon tasks test module: `ceylon compile test.ceylon.build.tasks.ceylon --src=test-source`
+* Compile Ceylon tasks test module: `ceylon compile --src=test-source test.ceylon.build.tasks.ceylon`
 * Run Ceylon tasks module tests: `ceylon run test.ceylon.build.tasks.ceylon`
 
-Files tasks:
+### Files tasks:
+Tasks to copy / delete files and directories
 * Compile command line task module: `ceylon compile ceylon.build.tasks.commandline`
 
 Usage
