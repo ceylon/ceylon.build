@@ -14,10 +14,10 @@ shared class FileCopyException(String message) extends IOException(message) {}
    `"foo/bar/baz"` will be created (except if `"foo"` is a `File` in which case `CreateDirectoryException` will
    be thrown)."""
 throws(
-    `FileCopyException`,
+    `class FileCopyException`,
     "When files with same names already exists in destination and `overwrite` is set to `false`")
 throws(
-    `CreateDirectoryException`,
+    `class CreateDirectoryException`,
     "If destination doesn't exist and can't be created because parent element in path is not a `Directory`")
 shared Task copy(
         "Source path from where files will be taken"
@@ -52,10 +52,10 @@ shared Task copy(
    `"foo/bar/baz"` will be created (except if `"foo"` is a `File` in which case `CreateDirectoryException` will
    be thrown)."""
 throws(
-    `FileCopyException`,
+    `class FileCopyException`,
     "When files with same names already exists in destination and `overwrite` is set to `false`")
 throws(
-    `CreateDirectoryException`,
+    `class CreateDirectoryException`,
     "If destination doesn't exist and can't be created because parent element in path is not a `Directory`")
 shared void copyFiles(
         "Source path from where files will be taken"

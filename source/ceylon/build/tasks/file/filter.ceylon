@@ -1,7 +1,7 @@
 import ceylon.file { File }
 
 "A `FileFilter` is a function that returns `true` when the file given in input match the filter"
-see(`extensions`)
+see(`function extensions`)
 shared alias FileFilter => Boolean(File);
 
 "Returns a `FileFilter` that will match all files"

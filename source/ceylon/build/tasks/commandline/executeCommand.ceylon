@@ -10,7 +10,7 @@ import ceylon.file { current, Path }
 
 "Returns a TaskDefinition that will run the given command in a new a new process.
  Waits for process termination and return its exit code."
-see(`executeCommand`)
+see(`function executeCommand`)
 shared Task command(
         doc("The _command_ to be run in the new
              process, usually a program with a list
@@ -46,7 +46,7 @@ shared Task command(
 
 "Creates and starts a new process, running the given command.
  Waits for process termination and return its exit code."
-see(`createProcess`)
+see(`function createProcess`)
 shared Integer? executeCommand(
         doc("The _command_ to be run in the new
              process, usually a program with a list
