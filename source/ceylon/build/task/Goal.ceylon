@@ -7,9 +7,9 @@
       In case the task execution is successful, `task` method should return `true`, `false` otherwise.
     - a `dependencies` list that lists goals that must be executed before this one.
   """
-shared class Goal(name, task, dependencies = []) satisfies Identifiable {
+shared class Goal(name, task, dependencies = []) satisfies Named & Identifiable {
     
-    shared String name;
+    shared actual String name;
     
     shared Task task;
     
