@@ -1,14 +1,16 @@
-import ceylon.build.task { Goal, GoalSet }
+import ceylon.build.task { Goal, GoalGroup, GoalSet }
 import ceylon.collection { LinkedList }
 
-shared {Goal+} mergeGoalSetsWithGoals({<Goal|GoalSet>+} goals) {
-    value goalsList = LinkedList<Goal>();
+shared {<Goal|GoalGroup>+} mergeGoalSetsWithGoals({<Goal|GoalGroup|GoalSet>+} goals) {
+    value goalsList = LinkedList<Goal|GoalGroup>();
     for (item in goals) {
-        if (is GoalSet item) {
+        switch (item)
+        case (is Goal|GoalGroup){
+            goalsList.add(item);
+        }
+        case (is GoalSet){
             {Goal+} setGoals = [ for (goal in item.goals) renameGoal(item.rename, goal) ];
             goalsList.addAll(setGoals);
-        } else if (is Goal item) {
-            goalsList.add(item);
         }
     }
     value goalsSequence = goalsList.sequence;

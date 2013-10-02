@@ -1,8 +1,8 @@
-import ceylon.build.task { Goal, Context, Writer }
+import ceylon.build.task { Goal, GoalGroup, Context, Writer }
 
 String argumentPrefix = "-D";
 
-shared Integer runGoals({Goal*} goals, String[] arguments, {Goal*} availableGoals, Writer writer) {
+shared Integer runGoals({Goal*} goals, String[] arguments, {<Goal|GoalGroup>*} availableGoals, Writer writer) {
     if (goals.empty) {
         writer.error("# no goal to run, available goals are: ``goalsNames(availableGoals)``");
         return exitCode.noGoalToRun;
@@ -26,7 +26,7 @@ shared Integer runGoals({Goal*} goals, String[] arguments, {Goal*} availableGoal
     }
 }
 
-String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name})``]";
+String goalsNames({<Goal|GoalGroup>*} goals) => "[``", ".join({for (goal in goals) goal.name})``]";
 
 shared String[] filterArgumentsForGoal(Goal goal, String[] arguments) {
     String prefix = "``argumentPrefix````goal.name``:";

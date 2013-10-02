@@ -1,5 +1,5 @@
 import ceylon.build.engine { mergeGoalSetsWithGoals }
-import ceylon.build.task { Context, Goal, GoalSet, Task, prefix }
+import ceylon.build.task { Context, Goal, GoalSet, Task, prefix, GoalGroup }
 import ceylon.test { assertEquals }
 
 Goal goalA = createTestGoal("a");
@@ -35,11 +35,13 @@ void shouldKeepGoalTaskWhenRenamingGoal() {
     };
     Goal goal = Goal("goal", task);
     GoalSet goalSet = GoalSet({ goal }, prefix("prefixed-"));
-    {Goal+} mergedGoals = mergeGoalSetsWithGoals({ goalSet });
+    {<Goal|GoalGroup>+} mergedGoals = mergeGoalSetsWithGoals({ goalSet });
     assertEquals({ Goal("prefixed-goal", task) }, mergedGoals);
     assertEquals(0, count);
     Context context = Context([], MockWriter());
-    mergedGoals.first.task(context);
+    value firstGoal = mergedGoals.first;
+    assert (is Goal firstGoal);
+    firstGoal.task(context);
     assertEquals(1, count);
 }
 

@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal }
+import ceylon.build.task { Goal, GoalGroup }
 import ceylon.collection { LinkedList }
 
 shared class Dependency(goal, {Goal*} goals = []) {
@@ -11,8 +11,19 @@ shared class Dependency(goal, {Goal*} goals = []) {
     string => "``goal.name`` -> ``dependencies``";
 }
 
-shared {Dependency*}  analyzeDependencyCycles({Goal+} goals) {
-    value definitions = { for (goal in goals) Dependency(goal, goal.dependencies) };
+shared {Dependency*}  analyzeDependencyCycles({<Goal|GoalGroup>+} goals) {
+    value definitions = LinkedList<Dependency>();
+    for (goal in goals) {
+        switch (goal)
+        case (is Goal) {
+            definitions.add(Dependency(goal, goal.dependencies));
+        }
+        case (is GoalGroup) {
+            for (Goal g in goal.goals) {
+                definitions.add(Dependency(g, g.dependencies));
+            }
+        }
+    }
     variable {Dependency*} remainingDefinitions = definitions;
     while (!remainingDefinitions.empty) {
         value toRemove = LinkedList<Dependency>();

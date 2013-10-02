@@ -1,7 +1,7 @@
-import ceylon.build.task { Goal, Writer }
+import ceylon.build.task { Goal, Writer, GoalGroup }
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
-shared {Goal*} buildGoalExecutionList({Goal+} definitions, String[] arguments, Writer writer) {
+shared {Goal*} buildGoalExecutionList({<Goal|GoalGroup>+} definitions, String[] arguments, Writer writer) {
     value goalsRequested = findGoalsToExecute(definitions, arguments, writer);
     MutableList<Goal> goalsToExecute = LinkedList<Goal>();
     for (goal in goalsRequested) {
@@ -10,22 +10,28 @@ shared {Goal*} buildGoalExecutionList({Goal+} definitions, String[] arguments, W
     return reduce(goalsToExecute);
 }
 
-shared {Goal*} findGoalsToExecute({Goal+} definitions, String[] arguments, Writer writer) {
-    MutableList<Goal> goals = LinkedList<Goal>();
-    for (goalName in arguments) {
-        if (!goalName.startsWith(argumentPrefix)) {
-            for (goal in definitions) {
-                if (goal.name.equals(goalName)) {
-                    goals.add(goal);
+shared {Goal*} findGoalsToExecute({<Goal|GoalGroup>+} definitions, String[] arguments, Writer writer) {
+    MutableList<Goal> goalsToExecute = LinkedList<Goal>();
+    for (argument in arguments) {
+        if (!argument.startsWith(argumentPrefix)) {
+            for (definition in definitions) {
+                if (definition.name.equals(argument)) {
+                    switch (definition)
+                    case (is Goal) {
+                        goalsToExecute.add(definition);
+                    }
+                    case (is GoalGroup) {
+                        goalsToExecute.addAll(definition.goals);
+                    }
                     break;
                 }
             } else {
-                writer.error("# goal '``goalName``' not found, stopping");
+                writer.error("# goal '``argument``' not found, stopping");
                 return {};
             }
         }
     }
-    return goals;
+    return goalsToExecute;
 }
 
 shared {Goal*} linearize(Goal goal) {
