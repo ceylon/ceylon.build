@@ -80,6 +80,7 @@
    arguments, then, the following command can be used:
    `ceylon run mybuildmodule/1.0.0 test doc -Dcompile:--javac=-g:source,lines,vars -Ddoc:--non-shared -Ddoc:--source-code`
    """
+license("http://www.apache.org/licenses/LICENSE-2.0")
 module ceylon.build.engine '0.1' {
     shared import ceylon.build.task '0.1';
     

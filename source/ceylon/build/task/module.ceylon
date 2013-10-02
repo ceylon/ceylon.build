@@ -12,4 +12,5 @@
    };
    ```
    """
+license("http://www.apache.org/licenses/LICENSE-2.0")
 module ceylon.build.task '0.1' {}
