@@ -12,4 +12,6 @@ shared class GoalSet(goals, rename = keepCurrentName()) {
     
     "Rename function to apply to each goal"
     shared {Goal+} goals;
+    
+    string => "GoalSet`` [ for (goal in goals) rename(goal.name) ]``";
 }
