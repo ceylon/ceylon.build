@@ -6,7 +6,7 @@ void shouldCreateCompileCommand() {
         expected = "ceylon compile mymodule";
         actual = buildCompileCommand {
             ceylon = "ceylon";
-            moduleName = "mymodule";
+            compilationUnits = ["mymodule"];
             encoding = null;
             sourceDirectories = [];
             javacOptions = null;
@@ -28,7 +28,7 @@ void shouldCreateCompileCommandWithAllVerboseFlag() {
         expected = "ceylon compile --verbose mymodule";
         actual = buildCompileCommand {
             ceylon = "ceylon";
-            moduleName = "mymodule";
+            compilationUnits = ["mymodule"];
             encoding = null;
             sourceDirectories = [];
             javacOptions = null;
@@ -51,10 +51,10 @@ void shouldCreateCompileCommandWithAllParametersSpecified() {
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
                 " --sysrep=system-repository --user=ceylon-user --pass=ceylon-user-password" +
                 " --offline --d --verbose=loader,ast,code,cmrloader,benchmark" +
-                " --src=foo --src=bar mymodule";
+                " --src=foo --src=bar mymodule1 file1.ceylon file2.ceylon";
         actual = buildCompileCommand {
             ceylon = "./ceylon";
-            moduleName = "mymodule";
+            compilationUnits = ["mymodule1", "file1.ceylon", "file2.ceylon"];
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
             javacOptions = "-g:source,lines,vars";
