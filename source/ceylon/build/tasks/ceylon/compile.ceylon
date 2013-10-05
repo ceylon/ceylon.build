@@ -2,8 +2,8 @@ import ceylon.build.task { Task, Context }
 
 "Compiles a Ceylon module using `ceylon compile` command line."
 shared Task compile(
-        doc("name of module to compile")
-        String moduleName,
+        doc("name of compilation units (modules/files) to compile")
+        String|{String+} compilationUnits,
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -48,7 +48,7 @@ shared Task compile(
     return function(Context context) {
         value command = buildCompileCommand {
             ceylon;
-            moduleName;
+            stringIterable(compilationUnits);
             encoding;
             sourceDirectories;
             javacOptions;
@@ -68,8 +68,8 @@ shared Task compile(
 
 "Compiles a Ceylon module to javascript using `ceylon compile-js` command line."
 shared Task compileJs(
-        doc("name of module to compile")
-        String moduleName,
+        doc("name of compilation units (modules/files) to compile")
+        String|{String+} compilationUnits,
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -129,7 +129,7 @@ shared Task compileJs(
     return function(Context context) {
         value command = buildCompileJsCommand {
             ceylon;
-            moduleName;
+            stringIterable(compilationUnits);
             encoding;
             sourceDirectories;
             outputModuleRepository;
@@ -150,4 +150,16 @@ shared Task compileJs(
         };
         return execute(context.writer, "compiling", command);
     };
+}
+
+{String+} stringIterable(String|{String+} stringOrMultipleStrings) {
+    {String+} compileUnits;
+    switch(stringOrMultipleStrings)
+    case (is String) {
+        compileUnits = {stringOrMultipleStrings};
+    }
+    case (is {String+}) {
+        compileUnits = stringOrMultipleStrings;
+    }
+    return compileUnits;
 }

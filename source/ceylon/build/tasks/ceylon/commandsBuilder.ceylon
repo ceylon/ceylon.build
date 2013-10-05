@@ -3,7 +3,7 @@ String ceylonExecutable =
 
 shared String buildCompileCommand(
         String ceylon,
-        String moduleName,
+        {String+} compilationUnits,
         String? encoding,
         {String*} sourceDirectories,
         String? javacOptions,
@@ -33,13 +33,13 @@ shared String buildCompileCommand(
     appendVerboseModes(sb, verboseModes);
     appendArguments(sb, arguments);
     sb.append(" ");
-    sb.append(moduleName);
+    sb.append(" ".join(compilationUnits));
     return sb.string;
 }
 
 shared String buildCompileJsCommand(
         String ceylon,
-        String moduleName,
+        {String+} compilationUnits,
         String? encoding,
         {String*} sourceDirectories,
         String? outputModuleRepository,
@@ -79,7 +79,7 @@ shared String buildCompileJsCommand(
     appendVerbose(sb, verbose);
     appendArguments(sb, arguments);
     sb.append(" ");
-    sb.append(moduleName);
+    sb.append(" ".join(compilationUnits));
     return sb.string;
 }
 
