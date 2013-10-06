@@ -3,7 +3,7 @@ shared class GoalGroup(name, goals) satisfies Named & Identifiable {
     
     shared actual String name;
     
-    shared {Goal+} goals;
+    shared {<Goal|GoalGroup>+} goals;
     
     string => "``name`` ``goals``";
     

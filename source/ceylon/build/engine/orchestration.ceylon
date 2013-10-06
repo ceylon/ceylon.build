@@ -21,7 +21,7 @@ shared {Goal*} findGoalsToExecute({<Goal|GoalGroup>+} definitions, String[] argu
                         goalsToExecute.add(definition);
                     }
                     case (is GoalGroup) {
-                        goalsToExecute.addAll(definition.goals);
+                        goalsToExecute.addAll(goalsList(definition.goals));
                     }
                     break;
                 }
@@ -36,8 +36,17 @@ shared {Goal*} findGoalsToExecute({<Goal|GoalGroup>+} definitions, String[] argu
 
 shared {Goal*} linearize(Goal goal) {
     MutableList<Goal> goals = LinkedList<Goal>();
-    for (Goal dependency in goal.dependencies) {
-        goals.addAll(linearize(dependency));
+    for (<Goal|GoalGroup> dependency in goal.dependencies) {
+        switch (dependency)
+        case (is Goal) {
+            goals.addAll(linearize(dependency));
+        }
+        case (is GoalGroup) {
+            value groupGoals = goalsList(dependency.goals);
+            for (groupGoal in groupGoals) {
+                goals.addAll(linearize(groupGoal));
+            }
+        }
     }
     goals.add(goal);
     return goals;

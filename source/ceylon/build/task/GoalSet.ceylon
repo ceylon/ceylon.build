@@ -7,11 +7,11 @@ shared String(String) keepCurrentName() => (String name) => name;
 "Set of goals that can be imported and renamed together"
 shared class GoalSet(goals, rename = keepCurrentName()) {
     
-    "List of goals to import"
+    "Rename function to apply to each goal"
     shared String(String) rename;
     
-    "Rename function to apply to each goal"
-    shared {Goal+} goals;
+    "List of goals to import"
+    shared {<Goal|GoalGroup>+} goals;
     
     string => "GoalSet`` [ for (goal in goals) rename(goal.name) ]``";
 }

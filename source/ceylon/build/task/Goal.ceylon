@@ -13,7 +13,7 @@ shared class Goal(name, task, dependencies = []) satisfies Named & Identifiable 
     
     shared Task task;
     
-    shared {Goal*} dependencies;
+    shared {<Goal|GoalGroup>*} dependencies;
     
     string => name;
     
