@@ -9,7 +9,7 @@ shared {<Goal|GoalGroup>+} mergeGoalSetsWithGoals({<Goal|GoalGroup|GoalSet>+} go
             goalsList.add(item);
         }
         case (is GoalSet){
-            {Goal+} setGoals = [ for (goal in item.goals) renameGoal(item.rename, goal) ];
+            {<Goal|GoalGroup>+} setGoals = [ for (goal in item.goals) renameGoal(item.rename, goal) ];
             goalsList.addAll(setGoals);
         }
     }
@@ -18,8 +18,15 @@ shared {<Goal|GoalGroup>+} mergeGoalSetsWithGoals({<Goal|GoalGroup|GoalSet>+} go
     return goalsSequence;
 }
 
-Goal renameGoal(String(String) newName, Goal goal) {
-    "GoalSet with dependencies are not yet supported"
-    assert (goal.dependencies.empty);
-    return Goal(newName(goal.name), goal.task);
+Goal|GoalGroup renameGoal(String(String) rename, Goal|GoalGroup goalOrGroup) {
+    value newName = rename(goalOrGroup.name);
+    switch (goalOrGroup)
+    case (is Goal) {
+        "GoalSet with dependencies are not yet supported"
+        assert (goalOrGroup.dependencies.empty);
+        return Goal(newName, goalOrGroup.task);
+    }
+    case (is GoalGroup) {
+        return GoalGroup(newName, goalOrGroup.goals);
+    }
 }

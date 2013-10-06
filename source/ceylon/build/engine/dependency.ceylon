@@ -16,11 +16,11 @@ shared {Dependency*}  analyzeDependencyCycles({<Goal|GoalGroup>+} goals) {
     for (goal in goals) {
         switch (goal)
         case (is Goal) {
-            definitions.add(Dependency(goal, goal.dependencies));
+            definitions.add(Dependency(goal, goalsList(goal.dependencies)));
         }
         case (is GoalGroup) {
-            for (Goal g in goal.goals) {
-                definitions.add(Dependency(g, g.dependencies));
+            for (Goal g in goalsList(goal.goals)) {
+                definitions.add(Dependency(g, goalsList(g.dependencies)));
             }
         }
     }
