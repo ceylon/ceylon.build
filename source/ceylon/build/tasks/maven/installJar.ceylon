@@ -25,7 +25,7 @@ import org.sonatype.aether.graph { Dependency }
    
    This approach avoid unnecessary recursion and download time, but links the modules properly.
 """
-shared Task installMavenJar (
+shared Task installJar (
     doc("Group Id (required)")
     String groupId,
     doc("Artifact Id (required)")
@@ -53,20 +53,18 @@ shared Task installMavenJar (
             .setTransferListener(BuildTransferListener(context.writer))
             .setRepositoryListener(BuildRepositoryListener(context.writer))
             .setTransferErrorCachingEnabled(false)
-                .setLocalRepositoryManager(localManager);
+            .setLocalRepositoryManager(localManager);
         
-        if (!overwrite) {
-            LocalArtifactRequest localRequest = LocalArtifactRequest()
-                    .setArtifact(artifactToCheck);
-            
-            LocalArtifactResult? localResult = localManager.find(session, localRequest);
-            if (exists localResult) {
-                if (localResult.available) {
-                    return true;
-                }
+        LocalArtifactRequest localRequest = LocalArtifactRequest()
+                .setArtifact(artifactToCheck);
+        
+        LocalArtifactResult? localResult = localManager.find(session, localRequest);
+        if (exists localResult) {
+            if (localResult.available && !overwrite) {
+                return true;
             }
         }
-        
+
         ArtifactRequest request = ArtifactRequest()
             .setArtifact(artifactToCheck)
             .addRepository(newRemoteMavenRepository("remote", mavenRepo));
@@ -76,7 +74,8 @@ shared Task installMavenJar (
             if (exists result) {
                 if (result.resolved) {
                     value directDeps = system.readArtifactDescriptor(session, ArtifactDescriptorRequest()
-                            .setArtifact(result.artifact).addRepository(newRemoteMavenRepository("deps", mavenRepo)));
+                            .setArtifact(artifactToCheck) //original one
+                            .addRepository(newRemoteMavenRepository("remote", mavenRepo)));
                     writeDependencies(directDeps, localManager);
                     return true;
                 }

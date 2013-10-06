@@ -1,4 +1,4 @@
-package ceylon.build.tasks.repo;
+package ceylon.build.tasks.maven;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
