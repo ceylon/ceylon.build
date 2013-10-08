@@ -34,7 +34,7 @@ Command line interface managing goals, dependencies and execution
 
 ### Command line tasks:
 Task to launch a command in a new process
-* Compile command line task module: `ceylon compile ceylon.build.tasks.commandline`
+* Compile command line tasks module: `ceylon compile ceylon.build.tasks.commandline`
 
 ### Ceylon tasks:
 Tasks to compile, run, test, document ceylon modules
@@ -44,7 +44,7 @@ Tasks to compile, run, test, document ceylon modules
 
 ### Files tasks:
 Tasks to copy / delete files and directories
-* Compile command line task module: `ceylon compile ceylon.build.tasks.commandline`
+* Copy / delete files tasks module: `ceylon compile ceylon.build.tasks.file`
 
 Usage
 -----
