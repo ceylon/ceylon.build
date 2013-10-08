@@ -37,7 +37,7 @@ shared GoalSet ceylonModule(
         Goal {
             name = "doc";
             document {
-                moduleName = moduleName;
+                modules = moduleName;
             };
         }
     };

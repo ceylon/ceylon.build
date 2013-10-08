@@ -6,7 +6,7 @@ void shouldCreateDocCommand() {
         expected = "ceylon doc mymodule";
         actual = buildDocCommand {
             ceylon = "ceylon";
-            moduleName = "mymodule";
+            modules = ["mymodule"];
             encoding = null;
             sourceDirectories = [];
             outputModuleRepository = null;
@@ -29,10 +29,10 @@ void shouldCreateDocCommandWithAllParametersSpecified() {
                 " --out=~/.ceylon/repo --rep=dependencies --sysrep=system-repository" +
                 " --user=ceylon-user --pass=ceylon-user-password --offline" +
                 " --link=http://doc.mymodule.org --non-shared --source-code" +
-                " --src=foo --src=bar mymodule";
+                " --src=foo --src=bar mymodule1 mymodule2";
         actual = buildDocCommand {
             ceylon = "./ceylon";
-            moduleName = "mymodule";
+            modules = ["mymodule1", "mymodule2"];
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
             outputModuleRepository = "~/.ceylon/repo";

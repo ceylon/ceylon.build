@@ -2,8 +2,8 @@ import ceylon.build.task { Task, Context }
 
 "Documents a Ceylon module using `ceylon doc` command line."
 shared Task document(
-        doc("name of module to document")
-        String moduleName,
+        doc("list of modules to document")
+        String|{String+}  modules,
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -58,7 +58,7 @@ shared Task document(
     return function(Context context) {
         value command = buildDocCommand {
             ceylon;
-            moduleName;
+            stringIterable(modules);
             encoding;
             sourceDirectories;
             outputModuleRepository;

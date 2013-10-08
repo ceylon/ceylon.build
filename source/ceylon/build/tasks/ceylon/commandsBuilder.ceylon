@@ -85,7 +85,7 @@ shared String buildCompileJsCommand(
 
 shared String buildDocCommand(
         String ceylon,
-        String moduleName,
+        {String+}  modules,
         String? encoding,
         {String*} sourceDirectories,
         String? outputModuleRepository,
@@ -115,7 +115,7 @@ shared String buildDocCommand(
     appendIncludeSourceCode(sb, includeSourceCode);
     appendArguments(sb, arguments);
     sb.append(" ");
-    sb.append(moduleName);
+    sb.append(" ".join(modules));
     return sb.string;
 }
 
