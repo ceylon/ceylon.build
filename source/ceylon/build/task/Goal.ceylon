@@ -1,4 +1,4 @@
-"""A `Goal` represent an action that can be launched by `ceylon.build.engine`
+"""A `Goal` represents an action that can be launched by `ceylon.build.engine`
    
    A `Goal` has:
     - a `name` which must be unique inside a build configuration.
