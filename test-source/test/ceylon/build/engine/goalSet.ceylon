@@ -14,17 +14,17 @@ void testMergeGoalSet() {
 }
 
 void shouldKeepGoals() {
-    assertEquals({ goalA }, mergeGoalSetsWithGoals({ goalA }));
-    assertEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalA, goalB }));
+    assertElementsNamesAreEquals({ goalA }, mergeGoalSetsWithGoals({ goalA }));
+    assertElementsNamesAreEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalA, goalB }));
 }
 void shouldExplodeGoalSetInGoals() {
     GoalSet goalSetAB = GoalSet({goalA, goalB});
-    assertEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalSetAB }));
+    assertElementsNamesAreEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalSetAB }));
 }
 
 void shouldRenameGoalsInGoalSet() {
     GoalSet goalSetABRenamed = GoalSet({goalA, goalB}, prefix("prefix-"));
-    assertEquals({ createTestGoal("prefix-a"), createTestGoal("prefix-b") }, mergeGoalSetsWithGoals({ goalSetABRenamed }));
+    assertElementsNamesAreEquals({ createTestGoal("prefix-a"), createTestGoal("prefix-b") }, mergeGoalSetsWithGoals({ goalSetABRenamed }));
 }
 
 void shouldKeepGoalTaskWhenRenamingGoal() {
@@ -36,7 +36,7 @@ void shouldKeepGoalTaskWhenRenamingGoal() {
     Goal goal = Goal("goal", task);
     GoalSet goalSet = GoalSet({ goal }, prefix("prefixed-"));
     {<Goal|GoalGroup>+} mergedGoals = mergeGoalSetsWithGoals({ goalSet });
-    assertEquals({ Goal("prefixed-goal", task) }, mergedGoals);
+    assertElementsNamesAreEquals({ Goal("prefixed-goal", task) }, mergedGoals);
     assertEquals(0, count);
     Context context = Context([], MockWriter());
     value firstGoal = mergedGoals.first;
@@ -53,7 +53,7 @@ void shouldMergeGoalsAndGoalSets() {
     Goal goalG = createTestGoal("g");
     GoalSet goalSetCDE = GoalSet({goalC, goalD, goalE});
     GoalSet goalSetFG = GoalSet({goalF, goalG}, prefix("prefix-"));
-    assertEquals {
+    assertElementsNamesAreEquals {
         expected = { goalA, goalC, goalD, goalE, createTestGoal("prefix-f"), createTestGoal("prefix-g"), goalB };
         actual = mergeGoalSetsWithGoals({ goalA, goalSetCDE, goalSetFG, goalB });
     };

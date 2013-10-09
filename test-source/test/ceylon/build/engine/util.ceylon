@@ -1,10 +1,16 @@
-import ceylon.build.task { Goal, Writer, Context }
+import ceylon.build.task { Goal, Named, Writer, Context }
 import ceylon.collection { LinkedList, MutableList }
+import ceylon.test { assertEquals }
 
 Boolean noOp(Context context) => true;
 
 Goal createTestGoal(String name, {Goal*} dependencies = []) {
     return Goal(name, noOp, dependencies);
+}
+
+void assertElementsNamesAreEquals({Named*} expected, {Named*} actual) {
+    String(Named) name = (Named n) => n.name;
+    assertEquals(expected.collect(name), actual.collect(name));
 }
 
 class MockWriter() satisfies Writer {

@@ -7,8 +7,7 @@
       In case the task execution is successful, `task` method should return `true`, `false` otherwise.
     - a `dependencies` list that lists goals / goals groups that must be executed before this goal.
   """
-shared class Goal(
-    name, task, dependencies = []) satisfies Named & Identifiable {
+shared class Goal(name, task, dependencies = []) satisfies Named {
     
     """Goal's name.
        
@@ -25,13 +24,4 @@ shared class Goal(
     shared {<Goal|GoalGroup>*} dependencies;
     
     string => name;
-    
-    hash => name.hash;
-    
-    shared actual Boolean equals(Object that) {
-        if (is Goal that) {
-            return that.name == name;
-        }
-        return false;
-    }
 }

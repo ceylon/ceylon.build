@@ -1,29 +1,34 @@
-import ceylon.build.task { Goal, Context }
-import ceylon.test { assertEquals, assertNotEquals }
+import ceylon.build.task { Context, Goal, Task }
+import ceylon.test { assertEquals }
+
+Task noopTask = (Context context) => true;
 
 Goal createTestGoal(String name) {
-    return Goal(name, (Context context) => true);
+    return Goal(name, noopTask);
 }
 
 void shouldHaveGivenName() {
     assertEquals("MyGoal", createTestGoal("MyGoal").name);
 }
 
-void goalsWithSameNamesAreEquals() {
-    assertEquals(createTestGoal("MyGoal1"), createTestGoal("MyGoal1"));
+void shouldHoldGivenTask() {
+    Task myTask = function(Context context) {
+        print("hello");
+        return true;
+    };
+    Goal myGoal = Goal("MyGoal", myTask);
+    assertEquals(myTask, myGoal.task);
 }
 
-void goalsWithDifferentNamesAreNotEquals() {
-    assertNotEquals(createTestGoal("MyGoal1"), createTestGoal("MyGoal2"));
+void shouldHaveNoDependenciesByDefault() {
+    Goal myGoal = Goal("MyGoal", noopTask);
+    assertEquals([], myGoal.dependencies);
 }
 
-void goalsWithSameNamesHaveSameHash() {
-    assertEquals(createTestGoal("MyGoal1").hash, createTestGoal("MyGoal1").hash);
-}
-
-void goalsWithDifferentNamesHashHaveDifferentHash() {
-    value myGoal1Name = "MyGoal1";
-    value myGoal2Name = "MyGoal2";
-    assertNotEquals(myGoal1Name.hash, myGoal2Name.hash);
-    assertNotEquals(createTestGoal(myGoal1Name).hash, createTestGoal(myGoal2Name).hash);
+void shouldHoldDependencies() {
+    Goal firstDependency = createTestGoal("firstDependency");
+    Goal secondDependency = createTestGoal("secondDependency");
+    value dependencies = [firstDependency, secondDependency];
+    Goal myGoal = Goal("MyGoal", noopTask, dependencies);
+    assertEquals(dependencies, myGoal.dependencies);
 }

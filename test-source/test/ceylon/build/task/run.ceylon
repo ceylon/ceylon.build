@@ -2,15 +2,10 @@ import ceylon.test { suite }
 
 void run() {
     suite("ceylon.build.engine",
-    "goals" -> shouldHaveGivenName,
-    "goals equality" -> goalsWithSameNamesAreEquals,
-    "goals inequality" -> goalsWithDifferentNamesAreNotEquals,
-    "goals hash equality" -> goalsWithSameNamesHaveSameHash,
-    "goals hash inequality" -> goalsWithDifferentNamesHashHaveDifferentHash,
-    "goal groups" -> goalGroupShouldHaveGivenName,
-    "goal groups equality" -> goalGroupsWithSameNamesAreEquals,
-    "goal groups inequality" -> goalGroupsWithDifferentNamesAreNotEquals,
-    "goal groups hash equality" -> goalGroupsWithSameNamesHaveSameHash,
-    "goal groups hash inequality" -> goalGroupsWithDifferentNamesHashHaveDifferentHash,
-    "goal groups contained goals" -> shouldHoldGoals);
+    "goals should have a name" -> shouldHaveGivenName,
+    "goals should have a task" -> shouldHoldGivenTask,
+    "goals should have no dependencies by default" -> shouldHaveNoDependenciesByDefault,
+    "goals should hold dependencies when given" -> shouldHoldDependencies,
+    "goal groups should have a name" -> goalGroupShouldHaveGivenName,
+    "goal groups should hold inner goals and goal groups" -> shouldHoldGoalsAndGoalGroups);
 }
