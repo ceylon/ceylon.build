@@ -1,6 +1,6 @@
 """A `GoalGroup` represents an action that can be launched by `ceylon.build.engine`
    
-   A `Goal` has:
+   A `GoalGroup` has:
    - a `name` which must be unique inside a build configuration.
    `name` will be used from command line to ask for the `GoalGroup` execution.
    - a `goals` list which represent the list of `Goal` and `GoalGroup` to execute.
