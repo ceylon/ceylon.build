@@ -53,12 +53,12 @@ shared {Goal*} linearize(Goal goal) {
 }
 
 shared {Goal*} reduce({Goal*} goals) {
-    MutableSet<Goal> reducedGoalsSet = HashSet<Goal>();
+    MutableSet<String> reducedGoalsNames = HashSet<String>();
     MutableList<Goal> reducedGoals = LinkedList<Goal>();
     for (Goal goal in goals) {
-        if (!reducedGoalsSet.contains(goal)) {
+        if (!reducedGoalsNames.contains(goal.name)) {
             reducedGoals.add(goal);
-            reducedGoalsSet.add(goal);
+            reducedGoalsNames.add(goal.name);
         }
     }
     return reducedGoals;
