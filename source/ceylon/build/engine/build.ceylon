@@ -97,7 +97,7 @@ Integer processGoals({<Goal|GoalGroup>+} goals, String[] arguments, Writer write
     value invalidTasks = invalidGoalsName(goals);
     if (!invalidTasks.empty) {
         writer.error("# invalid goals found ``invalidTasks``");
-        writer.error("# goal name should match following format: `[a-z][a-zA-Z0-9-]*`");
+        writer.error("# goal name should match following format: ```validTaskNamePattern```");
         return exitCode.invalidGoalFound;
     }
     value duplicateGoals = findDuplicateGoals(goals);

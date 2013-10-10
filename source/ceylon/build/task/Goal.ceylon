@@ -13,7 +13,7 @@ shared class Goal(name, task, dependencies = []) satisfies Named {
        This will be used from command line to identify the goal.
        This means that name must be unique inside a build configuration.
        
-       In addition, name should match following regular expression `"[a-z][a-zA-Z0-9-]*"`"""
+       In addition, name should match following regular expression `"[a-z][a-zA-Z0-9-.]*"`"""
     shared actual String name;
     
     "Task to execute"

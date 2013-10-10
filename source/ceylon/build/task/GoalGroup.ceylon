@@ -15,7 +15,7 @@ shared class GoalGroup(name, goals) satisfies Named {
        
        This means that name must be unique inside a build configuration.
        
-       In addition, name should match following regular expression `"[a-z][a-zA-Z0-9-]*"`"""
+       In addition, name should match following regular expression `"[a-z][a-zA-Z0-9-.]*"`"""
     shared actual String name;
     
     "Goals and or goals groups list to run.

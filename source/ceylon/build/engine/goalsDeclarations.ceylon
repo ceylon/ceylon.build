@@ -7,7 +7,9 @@ shared {<Goal|GoalGroup>*} invalidGoalsName({<Goal|GoalGroup>+} goals) {
     return goals.select((Goal|GoalGroup goal) => invalidGoalName(goal.name));
 }
 
-Pattern validTaskName = compilePattern("[a-z][a-zA-Z0-9-]*");
+String validTaskNamePattern = "[a-z][a-zA-Z0-9-.]*";
+
+Pattern validTaskName = compilePattern(validTaskNamePattern);
 
 shared Boolean invalidGoalName(String name) {
     return !validTaskName.matcher(javaString(name.string)).matches();
