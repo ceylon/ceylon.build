@@ -4,13 +4,18 @@ shared String(String) prefix(String prefix) => (String name) => prefix + name;
 "Returns a function that will not change the Goal name"
 shared String(String) keepCurrentName() => (String name) => name;
 
-"Set of goals that can be imported and renamed together"
+"""A `GoalSet` represents a set of goals that can be imported together
+   
+   A `GoalSet` has:
+   - a `rename` function which will be applied to each of the embed goals.
+   - a `Goal` and  `GoalGroup` iterable holding goals and groups to import in the current build configuration"""
 shared class GoalSet(goals, rename = keepCurrentName()) {
     
-    "Rename function to apply to each goal"
+    "Rename function to apply to each of the embed goals.
+     That rename function must produce valid goal names according to `Goal.name` documentation."
     shared String(String) rename;
     
-    "List of goals to import"
+    "List of goals and groups to import"
     shared {<Goal|GoalGroup>+} goals;
     
     string => "GoalSet`` [ for (goal in goals) rename(goal.name) ]``";
