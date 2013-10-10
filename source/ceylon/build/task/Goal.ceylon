@@ -5,8 +5,7 @@
       `name` will be used from command line to ask for the `Goal` execution.
     - a `task` which represent the task to execute for that `Goal`.
       In case the task execution is successful, `task` method should return `true`, `false` otherwise.
-    - a `dependencies` list that lists goals / goals groups that must be executed before this goal.
-  """
+    - a `dependencies` list that lists goals / goals groups that must be executed before this goal."""
 shared class Goal(name, task, dependencies = []) satisfies Named {
     
     """Goal's name.
