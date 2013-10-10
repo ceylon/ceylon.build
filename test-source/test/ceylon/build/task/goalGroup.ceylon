@@ -1,5 +1,5 @@
 import ceylon.build.task { Goal, GoalGroup, Named }
-import ceylon.test { assertEquals, assertNotEquals }
+import ceylon.test { assertEquals }
 
 GoalGroup createTestGoalGroup(String name) {
     return GoalGroup(name, [createTestGoal("a"), createTestGoal("b")]);
