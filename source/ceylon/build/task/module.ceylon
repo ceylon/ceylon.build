@@ -2,6 +2,7 @@
    
    # Goal
    `ceylon.build.engine` is designed to work with goals.
+
    A [[Goal]] represents an action that can be launched by the engine.
    It has a name and a task.
    - `Goal.name` is used in command line to ask for a goal execution.
@@ -33,6 +34,10 @@
    
    ## Dependencies
    A goal can also define dependencies to other goals.
+   Dependencies will be executed (even if not explicitly requested) before all other goals in the execution
+   list that depend on those.
+   
+   
    ```ceylon
    Goal compile = Goal {
        name = "compile";
@@ -50,7 +55,8 @@
        dependencies = [compile];
    };
    ```
-   Requesting execution of `run` goal will result in execution of goals `compile` followed by `run`. 
+   With the above code, requesting execution of `run` goal will result in execution of goals `compile`
+   followed by `run`.
    
    # GoalGroup
    A [[GoalGroup]] is a group of goals (or other goal groups) that are grouped together with a name.
@@ -61,6 +67,45 @@
    dependencies between goals of the current execution list are satisfied.
    
    If they are not, goals will be re-ordered to satisfy dependencies.
+   
+   Here is an example of a simple goal group:
+   ```ceylon
+   Goal compileGoal = Goal {
+       name = "compile";
+       compileTests {
+           compilationUnits = "my.module";
+       };
+   };
+   Goal compileTestsGoal = Goal {
+       name = "compile-tests";
+       compileTests {
+           compilationUnits = "test.my.module";
+       };
+   };
+   Goal runTestsGoal = Goal {
+       name = "run-tests";
+       runModule {
+           moduleName = "test.my.module";
+           version = "1.0.0";
+       };
+   };
+   GoalGroup test = GoalGroup {
+       name = "test";
+       compileTestsGoal,
+       runTestsGoal
+   };
+   ```
+   Execution of `test` will result in execution of goals `compileTestsGoal` followed by `runTestsGoal`.
+   
+   As a goal group can also group existing goal groups, the following goal group can be created:
+   ```ceylon
+   GoalGroup fullBuild = GoalGroup {
+       name = "full-build";
+       compileGoal,
+       test
+   };
+   ```
+   Execution of `fullBuild` will trigger execution of `compileGoal`, `compileTestsGoal` and then `runTestsGoal`.
    
    # GoalSet
    A [[GoalSet]] is a set of goals that can be imported in a build configuration.
