@@ -3,7 +3,7 @@ import ceylon.build.tasks.file { copyFiles, extensions, FileFilter }
 import ceylon.collection { LinkedList }
 
 void shouldCopyFileToFile() {
-    Path output = initializeTestFolder("shouldCopyFileToFile");
+    Path output = initializeTestDirectory("shouldCopyFileToFile");
     value source = dataPath("simple-file/file");
     value destination = output.childPath("simple-file");
     "Destination file shouldn't exist yet"
@@ -13,23 +13,23 @@ void shouldCopyFileToFile() {
     assert(destination.resource is File);
 }
 
-void shouldCopyFileToFolder() {
-    Path output = initializeTestFolder("shouldCopyFileToFolder");
+void shouldCopyFileToDirectory() {
+    Path output = initializeTestDirectory("shouldCopyFileToDirectory");
     value source = dataPath("simple-file/file");
-    value destinationFolder = output.childPath("folder");
-    createDirectoryFromPath(destinationFolder);
-    value destinationFile = destinationFolder.childPath("file");
+    value destinationDirectory = output.childPath("directory");
+    createDirectoryFromPath(destinationDirectory);
+    value destinationFile = destinationDirectory.childPath("file");
     "Destination file shouldn't exist"
     assert(destinationFile.resource is Nil);
-    copyFiles(source, destinationFolder);
+    copyFiles(source, destinationDirectory);
     "Destination file should exist"
     assert(destinationFile.resource is File);
 }
 
-void shouldCopyFileToFileInNonExistingFolder() {
-    Path output = initializeTestFolder("shouldCopyFileToFileInNonExistingFolder");
+void shouldCopyFileToFileInNonExistingDirectory() {
+    Path output = initializeTestDirectory("shouldCopyFileToFileInNonExistingDirectory");
     value source = dataPath("simple-file/file");
-    value destination = output.childPath("non-existing-folder/simple-file");
+    value destination = output.childPath("non-existing-directory/simple-file");
     "Destination file shouldn't exist yet"
     assert(destination.resource is Nil);
     copyFiles(source, destination);
@@ -37,24 +37,24 @@ void shouldCopyFileToFileInNonExistingFolder() {
     assert(destination.resource is File);
 }
 
-void shouldCopyFolderToFolder() {
-    Path output = initializeTestFolder("shouldCopyFolderToFolder");
-    value source = dataPath("simple-folder");
-    value destination = output.childPath("simple-folder");
+void shouldCopyDirectoryToDirectory() {
+    Path output = initializeTestDirectory("shouldCopyDirectoryToDirectory");
+    value source = dataPath("simple-directory");
+    value destination = output.childPath("simple-directory");
     createDirectoryFromPath(destination);
     copyFiles(source, destination);
     value destinationResource = destination.resource;
     "Destination file should exist"
     assert(is Directory destinationResource);
     value children = { for (resource in destinationResource.children()) shortname(resource.path) }.sequence;
-    "Destination folder should file-a and file-b"
+    "Destination directory should file-a and file-b"
     assert(children == ["file-a", "file-b"]);
 }
 
-void shouldCopyFolderToNonExistingFolder() {
-    Path output = initializeTestFolder("shouldCopyFolderToNonExistingFolder");
-    value source = dataPath("simple-folder");
-    value destination = output.childPath("simple-folder");
+void shouldCopyDirectoryToNonExistingDirectory() {
+    Path output = initializeTestDirectory("shouldCopyDirectoryToNonExistingDirectory");
+    value source = dataPath("simple-directory");
+    value destination = output.childPath("simple-directory");
     "Destination file shouldn't exist yet"
     assert(destination.resource is Nil);
     copyFiles(source, destination);
@@ -62,12 +62,12 @@ void shouldCopyFolderToNonExistingFolder() {
     "Destination file should exist"
     assert(is Directory destinationResource);
     value children = { for (resource in destinationResource.children()) shortname(resource.path) }.sequence;
-    "Destination folder should file-a and file-b"
+    "Destination directory should file-a and file-b"
     assert(children == ["file-a", "file-b"]);
 }
 
 void shouldCopyTree() {
-    Path output = initializeTestFolder("shouldCopyTree");
+    Path output = initializeTestDirectory("shouldCopyTree");
     value source = dataPath("tree");
     value destination = output.childPath("tree");
     "Destination file shouldn't exist yet"
@@ -93,7 +93,7 @@ void shouldCopyTree() {
     }
     destination.visit(visitor);
     value resources = res.sequence;
-    "Destination folder should contain copied files and folders"
+    "Destination directory should contain copied files and directories"
     assert(resources == [
         "",
         "a",

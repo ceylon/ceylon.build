@@ -1,9 +1,9 @@
 import ceylon.file { ExistingResource, Nil, Path, Directory }
 
-Path initializeTestFolder(String testId) {
+Path initializeTestDirectory(String testId) {
     Path output = baseWorkingPath.childPath(testId);
     value resource = output.resource;
-    "Test folder already exists"
+    "Test directory already exists"
     assert(is Nil resource);
     return resource.createDirectory().path;
 }

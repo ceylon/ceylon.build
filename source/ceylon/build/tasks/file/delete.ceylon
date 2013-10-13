@@ -1,12 +1,7 @@
 import ceylon.file { Path, File, Directory, Visitor }
 import ceylon.build.task { Task, Context }
 
-"""Returns a `Task` to delete files and directories inside `path` (`path` included)
-   
-   All files in `path` matching `filter` will be deleted.
-   
-   If some files in a directory don't match `filter`, those files won't be deleted.
-   As a consequence, parent directory will not be deleted too"""
+"""Returns a `Task` to delete files and directories inside `path` (`path` included) using [[deletePath]]"""
 shared Task delete(
         "Path to recursively delete"
         Path path,

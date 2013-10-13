@@ -5,20 +5,8 @@ shared class IOException(String message) extends Exception(message) {}
 shared class CreateDirectoryException(String message) extends IOException(message) {}
 shared class FileCopyException(String message) extends IOException(message) {}
 
-"""Returns a `Task` to copy files and directories from `source` to `destination`
-   
-   All files in `source` matching `filter` will be copied to same relative path from `source` into `destination`.
-   
-   If `destination` doesn't exist and `source` is a `Directory`, it will attempt to create missing directories.
-   For example, if `destination` is set to `"foo/bar/baz"` but only `"foo"` exists, directories `"foo/bar"` and
-   `"foo/bar/baz"` will be created (except if `"foo"` is a `File` in which case `CreateDirectoryException` will
-   be thrown)."""
-throws(
-    `class FileCopyException`,
-    "When files with same names already exists in destination and `overwrite` is set to `false`")
-throws(
-    `class CreateDirectoryException`,
-    "If destination doesn't exist and can't be created because parent element in path is not a `Directory`")
+"""Returns a `Task` to copy files and directories from `source` to `destination` using [[copyFiles]]"""
+see(`function copyFiles`)
 shared Task copy(
         "Source path from where files will be taken"
         Path source,
@@ -27,7 +15,7 @@ shared Task copy(
         """If `true`, will overwrite already existing files.
            If `false` and a file with a same name already exist in `destination`, `FileCopyException` will be raised"""
         Boolean overwrite = false,
-        "Copy `FileFilter` has to return `true` to copy files, `false` to copy them"
+        "Copy `FileFilter` has to return `true` to copy files, `false` not to copy them"
         FileFilter filter = allFiles
         ) {
     return function(Context context) {
@@ -47,10 +35,21 @@ shared Task copy(
    
    All files in `source` matching `filter` will be copied to same relative path from `source` into `destination`.
    
-   If `destination` doesn't exist and `source` is a `Directory`, it will attempt to create missing directories.
+   If `destination` doesn't exist, it will attempt to create missing directories.
+   
+   This function acts the same way as the `cp` Unix command does when a single file is given in input.
+   This means that if `destination` exists and is a directory, source file will be copied under that directory.
+   Otherwise, it will be copied directly to `destination` path.
+   
+   This has implications on missing directories creation process:
+   - In case `source` is a `Directory`: will create `destination` directory.
+   
    For example, if `destination` is set to `"foo/bar/baz"` but only `"foo"` exists, directories `"foo/bar"` and
-   `"foo/bar/baz"` will be created (except if `"foo"` is a `File` in which case `CreateDirectoryException` will
-   be thrown)."""
+   `"foo/bar/baz"` will be created.
+   - In case `source` is a `File`: will create missing directories until `destination`'s parent directory included.
+   
+   For example, if `destination` is set to `"foo/bar/baz"` but only `"foo"` exists, directory `"foo/bar"`
+   will be created."""
 throws(
     `class FileCopyException`,
     "When files with same names already exists in destination and `overwrite` is set to `false`")
@@ -65,7 +64,7 @@ shared void copyFiles(
         """If `true`, will overwrite already existing files.
            If `false` and a file with a same name already exist in `destination`, `FileCopyException` will be raised"""
         Boolean overwrite = false,
-        "Copy `FileFilter` has to return `true` to copy files, `false` to copy them"
+        "Copy `FileFilter` has to return `true` to copy files, `false` not to copy them"
         FileFilter filter = allFiles
         ) {
     createDestinationDirectory(source, destination);
@@ -101,6 +100,8 @@ Path getRealDestinationPath(Path source, Path originalDestination) {
     return targettedDestination;
 }
 
+"Recursivley create directory"
+throws(`class CreateDirectoryException`, "when last parent in hierachy is a file")
 shared void createDirectory(Resource directory) {
     if (is Nil directory) {
         createDirectory(directory.path.absolutePath.parent.resource);
