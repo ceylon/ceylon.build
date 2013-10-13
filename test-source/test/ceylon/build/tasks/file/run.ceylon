@@ -20,5 +20,6 @@ shared void run() {
     "shouldCopyFileToFile" -> shouldCopyFileToFile,
     "shouldCopyFileToFolder" -> shouldCopyFileToFolder,
     "shouldCopyFileToFileInNonExistingFolder" -> shouldCopyFileToFileInNonExistingFolder,
-    "shouldCopyFolderToFolder" -> shouldCopyFolderToFolder);
+    "shouldCopyFolderToFolder" -> shouldCopyFolderToFolder,
+    "shouldCopyFolderToNonExistingFolder" -> shouldCopyFolderToNonExistingFolder);
 }

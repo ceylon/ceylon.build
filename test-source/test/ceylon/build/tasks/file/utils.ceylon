@@ -1,4 +1,4 @@
-import ceylon.file { ExistingResource, Nil, Path }
+import ceylon.file { ExistingResource, Nil, Path, Directory }
 
 Path initializeTestFolder(String testId) {
     Path output = baseWorkingPath.childPath(testId);
@@ -19,4 +19,11 @@ String shortname(Path path) {
     [String*] elements = path.elements;
     assert(nonempty elements);
     return elements.last;
+}
+
+Directory createDirectoryFromPath(Path path) {
+    value resource = path.resource;
+    "Resource shouldn't exist yet"
+    assert(is Nil resource);
+    return resource.createDirectory();
 }
