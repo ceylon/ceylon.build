@@ -73,7 +73,16 @@ shared void copyFiles(
     if (is Directory sourceResource, is Nil destinationResource) {
         createDirectory(destinationResource);
     }
-    source.visit(CopyVisitor(source, destination, overwrite, filter));
+    Path targettedDestination;
+    if (is File sourceResource, is Directory destinationResource) {
+        [String*] elements = source.elements;
+        assert(nonempty elements);
+        value name = elements.last;
+        targettedDestination = destination.childPath(name);
+    } else {
+        targettedDestination = destination;
+    }
+    source.visit(CopyVisitor(source, targettedDestination, overwrite, filter));
 }
 
 shared void createDirectory(Resource directory) {
