@@ -76,9 +76,9 @@ shared void copyFiles(
     source.visit(CopyVisitor(source, destination, overwrite, filter));
 }
 
-void createDirectory(Resource directory) {
+shared void createDirectory(Resource directory) {
     if (is Nil directory) {
-        createDirectory(directory.path.parent.resource);
+        createDirectory(directory.path.absolutePath.parent.resource);
         directory.createDirectory();
     } else if (is File directory) {
         throw CreateDirectoryException("cannot create sub-directory of a file: ``directory.path``");
