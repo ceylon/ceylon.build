@@ -68,21 +68,37 @@ shared void copyFiles(
         "Copy `FileFilter` has to return `true` to copy files, `false` to copy them"
         FileFilter filter = allFiles
         ) {
-    value destinationResource = destination.resource;
+    createDestinationDirectory(source, destination);
+    Path targettedDestination = getRealDestinationPath(source, destination);
+    source.visit(CopyVisitor(source, targettedDestination, overwrite, filter));
+}
+
+void createDestinationDirectory(Path source, Path destination) {
     value sourceResource = source.resource;
-    if (is Directory sourceResource, is Nil destinationResource) {
-        createDirectory(destinationResource);
+    value destinationResource = destination.resource;
+    if (destinationResource is Nil) {
+        if (is Directory sourceResource) {
+            createDirectory(destination.resource);
+        } else if (is File sourceResource) {
+            value parent = destination.absolutePath.parent.resource;
+            if (parent is Nil) {
+                createDirectory(parent);
+            }
+        }
     }
+}
+
+Path getRealDestinationPath(Path source, Path originalDestination) {
     Path targettedDestination;
-    if (is File sourceResource, is Directory destinationResource) {
+    if (source.resource is File, originalDestination.resource is Directory) {
         [String*] elements = source.elements;
         assert(nonempty elements);
         value name = elements.last;
-        targettedDestination = destination.childPath(name);
+        targettedDestination = originalDestination.childPath(name);
     } else {
-        targettedDestination = destination;
+        targettedDestination = originalDestination;
     }
-    source.visit(CopyVisitor(source, targettedDestination, overwrite, filter));
+    return targettedDestination;
 }
 
 shared void createDirectory(Resource directory) {
