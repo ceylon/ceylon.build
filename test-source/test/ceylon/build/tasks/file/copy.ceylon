@@ -39,3 +39,18 @@ void shouldCopyFileToFileInNonExistingFolder() {
     "Destination file should exist"
     assert(destination.resource is File);
 }
+
+void shouldCopyFolderToFolder() {
+    Path output = initializeTestFolder("shouldCopyFolderToFolder");
+    value source = dataPath("simple-folder");
+    value destination = output.childPath("simple-folder");
+    "Destination file shouldn't exist yet"
+    assert(destination.resource is Nil);
+    copyFiles(source, destination);
+    value destinationResource = destination.resource;
+    "Destination file should exist"
+    assert(is Directory destinationResource);
+    value children = { for (resource in destinationResource.children()) shortname(resource.path) }.sequence;
+    "Destination folder should file-a and file-b"
+    assert(children == ["file-a", "file-b"]);
+}

@@ -14,3 +14,9 @@ Path dataPath(String subpath) {
     assert(childPath.resource is ExistingResource);
     return childPath;
 }
+
+String shortname(Path path) {
+    [String*] elements = path.elements;
+    assert(nonempty elements);
+    return elements.last;
+}

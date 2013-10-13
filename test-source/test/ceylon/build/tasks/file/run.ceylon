@@ -19,5 +19,6 @@ shared void run() {
     suite("ceylon.build.tasks.file",
     "shouldCopyFileToFile" -> shouldCopyFileToFile,
     "shouldCopyFileToFolder" -> shouldCopyFileToFolder,
-    "shouldCopyFileToFileInNonExistingFolder" -> shouldCopyFileToFileInNonExistingFolder);
+    "shouldCopyFileToFileInNonExistingFolder" -> shouldCopyFileToFileInNonExistingFolder,
+    "shouldCopyFolderToFolder" -> shouldCopyFolderToFolder);
 }
