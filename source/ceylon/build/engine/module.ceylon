@@ -1,6 +1,6 @@
 """The goal of this module is to provide a goal/task based build engine to achieve actions.
    It could be used to handle development tasks like compile, test, document, run module,  ...
-   or any other action like files copy, directory cleanup, ....
+   or any other action like files copy, directory cleanup, ...
    
    
    `ceylon.build.engine` objective is to achieve requested goals by executing their
@@ -70,11 +70,84 @@
    
    # Dependencies
    
+   Sometimes, it is needed to always execute a goal before another one.
+   In that case, the second goal can declare a dependency on the first one as below:
+   ```ceylon
+   import ceylon.build.engine { build }
+   import ceylon.build.task { Goal }
+   import ceylon.build.tasks.ceylon { compile, compileTests, document, runModule }
    
+   void run() {
+       String myModule = "mod";
+       String myTestModule = "test.mod";
+       Goal compileGoal = Goal {
+           name = "compile";
+           compile {
+               compilationUnits = myModule;
+           };
+       };
+       Goal compileTestsGoal = Goal {
+           name = "tests-compile";
+           compileTests {
+               compilationUnits = myTestModule;
+           };
+           dependencies = [compileGoal];
+       };
+       Goal testGoal = Goal {
+           name = "test";
+           runModule {
+               moduleName = myTestModule;
+               version = "1.0.0";
+           };
+           dependencies = [compileTestsGoal];
+       };
+       Goal docGoal = Goal {
+           name = "doc";
+           document {
+               modules = myModule;
+               includeSourceCode = true;
+           };
+       };
+       build {
+           project = "My Build Project";
+           compileGoal,
+           compileTestsGoal,
+           testGoal,
+           docGoal
+       };
+   }
+   ```
    
-   # Orchestration
+   In this example, `"tests-compile"` declares a dependency on `"compile"` and
+   `"test"` declares a dependency on `"tests-compile"`.
    
-   """
+   Executing `ceylon run mybuildmodule/1.0.0 test` will result in the execution
+   of goals `"compile"`, `"tests-compile"` and `"test"` in order.
+   As you can see, dependencies are recursives because not only direct dependencies
+   of `"test"` are put in the execution list, but also indirect dependencies
+   (dependencies of dependencies of ...)
+   
+   ## Goals re-ordering
+   
+   Another feature of the dependency resolution mechanism is that it will re-order
+   goal execution list to satisfy dependencies.
+   
+   For example, executing `ceylon run mybuildmodule/1.0.0 test tests-compile compile`
+   will result in the execution of goals `"compile"`, `"tests-compile"` and `"test"`
+   in this order because it is the only execution order that satisfies dependencies.
+   
+   In a general way, goals will be executed in the order they are requested as long
+   that it satisfies declared dependencies. Otherwise, dependencies, will be moved
+   before in the execution list to restore consistency.
+   
+   ## Multiple goals occurences
+   
+   In case a goal is requested multiple times (could be directly, or by dependency to it),
+   the engine ensures that it will be executed only once.
+   
+   Using previous example,executing `ceylon run mybuildmodule/1.0.0 test tests-compile compile`
+   will result in the execution of goals `"compile"`, `"tests-compile` and `"test"` in this order.
+   Even if `"compile"` and `"tests-compile"` are requested twice (once directly, and once per dependency)."""
 license("http://www.apache.org/licenses/LICENSE-2.0")
 module ceylon.build.engine '0.1' {
     shared import ceylon.build.task '0.1';
