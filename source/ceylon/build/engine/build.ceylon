@@ -1,18 +1,18 @@
 import ceylon.build.task { Goal, GoalGroup, GoalSet, Writer }
 
-"""Launch the task engine using.
+"""Launch the goal engine.
    
    Command line arguments retrieved by `process.arguments` will be used to determine which goals have to be run.
    
    All arguments passed to this program will be understood as a goal.
-   Except ones starting with `"-D"` which will be understood as task parameters.
+   Except ones starting with `"-D"` which will be understood as parameters for a goal's task.
    
-   Given a list of arguments, program will look for goal names in argument list and will try to find the corresponding
-   `Goal`.
+   Given a list of arguments, program will look for goal names in argument list and will try to find the
+   corresponding `Goal`.
    If no corresponding goal is found, an error will be raised and program will exit.
    
    For each goal found, dependencies will be linearized to ensure that if goal `a` depends on goal `b`, goal `b`
-   will be executed before `a` even if only `a` was asked for.
+   will be executed before `a` even if only `a` was requested or if `b` was requested after `a`.
    Goals execution list will then be reduced so that a goal is only executed once during program execution.
    If goals dependencies cycle are found, an error will be raised and program will exit.
    
