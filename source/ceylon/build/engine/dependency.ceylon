@@ -1,49 +1,88 @@
 import ceylon.build.task { Goal, GoalGroup }
-import ceylon.collection { LinkedList }
+import ceylon.collection { LinkedList, HashSet, MutableSet }
 
 shared class Dependency(goal, {Goal*} goals = []) {
+    
     shared Goal goal;
+    
     value dependencies = LinkedList<Goal>(goals);
-    shared Boolean hasDependencies => dependencies.empty;
+    
+    shared Boolean hasNoDependencies => dependencies.empty;
+    
+    shared Boolean hasDependencies => !dependencies.empty;
+    
     shared void removeDependency(Goal dependency) {
         dependencies.removeElement(dependency);
     }
+    
+    shared {Dependency*} remainingDependencies({Goal*} resolvedGoals) {
+        value remaining = LinkedList<Dependency>();
+        for (goal in dependencies) {
+            value dependency = Dependency(goal, goalsList(goal.dependencies));
+            for(resolvedGoal in resolvedGoals) {
+                dependency.removeDependency(resolvedGoal);
+            }
+            remaining.add(dependency);
+        }
+        return remaining;
+    }
+    
     string => "``goal.name`` -> ``dependencies``";
 }
 
-shared {Dependency*}  analyzeDependencyCycles({<Goal|GoalGroup>+} goals) {
-    value definitions = LinkedList<Dependency>();
-    for (goal in goals) {
-        switch (goal)
-        case (is Goal) {
-            definitions.add(Dependency(goal, goalsList(goal.dependencies)));
-        }
-        case (is GoalGroup) {
-            for (Goal g in goalsList(goal.goals)) {
-                definitions.add(Dependency(g, goalsList(g.dependencies)));
-            }
-        }
-    }
-    variable {Dependency*} remainingDefinitions = definitions;
-    while (!remainingDefinitions.empty) {
-        value toRemove = LinkedList<Dependency>();
-        value filteredDefinitions = LinkedList<Dependency>();
-        for (definition in remainingDefinitions) {
-            if (definition.hasDependencies) {
-                toRemove.add(definition);
+shared {Dependency*}  analyzeDependencyCycles({<Goal|GoalGroup>+} goalsAndGroups) {
+    value goals = goalsList(goalsAndGroups);
+    value goalsNames = HashSet<String>({ for (goal in goals) goal.name });
+    value definitions = { for (goal in goals) Dependency(goal, goalsList(goal.dependencies)) };
+    value resolved = LinkedList<Goal>();
+    variable {Dependency*} unresolved = definitions;
+    while (!unresolved.empty) {
+        "goals definitions that are resolved (have no dependencies on definitions in `unresolvedThisRound`)"
+        value resolvedThisRound = LinkedList<Dependency>();
+        "goals definitions for which we need still to resolve dependencies"
+        value unresolvedThisRound = LinkedList<Dependency>();
+        for (definition in unresolved) {
+            if (definition.hasNoDependencies) {
+                resolvedThisRound.add(definition);
             } else {
-                filteredDefinitions.add(definition);
+                unresolvedThisRound.add(definition);
             }
         }
-        if (toRemove.empty) {
-            return filteredDefinitions;
-        }
-        for (definition in filteredDefinitions) {
-            for (definitionToRemove in toRemove) {
-                definition.removeDependency(definitionToRemove.goal);
+        if (resolvedThisRound.empty) {
+            value newDefinitions = internalGoalDefinitions(unresolvedThisRound, resolved, goalsNames);
+            if (newDefinitions.empty) {
+                return unresolvedThisRound;
+            } else {
+                unresolvedThisRound.addAll(newDefinitions);
             }
+        } else {
+            removeDependenciesToResolvedDefinitions(unresolvedThisRound, resolvedThisRound);
         }
-        remainingDefinitions = filteredDefinitions;
+        unresolved = unresolvedThisRound;
+        resolved.addAll({ for (definition in resolvedThisRound) definition.goal });
     }
     return [];
+}
+
+{Dependency*} internalGoalDefinitions({Dependency*} unresolvedThisRound, {Goal*} resolved, MutableSet<String> goalsNames) {
+    value internalDependencies = LinkedList<Dependency>();
+    for (definition in unresolvedThisRound) {
+        value remaingDependencies = definition.remainingDependencies(resolved);
+        for (remainingDependency in remaingDependencies) {
+            String name = remainingDependency.goal.name;
+            if (!goalsNames.contains(name)) {
+                goalsNames.add(name);
+                internalDependencies.add(remainingDependency);
+            }
+        }
+    }
+    return internalDependencies;
+}
+
+void removeDependenciesToResolvedDefinitions({Dependency*} unresolvedThisRound, {Dependency*} resolvedThisRound) {
+    for (definition in unresolvedThisRound) {
+        for (definitionToRemove in resolvedThisRound) {
+            definition.removeDependency(definitionToRemove.goal);
+        }
+    }
 }
