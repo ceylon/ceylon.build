@@ -109,7 +109,6 @@
    
    # GoalSet
    A [[GoalSet]] is a set of goals that can be imported in a build configuration.
-   When importing goals from the goal set, they can be renamed.
    
    For example, if a `ceylonModule` goal set provides goals to compile, compile tests, run tests
    and document a ceylon module and you have differents ceylon modules in your build, then,
@@ -129,29 +128,28 @@
            "rename function that will be applied to each goal name."
            String(String) rename = keepCurrentName()) {
        return GoalSet {
-           rename = rename;
            Goal {
-               name = "compile";
+               name = rename("compile");
                compile {
                    compilationUnits = moduleName;
                };
            },
            Goal {
-               name = "tests-compile";
+               name = rename("tests-compile");
                compile {
                    compilationUnits = testModuleName;
                    sourceDirectories = testSourceDirectory;
                };
            },
            Goal {
-               name = "test";
+               name = rename("test");
                runModule {
                    moduleName = testModuleName;
                    version = testModuleVersion;
                };
            },
            Goal {
-               name = "doc";
+               name = rename("doc");
                document {
                    modules = moduleName;
                };
