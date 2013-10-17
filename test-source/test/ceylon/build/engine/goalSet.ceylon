@@ -1,6 +1,5 @@
 import ceylon.build.engine { mergeGoalSetsWithGoals }
-import ceylon.build.task { Context, Goal, GoalSet, Task, prefix, GoalGroup }
-import ceylon.test { assertEquals }
+import ceylon.build.task { Goal, GoalSet }
 
 Goal goalA = createTestGoal("a");
 Goal goalB = createTestGoal("b");
@@ -8,8 +7,6 @@ Goal goalB = createTestGoal("b");
 void testMergeGoalSet() {
     shouldKeepGoals();
     shouldExplodeGoalSetInGoals();
-    shouldRenameGoalsInGoalSet();
-    shouldKeepGoalTaskWhenRenamingGoal();
     shouldMergeGoalsAndGoalSets();
 }
 
@@ -22,29 +19,6 @@ void shouldExplodeGoalSetInGoals() {
     assertElementsNamesAreEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalSetAB }));
 }
 
-void shouldRenameGoalsInGoalSet() {
-    GoalSet goalSetABRenamed = GoalSet({goalA, goalB}, prefix("prefix-"));
-    assertElementsNamesAreEquals({ createTestGoal("prefix-a"), createTestGoal("prefix-b") }, mergeGoalSetsWithGoals({ goalSetABRenamed }));
-}
-
-void shouldKeepGoalTaskWhenRenamingGoal() {
-    variable Integer count = 0;
-    Task task = function(Context context) {
-        count++;
-        return true;
-    };
-    Goal goal = Goal("goal", task);
-    GoalSet goalSet = GoalSet({ goal }, prefix("prefixed-"));
-    {<Goal|GoalGroup>+} mergedGoals = mergeGoalSetsWithGoals({ goalSet });
-    assertElementsNamesAreEquals({ Goal("prefixed-goal", task) }, mergedGoals);
-    assertEquals(0, count);
-    Context context = Context([], MockWriter());
-    value firstGoal = mergedGoals.first;
-    assert (is Goal firstGoal);
-    firstGoal.task(context);
-    assertEquals(1, count);
-}
-
 void shouldMergeGoalsAndGoalSets() {
     Goal goalC = createTestGoal("c");
     Goal goalD = createTestGoal("d");
@@ -52,9 +26,9 @@ void shouldMergeGoalsAndGoalSets() {
     Goal goalF = createTestGoal("f");
     Goal goalG = createTestGoal("g");
     GoalSet goalSetCDE = GoalSet({goalC, goalD, goalE});
-    GoalSet goalSetFG = GoalSet({goalF, goalG}, prefix("prefix-"));
+    GoalSet goalSetFG = GoalSet({goalF, goalG});
     assertElementsNamesAreEquals {
-        expected = { goalA, goalC, goalD, goalE, createTestGoal("prefix-f"), createTestGoal("prefix-g"), goalB };
+        expected = { goalA, goalC, goalD, goalE, goalF, goalG, goalB };
         actual = mergeGoalSetsWithGoals({ goalA, goalSetCDE, goalSetFG, goalB });
     };
     
