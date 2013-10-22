@@ -80,10 +80,10 @@ shared object exitCode {
 }
 
 shared Integer buildTasks(String project, {<Goal|GoalGroup>+} goals, String[] arguments, Writer writer) {
-    Integer startTime = process.milliseconds;
+    Integer startTime = system.milliseconds;
     writer.info("## ceylon.build: ``project``");
     Integer code = processGoals(goals, arguments, writer);
-    Integer endTime = process.milliseconds;
+    Integer endTime = system.milliseconds;
     String duration = "duration ``(endTime - startTime) / 1000``s";
     if (code == exitCode.success) {
         writer.info("## success - ``duration``");

@@ -40,7 +40,7 @@
    (`modules/mymodule/1.0.0/module-1.0.0.car` -> `"container/modules/module-1.0.0.car` in our example)
    - If the destination is a file it will overwrite it or fail depending of overwrite configuration
    (`modules/mymodule/1.0.0/module-1.0.0.car` -> `"container/modules"` in our example)
-   - If the destination doesn't exist, it will use copy input file to destination
+   - If the destination doesn"t exist, it will use copy input file to destination
    (`modules/mymodule/1.0.0/module-1.0.0.car` -> `"container/modules"` in our example)
    
    A directory can also be copied recursively as below
@@ -53,7 +53,7 @@
    ```
    """
 license("http://www.apache.org/licenses/LICENSE-2.0")
-module ceylon.build.tasks.file '0.1' {
-    shared import ceylon.build.task '0.1';
-    shared import ceylon.file '0.6.1';
+module ceylon.build.tasks.file "0.1" {
+    shared import ceylon.build.task "0.1";
+    shared import ceylon.file "1.0.0";
 }
