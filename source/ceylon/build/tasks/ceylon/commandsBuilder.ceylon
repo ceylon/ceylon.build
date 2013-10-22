@@ -1,5 +1,5 @@
 String ceylonExecutable = 
-    process.os.lowercased.startsWith("windows") then "ceylon.bat" else "ceylon";
+    operatingSystem.name.lowercased.startsWith("windows") then "ceylon.bat" else "ceylon";
 
 shared String buildCompileCommand(
         String ceylon,

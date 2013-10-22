@@ -92,7 +92,7 @@
    ```
    """
 license("http://www.apache.org/licenses/LICENSE-2.0")
-module ceylon.build.tasks.ceylon '0.1' {
-    shared import ceylon.build.task '0.1';
-    import ceylon.build.tasks.commandline '0.1';
+module ceylon.build.tasks.ceylon "0.1" {
+    shared import ceylon.build.task "0.1";
+    import ceylon.build.tasks.commandline "0.1";
 }
