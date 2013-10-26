@@ -1,5 +1,5 @@
 import ceylon.file { File, Directory, Nil, Path, Visitor }
-import ceylon.build.tasks.file { copyFiles, extensions, FileFilter }
+import ceylon.build.tasks.file { copyFiles, extensions }
 import ceylon.collection { LinkedList }
 import ceylon.test { test }
 

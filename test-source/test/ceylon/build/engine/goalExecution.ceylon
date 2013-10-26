@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, Task, Context }
+import ceylon.build.task { Goal, Context }
 import ceylon.build.engine { filterArgumentsForGoal, runGoals, exitCode }
 import ceylon.test { assertEquals, assertTrue, test }
 
