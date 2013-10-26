@@ -18,13 +18,13 @@
                compile {
                    compilationUnits = "mymodule";
                };
+           },
+           Goal {
+               name = "doc";
+               document {
+                   modules = "mymodule";
+               };
            }
-       },
-       Goal {
-           name = "doc";
-           document {
-               modules = "mymodule";
-           };
        };
    }
    ```
