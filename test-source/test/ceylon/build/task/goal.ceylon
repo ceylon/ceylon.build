@@ -12,10 +12,10 @@ test void shouldHaveGivenName() {
 }
 
 test void shouldHoldGivenTask() {
-    function myTask(Context context) {
+    Task myTask = function(Context context) {
         print("hello");
         return true;
-    }
+    };
     Goal myGoal = Goal("MyGoal", myTask);
     assertEquals(myTask, myGoal.task);
 }
