@@ -73,10 +73,10 @@ test void shouldCopyTree() {
     value destination = output.childPath("tree");
     "Destination file shouldn't exist yet"
     assert(destination.resource is Nil);
-    FileFilter filter = function(File file) {
+    function filter(File file) {
         value extensionFilter = extensions("txt", "car", "css", "js", "html", "ext");
         return extensionFilter(file) || file.name.equals("index");
-    };
+    }
     copyFiles(source, destination, true, filter);
     value destinationResource = destination.resource;
     "Destination file should exist"

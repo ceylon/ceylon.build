@@ -46,9 +46,9 @@ test void shouldExitOnTaskFailure() {
 test void shouldExitOnTaskError() {
     value writer = MockWriter();
     value a = createTestGoal("a");
-    Task throwException = function(Context context) {
+    function throwException(Context context) {
         throw Exception("ex");
-    };
+    }
     value b = Goal("b", throwException);
     value c = createTestGoal("c");
     value d = createTestGoal("d");

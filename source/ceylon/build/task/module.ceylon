@@ -13,7 +13,7 @@
    ```ceylon
    Goal hello = Goal {
        name = "hello";
-       task = function(Context context) {
+       function task(Context context) {
            context.writer.info("Hello World!");
            return true;
        };
@@ -26,7 +26,7 @@
    
    Here is an example of a simple task that will display `"Hello World!"` message:
    ```ceylon
-   task = function(Context context) {
+   function task(Context context) {
        context.writer.info("Hello World!");
        return true;
    };
@@ -41,14 +41,14 @@
    ```ceylon
    Goal compile = Goal {
        name = "compile";
-       task = function(Context context) {
+       function task(Context context) {
            context.writer.info("compiling!");
            return true;
        };
    };
    Goal run = Goal {
        name = "run";
-       task = function(Context context) {
+       function task(Context context) {
            context.writer.info("running!");
            return true;
        };
