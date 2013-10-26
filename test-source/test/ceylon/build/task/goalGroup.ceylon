@@ -1,15 +1,15 @@
 import ceylon.build.task { Goal, GoalGroup, Named }
-import ceylon.test { assertEquals }
+import ceylon.test { assertEquals, test }
 
 GoalGroup createTestGoalGroup(String name) {
     return GoalGroup(name, [createTestGoal("a"), createTestGoal("b")]);
 }
 
-void goalGroupShouldHaveGivenName() {
+test void goalGroupShouldHaveGivenName() {
     assertEquals("MyGoalGroup", createTestGoalGroup("MyGoalGroup").name);
 }
 
-void shouldHoldGoalsAndGoalGroups() {
+test void shouldHoldGoalsAndGoalGroups() {
     Goal myGoal1 = createTestGoal("1");
     Goal myGoal2 = createTestGoal("2");
     assertElementsNamesAreEquals([myGoal1], GoalGroup("MyGoalGroup", [myGoal1]).goals);

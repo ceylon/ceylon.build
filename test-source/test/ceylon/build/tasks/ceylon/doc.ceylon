@@ -1,7 +1,7 @@
-import ceylon.test { assertEquals }
+import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { buildDocCommand }
 
-void shouldCreateDocCommand() {
+test void shouldCreateDocCommand() {
     assertEquals{
         expected = "ceylon doc mymodule";
         actual = buildDocCommand {
@@ -23,7 +23,7 @@ void shouldCreateDocCommand() {
     };
 }
 
-void shouldCreateDocCommandWithAllParametersSpecified() {
+test void shouldCreateDocCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "./ceylon doc --encoding=UTF-8 --src=source-a --src=source-b" +
                 " --out=~/.ceylon/repo --rep=dependencies --sysrep=system-repository" +

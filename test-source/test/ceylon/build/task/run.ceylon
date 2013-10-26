@@ -1,11 +1,7 @@
-import ceylon.test { suite }
+import ceylon.test { createTestRunner  }
 
 void run() {
-    suite("ceylon.build.engine",
-    "goals should have a name" -> shouldHaveGivenName,
-    "goals should have a task" -> shouldHoldGivenTask,
-    "goals should have no dependencies by default" -> shouldHaveNoDependenciesByDefault,
-    "goals should hold dependencies when given" -> shouldHoldDependencies,
-    "goal groups should have a name" -> goalGroupShouldHaveGivenName,
-    "goal groups should hold inner goals and goal groups" -> shouldHoldGoalsAndGoalGroups);
+    value testRunner = createTestRunner([`module test.ceylon.build.task`]);
+    value result = testRunner.run();
+    print(result);
 }

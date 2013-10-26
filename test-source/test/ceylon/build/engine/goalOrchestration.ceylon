@@ -1,15 +1,8 @@
 import ceylon.build.engine { findGoalsToExecute, linearize, reduce }
 import ceylon.build.task { Goal, GoalGroup }
-import ceylon.test { assertEquals }
+import ceylon.test { assertEquals, test }
 
-void testGoalsOrchestration() {
-    testFindGoalsToExecute();
-    testFindGoalsWithGoalGroupsToExecute();
-    testGoalsLinearization();
-    testGoalsReduction();
-}
-
-void testFindGoalsToExecute() {
+test void testFindGoalsToExecute() {
     value writer = MockWriter();
     Goal a = createTestGoal("a");
     Goal b = createTestGoal("b");
@@ -44,7 +37,7 @@ void testFindGoalsToExecute() {
     assertEquals([], writer.errorMessages);
 }
 
-void testFindGoalsWithGoalGroupsToExecute() {
+test void testFindGoalsWithGoalGroupsToExecute() {
     value writer = MockWriter();
     Goal a = createTestGoal("a");
     Goal b = createTestGoal("b");
@@ -64,7 +57,7 @@ void testFindGoalsWithGoalGroupsToExecute() {
     writer.clear();
 }
 
-void testGoalsLinearization() {
+test void testGoalsLinearization() {
     Goal a = createTestGoal("a");
     Goal b = createTestGoal("b", [a]);
     Goal c = createTestGoal("c", [b]);
@@ -75,7 +68,7 @@ void testGoalsLinearization() {
     assertElementsNamesAreEquals([a, b, a, d], linearize(d));
 }
 
-void testGoalsReduction() {
+test void testGoalsReduction() {
     Goal a = createTestGoal("a");
     Goal b = createTestGoal("b");
     Goal c = createTestGoal("c");

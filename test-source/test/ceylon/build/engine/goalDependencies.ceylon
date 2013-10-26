@@ -1,12 +1,8 @@
 import ceylon.build.engine { analyzeDependencyCycles }
 import ceylon.build.task { Goal, GoalGroup }
-import ceylon.test { assertTrue }
+import ceylon.test { assertTrue, test }
 
-void testDependenciesCycles() {
-    shouldNotFoundCycle();
-}
-
-void shouldNotFoundCycle() {
+test void shouldNotFoundCycle() {
     Goal a = createTestGoal("a");
     Goal b = createTestGoal("b");
     Goal c = createTestGoal("c");

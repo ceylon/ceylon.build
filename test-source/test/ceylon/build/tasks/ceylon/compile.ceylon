@@ -1,7 +1,7 @@
-import ceylon.test { assertEquals }
+import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { buildCompileCommand, all, loader, cmrloader, benchmark, code, ast }
 
-void shouldCreateCompileCommand() {
+test void shouldCreateCompileCommand() {
     assertEquals{
         expected = "ceylon compile mymodule";
         actual = buildCompileCommand {
@@ -23,7 +23,7 @@ void shouldCreateCompileCommand() {
     };
 }
 
-void shouldCreateCompileCommandWithAllVerboseFlag() {
+test void shouldCreateCompileCommandWithAllVerboseFlag() {
     assertEquals{
         expected = "ceylon compile --verbose mymodule";
         actual = buildCompileCommand {
@@ -45,7 +45,7 @@ void shouldCreateCompileCommandWithAllVerboseFlag() {
     };
 }
 
-void shouldCreateCompileCommandWithAllParametersSpecified() {
+test void shouldCreateCompileCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "./ceylon compile --encoding=UTF-8 --src=source-a --src=source-b" +
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +

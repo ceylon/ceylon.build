@@ -1,7 +1,7 @@
-import ceylon.test { assertEquals }
+import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { buildCompileJsCommand }
 
-void shouldCreateCompileJsCommand() {
+test void shouldCreateCompileJsCommand() {
     assertEquals{
         expected = "ceylon compile-js mymodule";
         actual = buildCompileJsCommand {
@@ -28,7 +28,7 @@ void shouldCreateCompileJsCommand() {
     };
 }
 
-void shouldCreateCompileJsCommandWithAllParametersSpecified() {
+test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "./ceylon compile-js --encoding=UTF-8 --src=source-a --src=source-b" +
                 " --out=~/.ceylon/repo --rep=dependencies --sysrep=system-repository" +

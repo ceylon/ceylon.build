@@ -1,5 +1,5 @@
 import ceylon.build.task { Context, Goal, Task }
-import ceylon.test { assertEquals }
+import ceylon.test { assertEquals, test }
 
 Task noopTask = (Context context) => true;
 
@@ -7,11 +7,11 @@ Goal createTestGoal(String name) {
     return Goal(name, noopTask);
 }
 
-void shouldHaveGivenName() {
+test void shouldHaveGivenName() {
     assertEquals("MyGoal", createTestGoal("MyGoal").name);
 }
 
-void shouldHoldGivenTask() {
+test void shouldHoldGivenTask() {
     Task myTask = function(Context context) {
         print("hello");
         return true;
@@ -20,12 +20,12 @@ void shouldHoldGivenTask() {
     assertEquals(myTask, myGoal.task);
 }
 
-void shouldHaveNoDependenciesByDefault() {
+test void shouldHaveNoDependenciesByDefault() {
     Goal myGoal = Goal("MyGoal", noopTask);
     assertEquals([], myGoal.dependencies);
 }
 
-void shouldHoldDependencies() {
+test void shouldHoldDependencies() {
     Goal firstDependency = createTestGoal("firstDependency");
     Goal secondDependency = createTestGoal("secondDependency");
     value dependencies = [firstDependency, secondDependency];

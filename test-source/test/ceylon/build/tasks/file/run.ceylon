@@ -1,4 +1,4 @@
-import ceylon.test { suite }
+import ceylon.test { createTestRunner }
 import ceylon.build.tasks.file { deletePath, createDirectory }
 import ceylon.file { parsePath, Path, Nil }
 
@@ -16,11 +16,7 @@ void cleanTestDirectory() {
 "Run the module `test.ceylon.build.tasks.file`."
 shared void run() {
     cleanTestDirectory();
-    suite("ceylon.build.tasks.file",
-    "shouldCopyFileToFile" -> shouldCopyFileToFile,
-    "shouldCopyFileToDirectory" -> shouldCopyFileToDirectory,
-    "shouldCopyFileToFileInNonExistingDirectory" -> shouldCopyFileToFileInNonExistingDirectory,
-    "shouldCopyDirectoryToDirectory" -> shouldCopyDirectoryToDirectory,
-    "shouldCopyDirectoryToNonExistingDirectory" -> shouldCopyDirectoryToNonExistingDirectory,
-    "shouldCopyTree" -> shouldCopyTree);
+    value testRunner = createTestRunner([`module test.ceylon.build.tasks.file`]);
+    value result = testRunner.run();
+    print(result);
 }

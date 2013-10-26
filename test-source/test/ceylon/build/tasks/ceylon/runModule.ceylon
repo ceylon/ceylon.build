@@ -1,7 +1,7 @@
-import ceylon.test { assertEquals }
+import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { all, buildRunCommand, cmr }
 
-void shouldCreateRunCommand() {
+test void shouldCreateRunCommand() {
     assertEquals{
         expected = "ceylon run mymodule/1.0.0";
         actual = buildRunCommand {
@@ -19,7 +19,7 @@ void shouldCreateRunCommand() {
     };
 }
 
-void shouldCreateRunCommandWithAllVerboseFlag() {
+test void shouldCreateRunCommandWithAllVerboseFlag() {
     assertEquals{
         expected = "ceylon run --verbose mymodule/1.0.0";
         actual = buildRunCommand {
@@ -37,7 +37,7 @@ void shouldCreateRunCommandWithAllVerboseFlag() {
     };
 }
 
-void shouldCreateRunCommandWithAllParametersSpecified() {
+test void shouldCreateRunCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "./ceylon run --d --offline --rep=dependencies --sysrep=system-repository" +
                 " --run=main --verbose=cmr mymodule/0.1 --foo bar=toto";

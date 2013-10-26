@@ -1,12 +1,8 @@
 import ceylon.build.task { Goal, Task, Context }
 import ceylon.build.engine { filterArgumentsForGoal, runGoals, exitCode }
-import ceylon.test { assertEquals, assertTrue }
+import ceylon.test { assertEquals, assertTrue, test }
 
-void testGoalsExecution() {
-    testArgumentFiltering();
-    testRunGoals();
-}
-void testArgumentFiltering() {
+test void testArgumentFiltering() {
     Goal a = createTestGoal("a");
     assertEquals([], filterArgumentsForGoal(a, []));
     assertEquals([], filterArgumentsForGoal(a, ["clean", "compile"]));
@@ -20,14 +16,7 @@ void testArgumentFiltering() {
     assertEquals(["foo=bar", "baz=toto"], filterArgumentsForGoal(a, ["clean", "compile", "-Da:foo=bar", "-Db:xxx=yyy", "-Da:baz=toto"]));
 }
 
-void testRunGoals() {
-    shouldExitWithErrorWhenNoGoalToRun();
-    shouldExitOnTaskFailure();
-    shouldExitOnTaskError();
-    shouldRunGoals();
-}
-
-void shouldExitWithErrorWhenNoGoalToRun() {
+test void shouldExitWithErrorWhenNoGoalToRun() {
     value writer = MockWriter();
     assertEquals(exitCode.noGoalToRun, runGoals([], [], [], writer));
     assertEquals([], writer.infoMessages);
@@ -40,7 +29,7 @@ void shouldExitWithErrorWhenNoGoalToRun() {
     assertEquals(["# no goal to run, available goals are: [a, b]"], writer.errorMessages);
 }
 
-void shouldExitOnTaskFailure() {
+test void shouldExitOnTaskFailure() {
     value writer = MockWriter();
     value a = createTestGoal("a");
     value b = Goal("b", (Context context) => false);
@@ -54,10 +43,10 @@ void shouldExitOnTaskFailure() {
     assertEquals(["# goal b failure, stopping"], writer.errorMessages);
 }
 
-void shouldExitOnTaskError() {
+test void shouldExitOnTaskError() {
     value writer = MockWriter();
     value a = createTestGoal("a");
-    Task throwException = function(Context context) { 
+    Task throwException = function(Context context) {
         throw Exception("ex");
     };
     value b = Goal("b", throwException);
@@ -72,7 +61,7 @@ void shouldExitOnTaskError() {
     assertEquals("# error during goal execution b, stopping", writer.errorMessages.first);
 }
 
-void shouldRunGoals(){
+test void shouldRunGoals(){
     value writer = MockWriter();
     value a = createTestGoal("a");
     value b = createTestGoal("b");

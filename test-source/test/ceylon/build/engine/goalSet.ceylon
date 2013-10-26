@@ -1,25 +1,20 @@
 import ceylon.build.engine { mergeGoalSetsWithGoals }
 import ceylon.build.task { Goal, GoalSet }
+import ceylon.test { test }
 
 Goal goalA = createTestGoal("a");
 Goal goalB = createTestGoal("b");
 
-void testMergeGoalSet() {
-    shouldKeepGoals();
-    shouldExplodeGoalSetInGoals();
-    shouldMergeGoalsAndGoalSets();
-}
-
-void shouldKeepGoals() {
+test void shouldKeepGoals() {
     assertElementsNamesAreEquals({ goalA }, mergeGoalSetsWithGoals({ goalA }));
     assertElementsNamesAreEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalA, goalB }));
 }
-void shouldExplodeGoalSetInGoals() {
+test void shouldExplodeGoalSetInGoals() {
     GoalSet goalSetAB = GoalSet({goalA, goalB});
     assertElementsNamesAreEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalSetAB }));
 }
 
-void shouldMergeGoalsAndGoalSets() {
+test void shouldMergeGoalsAndGoalSets() {
     Goal goalC = createTestGoal("c");
     Goal goalD = createTestGoal("d");
     Goal goalE = createTestGoal("e");

@@ -1,11 +1,7 @@
-import ceylon.test { suite }
+import ceylon.test { createTestRunner }
 
 void run() {
-    suite("ceylon.build.engine",
-            "goals name validation" -> testGoalNameValidation,
-            "goals duplication" -> testDuplicateGoals,
-            "goals dependencies cycles" -> testDependenciesCycles,
-            "goals orchestration" -> testGoalsOrchestration,
-            "goals execution" -> testGoalsExecution,
-            "goals set merge" -> testMergeGoalSet);
+    value testRunner = createTestRunner([`module test.ceylon.build.engine`]);
+    value result = testRunner.run();
+    print(result);
 }

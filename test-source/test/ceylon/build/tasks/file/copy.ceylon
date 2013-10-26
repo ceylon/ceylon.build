@@ -1,8 +1,9 @@
 import ceylon.file { File, Directory, Nil, Path, Visitor }
 import ceylon.build.tasks.file { copyFiles, extensions, FileFilter }
 import ceylon.collection { LinkedList }
+import ceylon.test { test }
 
-void shouldCopyFileToFile() {
+test void shouldCopyFileToFile() {
     Path output = initializeTestDirectory("shouldCopyFileToFile");
     value source = dataPath("simple-file/file");
     value destination = output.childPath("simple-file");
@@ -13,7 +14,7 @@ void shouldCopyFileToFile() {
     assert(destination.resource is File);
 }
 
-void shouldCopyFileToDirectory() {
+test void shouldCopyFileToDirectory() {
     Path output = initializeTestDirectory("shouldCopyFileToDirectory");
     value source = dataPath("simple-file/file");
     value destinationDirectory = output.childPath("directory");
@@ -26,7 +27,7 @@ void shouldCopyFileToDirectory() {
     assert(destinationFile.resource is File);
 }
 
-void shouldCopyFileToFileInNonExistingDirectory() {
+test void shouldCopyFileToFileInNonExistingDirectory() {
     Path output = initializeTestDirectory("shouldCopyFileToFileInNonExistingDirectory");
     value source = dataPath("simple-file/file");
     value destination = output.childPath("non-existing-directory/simple-file");
@@ -37,7 +38,7 @@ void shouldCopyFileToFileInNonExistingDirectory() {
     assert(destination.resource is File);
 }
 
-void shouldCopyDirectoryToDirectory() {
+test void shouldCopyDirectoryToDirectory() {
     Path output = initializeTestDirectory("shouldCopyDirectoryToDirectory");
     value source = dataPath("simple-directory");
     value destination = output.childPath("simple-directory");
@@ -51,7 +52,7 @@ void shouldCopyDirectoryToDirectory() {
     assert(children == ["file-a", "file-b"]);
 }
 
-void shouldCopyDirectoryToNonExistingDirectory() {
+test void shouldCopyDirectoryToNonExistingDirectory() {
     Path output = initializeTestDirectory("shouldCopyDirectoryToNonExistingDirectory");
     value source = dataPath("simple-directory");
     value destination = output.childPath("simple-directory");
@@ -66,7 +67,7 @@ void shouldCopyDirectoryToNonExistingDirectory() {
     assert(children == ["file-a", "file-b"]);
 }
 
-void shouldCopyTree() {
+test void shouldCopyTree() {
     Path output = initializeTestDirectory("shouldCopyTree");
     value source = dataPath("tree");
     value destination = output.childPath("tree");
