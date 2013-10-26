@@ -9,7 +9,7 @@
    Commands are executed in a synchronous way. This means that both functions will wait
    for command to exit before returning.
    """
-license("http://www.apache.org/licenses/LICENSE-2.0")
+license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module ceylon.build.tasks.commandline "0.1" {
     shared import ceylon.build.task "0.1";
     import ceylon.file "1.0.0";

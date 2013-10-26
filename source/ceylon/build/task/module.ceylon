@@ -171,5 +171,5 @@
    This will import goals `"compile.a"`, `"tests-compile.a"`, `"test.a"`, `"doc.a"`,
    `"compile.b"`, `"tests-compile.b"`, `"test.b"`, `"doc.b"` in the build configuration.
    """
-license("http://www.apache.org/licenses/LICENSE-2.0")
+license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module ceylon.build.task "0.1" {}
