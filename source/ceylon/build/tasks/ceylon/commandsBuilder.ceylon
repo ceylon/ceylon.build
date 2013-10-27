@@ -136,12 +136,14 @@ shared String buildDocCommand(
 
 shared String buildRunCommand(
         String ceylon,
+        String? currentWorkingDirectory,
         String moduleName,
         String version,
         Boolean noDefaultRepositories,
         Boolean offline,
         {String*} repositories,
         String? systemRepository,
+        String? cacheRepository,
         String? functionNameToRun,
         {RunVerboseMode*}|AllVerboseModes verboseModes,
         {String*} arguments
@@ -149,10 +151,12 @@ shared String buildRunCommand(
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
     sb.append(" run");
+    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendNoDefaultRepositories(sb, noDefaultRepositories);
     appendOfflineMode(sb, offline);
     appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
+    appendCacheRepository(sb, cacheRepository);
     appendRun(sb, functionNameToRun);
     appendVerboseModes(sb, verboseModes);
     sb.append(" ");

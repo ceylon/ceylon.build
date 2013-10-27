@@ -22,6 +22,10 @@ shared Task runModule(
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
         String? systemRepository = null,
+        doc("Specifies the folder to use for caching downloaded modules.
+             (default: '~/.ceylon/cache')
+             (corresponding command line parameter: `--cacherep=<url>`)")
+        String? cacheRepository = null,
         doc("Specifies the fully qualified name of a toplevel method or class with no parameters.
              (corresponding command line parameter: `--run=<toplevel>`)")
         String? functionNameToRun = null,
@@ -29,17 +33,23 @@ shared Task runModule(
              (corresponding command line parameter: `--verbose=<flags>`)")
         {RunVerboseMode*}|AllVerboseModes verboseModes = [],
         doc("Ceylon executable that will be used")
-        String ceylon = ceylonExecutable
+        String ceylon = ceylonExecutable,
+        doc("Specifies the current working directory for this tool.
+             (default: the directory where the tool is run from)
+             (corresponding command line parameter: `--cwd=<dir>`)")
+        String? currentWorkingDirectory = null
 ) {
     return function(Context context) {
         value command = buildRunCommand {
             ceylon;
+            currentWorkingDirectory;
             moduleName;
             version;
             noDefaultRepositories;
             offline;
             stringIterable(repositories);
             systemRepository;
+            cacheRepository;
             functionNameToRun;
             verboseModes;
             context.arguments;
