@@ -169,11 +169,13 @@ shared String buildRunCommand(
 
 shared String buildRunJsCommand(
         String ceylon,
+        String? currentWorkingDirectory,
         String moduleName,
         String version,
         Boolean offline,
         {String*} repositories,
         String? systemRepository,
+        String? cacheRepository,
         String? functionNameToRun,
         String? debug,
         String? pathToNodeJs,
@@ -182,9 +184,11 @@ shared String buildRunJsCommand(
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
     sb.append(" run-js");
+    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendOfflineMode(sb, offline);
     appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
+    appendCacheRepository(sb, cacheRepository);
     appendRun(sb, functionNameToRun);
     appendDebug(sb, debug);
     appendPathToNodeJs(sb, pathToNodeJs);
