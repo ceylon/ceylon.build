@@ -1,8 +1,8 @@
-import ceylon.build.task { Goal, Named, Writer, Context }
+import ceylon.build.task { Goal, Named, Writer, Context, Outcome, done }
 import ceylon.collection { LinkedList, MutableList }
 import ceylon.test { assertEquals }
 
-Boolean noOp(Context context) => true;
+Outcome noOp(Context context) => done();
 
 Goal createTestGoal(String name, {Goal*} dependencies = []) {
     return Goal(name, noOp, dependencies);

@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, Context }
+import ceylon.build.task { Goal, Context, failed, done }
 import ceylon.build.engine { filterArgumentsForGoal, runGoals, exitCode }
 import ceylon.test { assertEquals, assertTrue, test }
 
@@ -32,7 +32,7 @@ test void shouldExitWithErrorWhenNoGoalToRun() {
 test void shouldExitOnTaskFailure() {
     value writer = MockWriter();
     value a = createTestGoal("a");
-    value b = Goal("b", (Context context) => false);
+    value b = Goal("b", (Context context) => failed());
     value c = createTestGoal("c");
     value d = createTestGoal("d");
     assertEquals(exitCode.errorOnTaskExecution, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
@@ -58,20 +58,21 @@ test void shouldExitOnTaskError() {
         "# running a(foo)",
         "# running b()"], writer.infoMessages);
     assertEquals(2, writer.errorMessages.size);
-    assertEquals("# error during goal execution b, stopping", writer.errorMessages.first);
+    assertEquals(["# goal b failure, stopping", "ex"], writer.errorMessages);
 }
 
 test void shouldRunGoals(){
     value writer = MockWriter();
     value a = createTestGoal("a");
-    value b = createTestGoal("b");
+    value b = Goal("b", (Context context) => done("b succeed"));
     value c = createTestGoal("c");
-    value d = createTestGoal("d");
+    value d = createTestGoal("b");
     assertEquals(exitCode.success, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
     assertEquals([
         "# running goals: [a, b, c] in order",
         "# running a(foo)",
         "# running b()",
+        "b succeed",
         "# running c()"], writer.infoMessages);
     assertTrue(writer.errorMessages.empty);
 }
