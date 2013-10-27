@@ -10,8 +10,8 @@ test void shouldCreateCompileCommand() {
             encoding = null;
             sourceDirectories = [];
             javacOptions = null;
-            outputModuleRepository = null;
-            dependenciesRepository = null;
+            outputRepository = null;
+            repositories = [];
             systemRepository = null;
             user = null;
             password = null;
@@ -32,8 +32,8 @@ test void shouldCreateCompileCommandWithAllVerboseFlag() {
             encoding = null;
             sourceDirectories = [];
             javacOptions = null;
-            outputModuleRepository = null;
-            dependenciesRepository = null;
+            outputRepository = null;
+            repositories = [];
             systemRepository = null;
             user = null;
             password = null;
@@ -58,8 +58,8 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
             javacOptions = "-g:source,lines,vars";
-            outputModuleRepository = "~/.ceylon/repo";
-            dependenciesRepository = "dependencies";
+            outputRepository = "~/.ceylon/repo";
+            repositories = ["dependencies"];
             systemRepository = "system-repository";
             user = "ceylon-user";
             password = "ceylon-user-password";

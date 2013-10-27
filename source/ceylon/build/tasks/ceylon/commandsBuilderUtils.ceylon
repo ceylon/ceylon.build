@@ -6,12 +6,14 @@ void appendJavacOptions(StringBuilder sb, String? javacOptions) {
     appendParameter(sb, "javac", javacOptions);
 }
 
-void appendOutputModuleRepository(StringBuilder sb, String? outputModuleRepository) {
-    appendParameter(sb, "out", outputModuleRepository);
+void appendOutputRepository(StringBuilder sb, String? outputRepository) {
+    appendParameter(sb, "out", outputRepository);
 }
 
-void appendDependenciesRepository(StringBuilder sb, String? dependenciesRepository) {
-    appendParameter(sb, "rep", dependenciesRepository);
+void appendRepositories(StringBuilder sb, {String*} repositories) {
+    for (repository in repositories) {
+        appendParameter(sb, "rep", repository);
+    }
 }
 
 void appendSourceDirectories(StringBuilder sb, {String*} sourceDirectories) {

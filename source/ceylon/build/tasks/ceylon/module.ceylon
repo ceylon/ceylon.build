@@ -28,7 +28,7 @@
        compilationUnits = ["my.module", "test.my.module"];
        encoding = "UTF-8";
        sourceDirectories = ["source", "test-source"];
-       outputModuleRepository = "~/.ceylon/repo";
+       outputRepository = "~/.ceylon/repo";
    };
    ```
    #### Compile tests

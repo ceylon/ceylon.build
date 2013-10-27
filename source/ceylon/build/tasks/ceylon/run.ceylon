@@ -17,7 +17,7 @@ shared Task runModule(
         doc("Specifies a module repository containing dependencies. Can be specified multiple times.
              (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
              (corresponding command line parameter: `--rep=<url>`)")
-        String? dependenciesRepository = null,
+        String|{String*} repositories = [],
         doc("Specifies the system repository containing essential modules.
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
@@ -38,7 +38,7 @@ shared Task runModule(
             version;
             disableModuleRepository;
             offline;
-            dependenciesRepository;
+            stringIterable(repositories);
             systemRepository;
             functionNameToRun;
             verboseModes;
@@ -60,7 +60,7 @@ shared Task runJsModule(
         doc("Specifies a module repository containing dependencies. Can be specified multiple times.
              (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
              (corresponding command line parameter: `--rep=<url>`)")
-        String? dependenciesRepository = null,
+        String|{String*} repositories = [],
         doc("Specifies the system repository containing essential modules.
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
@@ -83,7 +83,7 @@ shared Task runJsModule(
             moduleName;
             version;
             offline;
-            dependenciesRepository;
+            stringIterable(repositories);
             systemRepository;
             functionNameToRun;
             debug;

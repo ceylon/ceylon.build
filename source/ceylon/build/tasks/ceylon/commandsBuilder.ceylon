@@ -6,8 +6,8 @@ shared String buildCompileCommand(
         String? encoding,
         {String*} sourceDirectories,
         String? javacOptions,
-        String? outputModuleRepository,
-        String? dependenciesRepository,
+        String? outputRepository,
+        {String*} repositories,
         String? systemRepository,
         String? user,
         String? password,
@@ -22,8 +22,8 @@ shared String buildCompileCommand(
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
     appendJavacOptions(sb, javacOptions);
-    appendOutputModuleRepository(sb, outputModuleRepository);
-    appendDependenciesRepository(sb, dependenciesRepository);
+    appendOutputRepository(sb, outputRepository);
+    appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
     appendUser(sb, user);
     appendPassword(sb, password);
@@ -41,8 +41,8 @@ shared String buildCompileJsCommand(
         {String+} compilationUnits,
         String? encoding,
         {String*} sourceDirectories,
-        String? outputModuleRepository,
-        String? dependenciesRepository,
+        String? outputRepository,
+        {String*} repositories,
         String? systemRepository,
         String? user,
         String? password,
@@ -62,8 +62,8 @@ shared String buildCompileJsCommand(
     sb.append(" compile-js");
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
-    appendOutputModuleRepository(sb, outputModuleRepository);
-    appendDependenciesRepository(sb, dependenciesRepository);
+    appendOutputRepository(sb, outputRepository);
+    appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
     appendUser(sb, user);
     appendPassword(sb, password);
@@ -87,8 +87,8 @@ shared String buildDocCommand(
         {String+}  modules,
         String? encoding,
         {String*} sourceDirectories,
-        String? outputModuleRepository,
-        String? dependenciesRepository,
+        String? outputRepository,
+        {String*} repositories,
         String? systemRepository,
         String? user,
         String? password,
@@ -103,8 +103,8 @@ shared String buildDocCommand(
     sb.append(" doc");
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
-    appendOutputModuleRepository(sb, outputModuleRepository);
-    appendDependenciesRepository(sb, dependenciesRepository);
+    appendOutputRepository(sb, outputRepository);
+    appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
     appendUser(sb, user);
     appendPassword(sb, password);
@@ -124,7 +124,7 @@ shared String buildRunCommand(
         String version,
         Boolean disableModuleRepository,
         Boolean offline,
-        String? dependenciesRepository,
+        {String*} repositories,
         String? systemRepository,
         String? functionNameToRun,
         {RunVerboseMode*}|AllVerboseModes verboseModes,
@@ -135,7 +135,7 @@ shared String buildRunCommand(
     sb.append(" run");
     appendDisableModuleRepository(sb, disableModuleRepository);
     appendOfflineMode(sb, offline);
-    appendDependenciesRepository(sb, dependenciesRepository);
+    appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
     appendRun(sb, functionNameToRun);
     appendVerboseModes(sb, verboseModes);
@@ -152,7 +152,7 @@ shared String buildRunJsCommand(
         String moduleName,
         String version,
         Boolean offline,
-        String? dependenciesRepository,
+        {String*} repositories,
         String? systemRepository,
         String? functionNameToRun,
         String? debug,
@@ -163,7 +163,7 @@ shared String buildRunJsCommand(
     sb.append(ceylon);
     sb.append(" run-js");
     appendOfflineMode(sb, offline);
-    appendDependenciesRepository(sb, dependenciesRepository);
+    appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
     appendRun(sb, functionNameToRun);
     appendDebug(sb, debug);

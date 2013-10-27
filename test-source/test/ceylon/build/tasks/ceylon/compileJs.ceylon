@@ -9,8 +9,8 @@ test void shouldCreateCompileJsCommand() {
             compilationUnits = ["mymodule"];
             encoding = null;
             sourceDirectories = [];
-            outputModuleRepository = null;
-            dependenciesRepository = null;
+            outputRepository = null;
+            repositories = [];
             systemRepository = null;
             user = null;
             password = null;
@@ -31,7 +31,7 @@ test void shouldCreateCompileJsCommand() {
 test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "./ceylon compile-js --encoding=UTF-8 --src=source-a --src=source-b" +
-                " --out=~/.ceylon/repo --rep=dependencies --sysrep=system-repository" +
+                " --out=~/.ceylon/repo --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
                 " --user=ceylon-user --pass=ceylon-user-password --offline --compact" +
                 " --no-comments --no-indent --no-module --optimize --profile" +
                 " --skip-src-archive --verbose --src=foo --src=bar mymodule file1.js file2.js";
@@ -40,8 +40,8 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
             compilationUnits = ["mymodule", "file1.js", "file2.js"];
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
-            outputModuleRepository = "~/.ceylon/repo";
-            dependenciesRepository = "dependencies";
+            outputRepository = "~/.ceylon/repo";
+            repositories = ["dependencies1", "dependencies2"];
             systemRepository = "system-repository";
             user = "ceylon-user";
             password = "ceylon-user-password";

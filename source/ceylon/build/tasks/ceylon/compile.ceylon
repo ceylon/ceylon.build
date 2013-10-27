@@ -18,11 +18,11 @@ shared Task compile(
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')
              (corresponding command line parameter: `--out=<url>`)")
-        String? outputModuleRepository = null,
+        String? outputRepository = null,
         doc("Specifies a module repository containing dependencies. Can be specified multiple times.
              (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
              (corresponding command line parameter: `--rep=<url>`)")
-        String? dependenciesRepository = null,
+        String|{String*} repositories = [],
         doc("Specifies the system repository containing essential modules.
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
@@ -48,12 +48,12 @@ shared Task compile(
     return function(Context context) {
         value command = buildCompileCommand {
             ceylon;
-            stringIterable(compilationUnits);
+            multipleStringsIterable(compilationUnits);
             encoding;
             sourceDirectories;
             javacOptions;
-            outputModuleRepository;
-            dependenciesRepository;
+            outputRepository;
+            stringIterable(repositories);
             systemRepository;
             user;
             password;
@@ -81,11 +81,11 @@ shared Task compileJs(
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')
              (corresponding command line parameter: `--out=<url>`)")
-        String? outputModuleRepository = null,
+        String? outputRepository = null,
         doc("Specifies a module repository containing dependencies. Can be specified multiple times.
              (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
              (corresponding command line parameter: `--rep=<url>`)")
-        String? dependenciesRepository = null,
+        String|{String*} repositories = [],
         doc("Specifies the system repository containing essential modules.
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
@@ -129,11 +129,11 @@ shared Task compileJs(
     return function(Context context) {
         value command = buildCompileJsCommand {
             ceylon;
-            stringIterable(compilationUnits);
+            multipleStringsIterable(compilationUnits);
             encoding;
             sourceDirectories;
-            outputModuleRepository;
-            dependenciesRepository;
+            outputRepository;
+            stringIterable(repositories);
             systemRepository;
             user;
             password;
@@ -152,7 +152,7 @@ shared Task compileJs(
     };
 }
 
-{String+} stringIterable(String|{String+} stringOrMultipleStrings) {
+{String+} multipleStringsIterable(String|{String+} stringOrMultipleStrings) {
     {String+} compileUnits;
     switch(stringOrMultipleStrings)
     case (is String) {
@@ -160,6 +160,19 @@ shared Task compileJs(
     }
     case (is {String+}) {
         compileUnits = stringOrMultipleStrings;
+    }
+    return compileUnits;
+}
+
+
+{String*} stringIterable(String|{String*} stringOrStrings) {
+    {String*} compileUnits;
+    switch(stringOrStrings)
+    case (is String) {
+        compileUnits = {stringOrStrings};
+    }
+    case (is {String*}) {
+        compileUnits = stringOrStrings;
     }
     return compileUnits;
 }

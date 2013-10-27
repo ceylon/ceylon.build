@@ -15,11 +15,11 @@ shared Task document(
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')
              (corresponding command line parameter: `--out=<url>`)")
-        String? outputModuleRepository = null,
+        String? outputRepository = null,
         doc("Specifies a module repository containing dependencies. Can be specified multiple times.
              (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
              (corresponding command line parameter: `--rep=<url>`)")
-        String? dependenciesRepository = null,
+        String|{String*} repositories = [],
         doc("Specifies the system repository containing essential modules.
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
@@ -58,11 +58,11 @@ shared Task document(
     return function(Context context) {
         value command = buildDocCommand {
             ceylon;
-            stringIterable(modules);
+            multipleStringsIterable(modules);
             encoding;
             sourceDirectories;
-            outputModuleRepository;
-            dependenciesRepository;
+            outputRepository;
+            stringIterable(repositories);
             systemRepository;
             user;
             password;

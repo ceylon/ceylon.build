@@ -18,11 +18,11 @@ shared Task compileTests(
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')
              (corresponding command line parameter: `--out=<url>`)")
-        String? outputModuleRepository = null,
+        String? outputRepository = null,
         doc("Specifies a module repository containing dependencies. Can be specified multiple times.
              (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
              (corresponding command line parameter: `--rep=<url>`)")
-        String? dependenciesRepository = null,
+        String|{String*} repositories = [],
         doc("Specifies the system repository containing essential modules.
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
@@ -51,8 +51,8 @@ shared Task compileTests(
         encoding;
         testSourceDirectory;
         javacOptions;
-        outputModuleRepository;
-        dependenciesRepository;
+        outputRepository;
+        repositories;
         systemRepository;
         user;
         password;
@@ -76,11 +76,11 @@ shared Task compileJsTests(
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')
              (corresponding command line parameter: `--out=<url>`)")
-        String? outputModuleRepository = null,
+        String? outputRepository = null,
         doc("Specifies a module repository containing dependencies. Can be specified multiple times.
              (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
              (corresponding command line parameter: `--rep=<url>`)")
-        String? dependenciesRepository = null,
+        String|{String*} repositories = [],
         doc("Specifies the system repository containing essential modules.
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
@@ -125,8 +125,8 @@ shared Task compileJsTests(
         compilationUnits;
         encoding;
         testSourceDirectory;
-        outputModuleRepository;
-        dependenciesRepository;
+        outputRepository;
+        repositories;
         systemRepository;
         user;
         password;
