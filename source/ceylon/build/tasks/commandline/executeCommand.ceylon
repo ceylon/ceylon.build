@@ -1,4 +1,4 @@
-import ceylon.build.task { Context, Task, failed, done, Outcome }
+import ceylon.build.task { Context, Task, Outcome, Failure, done }
 import ceylon.process {
     Process, createProcess,
     Input, currentInput,
@@ -86,8 +86,11 @@ shared Integer? executeCommand(
  If `exitCode` is not `0`, a failure outcome will be returned with information about executed command."
 shared Outcome exitCodeToOutcome(Integer exitCode, String command, Path path = current) {
     if (exitCode == 0) {
-        return done();
+        return done;
     } else {
-        return failed("command: ``command``\nin path: ``path``\nexits with code: ``exitCode``");
+        return Failure(
+                "command:            ``command``\n" +
+                "working directory:  ``path``\n" +
+                "exits with code:    ``exitCode``");
     }
 }

@@ -11,7 +11,7 @@ shared Task delete(
     return function(Context context) {
         context.writer.info("deleting ``path``");
         deletePath(path, filter);
-        return done();
+        return done;
     };
 }
 

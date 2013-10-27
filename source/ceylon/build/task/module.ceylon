@@ -15,7 +15,7 @@
        name = "hello";
        function task(Context context) {
            context.writer.info("Hello World!");
-           return done();
+           return done;
        };
    };
    ```
@@ -28,7 +28,7 @@
    ```ceylon
    function task(Context context) {
        context.writer.info("Hello World!");
-       return done();
+       return done;
    };
    ```
    
@@ -43,14 +43,14 @@
        name = "compile";
        function task(Context context) {
            context.writer.info("compiling!");
-           return done();
+           return done;
        };
    };
    Goal run = Goal {
        name = "run";
        function task(Context context) {
            context.writer.info("running!");
-           return done();
+           return done;
        };
        dependencies = [compile];
    };

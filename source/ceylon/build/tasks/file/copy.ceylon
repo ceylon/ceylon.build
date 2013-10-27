@@ -1,4 +1,4 @@
-import ceylon.build.task { Task, Context, done, failed }
+import ceylon.build.task { Task, Context, Failure, done }
 import ceylon.file { Path, Resource, Nil, File, Directory, Visitor }
 
 shared class IOException(String message) extends Exception(message) {}
@@ -22,9 +22,9 @@ shared Task copy(
         context.writer.info("copying ``source`` to ``destination``");
         try {
             copyFiles(source, destination, overwrite, filter);
-            return done();
+            return done;
         } catch (IOException exception) {
-            return failed("error during copy from ``source`` to ``destination``", exception);
+            return Failure("error during copy from ``source`` to ``destination``", exception);
         }
     };
 }

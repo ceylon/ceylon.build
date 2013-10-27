@@ -1,7 +1,7 @@
 import ceylon.build.task { Context, Goal, Task, done }
 import ceylon.test { assertEquals, test }
 
-Task noopTask = (Context context) => done();
+Task noopTask = (Context context) => done;
 
 Goal createTestGoal(String name) {
     return Goal(name, noopTask);
@@ -14,7 +14,7 @@ test void shouldHaveGivenName() {
 test void shouldHoldGivenTask() {
     Task myTask = function(Context context) {
         print("hello");
-        return done();
+        return done;
     };
     Goal myGoal = Goal("MyGoal", myTask);
     assertEquals(myTask, myGoal.task);

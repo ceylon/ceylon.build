@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, GoalGroup, Task, Context, Writer, Outcome, Success, Failure, failed }
+import ceylon.build.task { Goal, GoalGroup, Task, Context, Writer, Outcome, Success, Failure }
 
 String argumentPrefix = "-D";
 
@@ -32,9 +32,7 @@ Outcome executeTask(Task task, [String*] goalArguments, Writer writer) {
     try {
         return task(Context(goalArguments, writer));
     } catch (Exception exception) {
-        return failed {
-            exception = exception;
-        };
+        return Failure("", exception);
     }
 }
 
