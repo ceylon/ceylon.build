@@ -22,13 +22,25 @@
    ## Task definition
    A [[Task]] is the operation that will be executed when the goal name is specified.
    
-   It takes a [[Context]] in input and returns an `Outcome` object telling if task execution succeed or failed.
+   It takes a [[Context]] in input and returns an [[Outcome]] object telling if task execution succeed or failed.
    
    Here is an example of a simple task that will display `"Hello World!"` message:
    ```ceylon
    function task(Context context) {
        context.writer.info("Hello World!");
        return done;
+   };
+   ```
+   
+   A task can also return a success / failure message
+   ```ceylon
+   function task(Context context) {
+       try {
+           processMyXXXTask();
+           return Success("operation xxx done");
+       } catch (Exception exception) {
+           return Failure("failed to do xxx", exception);
+       }
    };
    ```
    
