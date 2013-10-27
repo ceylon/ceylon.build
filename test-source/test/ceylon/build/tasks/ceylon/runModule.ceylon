@@ -8,7 +8,7 @@ test void shouldCreateRunCommand() {
             ceylon = "ceylon";
             moduleName = "mymodule";
             version = "1.0.0";
-            disableModuleRepository = false;
+            noDefaultRepositories = false;
             offline = false;
             repositories = [];
             systemRepository = null;
@@ -26,7 +26,7 @@ test void shouldCreateRunCommandWithAllVerboseFlag() {
             ceylon = "ceylon";
             moduleName = "mymodule";
             version = "1.0.0";
-            disableModuleRepository = false;
+            noDefaultRepositories = false;
             offline = false;
             repositories = [];
             systemRepository = null;
@@ -39,13 +39,13 @@ test void shouldCreateRunCommandWithAllVerboseFlag() {
 
 test void shouldCreateRunCommandWithAllParametersSpecified() {
     assertEquals{
-        expected = "./ceylon run --d --offline --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
+        expected = "./ceylon run --no-default-repositories --offline --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
                 " --run=main --verbose=cmr mymodule/0.1 --foo bar=toto";
         actual = buildRunCommand {
             ceylon = "./ceylon";
             moduleName = "mymodule";
             version = "0.1";
-            disableModuleRepository = true;
+            noDefaultRepositories = true;
             offline = true;
             repositories = ["dependencies1", "dependencies2"];
             systemRepository = "system-repository";

@@ -34,8 +34,8 @@ void appendPassword(StringBuilder sb, String? password) {
     appendParameter(sb, "pass", password);
 }
 
-void appendDisableModuleRepository(StringBuilder sb, Boolean disableModuleRepository) {
-    appendFlag(sb, "d", disableModuleRepository);
+void appendNoDefaultRepositories(StringBuilder sb, Boolean noDefaultRepositories) {
+    appendFlag(sb, "no-default-repositories", noDefaultRepositories);
 }
 
 void appendOfflineMode(StringBuilder sb, Boolean offline) {

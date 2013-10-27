@@ -10,7 +10,7 @@ shared Task runModule(
         String version = defaultModuleVersion,
         doc("Disables the default module repositories and source directory.
              (corresponding command line parameter: `--d`)")
-        Boolean disableModuleRepository = false,
+        Boolean noDefaultRepositories = false,
         doc("Enables offline mode that will prevent the module loader from connecting to remote repositories.
              (corresponding command line parameter: `--offline`)")
         Boolean offline = false,
@@ -36,7 +36,7 @@ shared Task runModule(
             ceylon;
             moduleName;
             version;
-            disableModuleRepository;
+            noDefaultRepositories;
             offline;
             stringIterable(repositories);
             systemRepository;

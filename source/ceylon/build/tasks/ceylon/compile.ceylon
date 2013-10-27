@@ -38,7 +38,7 @@ shared Task compile(
         Boolean offline = false,
         doc("Disables the default module repositories and source directory.
              (corresponding command line parameter: `--d`)")
-        Boolean disableModuleRepository = false,
+        Boolean noDefaultRepositories = false,
         doc("Produce verbose output.
              (corresponding command line parameter: `--verbose=<flags>`)")
         {CompileVerboseMode*}|AllVerboseModes verboseModes = [],
@@ -58,7 +58,7 @@ shared Task compile(
             user;
             password;
             offline;
-            disableModuleRepository;
+            noDefaultRepositories;
             verboseModes;
             context.arguments;
         };

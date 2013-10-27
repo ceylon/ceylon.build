@@ -38,7 +38,7 @@ shared Task compileTests(
         Boolean offline = false,
         doc("Disables the default module repositories and source directory.
              (corresponding command line parameter: `--d`)")
-        Boolean disableModuleRepository = false,
+        Boolean noDefaultRepositories = false,
         doc("Produce verbose output. If no 'flags' are given then be verbose about everything,
              otherwise just be vebose about the flags which are present
              (corresponding command line parameter: `--verbose=<flags>`)")
@@ -57,7 +57,7 @@ shared Task compileTests(
         user;
         password;
         offline;
-        disableModuleRepository;
+        noDefaultRepositories;
         verboseModes;
         ceylon;
     };

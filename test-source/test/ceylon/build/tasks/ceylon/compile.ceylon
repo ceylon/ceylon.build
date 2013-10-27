@@ -16,7 +16,7 @@ test void shouldCreateCompileCommand() {
             user = null;
             password = null;
             offline = false;
-            disableModuleRepository = false;
+            noDefaultRepositories = false;
             verboseModes = [];
             arguments = [];
         };
@@ -38,7 +38,7 @@ test void shouldCreateCompileCommandWithAllVerboseFlag() {
             user = null;
             password = null;
             offline = false;
-            disableModuleRepository = false;
+            noDefaultRepositories = false;
             verboseModes = all;
             arguments = [];
         };
@@ -50,7 +50,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
         expected = "./ceylon compile --encoding=UTF-8 --src=source-a --src=source-b" +
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
                 " --sysrep=system-repository --user=ceylon-user --pass=ceylon-user-password" +
-                " --offline --d --verbose=loader,ast,code,cmrloader,benchmark" +
+                " --offline --no-default-repositories --verbose=loader,ast,code,cmrloader,benchmark" +
                 " --src=foo --src=bar mymodule1 file1.ceylon file2.ceylon";
         actual = buildCompileCommand {
             ceylon = "./ceylon";
@@ -64,7 +64,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
             user = "ceylon-user";
             password = "ceylon-user-password";
             offline = true;
-            disableModuleRepository = true;
+            noDefaultRepositories = true;
             verboseModes = [loader, ast, code, cmrloader, benchmark];
             arguments = ["--src=foo", "--src=bar"];
         };

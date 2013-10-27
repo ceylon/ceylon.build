@@ -12,7 +12,7 @@ shared String buildCompileCommand(
         String? user,
         String? password,
         Boolean offline,
-        Boolean disableModuleRepository,
+        Boolean noDefaultRepositories,
         {CompileVerboseMode*}|AllVerboseModes verboseModes,
         {String*} arguments
         ) {
@@ -28,7 +28,7 @@ shared String buildCompileCommand(
     appendUser(sb, user);
     appendPassword(sb, password);
     appendOfflineMode(sb, offline);
-    appendDisableModuleRepository(sb, disableModuleRepository);
+    appendNoDefaultRepositories(sb, noDefaultRepositories);
     appendVerboseModes(sb, verboseModes);
     appendArguments(sb, arguments);
     sb.append(" ");
@@ -122,7 +122,7 @@ shared String buildRunCommand(
         String ceylon,
         String moduleName,
         String version,
-        Boolean disableModuleRepository,
+        Boolean noDefaultRepositories,
         Boolean offline,
         {String*} repositories,
         String? systemRepository,
@@ -133,7 +133,7 @@ shared String buildRunCommand(
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
     sb.append(" run");
-    appendDisableModuleRepository(sb, disableModuleRepository);
+    appendNoDefaultRepositories(sb, noDefaultRepositories);
     appendOfflineMode(sb, offline);
     appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
