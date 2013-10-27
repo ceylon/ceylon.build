@@ -61,24 +61,31 @@ void appendVerboseModes(StringBuilder sb, {<CompileVerboseMode|RunVerboseMode>*}
 void appendCompact(StringBuilder sb, Boolean compact) {
     appendFlag(sb, "compact", compact);
 }
+
 void appendNoComments(StringBuilder sb, Boolean noComments) {
     appendFlag(sb, "no-comments", noComments);
 }
+
 void appendNoIndent(StringBuilder sb, Boolean noIndent) {
     appendFlag(sb, "no-indent", noIndent);
 }
+
 void appendNoModule(StringBuilder sb, Boolean noModule) {
     appendFlag(sb, "no-module", noModule);
 }
+
 void appendOptimize(StringBuilder sb, Boolean optimize) {
     appendFlag(sb, "optimize", optimize);
 }
+
 void appendProfile(StringBuilder sb, Boolean profile) {
     appendFlag(sb, "profile", profile);
 }
+
 void appendSkipSourceArchive(StringBuilder sb, Boolean skipSourceArchive) {
     appendFlag(sb, "skip-src-archive", skipSourceArchive);
 }
+
 void appendVerbose(StringBuilder sb, Boolean verbose) {
     appendFlag(sb, "verbose", verbose);
 }
@@ -86,12 +93,21 @@ void appendVerbose(StringBuilder sb, Boolean verbose) {
 void appendLink(StringBuilder sb, String? link) {
     appendParameter(sb, "link", link);
 }
+
 void appendIncludeNonShared(StringBuilder sb, Boolean includeNonShared) {
     appendFlag(sb, "non-shared", includeNonShared);
 }
 
 void appendIncludeSourceCode(StringBuilder sb, Boolean includeSourceCode) {
     appendFlag(sb, "source-code", includeSourceCode);
+}
+
+void appendIgnoreBrokenLink(StringBuilder sb, Boolean ignoreBrokenLink) {
+    appendFlag(sb, "ignore-broken-link", ignoreBrokenLink);
+}
+
+void appendIgnoreMissingDoc(StringBuilder sb, Boolean ignoreMissingDoc) {
+    appendFlag(sb, "ignore-missing-doc", ignoreMissingDoc);
 }
 
 void appendRun(StringBuilder sb, String? functionNameToRun) {

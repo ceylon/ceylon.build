@@ -92,34 +92,42 @@ shared String buildCompileJsCommand(
 
 shared String buildDocCommand(
         String ceylon,
+        String? currentWorkingDirectory,
         {String+}  modules,
         String? encoding,
         {String*} sourceDirectories,
         String? outputRepository,
         {String*} repositories,
         String? systemRepository,
+        String? cacheRepository,
         String? user,
         String? password,
         Boolean offline,
         String? link,
         Boolean includeNonShared,
         Boolean includeSourceCode,
+        Boolean ignoreBrokenLink,
+        Boolean ignoreMissingDoc,
         {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
     sb.append(" doc");
+    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
     appendOutputRepository(sb, outputRepository);
     appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
+    appendCacheRepository(sb, cacheRepository);
     appendUser(sb, user);
     appendPassword(sb, password);
     appendOfflineMode(sb, offline);
     appendLink(sb, link);
     appendIncludeNonShared(sb, includeNonShared);
     appendIncludeSourceCode(sb, includeSourceCode);
+    appendIgnoreBrokenLink(sb, ignoreBrokenLink);
+    appendIgnoreMissingDoc(sb, ignoreMissingDoc);
     appendArguments(sb, arguments);
     sb.append(" ");
     sb.append(" ".join(modules));

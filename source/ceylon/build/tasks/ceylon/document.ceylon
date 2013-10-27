@@ -24,6 +24,10 @@ shared Task document(
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
         String? systemRepository = null,
+        doc("Specifies the folder to use for caching downloaded modules.
+             (default: '~/.ceylon/cache')
+             (corresponding command line parameter: `--cacherep=<url>`)")
+        String? cacheRepository = null,
         doc("Sets the user name for use with an authenticated output repository
              (corresponding command line parameter: `--user=<name>`)")
         String? user = null,
@@ -52,24 +56,38 @@ shared Task document(
         doc("Includes source code in the generated documentation.
              (corresponding command line parameter: `--source-code`)")
         Boolean includeSourceCode = false,
+        doc("Do not print warnings about broken links.
+             (corresponding command line parameter: `--ignore-broken-link`)")
+        Boolean ignoreBrokenLink = false,
+        doc("Do not print warnings about missing documentation.
+             (corresponding command line parameter: `--ignore-missing-doc`)")
+        Boolean ignoreMissingDoc = false,
         doc("Ceylon executable that will be used")
-        String ceylon = ceylonExecutable
+        String ceylon = ceylonExecutable,
+        doc("Specifies the current working directory for this tool.
+             (default: the directory where the tool is run from)
+             (corresponding command line parameter: `--cwd=<dir>`)")
+        String? currentWorkingDirectory = null
 ) {
     return function(Context context) {
         value command = buildDocCommand {
             ceylon;
+            currentWorkingDirectory;
             multipleStringsIterable(modules);
             encoding;
             sourceDirectories;
             outputRepository;
             stringIterable(repositories);
             systemRepository;
+            cacheRepository;
             user;
             password;
             offline;
             link;
             includeNonShared;
             includeSourceCode;
+            ignoreBrokenLink;
+            ignoreMissingDoc;
             context.arguments;
         };
         return execute(context.writer, "documenting", command);
