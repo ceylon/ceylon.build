@@ -1,5 +1,5 @@
 import ceylon.file { Path, File, Directory, Visitor }
-import ceylon.build.task { Task, Context }
+import ceylon.build.task { Task, Context, done }
 
 """Returns a `Task` to delete files and directories inside `path` (`path` included) using [[deletePath]]"""
 shared Task delete(
@@ -11,7 +11,7 @@ shared Task delete(
     return function(Context context) {
         context.writer.info("deleting ``path``");
         deletePath(path, filter);
-        return true;
+        return done();
     };
 }
 

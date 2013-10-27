@@ -1,4 +1,4 @@
-import ceylon.build.task { Context, Task }
+import ceylon.build.task { Context, Task, failed, done, Outcome }
 import ceylon.process {
     Process, createProcess,
     Input, currentInput,
@@ -39,8 +39,8 @@ shared Task command(
              virtual machine process.")
         {<String->String>*} environment = currentEnvironment) {
     return function(Context context) {
-        Integer? exitCode = executeCommand(command, path, currentInput, currentOutput, currentError, environment);
-        return (exitCode else 0) == 0;
+        Integer exitCode = executeCommand(command, path, currentInput, currentOutput, currentError, environment) else 0;
+        return exitCodeToOutcome(exitCode, command, path);
     };
 }
 
@@ -77,4 +77,17 @@ shared Integer? executeCommand(
     Process process = createProcess(command.trimmed, path, input, output, error, *environment);
     process.waitForExit();
     return process.exitCode;
+}
+
+"Convert a command exit code into an Outcome.
+ 
+ If `exitCode` is `0`, a successfull outcome will be returned.
+ 
+ If `exitCode` is not `0`, a failure outcome will be returned with information about executed command."
+shared Outcome exitCodeToOutcome(Integer exitCode, String command, Path path = current) {
+    if (exitCode == 0) {
+        return done();
+    } else {
+        return failed("command: ``command``\nin path: ``path``\nexits with code: ``exitCode``");
+    }
 }
