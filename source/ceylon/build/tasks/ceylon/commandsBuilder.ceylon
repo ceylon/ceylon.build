@@ -2,6 +2,7 @@ String ceylonExecutable = operatingSystem.name.lowercased.startsWith("windows") 
 
 shared String buildCompileCommand(
         String ceylon,
+        String? currentWorkingDirectory,
         {String+} compilationUnits,
         String? encoding,
         {String*} sourceDirectories,
@@ -20,6 +21,7 @@ shared String buildCompileCommand(
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
     sb.append(" compile");
+    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
     appendJavacOptions(sb, javacOptions);

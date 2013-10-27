@@ -1,3 +1,7 @@
+void appendCurrentWorkingDirectory(StringBuilder sb, String? currentWorkingDirectory) {
+    appendParameter(sb, "cwd", currentWorkingDirectory);
+}
+
 void appendEncoding(StringBuilder sb, String? encoding) {
     appendParameter(sb, "encoding", encoding);
 }

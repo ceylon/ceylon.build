@@ -48,7 +48,11 @@ shared Task compileTests(
              (corresponding command line parameter: `--verbose=<flags>`)")
         {CompileVerboseMode*} verboseModes = [],
         doc("Ceylon executable that will be used")
-        String ceylon = ceylonExecutable
+        String ceylon = ceylonExecutable,
+        doc("Specifies the current working directory for this tool.
+             (default: the directory where the tool is run from)
+             (corresponding command line parameter: `--cwd=<dir>`)")
+        String? currentWorkingDirectory = null
 ) {
     return compile {
         compilationUnits;
@@ -65,6 +69,7 @@ shared Task compileTests(
         noDefaultRepositories;
         verboseModes;
         ceylon;
+        currentWorkingDirectory;
     };
 }
 

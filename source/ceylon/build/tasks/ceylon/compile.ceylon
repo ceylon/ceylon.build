@@ -47,11 +47,16 @@ shared Task compile(
              (corresponding command line parameter: `--verbose=<flags>`)")
         {CompileVerboseMode*}|AllVerboseModes verboseModes = [],
         doc("Ceylon executable that will be used")
-        String ceylon = ceylonExecutable
+        String ceylon = ceylonExecutable,
+        doc("Specifies the current working directory for this tool.
+             (default: the directory where the tool is run from)
+             (corresponding command line parameter: `--cwd=<dir>`)")
+        String? currentWorkingDirectory = null
 ) {
     return function(Context context) {
         value command = buildCompileCommand {
             ceylon;
+            currentWorkingDirectory;
             multipleStringsIterable(compilationUnits);
             encoding;
             sourceDirectories;
