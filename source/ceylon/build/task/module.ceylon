@@ -15,20 +15,20 @@
        name = "hello";
        function task(Context context) {
            context.writer.info("Hello World!");
-           return true;
+           return done();
        };
    };
    ```
    ## Task definition
    A [[Task]] is the operation that will be executed when the goal name is specified.
    
-   It takes a [[Context]] in input and returns a `Boolean` telling if task execution succeed or failed.
+   It takes a [[Context]] in input and returns an `Outcome` object telling if task execution succeed or failed.
    
    Here is an example of a simple task that will display `"Hello World!"` message:
    ```ceylon
    function task(Context context) {
        context.writer.info("Hello World!");
-       return true;
+       return done();
    };
    ```
    
@@ -43,14 +43,14 @@
        name = "compile";
        function task(Context context) {
            context.writer.info("compiling!");
-           return true;
+           return done();
        };
    };
    Goal run = Goal {
        name = "run";
        function task(Context context) {
            context.writer.info("running!");
-           return true;
+           return done();
        };
        dependencies = [compile];
    };
