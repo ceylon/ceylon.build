@@ -42,12 +42,14 @@ shared String buildCompileCommand(
 
 shared String buildCompileJsCommand(
         String ceylon,
+        String? currentWorkingDirectory,
         {String+} compilationUnits,
         String? encoding,
         {String*} sourceDirectories,
         String? outputRepository,
         {String*} repositories,
         String? systemRepository,
+        String? cacheRepository,
         String? user,
         String? password,
         Boolean offline,
@@ -64,11 +66,13 @@ shared String buildCompileJsCommand(
     StringBuilder sb = StringBuilder();
     sb.append(ceylon);
     sb.append(" compile-js");
+    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
     appendOutputRepository(sb, outputRepository);
     appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
+    appendCacheRepository(sb, cacheRepository);
     appendUser(sb, user);
     appendPassword(sb, password);
     appendOfflineMode(sb, offline);
