@@ -9,6 +9,7 @@ shared String buildCompileCommand(
         String? outputRepository,
         {String*} repositories,
         String? systemRepository,
+        String? cacheRepository,
         String? user,
         String? password,
         Boolean offline,
@@ -25,6 +26,7 @@ shared String buildCompileCommand(
     appendOutputRepository(sb, outputRepository);
     appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);
+    appendCacheRepository(sb, cacheRepository);
     appendUser(sb, user);
     appendPassword(sb, password);
     appendOfflineMode(sb, offline);

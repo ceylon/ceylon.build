@@ -13,6 +13,7 @@ test void shouldCreateCompileCommand() {
             outputRepository = null;
             repositories = [];
             systemRepository = null;
+            cacheRepository = null;
             user = null;
             password = null;
             offline = false;
@@ -35,6 +36,7 @@ test void shouldCreateCompileCommandWithAllVerboseFlag() {
             outputRepository = null;
             repositories = [];
             systemRepository = null;
+            cacheRepository = null;
             user = null;
             password = null;
             offline = false;
@@ -49,7 +51,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "./ceylon compile --encoding=UTF-8 --src=source-a --src=source-b" +
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
-                " --sysrep=system-repository --user=ceylon-user --pass=ceylon-user-password" +
+                " --sysrep=system-repository --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password" +
                 " --offline --no-default-repositories --verbose=loader,ast,code,cmrloader,benchmark" +
                 " --src=foo --src=bar mymodule1 file1.ceylon file2.ceylon";
         actual = buildCompileCommand {
@@ -61,6 +63,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
             outputRepository = "~/.ceylon/repo";
             repositories = ["dependencies"];
             systemRepository = "system-repository";
+            cacheRepository = "cache-rep";
             user = "ceylon-user";
             password = "ceylon-user-password";
             offline = true;

@@ -27,6 +27,10 @@ shared Task compile(
              (default: '$CEYLON_HOME/repo')
              (corresponding command line parameter: `--sysrep=<url>`)")
         String? systemRepository = null,
+        doc("Specifies the folder to use for caching downloaded modules.
+             (default: '~/.ceylon/cache')
+             (corresponding command line parameter: `--cacherep=<url>`)")
+        String? cacheRepository = null,
         doc("Sets the user name for use with an authenticated output repository
              (corresponding command line parameter: `--user=<name>`)")
         String? user = null,
@@ -55,6 +59,7 @@ shared Task compile(
             outputRepository;
             stringIterable(repositories);
             systemRepository;
+            cacheRepository;
             user;
             password;
             offline;

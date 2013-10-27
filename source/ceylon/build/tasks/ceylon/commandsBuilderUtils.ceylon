@@ -26,6 +26,10 @@ void appendSystemRepository(StringBuilder sb, String? systemRepository) {
     appendParameter(sb, "sysrep", systemRepository);
 }
 
+void appendCacheRepository(StringBuilder sb, String? cacheRepository) {
+    appendParameter(sb, "cacherep", cacheRepository);
+}
+
 void appendUser(StringBuilder sb, String? user) {
     appendParameter(sb, "user", user);
 }
