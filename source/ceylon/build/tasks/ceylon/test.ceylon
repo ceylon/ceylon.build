@@ -40,8 +40,8 @@ shared Task compileTests(
         doc("Enables offline mode that will prevent the module loader from connecting to remote repositories.
              (corresponding command line parameter: `--offline`)")
         Boolean offline = false,
-        doc("Disables the default module repositories and source directory.
-             (corresponding command line parameter: `--d`)")
+        doc("Indicates that the default repositories should not be used
+             (corresponding command line parameter: `--no-default-repositories`)")
         Boolean noDefaultRepositories = false,
         doc("Produce verbose output. If no 'flags' are given then be verbose about everything,
              otherwise just be vebose about the flags which are present

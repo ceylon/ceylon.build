@@ -8,8 +8,8 @@ shared Task runModule(
         String moduleName,
         doc("version of module to run")
         String version = defaultModuleVersion,
-        doc("Disables the default module repositories and source directory.
-             (corresponding command line parameter: `--d`)")
+        doc("Indicates that the default repositories should not be used
+             (corresponding command line parameter: `--no-default-repositories`)")
         Boolean noDefaultRepositories = false,
         doc("Enables offline mode that will prevent the module loader from connecting to remote repositories.
              (corresponding command line parameter: `--offline`)")
