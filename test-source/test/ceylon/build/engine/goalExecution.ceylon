@@ -66,7 +66,7 @@ test void shouldRunGoals(){
     value a = createTestGoal("a");
     value b = Goal("b", (Context context) => done("b succeed"));
     value c = createTestGoal("c");
-    value d = createTestGoal("b");
+    value d = createTestGoal("d");
     assertEquals(exitCode.success, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
     assertEquals([
         "# running goals: [a, b, c] in order",
