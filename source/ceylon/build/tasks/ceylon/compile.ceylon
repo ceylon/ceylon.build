@@ -10,8 +10,12 @@ shared Task compile(
         String? encoding = "",
         doc("Path to source files
              (default: './source')
-             (corresponding command line parameter: `--src=<dirs>`)")
+             (corresponding command line parameter: `--source=<dirs>`)")
         {String*} sourceDirectories = [],
+        doc("Path to directory containing resource files
+             (default: './resource')
+             (corresponding command line parameter: `--resource=<dirs>`)")
+        {String*} resourceDirectories = [],
         doc("Passes an option to the underlying java compiler
              (corresponding command line parameter: `--javac=<option>`)")
         String? javacOptions = null,
@@ -60,6 +64,7 @@ shared Task compile(
             multipleStringsIterable(compilationUnits);
             encoding;
             sourceDirectories;
+            resourceDirectories;
             javacOptions;
             outputRepository;
             stringIterable(repositories);
@@ -86,7 +91,7 @@ shared Task compileJs(
         String? encoding = null,
         doc("Path to source files
              (default: './source')
-             (corresponding command line parameter: `--src=<dirs>`)")
+             (corresponding command line parameter: `--source=<dirs>`)")
         {String*} sourceDirectories = [],
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')

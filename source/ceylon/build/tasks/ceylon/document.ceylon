@@ -10,7 +10,7 @@ shared Task document(
         String? encoding = "",
         doc("Path to source files
              (default: './source')
-             (corresponding command line parameter: `--src=<dirs>`)")
+             (corresponding command line parameter: `--source=<dirs>`)")
         {String*} sourceDirectories = [],
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')

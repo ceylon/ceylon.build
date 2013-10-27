@@ -10,6 +10,7 @@ test void shouldCreateCompileCommand() {
             compilationUnits = ["mymodule"];
             encoding = null;
             sourceDirectories = [];
+            resourceDirectories = [];
             javacOptions = null;
             outputRepository = null;
             repositories = [];
@@ -34,6 +35,7 @@ test void shouldCreateCompileCommandWithAllVerboseFlag() {
             compilationUnits = ["mymodule"];
             encoding = null;
             sourceDirectories = [];
+            resourceDirectories = [];
             javacOptions = null;
             outputRepository = null;
             repositories = [];
@@ -51,17 +53,19 @@ test void shouldCreateCompileCommandWithAllVerboseFlag() {
 
 test void shouldCreateCompileCommandWithAllParametersSpecified() {
     assertEquals{
-        expected = "./ceylon compile --cwd=. --encoding=UTF-8 --src=source-a --src=source-b" +
+        expected = "./ceylon compile --cwd=. --encoding=UTF-8 --source=source-a --source=source-b" +
+                " --resource=resource-a --resource=resource-c" +
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
                 " --sysrep=system-repository --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password" +
                 " --offline --no-default-repositories --verbose=loader,ast,code,cmrloader,benchmark" +
-                " --src=foo --src=bar mymodule1 file1.ceylon file2.ceylon";
+                " --source=foo --source=bar mymodule1 file1.ceylon file2.ceylon";
         actual = buildCompileCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
             compilationUnits = ["mymodule1", "file1.ceylon", "file2.ceylon"];
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
+            resourceDirectories = ["resource-a", "resource-c"];
             javacOptions = "-g:source,lines,vars";
             outputRepository = "~/.ceylon/repo";
             repositories = ["dependencies"];
@@ -72,7 +76,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
             offline = true;
             noDefaultRepositories = true;
             verboseModes = [loader, ast, code, cmrloader, benchmark];
-            arguments = ["--src=foo", "--src=bar"];
+            arguments = ["--source=foo", "--source=bar"];
         };
     };
 }

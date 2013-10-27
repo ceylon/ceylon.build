@@ -22,7 +22,13 @@ void appendRepositories(StringBuilder sb, {String*} repositories) {
 
 void appendSourceDirectories(StringBuilder sb, {String*} sourceDirectories) {
     for (sourceDirectory in sourceDirectories) {
-        appendParameter(sb, "src", sourceDirectory);
+        appendParameter(sb, "source", sourceDirectory);
+    }
+}
+
+void appendResourceDirectories(StringBuilder sb, {String*} resourceDirectories) {
+    for (resourceDirectory in resourceDirectories) {
+        appendParameter(sb, "resource", resourceDirectory);
     }
 }
 

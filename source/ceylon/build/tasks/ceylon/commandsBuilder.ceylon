@@ -6,6 +6,7 @@ shared String buildCompileCommand(
         {String+} compilationUnits,
         String? encoding,
         {String*} sourceDirectories,
+        {String*} resourceDirectories,
         String? javacOptions,
         String? outputRepository,
         {String*} repositories,
@@ -24,6 +25,7 @@ shared String buildCompileCommand(
     appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
+    appendResourceDirectories(sb, resourceDirectories);
     appendJavacOptions(sb, javacOptions);
     appendOutputRepository(sb, outputRepository);
     appendRepositories(sb, repositories);

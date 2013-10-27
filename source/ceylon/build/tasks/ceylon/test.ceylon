@@ -1,10 +1,11 @@
 import ceylon.build.task { Task }
 
 [String+] testSourceDirectory = ["test-source"];
+[String+] testResourceDirectory = ["test-resource"];
 
 """Compiles a Ceylon test module using `ceylon compile` command line.
    
-   `--src` command line parameter is set to `"test-source"`"""
+   `--source` command line parameter is set to `"test-source"`"""
 shared Task compileTests(
         doc("name of compilation units (modules/files) to compile")
         String|{String+} compilationUnits,
@@ -58,6 +59,7 @@ shared Task compileTests(
         compilationUnits;
         encoding;
         testSourceDirectory;
+        testResourceDirectory;
         javacOptions;
         outputRepository;
         repositories;
@@ -75,7 +77,7 @@ shared Task compileTests(
 
 """Compiles a Ceylon test module to javascript using `ceylon compile-js` command line.
    
-   `--src` command line parameter is set to `"test-source"`"""
+   `--source` command line parameter is set to `"test-source"`"""
 shared Task compileJsTests(
         doc("name of compilation units (modules/files) to compile")
         String|{String+} compilationUnits,

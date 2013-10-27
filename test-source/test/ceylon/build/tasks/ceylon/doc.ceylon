@@ -29,11 +29,11 @@ test void shouldCreateDocCommand() {
 
 test void shouldCreateDocCommandWithAllParametersSpecified() {
     assertEquals{
-        expected = "./ceylon doc --cwd=. --encoding=UTF-8 --src=source-a --src=source-b" +
+        expected = "./ceylon doc --cwd=. --encoding=UTF-8 --source=source-a --source=source-b" +
                 " --out=~/.ceylon/repo --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
                 " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline" +
                 " --link=http://doc.mymodule.org --non-shared --source-code" +
-                " --ignore-broken-link --ignore-missing-doc --src=foo --src=bar mymodule1 mymodule2";
+                " --ignore-broken-link --ignore-missing-doc --source=foo --source=bar mymodule1 mymodule2";
         actual = buildDocCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
@@ -52,7 +52,7 @@ test void shouldCreateDocCommandWithAllParametersSpecified() {
             includeSourceCode = true;
             ignoreBrokenLink = true;
             ignoreMissingDoc = true;
-            arguments = ["--src=foo", "--src=bar"];
+            arguments = ["--source=foo", "--source=bar"];
         };
     };
 }
