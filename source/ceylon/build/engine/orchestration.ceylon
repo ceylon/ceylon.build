@@ -56,7 +56,7 @@ shared {Goal*} reduce({Goal*} goals) {
     MutableSet<String> reducedGoalsNames = HashSet<String>();
     MutableList<Goal> reducedGoals = LinkedList<Goal>();
     for (Goal goal in goals) {
-        if (!reducedGoalsNames.contains(goal.name)) {
+        if (!reducedGoalsNames.contains(goal.name) && !goal.tasks.empty) {
             reducedGoals.add(goal);
             reducedGoalsNames.add(goal.name);
         }

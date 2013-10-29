@@ -11,12 +11,9 @@ shared Integer runGoals({Goal*} goals, String[] arguments, {<Goal|GoalGroup>*} a
         for (goal in goals) {
             value goalArguments = filterArgumentsForGoal(goal, arguments);
             writer.info("# running ``goal.name``(``", ".join(goalArguments)``)");
-            for (Task task in goal.task) {
-                value outcome = executeTask(task, goalArguments, writer);
-                reportOutcome(outcome, goal, writer);
-                if (is Failure outcome) {
-                    return exitCode.errorOnTaskExecution;
-                }
+            value succeed = executeTasks(goal, goalArguments, writer);
+            if (!succeed) {
+                return exitCode.errorOnTaskExecution;
             }
         }
         return exitCode.success;
@@ -28,6 +25,17 @@ String goalsNames({<Goal|GoalGroup>*} goals) => "[``", ".join({for (goal in goal
 shared String[] filterArgumentsForGoal(Goal goal, String[] arguments) {
     String prefix = "``argumentPrefix````goal.name``:";
     return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)];
+}
+
+Boolean executeTasks(Goal goal, [String*] goalArguments, Writer writer) {
+    for (Task task in goal.tasks) {
+        value outcome = executeTask(task, goalArguments, writer);
+        reportOutcome(outcome, goal, writer);
+        if (is Failure outcome) {
+            return false;
+        }
+    }
+    return true;
 }
 
 Outcome executeTask(Task task, [String*] goalArguments, Writer writer) {

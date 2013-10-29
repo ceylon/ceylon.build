@@ -68,14 +68,56 @@ test void testGoalsLinearization() {
     assertElementsNamesAreEquals([a, b, a, d], linearize(d));
 }
 
+test void testGoalsWithoutTasksLinearization() {
+    Goal a = Goal("a", []);
+    Goal b = Goal("b", [], [a]);
+    Goal c = Goal("c", [noOp], [b]);
+    Goal d = Goal("d", [noOp], [b, a]);
+    assertElementsNamesAreEquals([a], linearize(a));
+    assertElementsNamesAreEquals([a, b], linearize(b));
+    assertElementsNamesAreEquals([a, b, c], linearize(c));
+    assertElementsNamesAreEquals([a, b, a, d], linearize(d));
+}
+
+test void testGoalsWithMultipleTasksLinearization() {
+    Goal a = Goal("a", [noOp, noOp]);
+    Goal b = Goal("b", [noOp, noOp], [a]);
+    Goal c = Goal("c", [noOp], [b]);
+    Goal d = Goal("d", [noOp], [b, a]);
+    assertElementsNamesAreEquals([a], linearize(a));
+    assertElementsNamesAreEquals([a, b], linearize(b));
+    assertElementsNamesAreEquals([a, b, c], linearize(c));
+    assertElementsNamesAreEquals([a, b, a, d], linearize(d));
+}
+
 test void testGoalsReduction() {
-    Goal a = createTestGoal("a");
-    Goal b = createTestGoal("b");
-    Goal c = createTestGoal("c");
+    Goal a = Goal("a", [noOp]);
+    Goal b = Goal("b", [noOp]);
+    Goal c = Goal("c", [noOp]);
     assertElementsNamesAreEquals([], reduce([]));
     assertElementsNamesAreEquals([a], reduce([a]));
     assertElementsNamesAreEquals([a], reduce([a, a]));
     assertElementsNamesAreEquals([a, b], reduce([a, b]));
     assertElementsNamesAreEquals([b, a], reduce([b, a, b]));
     assertElementsNamesAreEquals([b, a, c], reduce([b, a, b, b, a, c, a, b]));
+}
+
+test void testGoalsWithMultipleTasksReduction() {
+    Goal a = Goal("a", [noOp, noOp]);
+    Goal b = Goal("b", [noOp]);
+    assertElementsNamesAreEquals([], reduce([]));
+    assertElementsNamesAreEquals([a], reduce([a]));
+    assertElementsNamesAreEquals([a], reduce([a, a]));
+    assertElementsNamesAreEquals([a, b], reduce([a, b]));
+    assertElementsNamesAreEquals([b, a], reduce([b, a, b]));
+}
+
+test void testGoalsWithoutTasksReduction() {
+    Goal a = Goal("a", []);
+    Goal b = Goal("b", [noOp]);
+    assertElementsNamesAreEquals([], reduce([]));
+    assertElementsNamesAreEquals([], reduce([a]));
+    assertElementsNamesAreEquals([], reduce([a, a]));
+    assertElementsNamesAreEquals([b], reduce([a, b]));
+    assertElementsNamesAreEquals([b], reduce([b, a, b]));
 }
