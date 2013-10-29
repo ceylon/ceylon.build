@@ -25,21 +25,21 @@ import ceylon.build.task { Goal, GoalGroup, GoalSet, Writer }
    ```ceylon
    value a = Goal {
        name = "a";
-       doA;
+       doA
    };
    value b = Goal {
        name = "b";
-       doB;
+       doB
    };
    value c = Goal {
        name = "c";
-       doC;
        dependencies = [b];
+       doC
    };
    value d = Goal {
        name = "d";
-       doD;
        dependencies = [c, b];
+       doD
    };
    build(
        project = "My Project";
