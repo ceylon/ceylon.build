@@ -1,7 +1,7 @@
-import ceylon.build.task { Goal, Writer, GoalGroup }
+import ceylon.build.task { Goal, Writer }
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
-shared {Goal*} buildGoalExecutionList({<Goal|GoalGroup>+} definitions, String[] arguments, Writer writer) {
+shared {Goal*} buildGoalExecutionList({Goal+} definitions, String[] arguments, Writer writer) {
     value goalsRequested = findGoalsToExecute(definitions, arguments, writer);
     MutableList<Goal> goalsToExecute = LinkedList<Goal>();
     for (goal in goalsRequested) {
@@ -10,19 +10,13 @@ shared {Goal*} buildGoalExecutionList({<Goal|GoalGroup>+} definitions, String[] 
     return reduce(goalsToExecute);
 }
 
-shared {Goal*} findGoalsToExecute({<Goal|GoalGroup>+} definitions, String[] arguments, Writer writer) {
+shared {Goal*} findGoalsToExecute({Goal+} definitions, String[] arguments, Writer writer) {
     MutableList<Goal> goalsToExecute = LinkedList<Goal>();
     for (argument in arguments) {
         if (!argument.startsWith(argumentPrefix)) {
             for (definition in definitions) {
                 if (definition.name.equals(argument)) {
-                    switch (definition)
-                    case (is Goal) {
-                        goalsToExecute.add(definition);
-                    }
-                    case (is GoalGroup) {
-                        goalsToExecute.addAll(goalsList(definition.goals));
-                    }
+                    goalsToExecute.add(definition);
                     break;
                 }
             } else {
@@ -36,17 +30,8 @@ shared {Goal*} findGoalsToExecute({<Goal|GoalGroup>+} definitions, String[] argu
 
 shared {Goal*} linearize(Goal goal) {
     MutableList<Goal> goals = LinkedList<Goal>();
-    for (<Goal|GoalGroup> dependency in goal.dependencies) {
-        switch (dependency)
-        case (is Goal) {
-            goals.addAll(linearize(dependency));
-        }
-        case (is GoalGroup) {
-            value groupGoals = goalsList(dependency.goals);
-            for (groupGoal in groupGoals) {
-                goals.addAll(linearize(groupGoal));
-            }
-        }
+    for (Goal dependency in goal.dependencies) {
+        goals.addAll(linearize(dependency));
     }
     goals.add(goal);
     return goals;

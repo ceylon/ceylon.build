@@ -11,7 +11,7 @@ shared String(String) keepCurrentName() => (String name) => name;
 shared class GoalSet(goals) {
     
     "List of goals and groups to import"
-    shared {<Goal|GoalGroup>+} goals;
+    shared {Goal+} goals;
     
     string => "GoalSet``goals``";
 }

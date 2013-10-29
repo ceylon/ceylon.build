@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, GoalGroup }
+import ceylon.build.task { Goal }
 import ceylon.collection { LinkedList, HashSet, MutableSet }
 
 shared class Dependency(goal, {Goal*} goals = []) {
@@ -18,7 +18,7 @@ shared class Dependency(goal, {Goal*} goals = []) {
     shared {Dependency*} remainingDependencies({Goal*} resolvedGoals) {
         value remaining = LinkedList<Dependency>();
         for (goal in dependencies) {
-            value dependency = Dependency(goal, goalsList(goal.dependencies));
+            value dependency = Dependency(goal, goal.dependencies);
             for(resolvedGoal in resolvedGoals) {
                 dependency.removeDependency(resolvedGoal);
             }
@@ -30,10 +30,9 @@ shared class Dependency(goal, {Goal*} goals = []) {
     string => "``goal.name`` -> ``dependencies``";
 }
 
-shared {Dependency*}  analyzeDependencyCycles({<Goal|GoalGroup>+} goalsAndGroups) {
-    value goals = goalsList(goalsAndGroups);
+shared {Dependency*}  analyzeDependencyCycles({Goal+} goals) {
     value goalsNames = HashSet<String>({ for (goal in goals) goal.name });
-    value definitions = { for (goal in goals) Dependency(goal, goalsList(goal.dependencies)) };
+    value definitions = { for (goal in goals) Dependency(goal, goal.dependencies) };
     value resolved = LinkedList<Goal>();
     variable {Dependency*} unresolved = definitions;
     while (!unresolved.empty) {

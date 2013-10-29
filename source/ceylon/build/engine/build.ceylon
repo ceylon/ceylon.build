@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, GoalGroup, GoalSet, Writer }
+import ceylon.build.task { Goal, GoalSet, Writer }
 
 """Launch the goal engine.
    
@@ -48,8 +48,8 @@ import ceylon.build.task { Goal, GoalGroup, GoalSet, Writer }
    ```
    Launching the program with goals `a, d, c` (in order) will result in the execution of `a, b, c, d` (still in order) 
    """
-shared void build(String project, {<Goal|GoalGroup|GoalSet>+} goals) {
-    {<Goal|GoalGroup>+} mergedGoals = mergeGoalSetsWithGoals(goals);
+shared void build(String project, {<Goal|GoalSet>+} goals) {
+    {Goal+} mergedGoals = mergeGoalSetsWithGoals(goals);
     Integer exitCode = buildTasks(project, mergedGoals, process.arguments, consoleWriter);
     process.exit(exitCode);
 }
@@ -79,7 +79,7 @@ shared object exitCode {
     shared Integer errorOnTaskExecution = 5;
 }
 
-shared Integer buildTasks(String project, {<Goal|GoalGroup>+} goals, String[] arguments, Writer writer) {
+shared Integer buildTasks(String project, {Goal+} goals, String[] arguments, Writer writer) {
     Integer startTime = system.milliseconds;
     writer.info("## ceylon.build: ``project``");
     Integer code = processGoals(goals, arguments, writer);
@@ -93,7 +93,7 @@ shared Integer buildTasks(String project, {<Goal|GoalGroup>+} goals, String[] ar
     return code;
 }
 
-Integer processGoals({<Goal|GoalGroup>+} goals, String[] arguments, Writer writer) {
+Integer processGoals({Goal+} goals, String[] arguments, Writer writer) {
     value invalidTasks = invalidGoalsName(goals);
     if (!invalidTasks.empty) {
         writer.error("# invalid goals found ``invalidTasks``");

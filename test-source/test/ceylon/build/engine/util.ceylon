@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, Named, Writer, Context, Outcome, done }
+import ceylon.build.task { Goal, Writer, Context, Outcome, done }
 import ceylon.collection { LinkedList, MutableList }
 import ceylon.test { assertEquals }
 
@@ -8,8 +8,8 @@ Goal createTestGoal(String name, {Goal*} dependencies = []) {
     return Goal(name, [noOp], dependencies);
 }
 
-void assertElementsNamesAreEquals({Named*} expected, {Named*} actual) {
-    String(Named) name = (Named n) => n.name;
+void assertElementsNamesAreEquals({Goal*} expected, {Goal*} actual) {
+    String(Goal) name = (Goal n) => n.name;
     assertEquals(expected.collect(name), actual.collect(name));
 }
 
