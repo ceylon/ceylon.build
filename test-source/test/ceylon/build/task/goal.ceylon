@@ -4,7 +4,7 @@ import ceylon.test { assertEquals, test }
 Task noopTask = (Context context) => done;
 
 Goal createTestGoal(String name) {
-    return Goal(name, noopTask);
+    return Goal(name, [noopTask]);
 }
 
 test void shouldHaveGivenName() {
@@ -16,12 +16,12 @@ test void shouldHoldGivenTask() {
         print("hello");
         return done;
     };
-    Goal myGoal = Goal("MyGoal", myTask);
-    assertEquals(myTask, myGoal.task);
+    Goal myGoal = Goal("MyGoal", [myTask]);
+    assertEquals([myTask], myGoal.task);
 }
 
 test void shouldHaveNoDependenciesByDefault() {
-    Goal myGoal = Goal("MyGoal", noopTask);
+    Goal myGoal = Goal("MyGoal", [noopTask]);
     assertEquals([], myGoal.dependencies);
 }
 
@@ -29,6 +29,6 @@ test void shouldHoldDependencies() {
     Goal firstDependency = createTestGoal("firstDependency");
     Goal secondDependency = createTestGoal("secondDependency");
     value dependencies = [firstDependency, secondDependency];
-    Goal myGoal = Goal("MyGoal", noopTask, dependencies);
+    Goal myGoal = Goal("MyGoal", [noopTask], dependencies);
     assertEquals(dependencies, myGoal.dependencies);
 }

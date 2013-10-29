@@ -32,7 +32,7 @@ test void shouldExitWithErrorWhenNoGoalToRun() {
 test void shouldExitOnTaskFailure() {
     value writer = MockWriter();
     value a = createTestGoal("a");
-    value b = Goal("b", (Context context) => Failure());
+    value b = Goal("b", [(Context context) => Failure()]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
     assertEquals(exitCode.errorOnTaskExecution, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
@@ -49,7 +49,7 @@ test void shouldExitOnTaskError() {
     function throwException(Context context) {
         throw Exception("ex");
     }
-    value b = Goal("b", throwException);
+    value b = Goal("b", [throwException]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
     assertEquals(exitCode.errorOnTaskExecution, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
@@ -64,7 +64,7 @@ test void shouldExitOnTaskError() {
 test void shouldRunGoals(){
     value writer = MockWriter();
     value a = createTestGoal("a");
-    value b = Goal("b", (Context context) => Success("b succeed"));
+    value b = Goal("b", [(Context context) => Success("b succeed")]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
     assertEquals(exitCode.success, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));

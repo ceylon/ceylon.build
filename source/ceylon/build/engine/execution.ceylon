@@ -11,10 +11,12 @@ shared Integer runGoals({Goal*} goals, String[] arguments, {<Goal|GoalGroup>*} a
         for (goal in goals) {
             value goalArguments = filterArgumentsForGoal(goal, arguments);
             writer.info("# running ``goal.name``(``", ".join(goalArguments)``)");
-            value outcome = executeTask(goal.task, goalArguments, writer);
-            reportOutcome(outcome, goal, writer);
-            if (is Failure outcome) {
-                return exitCode.errorOnTaskExecution;
+            for (Task task in goal.task) {
+                value outcome = executeTask(task, goalArguments, writer);
+                reportOutcome(outcome, goal, writer);
+                if (is Failure outcome) {
+                    return exitCode.errorOnTaskExecution;
+                }
             }
         }
         return exitCode.success;

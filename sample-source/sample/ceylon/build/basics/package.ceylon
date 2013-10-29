@@ -17,13 +17,13 @@
                name = "compile";
                compile {
                    compilationUnits = "mymodule";
-               };
+               }
            },
            Goal {
                name = "doc";
                document {
                    modules = "mymodule";
-               };
+               }
            }
        };
    }

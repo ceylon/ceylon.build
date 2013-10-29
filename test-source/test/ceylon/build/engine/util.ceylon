@@ -5,7 +5,7 @@ import ceylon.test { assertEquals }
 Outcome noOp(Context context) => done;
 
 Goal createTestGoal(String name, {Goal*} dependencies = []) {
-    return Goal(name, noOp, dependencies);
+    return Goal(name, [noOp], dependencies);
 }
 
 void assertElementsNamesAreEquals({Named*} expected, {Named*} actual) {

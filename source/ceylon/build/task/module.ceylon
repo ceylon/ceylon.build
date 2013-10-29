@@ -13,10 +13,10 @@
    ```ceylon
    Goal hello = Goal {
        name = "hello";
-       function task(Context context) {
+       function(Context context) {
            context.writer.info("Hello World!");
            return done;
-       };
+       }
    };
    ```
    ## Task definition
@@ -26,22 +26,22 @@
    
    Here is an example of a simple task that will display `"Hello World!"` message:
    ```ceylon
-   function task(Context context) {
+   Outcome helloTask(Context context) {
        context.writer.info("Hello World!");
        return done;
-   };
+   }
    ```
    
    A task can also return a success / failure message
    ```ceylon
-   function task(Context context) {
+   Outcome myTask(Context context) {
        try {
            processMyXXXTask();
            return Success("operation xxx done");
        } catch (Exception exception) {
            return Failure("failed to do xxx", exception);
        }
-   };
+   }
    ```
    
    ## Dependencies
@@ -53,18 +53,18 @@
    ```ceylon
    Goal compile = Goal {
        name = "compile";
-       function task(Context context) {
+       function(Context context) {
            context.writer.info("compiling!");
            return done;
-       };
+       }
    };
    Goal run = Goal {
        name = "run";
-       function task(Context context) {
+       dependencies = [compile];
+       function(Context context) {
            context.writer.info("running!");
            return done;
-       };
-       dependencies = [compile];
+       }
    };
    ```
    With the above code, requesting execution of `run` goal will result in execution of goals `compile`
@@ -84,22 +84,22 @@
    ```ceylon
    Goal compileGoal = Goal {
        name = "compile";
-       compileTests {
+       compile {
            compilationUnits = "my.module";
-       };
+       }
    };
    Goal compileTestsGoal = Goal {
        name = "compile-tests";
        compileTests {
            compilationUnits = "test.my.module";
-       };
+       }
    };
    Goal runTestsGoal = Goal {
        name = "run-tests";
        runModule {
            moduleName = "test.my.module";
            version = "1.0.0";
-       };
+       }
    };
    GoalGroup test = GoalGroup {
        name = "test";
@@ -144,27 +144,27 @@
                name = rename("compile");
                compile {
                    compilationUnits = moduleName;
-               };
+               }
            },
            Goal {
                name = rename("tests-compile");
                compile {
                    compilationUnits = testModuleName;
                    sourceDirectories = testSourceDirectory;
-               };
+               }
            },
            Goal {
                name = rename("test");
                runModule {
                    moduleName = testModuleName;
                    version = testModuleVersion;
-               };
+               }
            },
            Goal {
                name = rename("doc");
                document {
                    modules = moduleName;
-               };
+               }
            }
        };
    }

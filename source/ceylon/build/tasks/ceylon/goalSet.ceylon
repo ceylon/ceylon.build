@@ -17,27 +17,27 @@ shared GoalSet ceylonModule(
             name = rename("compile");
             compile {
                 compilationUnits = moduleName;
-            };
+            }
         },
         Goal {
             name = rename("tests-compile");
             compile {
                 compilationUnits = testModuleName;
                 sourceDirectories = testSourceDirectory;
-            };
+            }
         },
         Goal {
             name = rename("test");
             runModule {
                 moduleName = testModuleName;
                 version = testModuleVersion;
-            };
+            }
         },
         Goal {
             name = rename("doc");
             document {
                 modules = moduleName;
-            };
+            }
         }
     };
 }

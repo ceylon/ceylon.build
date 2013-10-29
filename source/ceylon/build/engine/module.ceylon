@@ -29,7 +29,7 @@
                name = "clean";
                delete {
                    path = parsePath("modules/``myModule``");
-               };
+               }
            },
            ceylonModule {
                moduleName = myModule;
@@ -41,7 +41,7 @@
                    source = parsePath("modules/``myModule``");
                    destination = parsePath("/path/to/local/ceylon/repo/``myModule``");
                    overwrite = true;
-               };
+               }
            }
        };
    }
@@ -84,29 +84,29 @@
            name = "compile";
            compile {
                compilationUnits = myModule;
-           };
+           }
        };
        Goal compileTestsGoal = Goal {
            name = "tests-compile";
+           dependencies = [compileGoal];
            compileTests {
                compilationUnits = myTestModule;
-           };
-           dependencies = [compileGoal];
+           }
        };
        Goal testGoal = Goal {
            name = "test";
+           dependencies = [compileTestsGoal];
            runModule {
                moduleName = myTestModule;
                version = "1.0.0";
-           };
-           dependencies = [compileTestsGoal];
+           }
        };
        Goal docGoal = Goal {
            name = "doc";
            document {
                modules = myModule;
                includeSourceCode = true;
-           };
+           }
        };
        build {
            project = "My Build Project";
