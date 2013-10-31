@@ -5,7 +5,7 @@ String argumentPrefix = "-D";
 shared Integer runGoals({Goal*} goals, String[] arguments, {Goal*} availableGoals, Writer writer) {
     if (goals.empty) {
         writer.error("# no goal to run, available goals are: ``goalsNames(availableGoals)``");
-        return exitCode.noGoalToRun;
+        return exitCodes.noGoalToRun;
     } else {
         writer.info("# running goals: ``goals`` in order");
         for (goal in goals) {
@@ -13,10 +13,10 @@ shared Integer runGoals({Goal*} goals, String[] arguments, {Goal*} availableGoal
             writer.info("# running ``goal.name``(``", ".join(goalArguments)``)");
             value succeed = executeTasks(goal, goalArguments, writer);
             if (!succeed) {
-                return exitCode.errorOnTaskExecution;
+                return exitCodes.errorOnTaskExecution;
             }
         }
-        return exitCode.success;
+        return exitCodes.success;
     }
 }
 

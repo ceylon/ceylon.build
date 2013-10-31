@@ -1,5 +1,5 @@
 import ceylon.build.task { Goal, Context, Success, Failure }
-import ceylon.build.engine { filterArgumentsForGoal, runGoals, exitCode }
+import ceylon.build.engine { filterArgumentsForGoal, runGoals, exitCodes }
 import ceylon.test { assertEquals, assertTrue, test }
 
 test void testArgumentFiltering() {
@@ -18,13 +18,13 @@ test void testArgumentFiltering() {
 
 test void shouldExitWithErrorWhenNoGoalToRun() {
     value writer = MockWriter();
-    assertEquals(exitCode.noGoalToRun, runGoals([], [], [], writer));
+    assertEquals(exitCodes.noGoalToRun, runGoals([], [], [], writer));
     assertEquals([], writer.infoMessages);
     assertEquals(["# no goal to run, available goals are: []"], writer.errorMessages);
     writer.clear();
     value a = createTestGoal("a");
     value b = createTestGoal("b");
-    assertEquals(exitCode.noGoalToRun, runGoals([], ["-Da:foo"], [a, b], writer));
+    assertEquals(exitCodes.noGoalToRun, runGoals([], ["-Da:foo"], [a, b], writer));
     assertEquals([], writer.infoMessages);
     assertEquals(["# no goal to run, available goals are: [a, b]"], writer.errorMessages);
 }
@@ -35,7 +35,7 @@ test void shouldExitOnTaskFailure() {
     value b = Goal("b", [(Context context) => Failure()]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
-    assertEquals(exitCode.errorOnTaskExecution, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
+    assertEquals(exitCodes.errorOnTaskExecution, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
     assertEquals([
         "# running goals: [a, b, c] in order",
         "# running a(foo)",
@@ -52,7 +52,7 @@ test void shouldExitOnTaskError() {
     value b = Goal("b", [throwException]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
-    assertEquals(exitCode.errorOnTaskExecution, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
+    assertEquals(exitCodes.errorOnTaskExecution, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
     assertEquals([
         "# running goals: [a, b, c] in order",
         "# running a(foo)",
@@ -67,7 +67,7 @@ test void shouldRunGoals(){
     value b = Goal("b", [(Context context) => Success("b succeed")]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
-    assertEquals(exitCode.success, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
+    assertEquals(exitCodes.success, runGoals([a, b, c], ["-Da:foo"], [a, b, c, d], writer));
     assertEquals([
         "# running goals: [a, b, c] in order",
         "# running a(foo)",

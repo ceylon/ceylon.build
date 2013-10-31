@@ -55,7 +55,7 @@ shared void build(String project, {<Goal|GoalSet>+} goals) {
 }
 
 "List of program exit code"
-shared object exitCode {
+shared object exitCodes {
     "Success exit code as per standard conventions"
     shared Integer success = 0;
     
@@ -85,7 +85,7 @@ shared Integer buildTasks(String project, {Goal+} goals, String[] arguments, Wri
     Integer code = processGoals(goals, arguments, writer);
     Integer endTime = system.milliseconds;
     String duration = "duration ``(endTime - startTime) / 1000``s";
-    if (code == exitCode.success) {
+    if (code == exitCodes.success) {
         writer.info("## success - ``duration``");
     } else {
         writer.error("## failure - ``duration``");
@@ -98,20 +98,20 @@ Integer processGoals({Goal+} goals, String[] arguments, Writer writer) {
     if (!invalidTasks.empty) {
         writer.error("# invalid goals found ``invalidTasks``");
         writer.error("# goal name should match following format: ```validTaskNamePattern```");
-        return exitCode.invalidGoalFound;
+        return exitCodes.invalidGoalFound;
     }
     value duplicateGoals = findDuplicateGoals(goals);
     if (duplicateGoals.empty) {
         value cycles = analyzeDependencyCycles(goals);
         if (cycles.empty) {
-            value goalsToRun = buildGoalExecutionList(goals, process.arguments, writer);
+            value goalsToRun = buildGoalExecutionList(goals, arguments, writer);
             return runGoals(goalsToRun, arguments, goals, writer);
         } else {
             writer.error("# goal dependency cycle found between: ``cycles``");
-            return exitCode.dependencyCycleFound;
+            return exitCodes.dependencyCycleFound;
         }
     } else {
         writer.error("# duplicate goal names found: ``duplicateGoals``");
-        return exitCode.duplicateGoalsFound;
+        return exitCodes.duplicateGoalsFound;
     }
 }
