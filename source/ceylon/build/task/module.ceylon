@@ -4,9 +4,10 @@
    `ceylon.build.engine` is designed to work with goals.
 
    A [[Goal]] represents an action that can be launched by the engine.
-   It has a name and a task.
+   It has a name and a tasks list.
    - `Goal.name` is used in command line to ask for a goal execution.
-   - `Goal.task` is the operation that will be executed when the goal name is specified.
+   - `Goal.tasks` is a list of operations that will be executed in order when the goal name is specified.
+   - `Goal.dependencies` is a list of goals that must be executed before current goal's tasks.
    
    ## Simple goal definition
    Here is an example of how to define a simple `Goal`:
@@ -20,7 +21,7 @@
    };
    ```
    ## Task definition
-   A [[Task]] is the operation that will be executed when the goal name is specified.
+   A [[Task]] is an operation that will be executed when the goal name is specified.
    
    It takes a [[Context]] in input and returns an [[Outcome]] object telling if task execution succeed or failed.
    
@@ -43,6 +44,29 @@
        }
    }
    ```
+   
+   ## Goal with multiple tasks
+   A goal can have several tasks.
+   
+   ```ceylon
+   Goal myGoal = Goal {
+       name = "myGoal";
+       function(Context context) {
+           context.writer.info("starting");
+           return done;
+       },
+       function(Context context) {
+           context.writer.info("running");
+           return done;
+       },
+       function(Context context) {
+           context.writer.info("stopping");
+           return done;
+       }
+   };
+   ```
+   They will all be executed in order when goal execution is requested.
+   If one of the tasks fails, execution will stop and failure will be reported.
    
    ## Dependencies
    A goal can also define dependencies to other goals.
@@ -70,17 +94,23 @@
    With the above code, requesting execution of `run` goal will result in execution of goals `compile`
    followed by `run`.
    
-   # GoalGroup
-   A [[GoalGroup]] is a group of goals (or other goal groups) that are grouped together with a name.
+   ## Goals without tasks
+   It is possible to define a goal that don't have any tasks like below:
+   ```ceylon
+   Goal testGoal = Goal {
+       name = "test";
+   };
+   ```
+   Such a goal is useless, because it will not trigger any tasks execution.
    
-   Requesting the execution of a GoalGroup will cause the execution of all of the contained goals.
+   However, if dependencies are added it becomes a great way to group goals.
    
-   The execution of those goals will be done in the order of declaration in the group as long as
+   Requesting the execution of a such goal will cause the execution (as for any goals) of all of its dependencies.
+   The execution of those dependencies will be done in the order of declaration as long as
    dependencies between goals of the current execution list are satisfied.
-   
    If they are not, goals will be re-ordered to satisfy dependencies.
    
-   Here is an example of a simple goal group:
+   Here is an example:
    ```ceylon
    Goal compileGoal = Goal {
        name = "compile";
@@ -101,20 +131,19 @@
            version = "1.0.0";
        }
    };
-   GoalGroup test = GoalGroup {
+   Goal testGoal = Goal {
        name = "test";
-       compileTestsGoal,
-       runTestsGoal
+       dependencies = [compileTestsGoal, runTestsGoal];
    };
    ```
-   Execution of `test` will result in execution of goals `compileTestsGoal` followed by `runTestsGoal`.
+   Execution of `testGoal` will result in execution of goals `compileTestsGoal` followed by `runTestsGoal`.
    
-   As a goal group can also group existing goal groups, the following goal group can be created:
+   As a goals without tasks is like any other goal from a dependency point of view, it can be used as a
+   dependency which enables interesting constructions like below:
    ```ceylon
-   GoalGroup fullBuild = GoalGroup {
+   Goal fullBuild = Goal {
        name = "full-build";
-       compileGoal,
-       test
+       dependencies = [compileGoal, test];
    };
    ```
    Execution of `fullBuild` will trigger execution of `compileGoal`, `compileTestsGoal` and then `runTestsGoal`.

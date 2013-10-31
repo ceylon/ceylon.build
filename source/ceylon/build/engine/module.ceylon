@@ -6,13 +6,13 @@
    `ceylon.build.engine` objective is to achieve requested goals by executing their
    associated task function and orchestrating their dependencies.
    
-   More detailled documentation on how to create and use `Goal`, `GoalGroup` and `GoalSet`
+   More detailled documentation on how to create and use `Goal` and `GoalSet`
    can be found in module `ceylon.build.task`.
    
    # Build module
    
    A build module is a standard ceylon module that has in its `run()` function a call to
-   `build(String project, {<Goal|GoalGroup|GoalSet>+} goals)`.
+   `build(String project, {<Goal|GoalSet>+} goals)`.
    
    ```ceylon
    import ceylon.build.engine { build }
@@ -145,7 +145,7 @@
    In case a goal is requested multiple times (could be directly, or by dependency to it),
    the engine ensures that it will be executed only once.
    
-   Using previous example,executing `ceylon run mybuildmodule/1.0.0 test tests-compile compile`
+   Using previous example, executing `ceylon run mybuildmodule/1.0.0 test tests-compile compile`
    will result in the execution of goals `"compile"`, `"tests-compile` and `"test"` in this order.
    Even if `"compile"` and `"tests-compile"` are requested twice (once directly, and once per dependency)."""
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")

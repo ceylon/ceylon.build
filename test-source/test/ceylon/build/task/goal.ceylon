@@ -50,6 +50,9 @@ test void shouldHoldDependencies() {
     Goal firstDependency = createTestGoal("firstDependency");
     Goal secondDependency = createTestGoal("secondDependency");
     value dependencies = [firstDependency, secondDependency];
-    Goal myGoal = Goal("MyGoal", [], dependencies);
+    Goal myGoal = Goal {
+        name = "MyGoal";
+        dependencies = dependencies;
+    };
     assertEquals(dependencies, myGoal.dependencies);
 }
