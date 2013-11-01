@@ -213,4 +213,4 @@
    `"compile.b"`, `"tests-compile.b"`, `"test.b"`, `"doc.b"` in the build configuration.
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
-module ceylon.build.task "0.1" {}
+module ceylon.build.task "1.0.0" {}
