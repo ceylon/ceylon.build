@@ -63,7 +63,7 @@ shared Task compile(
     value filesList = stringIterable(files);
     checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
-        value command = buildCompileCommand {
+        value command = compileCommand {
             ceylon;
             currentWorkingDirectory;
             modulesList;
@@ -161,7 +161,7 @@ shared Task compileJs(
     value filesList = stringIterable(files);
     checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
-        value command = buildCompileJsCommand {
+        value command = compileJsCommand {
             ceylon;
             currentWorkingDirectory;
             modulesList;

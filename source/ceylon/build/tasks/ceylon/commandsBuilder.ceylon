@@ -1,6 +1,7 @@
 String ceylonExecutable = operatingSystem.name.lowercased.startsWith("windows") then "ceylon.bat" else "ceylon";
 
-shared String buildCompileCommand(
+"Builds a ceylon compile command as a `String` and returns it."
+shared String compileCommand(
         "Ceylon executable that will be used"
         String ceylon,
         "Specifies the current working directory for this tool.
@@ -82,7 +83,8 @@ shared String buildCompileCommand(
     return sb.string;
 }
 
-shared String buildCompileJsCommand(
+"Builds a ceylon compile-js command as a `String` and returns it."
+shared String compileJsCommand(
         "Ceylon executable that will be used"
         String ceylon,
         "Specifies the current working directory for this tool.
@@ -179,7 +181,8 @@ shared String buildCompileJsCommand(
     return sb.string;
 }
 
-shared String buildDocCommand(
+"Builds a ceylon doc command as a `String` and returns it."
+shared String docCommand(
         "Ceylon executable that will be used"
         String ceylon,
         "Specifies the current working directory for this tool.
@@ -273,7 +276,8 @@ shared String buildDocCommand(
     return sb.string;
 }
 
-shared String buildRunCommand(
+"Builds a ceylon run command as a `String` and returns it."
+shared String runCommand(
         "Ceylon executable that will be used"
         String ceylon,
         "Specifies the current working directory for this tool.
@@ -330,7 +334,8 @@ shared String buildRunCommand(
     return sb.string;
 }
 
-shared String buildRunJsCommand(
+"Builds a ceylon run-js command as a `String` and returns it."
+shared String runJsCommand(
         "Ceylon executable that will be used"
         String ceylon,
         "Specifies the current working directory for this tool.

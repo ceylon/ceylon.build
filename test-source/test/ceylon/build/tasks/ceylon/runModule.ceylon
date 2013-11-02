@@ -1,10 +1,10 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { all, buildRunCommand, cmr }
+import ceylon.build.tasks.ceylon { all, runCommand, cmr }
 
 test void shouldCreateRunCommand() {
     assertEquals{
         expected = "ceylon run mymodule/1.0.0";
-        actual = buildRunCommand {
+        actual = runCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
             moduleName = "mymodule";
@@ -24,7 +24,7 @@ test void shouldCreateRunCommand() {
 test void shouldCreateRunCommandWithAllVerboseFlag() {
     assertEquals{
         expected = "ceylon run --verbose mymodule/1.0.0";
-        actual = buildRunCommand {
+        actual = runCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
             moduleName = "mymodule";
@@ -46,7 +46,7 @@ test void shouldCreateRunCommandWithAllParametersSpecified() {
         expected = "./ceylon run --cwd=. --no-default-repositories --offline --rep=dependencies1" +
                 " --rep=dependencies2 --sysrep=system-repository --cacherep=cache-rep" +
                 " --run=main --verbose=cmr mymodule/0.1 --foo bar=toto";
-        actual = buildRunCommand {
+        actual = runCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
             moduleName = "mymodule";

@@ -1,10 +1,10 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { buildDocCommand }
+import ceylon.build.tasks.ceylon { docCommand }
 
 test void shouldCreateDocCommand() {
     assertEquals{
         expected = "ceylon doc mymodule";
-        actual = buildDocCommand {
+        actual = docCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
             modules = ["mymodule"];
@@ -34,7 +34,7 @@ test void shouldCreateDocCommandWithAllParametersSpecified() {
                 " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline" +
                 " --link=http://doc.mymodule.org --non-shared --source-code" +
                 " --ignore-broken-link --ignore-missing-doc --source=foo --source=bar mymodule1 mymodule2";
-        actual = buildDocCommand {
+        actual = docCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
             modules = ["mymodule1", "mymodule2"];

@@ -1,10 +1,10 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { buildCompileJsCommand }
+import ceylon.build.tasks.ceylon { compileJsCommand }
 
 test void shouldCreateCompileJsCommand() {
     assertEquals{
         expected = "ceylon compile-js mymodule";
-        actual = buildCompileJsCommand {
+        actual = compileJsCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
             modules = ["mymodule"];
@@ -38,7 +38,7 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
                 " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline --compact" +
                 " --no-comments --no-indent --no-module --optimize --profile" +
                 " --skip-src-archive --verbose --source=foo --source=bar module1 module2 file1.js file2.js";
-        actual = buildCompileJsCommand {
+        actual = compileJsCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
             modules = ["module1", "module2"];

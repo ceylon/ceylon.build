@@ -40,7 +40,7 @@ shared Task runModule(
         String? currentWorkingDirectory = null
 ) {
     return function(Context context) {
-        value command = buildRunCommand {
+        value command = runCommand {
             ceylon;
             currentWorkingDirectory;
             moduleName;
@@ -96,7 +96,7 @@ shared Task runJsModule(
         String? currentWorkingDirectory = null
 ) {
     return function(Context context) {
-        value command = buildRunJsCommand {
+        value command = runJsCommand {
             ceylon;
             currentWorkingDirectory;
             moduleName;

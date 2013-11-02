@@ -70,7 +70,7 @@ shared Task document(
         String? currentWorkingDirectory = null
 ) {
     return function(Context context) {
-        value command = buildDocCommand {
+        value command = docCommand {
             ceylon;
             currentWorkingDirectory;
             multipleStringsIterable(modules);

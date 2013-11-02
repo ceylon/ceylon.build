@@ -1,10 +1,10 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { buildRunJsCommand }
+import ceylon.build.tasks.ceylon { runJsCommand }
 
 test void shouldCreateRunJsCommand() {
     assertEquals{
         expected = "ceylon run-js mymodule/1.0.0";
-        actual = buildRunJsCommand {
+        actual = runJsCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
             moduleName = "mymodule";
@@ -26,7 +26,7 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
         expected = "./ceylon run-js --cwd=. --offline --rep=dependencies1 --rep=dependencies2" +
                 " --sysrep=system-repository --cacherep=cache-rep" +
                 " --run=main --debug=debug --node-exe=/usr/bin/nodejs mymodule/0.1 --foo bar=toto";
-        actual = buildRunJsCommand {
+        actual = runJsCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
             moduleName = "mymodule";

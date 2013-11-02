@@ -1,10 +1,10 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { buildCompileCommand, all, loader, cmrloader, benchmark, code, ast }
+import ceylon.build.tasks.ceylon { compileCommand, all, loader, cmrloader, benchmark, code, ast }
 
 test void shouldCreateCompileCommand() {
     assertEquals{
         expected = "ceylon compile mymodule";
-        actual = buildCompileCommand {
+        actual = compileCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
             modules = ["mymodule"];
@@ -29,7 +29,7 @@ test void shouldCreateCompileCommand() {
 test void shouldCreateCompileCommandWithAllVerboseFlag() {
     assertEquals{
         expected = "ceylon compile --verbose myfile.ceylon";
-        actual = buildCompileCommand {
+        actual = compileCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
             modules = [];
@@ -60,7 +60,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
                 " --sysrep=system-repository --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password" +
                 " --offline --no-default-repositories --verbose=loader,ast,code,cmrloader,benchmark" +
                 " --source=foo --source=bar module1 module2 file1.ceylon file2.ceylon";
-        actual = buildCompileCommand {
+        actual = compileCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
             modules = ["module1", "module2"];
