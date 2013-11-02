@@ -16,13 +16,13 @@ shared GoalSet ceylonModule(
         Goal {
             name = rename("compile");
             compile {
-                compilationUnits = moduleName;
+                modules = moduleName;
             }
         },
         Goal {
             name = rename("tests-compile");
             compile {
-                compilationUnits = testModuleName;
+                modules = testModuleName;
                 sourceDirectories = testSourceDirectory;
             }
         },

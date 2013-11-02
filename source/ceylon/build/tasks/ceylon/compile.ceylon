@@ -2,8 +2,10 @@ import ceylon.build.task { Task, Context }
 
 "Compiles a Ceylon module using `ceylon compile` command line."
 shared Task compile(
-        doc("name of compilation units (modules/files) to compile")
-        String|{String+} compilationUnits,
+        doc("name of modules to compile")
+        String|{String*} modules,
+        doc("name of files to compile")
+        {String*} files = [],
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -56,12 +58,15 @@ shared Task compile(
              (default: the directory where the tool is run from)
              (corresponding command line parameter: `--cwd=<dir>`)")
         String? currentWorkingDirectory = null
-) {
+    ) {
+    value modulesList = stringIterable(modules);
+    checkCompilationUnits(modulesList, files);
     return function(Context context) {
         value command = buildCompileCommand {
             ceylon;
             currentWorkingDirectory;
-            multipleStringsIterable(compilationUnits);
+            modulesList;
+            files;
             encoding;
             sourceDirectories;
             resourceDirectories;
@@ -83,8 +88,10 @@ shared Task compile(
 
 "Compiles a Ceylon module to javascript using `ceylon compile-js` command line."
 shared Task compileJs(
-        doc("name of compilation units (modules/files) to compile")
-        String|{String+} compilationUnits,
+        doc("name of modules to compile")
+        String|{String*} modules,
+        doc("name of files to compile")
+        {String*} files = [],
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -148,12 +155,15 @@ shared Task compileJs(
              (default: the directory where the tool is run from)
              (corresponding command line parameter: `--cwd=<dir>`)")
         String? currentWorkingDirectory = null
-) {
+    ) {
+    value modulesList = stringIterable(modules);
+    checkCompilationUnits(modulesList, files);
     return function(Context context) {
         value command = buildCompileJsCommand {
             ceylon;
             currentWorkingDirectory;
-            multipleStringsIterable(compilationUnits);
+            modulesList;
+            files;
             encoding;
             sourceDirectories;
             outputRepository;
@@ -177,27 +187,33 @@ shared Task compileJs(
     };
 }
 
+void checkCompilationUnits({String*} modules, {String*} files) {
+    value compilationUnits = concatenate(modules, files).sequence;
+    "Modules and/or files to compile must be provided"
+    assert (nonempty compilationUnits);
+}
+
 {String+} multipleStringsIterable(String|{String+} stringOrMultipleStrings) {
-    {String+} compileUnits;
+    {String+} stringIterable;
     switch(stringOrMultipleStrings)
     case (is String) {
-        compileUnits = {stringOrMultipleStrings};
+        stringIterable = {stringOrMultipleStrings};
     }
     case (is {String+}) {
-        compileUnits = stringOrMultipleStrings;
+        stringIterable = stringOrMultipleStrings;
     }
-    return compileUnits;
+    return stringIterable;
 }
 
 
 {String*} stringIterable(String|{String*} stringOrStrings) {
-    {String*} compileUnits;
+    {String*} stringIterable;
     switch(stringOrStrings)
     case (is String) {
-        compileUnits = {stringOrStrings};
+        stringIterable = {stringOrStrings};
     }
     case (is {String*}) {
-        compileUnits = stringOrStrings;
+        stringIterable = stringOrStrings;
     }
-    return compileUnits;
+    return stringIterable;
 }

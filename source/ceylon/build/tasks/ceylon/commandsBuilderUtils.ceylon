@@ -64,6 +64,11 @@ void appendVerboseModes(StringBuilder sb, {<CompileVerboseMode|RunVerboseMode>*}
     }
 }
 
+void appendCompilationUnits(StringBuilder sb, {String*} modules, {String*} files) {
+    sb.append(" ");
+    sb.append(" ".join(concatenate(modules, files)));
+}
+
 void appendCompact(StringBuilder sb, Boolean compact) {
     appendFlag(sb, "compact", compact);
 }
@@ -123,11 +128,11 @@ void appendRun(StringBuilder sb, String? functionNameToRun) {
 void appendDebug(StringBuilder sb, String? debug) {
     appendParameter(sb, "debug", debug);
 }
+
 void appendPathToNodeJs(StringBuilder sb, String? pathToNodeJs) {
     appendParameter(sb, "node-exe", pathToNodeJs);
 }
-
-        
+     
 void appendArguments(StringBuilder sb, {String*} arguments) {
     if (!arguments.empty) {
         sb.append(" ");

@@ -7,8 +7,10 @@ import ceylon.build.task { Task }
    
    `--source` command line parameter is set to `"test-source"`"""
 shared Task compileTests(
-        doc("name of compilation units (modules/files) to compile")
-        String|{String+} compilationUnits,
+        doc("name of modules to compile")
+        String|{String*} modules,
+        doc("name of files to compile")
+        {String*} files = [],
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -56,7 +58,8 @@ shared Task compileTests(
         String? currentWorkingDirectory = null
 ) {
     return compile {
-        compilationUnits;
+        modules;
+        files;
         encoding;
         testSourceDirectory;
         testResourceDirectory;
@@ -79,8 +82,10 @@ shared Task compileTests(
    
    `--source` command line parameter is set to `"test-source"`"""
 shared Task compileJsTests(
-        doc("name of compilation units (modules/files) to compile")
-        String|{String+} compilationUnits,
+        doc("name of modules to compile")
+        String|{String*} modules,
+        doc("name of files to compile")
+        {String*} files = [],
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -142,7 +147,8 @@ shared Task compileJsTests(
         String? currentWorkingDirectory = null
 ) {
     return compileJs {
-        compilationUnits;
+        modules;
+        files;
         encoding;
         testSourceDirectory;
         outputRepository;

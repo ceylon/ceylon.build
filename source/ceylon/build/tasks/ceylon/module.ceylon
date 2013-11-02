@@ -7,25 +7,25 @@
    A simple task to compile to jvm backend:
    ```ceylon
    Task compileTask = compile {
-       compilationUnits = "my.module";
+       modules = "my.module";
    };
    ```
    A simple task to compile to javascript backend:
    ```ceylon
    Task compileJsTask = compileJs {
-       compilationUnits = "my.module";
+       modules = "my.module";
    };
    ```
    Several modules can be compile at once:
    ```ceylon
    Task compileTask = compile {
-       compilationUnits = ["my.module1", "my.module2"];
+       modules = ["my.module1", "my.module2"];
    };
    ```
    Compiler options can be configured:
    ```ceylon
    Task compileTask = compile {
-       compilationUnits = ["my.module", "test.my.module"];
+       modules = ["my.module", "test.my.module"];
        encoding = "UTF-8";
        sourceDirectories = ["source", "test-source"];
        outputRepository = "~/.ceylon/repo";
@@ -39,13 +39,13 @@
    Task to compile tests to jvm backend:
    ```ceylon
    Task compileTestsTask = compileTests {
-       compilationUnits = "test.my.module";
+       modules = "test.my.module";
    };
    ```
    Task to compile tests to javascript backend:
    ```ceylon
    Task compileJsTestsTask = compileJsTests {
-       compilationUnits = "test.my.module";
+       modules = "test.my.module";
    };
    ```
    

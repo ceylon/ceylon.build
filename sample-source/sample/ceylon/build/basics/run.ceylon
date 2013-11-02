@@ -8,7 +8,7 @@ void run() {
         Goal {
             name = "compile";
             compile {
-                compilationUnits = "mymodule";
+                modules = "mymodule";
             }
         },
         Goal {

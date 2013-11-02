@@ -7,7 +7,7 @@ test void shouldCreateCompileCommand() {
         actual = buildCompileCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
-            compilationUnits = ["mymodule"];
+            modules = ["mymodule"];
             encoding = null;
             sourceDirectories = [];
             resourceDirectories = [];
@@ -28,11 +28,12 @@ test void shouldCreateCompileCommand() {
 
 test void shouldCreateCompileCommandWithAllVerboseFlag() {
     assertEquals{
-        expected = "ceylon compile --verbose mymodule";
+        expected = "ceylon compile --verbose myfile.ceylon";
         actual = buildCompileCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
-            compilationUnits = ["mymodule"];
+            modules = [];
+            files = ["myfile.ceylon"];
             encoding = null;
             sourceDirectories = [];
             resourceDirectories = [];
@@ -58,11 +59,12 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
                 " --sysrep=system-repository --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password" +
                 " --offline --no-default-repositories --verbose=loader,ast,code,cmrloader,benchmark" +
-                " --source=foo --source=bar mymodule1 file1.ceylon file2.ceylon";
+                " --source=foo --source=bar module1 module2 file1.ceylon file2.ceylon";
         actual = buildCompileCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
-            compilationUnits = ["mymodule1", "file1.ceylon", "file2.ceylon"];
+            modules = ["module1", "module2.ceylon"];
+            files = ["file1.ceylon", "file2.ceylon"];
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
             resourceDirectories = ["resource-a", "resource-c"];

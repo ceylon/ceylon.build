@@ -115,13 +115,13 @@
    Goal compileGoal = Goal {
        name = "compile";
        compile {
-           compilationUnits = "my.module";
+           modules = "my.module";
        }
    };
    Goal compileTestsGoal = Goal {
        name = "compile-tests";
        compileTests {
-           compilationUnits = "test.my.module";
+           modules = "test.my.module";
        }
    };
    Goal runTestsGoal = Goal {
@@ -172,13 +172,13 @@
            Goal {
                name = rename("compile");
                compile {
-                   compilationUnits = moduleName;
+                   modules = moduleName;
                }
            },
            Goal {
                name = rename("tests-compile");
                compile {
-                   compilationUnits = testModuleName;
+                   modules = testModuleName;
                    sourceDirectories = testSourceDirectory;
                }
            },

@@ -7,7 +7,8 @@ test void shouldCreateCompileJsCommand() {
         actual = buildCompileJsCommand {
             ceylon = "ceylon";
             currentWorkingDirectory = null;
-            compilationUnits = ["mymodule"];
+            modules = ["mymodule"];
+            files = [];
             encoding = null;
             sourceDirectories = [];
             outputRepository = null;
@@ -36,11 +37,12 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
                 " --out=~/.ceylon/repo --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
                 " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline --compact" +
                 " --no-comments --no-indent --no-module --optimize --profile" +
-                " --skip-src-archive --verbose --source=foo --source=bar mymodule file1.js file2.js";
+                " --skip-src-archive --verbose --source=foo --source=bar module1 module2 file1.js file2.js";
         actual = buildCompileJsCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
-            compilationUnits = ["mymodule", "file1.js", "file2.js"];
+            modules = ["module1", "module2"];
+            files = ["file1.js", "file2.js"];
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
             outputRepository = "~/.ceylon/repo";

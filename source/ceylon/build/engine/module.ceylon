@@ -83,14 +83,14 @@
        Goal compileGoal = Goal {
            name = "compile";
            compile {
-               compilationUnits = myModule;
+               modules = myModule;
            }
        };
        Goal compileTestsGoal = Goal {
            name = "tests-compile";
            dependencies = [compileGoal];
            compileTests {
-               compilationUnits = myTestModule;
+               modules = myTestModule;
            }
        };
        Goal testGoal = Goal {

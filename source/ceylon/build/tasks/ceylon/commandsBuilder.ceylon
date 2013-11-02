@@ -3,7 +3,8 @@ String ceylonExecutable = operatingSystem.name.lowercased.startsWith("windows") 
 shared String buildCompileCommand(
         String ceylon,
         String? currentWorkingDirectory,
-        {String+} compilationUnits,
+        {String*} modules,
+        {String*} files,
         String? encoding,
         {String*} sourceDirectories,
         {String*} resourceDirectories,
@@ -37,15 +38,15 @@ shared String buildCompileCommand(
     appendNoDefaultRepositories(sb, noDefaultRepositories);
     appendVerboseModes(sb, verboseModes);
     appendArguments(sb, arguments);
-    sb.append(" ");
-    sb.append(" ".join(compilationUnits));
+    appendCompilationUnits(sb, modules, files);
     return sb.string;
 }
 
 shared String buildCompileJsCommand(
         String ceylon,
         String? currentWorkingDirectory,
-        {String+} compilationUnits,
+        {String*} modules,
+        {String*} files,
         String? encoding,
         {String*} sourceDirectories,
         String? outputRepository,
@@ -87,8 +88,7 @@ shared String buildCompileJsCommand(
     appendSkipSourceArchive(sb, skipSourceArchive);
     appendVerbose(sb, verbose);
     appendArguments(sb, arguments);
-    sb.append(" ");
-    sb.append(" ".join(compilationUnits));
+    appendCompilationUnits(sb, modules, files);
     return sb.string;
 }
 
