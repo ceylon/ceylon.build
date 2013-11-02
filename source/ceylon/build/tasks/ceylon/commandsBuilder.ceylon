@@ -193,46 +193,46 @@ shared String buildDocCommand(
          (corresponding command line parameter: `--encoding=<encoding>`)"
         String? encoding,
         "Path to source files
-             (default: './source')
-             (corresponding command line parameter: `--source=<dirs>`)"
+         (default: './source')
+         (corresponding command line parameter: `--source=<dirs>`)"
         {String*} sourceDirectories,
         "Specifies the output module repository (which must be publishable).
-             (default: './modules')
-             (corresponding command line parameter: `--out=<url>`)"
+         (default: './modules')
+         (corresponding command line parameter: `--out=<url>`)"
         String? outputRepository,
         "Specifies a module repository containing dependencies. Can be specified multiple times.
-             (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
-             (corresponding command line parameter: `--rep=<url>`)"
+         (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
+         (corresponding command line parameter: `--rep=<url>`)"
         {String*} repositories,
         "Specifies the system repository containing essential modules.
-             (default: '$CEYLON_HOME/repo')
-             (corresponding command line parameter: `--sysrep=<url>`)"
+         (default: '$CEYLON_HOME/repo')
+         (corresponding command line parameter: `--sysrep=<url>`)"
         String? systemRepository,
         "Specifies the folder to use for caching downloaded modules.
-             (default: '~/.ceylon/cache')
-             (corresponding command line parameter: `--cacherep=<url>`)"
+         (default: '~/.ceylon/cache')
+         (corresponding command line parameter: `--cacherep=<url>`)"
         String? cacheRepository,
         "Sets the user name for use with an authenticated output repository
-             (corresponding command line parameter: `--user=<name>`)"
+         (corresponding command line parameter: `--user=<name>`)"
         String? user,
         "Sets the password for use with an authenticated output repository
-             (corresponding command line parameter: `--pass=<secret>`)"
+         (corresponding command line parameter: `--pass=<secret>`)"
         String? password,
         "Enables offline mode that will prevent the module loader from connecting to remote repositories.
          (corresponding command line parameter: `--offline`)"
         Boolean offline,
         "The URL of a module repository containing documentation for external dependencies.
-           
-           Parameter url must be one of supported protocols (http://, https:// or file://).
-           Parameter url can be prefixed with module name pattern, separated by a '=' character,
-           determine for which external modules will be use.
-           
-           Examples:
-           
-           --link https://modules.ceylon-lang.org/
-           --link ceylon.math=https://modules.ceylon-lang.org/
-           
-           (corresponding command line parameter: `--link=<url>`)"
+         
+         Parameter url must be one of supported protocols (http://, https:// or file://).
+         Parameter url can be prefixed with module name pattern, separated by a '=' character,
+         determine for which external modules will be use.
+         
+         Examples:
+         
+         - --link https://modules.ceylon-lang.org/
+         - --link ceylon.math=https://modules.ceylon-lang.org/
+         
+         (corresponding command line parameter: `--link=<url>`)"
         String? link,
         "Includes documentation for package-private declarations.
          (corresponding command line parameter: `--non-shared`)"
