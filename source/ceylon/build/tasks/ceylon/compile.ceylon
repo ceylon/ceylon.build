@@ -142,7 +142,7 @@ shared Task compileJs(
              (corresponding command line parameter: `--optimize`)")
         Boolean optimize = false,
         doc("Time the compilation phases (results are printed to standard error)
-             (corresponding command line parameter: `--offline`)")
+             (corresponding command line parameter: `--profile`)")
         Boolean profile = false,
         doc("Do NOT generate .src archive - useful when doing joint compilation
              (corresponding command line parameter: `--skip-src-archive`)")
