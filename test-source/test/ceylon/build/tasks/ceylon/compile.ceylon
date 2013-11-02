@@ -63,7 +63,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
         actual = buildCompileCommand {
             ceylon = "./ceylon";
             currentWorkingDirectory = ".";
-            modules = ["module1", "module2.ceylon"];
+            modules = ["module1", "module2"];
             files = ["file1.ceylon", "file2.ceylon"];
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
