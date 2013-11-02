@@ -11,7 +11,7 @@ shared Task document(
         doc("Path to source files
              (default: './source')
              (corresponding command line parameter: `--source=<dirs>`)")
-        {String*} sourceDirectories = [],
+        String|{String*} sourceDirectories = [],
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')
              (corresponding command line parameter: `--out=<url>`)")
@@ -75,7 +75,7 @@ shared Task document(
             currentWorkingDirectory;
             multipleStringsIterable(modules);
             encoding;
-            sourceDirectories;
+            stringIterable(sourceDirectories);
             outputRepository;
             stringIterable(repositories);
             systemRepository;

@@ -5,7 +5,7 @@ shared Task compile(
         doc("name of modules to compile")
         String|{String*} modules,
         doc("name of files to compile")
-        {String*} files = [],
+        String|{String*} files = [],
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -13,11 +13,11 @@ shared Task compile(
         doc("Path to source files
              (default: './source')
              (corresponding command line parameter: `--source=<dirs>`)")
-        {String*} sourceDirectories = [],
+        String|{String*} sourceDirectories = [],
         doc("Path to directory containing resource files
              (default: './resource')
              (corresponding command line parameter: `--resource=<dirs>`)")
-        {String*} resourceDirectories = [],
+        String|{String*} resourceDirectories = [],
         doc("Passes an option to the underlying java compiler
              (corresponding command line parameter: `--javac=<option>`)")
         String? javacOptions = null,
@@ -60,16 +60,17 @@ shared Task compile(
         String? currentWorkingDirectory = null
     ) {
     value modulesList = stringIterable(modules);
-    checkCompilationUnits(modulesList, files);
+    value filesList = stringIterable(files);
+    checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
         value command = buildCompileCommand {
             ceylon;
             currentWorkingDirectory;
             modulesList;
-            files;
+            filesList;
             encoding;
-            sourceDirectories;
-            resourceDirectories;
+            stringIterable(sourceDirectories);
+            stringIterable(resourceDirectories);
             javacOptions;
             outputRepository;
             stringIterable(repositories);
@@ -91,7 +92,7 @@ shared Task compileJs(
         doc("name of modules to compile")
         String|{String*} modules,
         doc("name of files to compile")
-        {String*} files = [],
+        String|{String*} files = [],
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -99,7 +100,7 @@ shared Task compileJs(
         doc("Path to source files
              (default: './source')
              (corresponding command line parameter: `--source=<dirs>`)")
-        {String*} sourceDirectories = [],
+        String|{String*} sourceDirectories = [],
         doc("Specifies the output module repository (which must be publishable).
              (default: './modules')
              (corresponding command line parameter: `--out=<url>`)")
@@ -157,15 +158,16 @@ shared Task compileJs(
         String? currentWorkingDirectory = null
     ) {
     value modulesList = stringIterable(modules);
-    checkCompilationUnits(modulesList, files);
+    value filesList = stringIterable(files);
+    checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
         value command = buildCompileJsCommand {
             ceylon;
             currentWorkingDirectory;
             modulesList;
-            files;
+            filesList;
             encoding;
-            sourceDirectories;
+            stringIterable(sourceDirectories);
             outputRepository;
             stringIterable(repositories);
             systemRepository;

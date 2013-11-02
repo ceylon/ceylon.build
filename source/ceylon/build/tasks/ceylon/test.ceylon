@@ -10,7 +10,7 @@ shared Task compileTests(
         doc("name of modules to compile")
         String|{String*} modules,
         doc("name of files to compile")
-        {String*} files = [],
+        String|{String*} files = [],
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
@@ -85,7 +85,7 @@ shared Task compileJsTests(
         doc("name of modules to compile")
         String|{String*} modules,
         doc("name of files to compile")
-        {String*} files = [],
+        String|{String*} files = [],
         doc("encoding used for reading source files
              (default: platform-specific)
              (corresponding command line parameter: `--encoding=<encoding>`)")
