@@ -62,8 +62,8 @@ shared Task document(
         "Do not print warnings about missing documentation.
          (corresponding command line parameter: `--ignore-missing-doc`)"
         Boolean ignoreMissingDoc = false,
-        "Ceylon executable that will be used"
-        String ceylon = ceylonExecutable,
+        "Ceylon executable that will be used or null to use current ceylon tool"
+        String? ceylon = null,
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
