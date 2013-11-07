@@ -3,9 +3,8 @@ import ceylon.build.tasks.ceylon { compileCommand, all, loader, cmrloader, bench
 
 test void shouldCreateCompileCommand() {
     assertEquals{
-        expected = "ceylon compile mymodule";
+        expected = "compile mymodule";
         actual = compileCommand {
-            ceylon = "ceylon";
             currentWorkingDirectory = null;
             modules = ["mymodule"];
             encoding = null;
@@ -28,9 +27,8 @@ test void shouldCreateCompileCommand() {
 
 test void shouldCreateCompileCommandWithAllVerboseFlag() {
     assertEquals{
-        expected = "ceylon compile --verbose myfile.ceylon";
+        expected = "compile --verbose myfile.ceylon";
         actual = compileCommand {
-            ceylon = "ceylon";
             currentWorkingDirectory = null;
             modules = [];
             files = ["myfile.ceylon"];
@@ -54,14 +52,13 @@ test void shouldCreateCompileCommandWithAllVerboseFlag() {
 
 test void shouldCreateCompileCommandWithAllParametersSpecified() {
     assertEquals{
-        expected = "./ceylon compile --cwd=. --encoding=UTF-8 --source=source-a --source=source-b" +
+        expected = "compile --cwd=. --encoding=UTF-8 --source=source-a --source=source-b" +
                 " --resource=resource-a --resource=resource-c" +
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
                 " --sysrep=system-repository --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password" +
                 " --offline --no-default-repositories --verbose=loader,ast,code,cmrloader,benchmark" +
                 " --source=foo --source=bar module1 module2 file1.ceylon file2.ceylon";
         actual = compileCommand {
-            ceylon = "./ceylon";
             currentWorkingDirectory = ".";
             modules = ["module1", "module2"];
             files = ["file1.ceylon", "file2.ceylon"];

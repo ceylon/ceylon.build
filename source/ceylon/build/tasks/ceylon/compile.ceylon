@@ -64,7 +64,6 @@ shared Task compile(
     checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
         value command = compileCommand {
-            ceylon;
             currentWorkingDirectory;
             modulesList;
             filesList;
@@ -83,7 +82,7 @@ shared Task compile(
             verboseModes;
             context.arguments;
         };
-        return execute(context.writer, "compiling", command);
+        return execute(context.writer, "compiling", ceylon, command);
     };
 }
 
@@ -162,7 +161,6 @@ shared Task compileJs(
     checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
         value command = compileJsCommand {
-            ceylon;
             currentWorkingDirectory;
             modulesList;
             filesList;
@@ -185,7 +183,7 @@ shared Task compileJs(
             verbose;
             context.arguments;
         };
-        return execute(context.writer, "compiling", command);
+        return execute(context.writer, "compiling", ceylon, command);
     };
 }
 

@@ -2,8 +2,6 @@ String ceylonExecutable = operatingSystem.name.lowercased.startsWith("windows") 
 
 "Builds a ceylon compile command as a `String` and returns it."
 shared String compileCommand(
-        "Ceylon executable that will be used"
-        String ceylon,
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -62,8 +60,7 @@ shared String compileCommand(
         {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
-    sb.append(ceylon);
-    sb.append(" compile");
+    sb.append("compile");
     appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
@@ -85,8 +82,6 @@ shared String compileCommand(
 
 "Builds a ceylon compile-js command as a `String` and returns it."
 shared String compileJsCommand(
-        "Ceylon executable that will be used"
-        String ceylon,
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -156,8 +151,7 @@ shared String compileJsCommand(
         {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
-    sb.append(ceylon);
-    sb.append(" compile-js");
+    sb.append("compile-js");
     appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
@@ -183,8 +177,6 @@ shared String compileJsCommand(
 
 "Builds a ceylon doc command as a `String` and returns it."
 shared String docCommand(
-        "Ceylon executable that will be used"
-        String ceylon,
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -253,8 +245,7 @@ shared String docCommand(
         {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
-    sb.append(ceylon);
-    sb.append(" doc");
+    sb.append("doc");
     appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
@@ -278,8 +269,6 @@ shared String docCommand(
 
 "Builds a ceylon run command as a `String` and returns it."
 shared String runCommand(
-        "Ceylon executable that will be used"
-        String ceylon,
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -316,8 +305,7 @@ shared String runCommand(
         {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
-    sb.append(ceylon);
-    sb.append(" run");
+    sb.append("run");
     appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendNoDefaultRepositories(sb, noDefaultRepositories);
     appendOfflineMode(sb, offline);
@@ -336,8 +324,6 @@ shared String runCommand(
 
 "Builds a ceylon run-js command as a `String` and returns it."
 shared String runJsCommand(
-        "Ceylon executable that will be used"
-        String ceylon,
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -374,8 +360,7 @@ shared String runJsCommand(
         {String*} arguments
         ) {
     StringBuilder sb = StringBuilder();
-    sb.append(ceylon);
-    sb.append(" run-js");
+    sb.append("run-js");
     appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendOfflineMode(sb, offline);
     appendRepositories(sb, repositories);

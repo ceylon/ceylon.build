@@ -71,7 +71,6 @@ shared Task document(
 ) {
     return function(Context context) {
         value command = docCommand {
-            ceylon;
             currentWorkingDirectory;
             multipleStringsIterable(modules);
             encoding;
@@ -90,6 +89,6 @@ shared Task document(
             ignoreMissingDoc;
             context.arguments;
         };
-        return execute(context.writer, "documenting", command);
+        return execute(context.writer, "documenting", ceylon, command);
     };
 }

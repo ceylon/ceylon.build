@@ -3,9 +3,8 @@ import ceylon.build.tasks.ceylon { runJsCommand }
 
 test void shouldCreateRunJsCommand() {
     assertEquals{
-        expected = "ceylon run-js mymodule/1.0.0";
+        expected = "run-js mymodule/1.0.0";
         actual = runJsCommand {
-            ceylon = "ceylon";
             currentWorkingDirectory = null;
             moduleName = "mymodule";
             version = "1.0.0";
@@ -23,11 +22,10 @@ test void shouldCreateRunJsCommand() {
 
 test void shouldCreateRunJsCommandWithAllParametersSpecified() {
     assertEquals{
-        expected = "./ceylon run-js --cwd=. --offline --rep=dependencies1 --rep=dependencies2" +
+        expected = "run-js --cwd=. --offline --rep=dependencies1 --rep=dependencies2" +
                 " --sysrep=system-repository --cacherep=cache-rep" +
                 " --run=main --debug=debug --node-exe=/usr/bin/nodejs mymodule/0.1 --foo bar=toto";
         actual = runJsCommand {
-            ceylon = "./ceylon";
             currentWorkingDirectory = ".";
             moduleName = "mymodule";
             version = "0.1";

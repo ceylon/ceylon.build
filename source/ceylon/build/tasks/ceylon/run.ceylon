@@ -41,7 +41,6 @@ shared Task runModule(
 ) {
     return function(Context context) {
         value command = runCommand {
-            ceylon;
             currentWorkingDirectory;
             moduleName;
             version;
@@ -54,7 +53,7 @@ shared Task runModule(
             verboseModes;
             context.arguments;
         };
-        return execute(context.writer, "running", command);
+        return execute(context.writer, "running", ceylon, command);
     };
 }
 
@@ -97,7 +96,6 @@ shared Task runJsModule(
 ) {
     return function(Context context) {
         value command = runJsCommand {
-            ceylon;
             currentWorkingDirectory;
             moduleName;
             version;
@@ -110,6 +108,6 @@ shared Task runJsModule(
             pathToNodeJs;
             context.arguments;
         };
-        return execute(context.writer, "running", command);
+        return execute(context.writer, "running", ceylon, command);
     };
 }
