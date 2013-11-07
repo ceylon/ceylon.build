@@ -1,4 +1,5 @@
-String ceylonExecutable = operatingSystem.name.lowercased.startsWith("windows") then "ceylon.bat" else "ceylon";
+"Name of ceylon executable"
+shared String ceylonExecutable = operatingSystem.name.lowercased.startsWith("windows") then "ceylon.bat" else "ceylon";
 
 "Builds a ceylon compile command as a `String` and returns it."
 shared String compileCommand(
