@@ -2,7 +2,7 @@ import ceylon.build.task { Goal, Task, Context, Writer, Outcome, Success, Failur
 
 String argumentPrefix = "-D";
 
-shared Integer runGoals({Goal*} goals, [String*] arguments, {Goal*} availableGoals, Writer writer) {
+Integer runGoals({Goal*} goals, [String*] arguments, {Goal*} availableGoals, Writer writer) {
     if (goals.empty) {
         writer.error("# no goal to run, available goals are: ``goalsNames(availableGoals)``");
         return exitCodes.noGoalToRun;
