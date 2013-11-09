@@ -1,7 +1,7 @@
 import ceylon.build.task { Goal, Writer }
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
-shared {Goal*} buildGoalExecutionList({Goal+} definitions, String[] arguments, Writer writer) {
+shared {Goal*} buildGoalExecutionList({Goal+} definitions, [String*] arguments, Writer writer) {
     value goalsRequested = findGoalsToExecute(definitions, arguments, writer);
     MutableList<Goal> goalsToExecute = LinkedList<Goal>();
     for (goal in goalsRequested) {
@@ -10,7 +10,7 @@ shared {Goal*} buildGoalExecutionList({Goal+} definitions, String[] arguments, W
     return reduce(goalsToExecute);
 }
 
-shared {Goal*} findGoalsToExecute({Goal+} definitions, String[] arguments, Writer writer) {
+shared {Goal*} findGoalsToExecute({Goal+} definitions, [String*] arguments, Writer writer) {
     MutableList<Goal> goalsToExecute = LinkedList<Goal>();
     for (argument in arguments) {
         if (!argument.startsWith(argumentPrefix)) {

@@ -79,7 +79,7 @@ shared object exitCodes {
     shared Integer errorOnTaskExecution = 5;
 }
 
-shared Integer buildTasks(String project, {Goal+} goals, String[] arguments, Writer writer) {
+shared Integer buildTasks(String project, {Goal+} goals, [String*] arguments, Writer writer) {
     Integer startTime = system.milliseconds;
     writer.info("## ceylon.build: ``project``");
     Integer code = processGoals(goals, arguments, writer);
@@ -93,7 +93,7 @@ shared Integer buildTasks(String project, {Goal+} goals, String[] arguments, Wri
     return code;
 }
 
-Integer processGoals({Goal+} goals, String[] arguments, Writer writer) {
+Integer processGoals({Goal+} goals, [String*] arguments, Writer writer) {
     value invalidTasks = invalidGoalsName(goals);
     if (!invalidTasks.empty) {
         writer.error("# invalid goals found ``invalidTasks``");

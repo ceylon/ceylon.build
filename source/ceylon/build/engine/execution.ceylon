@@ -2,7 +2,7 @@ import ceylon.build.task { Goal, Task, Context, Writer, Outcome, Success, Failur
 
 String argumentPrefix = "-D";
 
-shared Integer runGoals({Goal*} goals, String[] arguments, {Goal*} availableGoals, Writer writer) {
+shared Integer runGoals({Goal*} goals, [String*] arguments, {Goal*} availableGoals, Writer writer) {
     if (goals.empty) {
         writer.error("# no goal to run, available goals are: ``goalsNames(availableGoals)``");
         return exitCodes.noGoalToRun;
@@ -22,7 +22,7 @@ shared Integer runGoals({Goal*} goals, String[] arguments, {Goal*} availableGoal
 
 String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name})``]";
 
-shared String[] filterArgumentsForGoal(Goal goal, String[] arguments) {
+shared [String*] filterArgumentsForGoal(Goal goal, [String*] arguments) {
     String prefix = "``argumentPrefix````goal.name``:";
     return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)];
 }
