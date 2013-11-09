@@ -1,4 +1,4 @@
-import ceylon.build.engine { buildTasks, exitCodes }
+import ceylon.build.engine { runEngine, exitCodes }
 import ceylon.build.task { Goal, Context, Failure, done, Writer }
 import ceylon.test { test, assertEquals }
 import ceylon.collection { MutableList, LinkedList }
@@ -46,7 +46,7 @@ Integer execute([String*] arguments, Writer writer, MutableList<String> executed
         name = "goalWithOnlyDependenciesOnGoalsWithoutTasks";
         dependencies = [goalWithoutTasks];
     };
-    return buildTasks {
+    return runEngine {
         project = "My Build Project";
         goals = [
             goalWithoutTasks, goalWithOneTask, goalWithMultipleTasks,
