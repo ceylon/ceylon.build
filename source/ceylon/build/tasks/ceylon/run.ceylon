@@ -32,8 +32,8 @@ shared Task runModule(
         "Produce verbose output.
          (corresponding command line parameter: `--verbose=<flags>`)"
         {RunVerboseMode*}|AllVerboseModes verboseModes = [],
-        "Ceylon executable that will be used or null to use current ceylon tool"
-        String? ceylon = null,
+        "Ceylon executable that will be used"
+        String ceylon = ceylonExecutable,
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
