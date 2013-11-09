@@ -22,7 +22,7 @@ shared Integer runGoals({Goal*} goals, [String*] arguments, {Goal*} availableGoa
 
 String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name})``]";
 
-shared [String*] filterArgumentsForGoal(Goal goal, [String*] arguments) {
+[String*] filterArgumentsForGoal(Goal goal, [String*] arguments) {
     String prefix = "``argumentPrefix````goal.name``:";
     return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)];
 }

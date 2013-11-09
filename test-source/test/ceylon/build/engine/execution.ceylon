@@ -1,19 +1,35 @@
-import ceylon.build.task { Goal, Context, Success, Failure }
-import ceylon.build.engine { filterArgumentsForGoal, runGoals, exitCodes }
+import ceylon.build.task { Goal, Task, Context, Success, Failure, done }
+import ceylon.build.engine { runGoals, exitCodes }
 import ceylon.test { assertEquals, assertTrue, test }
+import ceylon.collection { HashMap, MutableMap }
+
+void assertArgumentsAreFiltered({String*} inputArguments, {String*} expectedGoalArguments ) {
+    Task registerArguments(String taskName, MutableMap<String, {String*}> argumentsMap) {
+        return function (Context context) {
+            if (argumentsMap.defines(taskName)) {
+                return Failure("``taskName`` have already arguments");
+            }
+            argumentsMap.put(taskName, context.arguments);
+            return done;
+        };
+    }
+    value argumentsMap = HashMap<String, {String*}>();
+    Goal a = Goal("a", [registerArguments("a", argumentsMap)]);
+    assertEquals(callEngine([a], ["a", *inputArguments]), exitCodes.success);
+    assertEquals(argumentsMap.get("a"), expectedGoalArguments);
+}
 
 test void testArgumentFiltering() {
-    Goal a = createTestGoal("a");
-    assertEquals([], filterArgumentsForGoal(a, []));
-    assertEquals([], filterArgumentsForGoal(a, ["clean", "compile"]));
-    assertEquals([], filterArgumentsForGoal(a, ["clean", "compile", "-D"]));
-    assertEquals([], filterArgumentsForGoal(a, ["clean", "compile", "-Da"]));
-    assertEquals([], filterArgumentsForGoal(a, ["clean", "compile", "-Daa"]));
-    assertEquals([""], filterArgumentsForGoal(a, ["clean", "compile", "-Da:"]));
-    assertEquals(["foo"], filterArgumentsForGoal(a, ["clean", "compile", "-Da:foo"]));
-    assertEquals(["foo=bar"], filterArgumentsForGoal(a, ["clean", "compile", "-Da:foo=bar"]));
-    assertEquals(["foo=bar", "baz=toto"], filterArgumentsForGoal(a, ["clean", "compile", "-Da:foo=bar", "-Da:baz=toto"]));
-    assertEquals(["foo=bar", "baz=toto"], filterArgumentsForGoal(a, ["clean", "compile", "-Da:foo=bar", "-Db:xxx=yyy", "-Da:baz=toto"]));
+    assertArgumentsAreFiltered(["a"], []);
+    assertArgumentsAreFiltered(["a"], []);
+    assertArgumentsAreFiltered(["a", "-D"], []);
+    assertArgumentsAreFiltered(["a", "-Da"], []);
+    assertArgumentsAreFiltered(["a", "-Daa"], []);
+    assertArgumentsAreFiltered(["a", "-Da:"], [""]);
+    assertArgumentsAreFiltered(["a", "-Da:foo"], ["foo"]);
+    assertArgumentsAreFiltered(["a", "-Da:foo=bar"], ["foo=bar"]);
+    assertArgumentsAreFiltered(["-Da:foo=bar", "-Da:baz=toto"], ["foo=bar", "baz=toto"]);
+    assertArgumentsAreFiltered(["-Da:foo=bar", "-Db:xxx=yyy", "-Da:baz=toto"], ["foo=bar", "baz=toto"]);
 }
 
 test void shouldExitWithErrorWhenNoGoalToRun() {
