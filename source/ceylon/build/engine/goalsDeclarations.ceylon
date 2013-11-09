@@ -15,7 +15,7 @@ shared Boolean invalidGoalName(String name) {
     return !validTaskName.matcher(javaString(name.string)).matches();
 }
 
-shared {String*} findDuplicateGoals({Goal+} goals) {
+{String*} findDuplicateGoals({Goal+} goals) {
     value map = HashMap<String, Integer>();
     for (goal in goals) {
         String name = goal.name;
