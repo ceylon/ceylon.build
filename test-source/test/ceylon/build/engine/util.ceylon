@@ -1,6 +1,7 @@
 import ceylon.build.task { Goal, Writer, Context, Outcome, done }
 import ceylon.collection { LinkedList, MutableList }
 import ceylon.test { assertEquals }
+import ceylon.build.engine { runEngine }
 
 Outcome noOp(Context context) => done;
 
@@ -31,4 +32,8 @@ class MockWriter() satisfies Writer {
         internalInfoMessages.clear();
         internalErrorMessages.clear();
     }
+}
+
+Integer callEngine({Goal+} goals, [String*] arguments = [ for (goal in goals) goal.name ], Writer writer = MockWriter()) {
+    return runEngine(goals, "test project", arguments, writer);
 }
