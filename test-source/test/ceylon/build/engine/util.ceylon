@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, Writer, Context, Outcome, done }
+import ceylon.build.task { Goal, Writer, Context, Outcome, done, GoalSet }
 import ceylon.collection { LinkedList, MutableList }
 import ceylon.test { assertEquals }
 import ceylon.build.engine { runEngine }
@@ -34,6 +34,23 @@ class MockWriter() satisfies Writer {
     }
 }
 
-Integer callEngine({Goal+} goals, [String*] arguments = [ for (goal in goals) goal.name ], Writer writer = MockWriter()) {
+[String+] names({<Goal|GoalSet>+} goals) {
+    value namesList = LinkedList<String>();
+    for (goal in goals) {
+        switch (goal)
+        case (is Goal) {
+            namesList.add(goal.name);
+        } case (is GoalSet) {
+            for (innerGoal in goal.goals) {
+                namesList.add(innerGoal.name);
+            }
+        }
+    }
+    [String*] names = namesList.sequence;
+    assert(nonempty names);
+    return names;
+}
+
+Integer callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goals), Writer writer = MockWriter()) {
     return runEngine(goals, "test project", arguments, writer);
 }

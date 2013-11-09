@@ -1,30 +1,38 @@
-import ceylon.build.engine { mergeGoalSetsWithGoals }
-import ceylon.build.task { Goal, GoalSet }
-import ceylon.test { test }
+import ceylon.build.engine { exitCodes }
+import ceylon.build.task { Goal, GoalSet, Task, Context, Outcome, done }
+import ceylon.test { test, assertEquals, assertTrue }
 
-Goal goalA = createTestGoal("a");
-Goal goalB = createTestGoal("b");
-
-test void shouldKeepGoals() {
-    assertElementsNamesAreEquals({ goalA }, mergeGoalSetsWithGoals({ goalA }));
-    assertElementsNamesAreEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalA, goalB }));
-}
-test void shouldExplodeGoalSetInGoals() {
-    GoalSet goalSetAB = GoalSet({goalA, goalB});
-    assertElementsNamesAreEquals({ goalA, goalB }, mergeGoalSetsWithGoals({ goalSetAB }));
+test void shouldListGoalsFromGoalSet() {
+    value goals = goalsAndGoalSets();
+    value writer = MockWriter();
+    Integer exitCode = callEngine(goals, [], writer);
+    assertEquals(exitCode, exitCodes.noGoalToRun);
+    assertEquals(writer.errorMessages.sequence[0], "# no goal to run, available goals are: [a, c, d, e, b, f, g]");
 }
 
-test void shouldMergeGoalsAndGoalSets() {
-    Goal goalC = createTestGoal("c");
-    Goal goalD = createTestGoal("d");
-    Goal goalE = createTestGoal("e");
-    Goal goalF = createTestGoal("f");
-    Goal goalG = createTestGoal("g");
+test void shouldRunGoalsImportedFromGoalSet() {
+    variable Boolean executed = false;
+    Outcome task(Context context) {
+        executed = true;
+        return done;
+    }
+    value goals = goalsAndGoalSets(task);
+    value writer = MockWriter();
+    Integer exitCode = callEngine(goals, ["d"], writer);
+    assertEquals(exitCode, exitCodes.success);
+    assertTrue(executed);
+    assertEquals(writer.infoMessages.sequence[1], "# running goals: [d] in order");
+}
+
+{<Goal|GoalSet>+} goalsAndGoalSets(Task task = noOp) {
+    Goal goalA = Goal("a", [task]);
+    Goal goalB = Goal("b", [task]);
+    Goal goalC = Goal("c", [task]);
+    Goal goalD = Goal("d", [task]);
+    Goal goalE = Goal("e", [task]);
+    Goal goalF = Goal("f", [task]);
+    Goal goalG = Goal("g", [task]);
     GoalSet goalSetCDE = GoalSet({goalC, goalD, goalE});
     GoalSet goalSetFG = GoalSet({goalF, goalG});
-    assertElementsNamesAreEquals {
-        expected = { goalA, goalC, goalD, goalE, goalF, goalG, goalB };
-        actual = mergeGoalSetsWithGoals({ goalA, goalSetCDE, goalSetFG, goalB });
-    };
-    
+    return [goalA, goalSetCDE, goalB, goalSetFG];
 }
