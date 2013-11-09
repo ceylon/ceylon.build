@@ -1,5 +1,5 @@
 import ceylon.test { test, assertEquals, assertNotEquals  }
-import ceylon.build.engine { invalidGoalName, invalidGoalsName, exitCodes }
+import ceylon.build.engine { exitCodes }
 import ceylon.build.task { Goal }
 
 test void testDuplicateGoals() {
@@ -20,21 +20,27 @@ void checkDuplicateGoals({Goal+} goals, [String*] duplicates) {
 }
 
 test void testValidateGoalName() {
-    assertEquals(true, invalidGoalName(""));
-    assertEquals(true, invalidGoalName("0"));
-    assertEquals(true, invalidGoalName("-"));
-    assertEquals(true, invalidGoalName("_"));
-    assertEquals(true, invalidGoalName("A"));
-    assertEquals(false, invalidGoalName("a"));
-    assertEquals(true, invalidGoalName("a "));
-    assertEquals(true, invalidGoalName("a_"));
-    assertEquals(false, invalidGoalName("ab"));
-    assertEquals(false, invalidGoalName("a-b"));
-    assertEquals(false, invalidGoalName("a0b"));
-    assertEquals(false, invalidGoalName("a0b1"));
-    assertEquals(false, invalidGoalName("compile-mod1"));
-    assertEquals(true, invalidGoalName("compile_mod1"));
-    assertEquals(true, invalidGoalName("compile mod1"));
+    checkGoalName("", false);
+    checkGoalName("0", false);
+    checkGoalName("00", false);
+    checkGoalName("0a0", false);
+    checkGoalName("0aa", false);
+    checkGoalName("-", false);
+    checkGoalName("-a", false);
+    checkGoalName("_", false);
+    checkGoalName("_A", false);
+    checkGoalName("A", false);
+    checkGoalName("a", true);
+    checkGoalName("a", true);
+    checkGoalName("a_", false);
+    checkGoalName("ab", true);
+    checkGoalName("a-b", true);
+    checkGoalName("a0b", true);
+    checkGoalName("a0b1", true);
+    checkGoalName("compile-mod1", true);
+    checkGoalName("compile-mod1", true);
+    checkGoalName("compile_mod1", false);
+    checkGoalName("compile mod1", false);
 }
 
 test void testValidateGoalsName() {
@@ -42,9 +48,23 @@ test void testValidateGoalsName() {
     value test = createTestGoal("test");
     value compileAndRun = createTestGoal("compile run");
     value compileAndTest = createTestGoal("compile_test");
-    assertEquals([], invalidGoalsName({compile}));
-    assertEquals([], invalidGoalsName([compile, test]));
-    assertEquals([compileAndRun], invalidGoalsName([compileAndRun, test]));
-    assertEquals([compileAndRun, compileAndTest], invalidGoalsName([compileAndRun, compileAndTest]));
+    checkInvalidGoalsNames([compile], []);
+    checkInvalidGoalsNames([compile, test], []);
+    checkInvalidGoalsNames([compileAndRun, test], ["compile run"]);
+    checkInvalidGoalsNames([compileAndRun, compileAndTest], ["compile run", "compile_test"]);
 }
 
+void checkGoalName(String name, Boolean valid) {
+    checkInvalidGoalsNames([Goal(name)], valid then [] else [name]);
+}
+
+void checkInvalidGoalsNames({Goal+} goals, [String*] invalidGoals) {
+    value writer = MockWriter();
+    Integer exitCode = callEngine(goals, [goals.first.name], writer);
+    if (nonempty invalidGoals) {
+        assertEquals(exitCode, exitCodes.invalidGoalFound);
+        assertEquals(writer.errorMessages.sequence[0], "# invalid goals found ``invalidGoals``");
+    } else {
+        assertNotEquals(exitCode, exitCodes.invalidGoalFound);
+    }
+}
