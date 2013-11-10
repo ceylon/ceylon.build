@@ -28,7 +28,7 @@ import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
     return goalsToExecute;
 }
 
-shared {Goal*} linearize(Goal goal) {
+{Goal*} linearize(Goal goal) {
     MutableList<Goal> goals = LinkedList<Goal>();
     for (Goal dependency in goal.dependencies) {
         goals.addAll(linearize(dependency));
