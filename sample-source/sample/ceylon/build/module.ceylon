@@ -1,3 +1,4 @@
+"Sample ceylon.build module"
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module sample.ceylon.build "1.0.0" {
     import ceylon.build.engine "1.0.0";
