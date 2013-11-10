@@ -1,4 +1,4 @@
-import ceylon.build.engine { reduce, exitCodes }
+import ceylon.build.engine { exitCodes }
 import ceylon.build.task { Goal }
 import ceylon.test { assertEquals, test }
 
@@ -72,32 +72,38 @@ test void testGoalsReduction() {
     Goal a = Goal("a", [noOp]);
     Goal b = Goal("b", [noOp]);
     Goal c = Goal("c", [noOp]);
-    assertElementsNamesAreEquals([], reduce([]));
-    assertElementsNamesAreEquals([a], reduce([a]));
-    assertElementsNamesAreEquals([a], reduce([a, a]));
-    assertElementsNamesAreEquals([a, b], reduce([a, b]));
-    assertElementsNamesAreEquals([b, a], reduce([b, a, b]));
-    assertElementsNamesAreEquals([b, a, c], reduce([b, a, b, b, a, c, a, b]));
+    {Goal+} goals = [a, b, c];
+    checkGoalsToExecute(goals, [], []);
+    checkGoalsToExecute(goals, ["a"], [a]);
+    checkGoalsToExecute(goals, ["a", "a"], [a]);
+    checkGoalsToExecute(goals, ["a", "b"], [a, b]);
+    checkGoalsToExecute(goals, ["b", "a"], [b, a]);
+    checkGoalsToExecute(goals, ["b", "a", "b"], [b, a]);
+    checkGoalsToExecute(goals, ["b", "a", "b", "b", "a", "c", "a", "b"], [b, a, c]);
 }
 
 test void testGoalsWithMultipleTasksReduction() {
     Goal a = Goal("a", [noOp, noOp]);
     Goal b = Goal("b", [noOp]);
-    assertElementsNamesAreEquals([], reduce([]));
-    assertElementsNamesAreEquals([a], reduce([a]));
-    assertElementsNamesAreEquals([a], reduce([a, a]));
-    assertElementsNamesAreEquals([a, b], reduce([a, b]));
-    assertElementsNamesAreEquals([b, a], reduce([b, a, b]));
+    {Goal+} goals = [a, b];
+    checkGoalsToExecute(goals, [], []);
+    checkGoalsToExecute(goals, ["a"], [a]);
+    checkGoalsToExecute(goals, ["a", "a"], [a]);
+    checkGoalsToExecute(goals, ["a", "b"], [a, b]);
+    checkGoalsToExecute(goals, ["b", "a"], [b, a]);
+    checkGoalsToExecute(goals, ["b", "a", "b"], [b, a]);
 }
 
 test void testGoalsWithoutTasksReduction() {
     Goal a = Goal("a", []);
     Goal b = Goal("b", [noOp]);
-    assertElementsNamesAreEquals([], reduce([]));
-    assertElementsNamesAreEquals([], reduce([a]));
-    assertElementsNamesAreEquals([], reduce([a, a]));
-    assertElementsNamesAreEquals([b], reduce([a, b]));
-    assertElementsNamesAreEquals([b], reduce([b, a, b]));
+    {Goal+} goals = [a, b];
+    checkGoalsToExecute(goals, [], []);
+    checkGoalsToExecute(goals, ["a"], []);
+    checkGoalsToExecute(goals, ["a", "a"], []);
+    checkGoalsToExecute(goals, ["a", "b"], [b]);
+    checkGoalsToExecute(goals, ["b", "a"], [b]);
+    checkGoalsToExecute(goals, ["b", "a", "b"], [b]);
 }
 
 void checkGoalsToExecute({Goal+} availableGoals, [String*] arguments, {Goal*} expectedExecutionList) {

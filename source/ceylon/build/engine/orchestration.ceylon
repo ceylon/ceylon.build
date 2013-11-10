@@ -37,7 +37,7 @@ import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
     return goals;
 }
 
-shared {Goal*} reduce({Goal*} goals) {
+{Goal*} reduce({Goal*} goals) {
     MutableSet<String> reducedGoalsNames = HashSet<String>();
     MutableList<Goal> reducedGoals = LinkedList<Goal>();
     for (Goal goal in goals) {
