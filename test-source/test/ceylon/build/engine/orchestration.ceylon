@@ -1,40 +1,35 @@
-import ceylon.build.engine { findGoalsToExecute, linearize, reduce }
+import ceylon.build.engine { linearize, reduce, exitCodes }
 import ceylon.build.task { Goal }
 import ceylon.test { assertEquals, test }
 
-test void testFindGoalsToExecute() {
-    value writer = MockWriter();
+test void shouldNotFindGoalToExecuteIfNoneIsRequested() {
+    Goal a = createTestGoal("a");
+    findGoalsToExecute([a], [], []);
+}
+
+test void shouldNotFindGoalToExecuteIfUnknownGoalIsRequested() {
+    Goal a = createTestGoal("a");
+    findGoalsToExecute([a], ["a", "b"], []);
+}
+
+test void shouldFindRequestedGoalToExecute() {
     Goal a = createTestGoal("a");
     Goal b = createTestGoal("b");
-    assertElementsNamesAreEquals([], findGoalsToExecute({ a }, [], writer));
-    assertEquals([], writer.infoMessages);
-    assertEquals([], writer.errorMessages);
-    writer.clear();
-    assertElementsNamesAreEquals([a], findGoalsToExecute({ a }, ["a"], writer));
-    assertEquals([], writer.infoMessages);
-    assertEquals([], writer.errorMessages);
-    writer.clear();
-    assertElementsNamesAreEquals([], findGoalsToExecute({ a }, ["a", "b"], writer));
-    assertEquals([], writer.infoMessages);
-    assertEquals(["# goal 'b' not found, stopping"], writer.errorMessages);
-    writer.clear();
-    assertElementsNamesAreEquals([a, b], findGoalsToExecute({ a, b }, ["a", "b"], writer));
-    assertEquals([], writer.infoMessages);
-    assertEquals([], writer.errorMessages);
-    writer.clear();
-    assertElementsNamesAreEquals([a, b], findGoalsToExecute({ a, b }, ["a", "b", "-Dfoo=bar"], writer));
-    assertEquals([], writer.infoMessages);
-    assertEquals([], writer.errorMessages);
-    writer.clear();
-    assertElementsNamesAreEquals([a], findGoalsToExecute({ a, b }, ["a"], writer));
-    assertEquals([], writer.infoMessages);
-    assertEquals([], writer.errorMessages);
-    writer.clear();
-    Goal c = createTestGoal("c");
-    Goal d = createTestGoal("d", [c]);
-    assertElementsNamesAreEquals([d], findGoalsToExecute({ c, d }, ["d"], writer));
-    assertEquals([], writer.infoMessages);
-    assertEquals([], writer.errorMessages);
+    findGoalsToExecute([a], ["a"], [a]);
+    findGoalsToExecute([a, b], ["a"], [a]);
+    findGoalsToExecute([a, b], ["a", "b"], [a, b]);
+    findGoalsToExecute([a, b], ["b", "a"], [b, a]);
+    findGoalsToExecute([a, b], ["a", "b", "-Dfoo=bar"], [a, b]);
+}
+
+test void shouldFindRequestedGoalWithDependenciesToExecute() {
+    Goal a = createTestGoal("a");
+    Goal b = createTestGoal("b", [a]);
+    findGoalsToExecute([a], ["a"], [a]);
+    findGoalsToExecute([b], ["a"], []);
+    findGoalsToExecute([b], ["b"], [a, b]);
+    findGoalsToExecute([a, b], ["a", "b"], [a, b]);
+    findGoalsToExecute([a, b], ["b", "a"], [a, b]);
 }
 
 test void testGoalsLinearization() {
@@ -100,4 +95,14 @@ test void testGoalsWithoutTasksReduction() {
     assertElementsNamesAreEquals([], reduce([a, a]));
     assertElementsNamesAreEquals([b], reduce([a, b]));
     assertElementsNamesAreEquals([b], reduce([b, a, b]));
+}
+
+void findGoalsToExecute({Goal+} availableGoals, [String*] arguments, {Goal*} expectedExecutionList) {
+    value result = callEngine(availableGoals, arguments);
+    assertEquals(result.exitCode, expectedExecutionList.empty then exitCodes.noGoalToRun else exitCodes.success);
+    assertEquals(names(result.availableGoals), names(availableGoals));
+    assertEquals(names(result.executionList), names(expectedExecutionList));
+    assertEquals(names(result.executed), names(expectedExecutionList));
+    assertEquals(result.failed, []);
+    assertEquals(result.notRun, []);
 }
