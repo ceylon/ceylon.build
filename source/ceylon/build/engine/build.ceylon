@@ -1,6 +1,6 @@
 import ceylon.build.task { Goal, GoalSet, Writer }
 
-"""Starts the goal engine and exit with one of [[exitCodes]] exit code.
+"""Starts the goal engine and exits with one of [[exitCodes]] exit code.
    
    Command line arguments retrieved by `process.arguments` will be used to determine which goals have to be run.
    
