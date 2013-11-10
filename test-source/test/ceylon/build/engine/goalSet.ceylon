@@ -8,10 +8,10 @@ test void shouldListGoalsFromGoalSet() {
     value result = callEngine(goals, [], writer);
     assertEquals(result.exitCode, exitCodes.noGoalToRun);
     assertEquals(names(result.availableGoals), names(goals));
-    assertEquals(result.executionList, []);
-    assertEquals(result.executed, []);
-    assertEquals(result.failed, []);
-    assertEquals(result.notRun, []);
+    assertEquals(execution(result), []);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
     assertEquals(writer.errorMessages.sequence[0], "# no goal to run, available goals are: [a, c, d, e, b, f, g]");
 }
 
@@ -26,10 +26,10 @@ test void shouldRunGoalsImportedFromGoalSet() {
     value result = callEngine(goals, ["d"], writer);
     assertEquals(result.exitCode, exitCodes.success);
     assertEquals(names(result.availableGoals), names(goals));
-    assertEquals(names(result.executionList), ["d"]);
-    assertEquals(names(result.executed), ["d"]);
-    assertEquals(result.failed, []);
-    assertEquals(result.notRun, []);
+    assertEquals(execution(result), ["d"]);
+    assertEquals(success(result), ["d"]);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
     assertTrue(executed);
     assertEquals(writer.infoMessages.sequence[1], "# running goals: [d] in order");
 }

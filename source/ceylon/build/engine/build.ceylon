@@ -1,30 +1,5 @@
 import ceylon.build.task { Goal, GoalSet, Writer }
 
-"List of program exit code"
-shared object exitCodes {
-    "Success exit code as per standard conventions"
-    shared Integer success = 0;
-    
-    "Exit code returned when an invalid `Goal` is found
-     
-     This can happen if a goal name contains forbidden characters"
-    shared Integer invalidGoalFound = 1;
-    
-    "Exit code returned when multiples `Goal` have the same name"
-    shared Integer duplicateGoalsFound = 2;
-    
-    "Exit code returned when a dependency cycle has been found"
-    shared Integer dependencyCycleFound = 3;
-    
-    "Exit code returned when there is no goal to be run.
-     
-     This happens because no goal has been requested or because the requested goal doesn't exists."
-    shared Integer noGoalToRun = 4;
-    
-    "Exit code returned when a goal's task failed"
-    shared Integer errorOnTaskExecution = 5;
-}
-
 """Starts the goal engine and exit with one of [[exitCodes]] exit code.
    
    Command line arguments retrieved by `process.arguments` will be used to determine which goals have to be run.
@@ -154,35 +129,13 @@ shared EngineResult runEngine(
     return result;
 }
 
-EngineResult processGoals({Goal+} goals, [String*] arguments, Writer writer) {
-    ExecutionResult executionResult;
-    value invalidTasks = invalidGoalsName(goals);
-    if (!invalidTasks.empty) {
-        writer.error("# invalid goals found ``invalidTasks``");
-        writer.error("# goal name should match following format: ```validTaskNamePattern```");
-        executionResult = ExecutionResult([], [], [], exitCodes.invalidGoalFound);
+EngineResult processGoals({Goal+} availableGoals, [String*] arguments, Writer writer) {
+    value configCheckCode = checkConfiguration(availableGoals, writer);
+    if (!configCheckCode.valid) {
+        return EngineResult(availableGoals.sequence, [], configCheckCode.exitCode);
     } else {
-        value duplicateGoals = findDuplicateGoals(goals);
-        if (duplicateGoals.empty) {
-            value cycles = analyzeDependencyCycles(goals);
-            if (cycles.empty) {
-                value goalsToRun = buildGoalExecutionList(goals, arguments, writer).sequence;
-                executionResult = runGoals(goalsToRun, arguments, goals, writer);
-            } else {
-                writer.error("# goal dependency cycle found between: ``cycles``");
-                executionResult = ExecutionResult([], [], [], exitCodes.dependencyCycleFound);
-            }
-        } else {
-            writer.error("# duplicate goal names found: ``duplicateGoals``");
-            executionResult = ExecutionResult([], [], [], exitCodes.duplicateGoalsFound);
-        }
+        value goals = buildGoalExecutionList(availableGoals, arguments, writer).sequence;
+        value result = runGoals(goals, arguments, availableGoals, writer);
+        return EngineResult(availableGoals.sequence, result.executionResults, result.exitCode);
     }
-    return EngineResult {
-        exitCode = executionResult.exitCode;
-        availableGoals = goals.sequence;
-        executionList = executionResult.toExecute;
-        executed = executionResult.executed;
-        failed = executionResult.failed;
-        notRun = executionResult.notRun;
-    };
 }

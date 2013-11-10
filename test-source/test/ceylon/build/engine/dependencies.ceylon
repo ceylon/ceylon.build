@@ -27,8 +27,8 @@ void checkNoDependencyCycle({Goal+} goals, {Goal+} expectedGoalsToBeRun = goals)
     value result = callEngine(goals);
     assertEquals(result.exitCode, exitCodes.success);
     assertEquals(names(result.availableGoals), names(goals));
-    assertEquals(names(result.executionList), names(expectedGoalsToBeRun));
-    assertEquals(names(result.executed), names(expectedGoalsToBeRun));
-    assertEquals(result.failed, []);
-    assertEquals(result.notRun, []);
+    assertEquals(execution(result), names(expectedGoalsToBeRun));
+    assertEquals(success(result), names(expectedGoalsToBeRun));
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
 }

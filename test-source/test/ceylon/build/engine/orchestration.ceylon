@@ -110,8 +110,8 @@ void checkGoalsToExecute({Goal+} availableGoals, [String*] arguments, {Goal*} ex
     value result = callEngine(availableGoals, arguments);
     assertEquals(result.exitCode, expectedExecutionList.empty then exitCodes.noGoalToRun else exitCodes.success);
     assertEquals(names(result.availableGoals), names(availableGoals));
-    assertEquals(names(result.executionList), names(expectedExecutionList));
-    assertEquals(names(result.executed), names(expectedExecutionList));
-    assertEquals(result.failed, []);
-    assertEquals(result.notRun, []);
+    assertEquals(execution(result), names(expectedExecutionList));
+    assertEquals(success(result), names(expectedExecutionList));
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
 }

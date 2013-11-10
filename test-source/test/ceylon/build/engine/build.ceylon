@@ -10,10 +10,10 @@ test void shouldExitWhenNoGoalToRun() {
     value result = execute(goalsToRun, writer, executedTasks);
     assertEquals(result.exitCode, exitCodes.noGoalToRun);
     assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(names(result.executionList), goalsToRun);
-    assertEquals(names(result.executed), []);
-    assertEquals(names(result.failed), []);
-    assertEquals(names(result.notRun), []);
+    assertEquals(execution(result), goalsToRun);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
     assertEquals(executedTasks, []);
 }
 
@@ -24,10 +24,10 @@ test void shouldExitWhenNoGoalWithTasksToRun() {
     value result = execute(goalsToRun, writer, executedTasks);
     assertEquals(result.exitCode, exitCodes.noGoalToRun);
     assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(names(result.executionList), []);
-    assertEquals(names(result.executed), []);
-    assertEquals(names(result.failed), []);
-    assertEquals(names(result.notRun), []);
+    assertEquals(execution(result), []);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
     assertEquals(executedTasks, []);
 }
 
@@ -38,10 +38,10 @@ test void shouldExecuteGoalTask() {
     value result = execute(goalsToRun, writer, executedTasks);
     assertEquals(result.exitCode, exitCodes.success);
     assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(names(result.executionList), goalsToRun);
-    assertEquals(names(result.executed), goalsToRun);
-    assertEquals(names(result.failed), []);
-    assertEquals(names(result.notRun), []);
+    assertEquals(execution(result), goalsToRun);
+    assertEquals(success(result), goalsToRun);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
     assertEquals(executedTasks, ["goalWithOneTask"]);
 }
 
@@ -52,10 +52,10 @@ test void shouldExecuteGoalTasks() {
     value result = execute(goalsToRun, writer, executedTasks);
     assertEquals(result.exitCode, exitCodes.success);
     assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(names(result.executionList), goalsToRun);
-    assertEquals(names(result.executed), goalsToRun);
-    assertEquals(names(result.failed), []);
-    assertEquals(names(result.notRun), []);
+    assertEquals(execution(result), goalsToRun);
+    assertEquals(success(result), goalsToRun);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
     assertEquals(executedTasks, ["goalWithMultipleTasks-1", "goalWithMultipleTasks-2", "goalWithMultipleTasks-3"]);
 }
 
@@ -66,10 +66,10 @@ test void shouldExecuteGoalTasksUntilTaskFailure() {
     value result = execute(goalsToRun, writer, executedTasks);
     assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
     assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(names(result.executionList), goalsToRun);
-    assertEquals(names(result.executed), []);
-    assertEquals(names(result.failed), goalsToRun);
-    assertEquals(names(result.notRun), []);
+    assertEquals(execution(result), goalsToRun);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), goalsToRun);
+    assertEquals(notRun(result), []);
     assertEquals(
         executedTasks,
         ["goalWithMultipleTasksFailingInTheMiddle-1", "goalWithMultipleTasksFailingInTheMiddle-2"]
@@ -83,10 +83,10 @@ test void shouldExecuteDependenciesTasks() {
     value result = execute(goalsToRun, writer, executedTasks);
     assertEquals(result.exitCode, exitCodes.success);
     assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(names(result.executionList), ["goalWithOneTask", "goalWithMultipleTasks"]);
-    assertEquals(names(result.executed), ["goalWithOneTask", "goalWithMultipleTasks"]);
-    assertEquals(names(result.failed), []);
-    assertEquals(names(result.notRun), []);
+    assertEquals(execution(result), ["goalWithOneTask", "goalWithMultipleTasks"]);
+    assertEquals(success(result), ["goalWithOneTask", "goalWithMultipleTasks"]);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
     assertEquals(
         executedTasks,
         ["goalWithOneTask", "goalWithMultipleTasks-1", "goalWithMultipleTasks-2", "goalWithMultipleTasks-3"]
@@ -100,10 +100,10 @@ test void shouldExitWhenNoGoalWithTasksToRunEvenOnDependencies() {
     value result = execute(goalsToRun, writer, executedTasks);
     assertEquals(result.exitCode, exitCodes.noGoalToRun);
     assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(names(result.executionList), []);
-    assertEquals(names(result.executed), []);
-    assertEquals(names(result.failed), []);
-    assertEquals(names(result.notRun), []);
+    assertEquals(execution(result), []);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
     assertEquals(executedTasks, []);
 }
 

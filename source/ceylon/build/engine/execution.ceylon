@@ -1,25 +1,30 @@
 import ceylon.build.task { Goal, Task, Context, Writer, Outcome, Success, Failure }
-import ceylon.collection { LinkedList, MutableList }
+import ceylon.collection { LinkedList }
 
 String argumentPrefix = "-D";
 
 ExecutionResult runGoals({Goal*} goals, [String*] arguments, {Goal*} availableGoals, Writer writer) {
-    value executed = LinkedList<Goal->{Success*}>();
-    value failed = LinkedList<Goal->{Outcome*}>();
+    value results = LinkedList<GoalExecutionResult>();
     if (goals.empty) {
         writer.error("# no goal to run, available goals are: ``goalsNames(availableGoals)``");
-        return ExecutionResult(goals.sequence, executed.sequence, failed.sequence, exitCodes.noGoalToRun);
+        return ExecutionResult([], exitCodes.noGoalToRun);
     } else {
+        Integer exitCode;
         writer.info("# running goals: ``goals`` in order");
         for (goal in goals) {
             value goalArguments = filterArgumentsForGoal(goal, arguments);
             writer.info("# running ``goal.name``(``", ".join(goalArguments)``)");
-            value succeed = executeTasks(goal, goalArguments, writer, executed, failed);
-            if (!succeed) {
-                return ExecutionResult(goals.sequence, executed.sequence, failed.sequence, exitCodes.errorOnTaskExecution);
+            value result = executeTasks(goal, goalArguments, writer);
+            results.add(result);
+            if (!result.success) {
+                exitCode = exitCodes.errorOnTaskExecution;
+                results.addAll(notRunGoalsExecutionResult(goals.skipping(results.size), arguments));
+                break;
             }
+        } else {
+            exitCode = exitCodes.success;
         }
-        return ExecutionResult(goals.sequence, executed.sequence, failed.sequence, exitCodes.success);
+        return ExecutionResult(results.sequence, exitCode);
     }
 }
 
@@ -30,30 +35,18 @@ String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name
     return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)];
 }
 
-Boolean executeTasks(
-    Goal goal,
-    [String*] goalArguments,
-    Writer writer,
-    MutableList<Goal->{Success*}> executed,
-    MutableList<Goal->{Outcome*}> failed) {
-    value successfullOutcomes = LinkedList<Success>();
+GoalExecutionResult executeTasks(Goal goal, [String*] arguments, Writer writer) {
     value outcomes = LinkedList<Outcome>();
     for (Task task in goal.tasks) {
-        value outcome = executeTask(task, goalArguments, writer);
+        value outcome = executeTask(task, arguments, writer);
         outcomes.add(outcome);
         reportOutcome(outcome, goal, writer);
         outcomes.add(outcome);
-        switch (outcome)
-        case (is Success) {
-            successfullOutcomes.add(outcome);
-        }
-        case (is Failure) {
-            failed.add(goal -> outcomes);
-            return false;
+        if (is Failure outcome) {
+            break;
         }
     }
-    executed.add(goal -> successfullOutcomes);
-    return true;
+    return GoalExecutionResult(goal, arguments, outcomes.sequence);
 }
 
 Outcome executeTask(Task task, [String*] goalArguments, Writer writer) {
@@ -80,4 +73,8 @@ void reportOutcome(Outcome outcome, Goal goal, Writer writer) {
             writer.exception(exception);
         }
     }
+}
+
+GoalExecutionResult[] notRunGoalsExecutionResult({Goal*} notRunGoals, String[] arguments) {
+    return [ for (notRun in notRunGoals) GoalExecutionResult(notRun, filterArgumentsForGoal(notRun, arguments), [])];
 }

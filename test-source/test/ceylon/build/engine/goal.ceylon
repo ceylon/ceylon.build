@@ -64,10 +64,10 @@ void checkInvalidGoalsNames({Goal+} goals, [String*] invalidGoals) {
     if (nonempty invalidGoals) {
         assertEquals(result.exitCode, exitCodes.invalidGoalFound);
         assertEquals(result.availableGoals, goals);
-        assertEquals(result.executionList, []);
-        assertEquals(result.executed, []);
-        assertEquals(result.failed, []);
-        assertEquals(result.notRun, []);
+        assertEquals(execution(result), []);
+        assertEquals(success(result), []);
+        assertEquals(failed(result), []);
+        assertEquals(notRun(result), []);
         assertEquals(writer.errorMessages.sequence[0], "# invalid goals found ``invalidGoals``");
     } else {
         assertNotEquals(result.exitCode, exitCodes.invalidGoalFound);

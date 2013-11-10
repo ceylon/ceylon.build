@@ -1,4 +1,4 @@
-import ceylon.build.task { Goal, Writer, Context, Outcome, done, GoalSet }
+import ceylon.build.task { Goal, GoalSet, Writer, Context, Outcome, done }
 import ceylon.collection { LinkedList, MutableList }
 import ceylon.build.engine { runEngine, EngineResult }
 
@@ -21,11 +21,6 @@ class MockWriter() satisfies Writer {
     shared actual void info(String message) => internalInfoMessages.add(message);
     
     shared actual void error(String message) => internalErrorMessages.add(message);
-    
-    shared void clear() {
-        internalInfoMessages.clear();
-        internalErrorMessages.clear();
-    }
 }
 
 [String*] names({<Goal|GoalSet|<Goal->{Outcome*}>>*} goals) {
@@ -48,4 +43,20 @@ class MockWriter() satisfies Writer {
 
 EngineResult callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goals), Writer writer = MockWriter()) {
     return runEngine(goals, "test project", arguments, writer);
+}
+
+[String*] execution(EngineResult engineResult) {
+    return [for (result in engineResult.executionResults) result.goal.name];
+}
+
+[String*] success(EngineResult engineResult) {
+    return [for (result in engineResult.executionResults) if (result.success) result.goal.name];
+}
+
+[String*] failed(EngineResult engineResult) {
+    return [for (result in engineResult.executionResults) if (result.failed) result.goal.name];
+}
+
+[String*] notRun(EngineResult engineResult) {
+    return [for (result in engineResult.executionResults) if (result.notRun) result.goal.name];
 }
