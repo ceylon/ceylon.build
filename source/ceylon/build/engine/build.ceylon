@@ -25,7 +25,7 @@ shared object exitCodes {
     shared Integer errorOnTaskExecution = 5;
 }
 
-"""Launch the goal engine and exit with one of [[exitCodes]] exit code.
+"""Starts the goal engine and exit with one of [[exitCodes]] exit code.
    
    Command line arguments retrieved by `process.arguments` will be used to determine which goals have to be run.
    
@@ -79,11 +79,11 @@ shared void build(
     {<Goal|GoalSet>+} goals,
     "Project name to be displayed"
     String project = "") {
-    Integer exitCode = runEngine(goals, project, process.arguments, consoleWriter);
-    process.exit(exitCode);
+    value result = runEngine(goals, project, process.arguments, consoleWriter);
+    process.exit(result.exitCode);
 }
 
-"""Launch the goal engine and return an exit code.
+"""Starts the goal engine and returns an [[EngineResult]] giving information about goals execution.
    
    All arguments passed to this program will be understood as a goal.
    Except ones starting with `"-D"` which will be understood as parameters for a goal's task.
@@ -129,7 +129,7 @@ shared void build(
    ```
    Launching the program with goals `a, d, c` (in order) will result in the execution of `a, b, c, d` (still in order)
    """
-shared Integer runEngine(
+shared EngineResult runEngine(
   "Goals and GoalSets available in the engine"
   {<Goal|GoalSet>+} goals,
   "Project name to be displayed"
@@ -142,37 +142,47 @@ shared Integer runEngine(
   Writer writer = consoleWriter) {
     Integer startTime = system.milliseconds;
     writer.info("## ceylon.build: ``project``");
-    {Goal+} mergedGoals = mergeGoalSetsWithGoals(goals);
-    Integer code = processGoals(mergedGoals, arguments, writer);
+    {Goal+} availableGoals = mergeGoalSetsWithGoals(goals);
+    value result = processGoals(availableGoals, arguments, writer);
     Integer endTime = system.milliseconds;
     String duration = "duration ``(endTime - startTime) / 1000``s";
-    if (code == exitCodes.success) {
+    if (result.exitCode == exitCodes.success) {
         writer.info("## success - ``duration``");
     } else {
         writer.error("## failure - ``duration``");
     }
-    return code;
+    return result;
 }
 
-Integer processGoals({Goal+} goals, [String*] arguments, Writer writer) {
+EngineResult processGoals({Goal+} goals, [String*] arguments, Writer writer) {
+    ExecutionResult executionResult;
     value invalidTasks = invalidGoalsName(goals);
     if (!invalidTasks.empty) {
         writer.error("# invalid goals found ``invalidTasks``");
         writer.error("# goal name should match following format: ```validTaskNamePattern```");
-        return exitCodes.invalidGoalFound;
-    }
-    value duplicateGoals = findDuplicateGoals(goals);
-    if (duplicateGoals.empty) {
-        value cycles = analyzeDependencyCycles(goals);
-        if (cycles.empty) {
-            value goalsToRun = buildGoalExecutionList(goals, arguments, writer);
-            return runGoals(goalsToRun, arguments, goals, writer);
-        } else {
-            writer.error("# goal dependency cycle found between: ``cycles``");
-            return exitCodes.dependencyCycleFound;
-        }
+        executionResult = ExecutionResult([], [], [], exitCodes.invalidGoalFound);
     } else {
-        writer.error("# duplicate goal names found: ``duplicateGoals``");
-        return exitCodes.duplicateGoalsFound;
+        value duplicateGoals = findDuplicateGoals(goals);
+        if (duplicateGoals.empty) {
+            value cycles = analyzeDependencyCycles(goals);
+            if (cycles.empty) {
+                value goalsToRun = buildGoalExecutionList(goals, arguments, writer).sequence;
+                executionResult = runGoals(goalsToRun, arguments, goals, writer);
+            } else {
+                writer.error("# goal dependency cycle found between: ``cycles``");
+                executionResult = ExecutionResult([], [], [], exitCodes.dependencyCycleFound);
+            }
+        } else {
+            writer.error("# duplicate goal names found: ``duplicateGoals``");
+            executionResult = ExecutionResult([], [], [], exitCodes.duplicateGoalsFound);
+        }
     }
+    return EngineResult {
+        exitCode = executionResult.exitCode;
+        availableGoals = goals.sequence;
+        executionList = executionResult.toExecute;
+        executed = executionResult.executed;
+        failed = executionResult.failed;
+        notRun = executionResult.notRun;
+    };
 }

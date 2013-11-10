@@ -10,12 +10,12 @@ test void testDuplicateGoals() {
 
 void checkDuplicateGoals({Goal+} goals, [String*] duplicates) {
     value writer = MockWriter();
-    Integer exitCode = callEngine(goals, [goals.first.name], writer);
+    value result = callEngine(goals, [goals.first.name], writer);
     if (nonempty duplicates) {
-        assertEquals(exitCode, exitCodes.duplicateGoalsFound);
+        assertEquals(result.exitCode, exitCodes.duplicateGoalsFound);
         assertEquals(writer.errorMessages.sequence[0], "# duplicate goal names found: ``duplicates``");
     } else {
-        assertNotEquals(exitCode, exitCodes.duplicateGoalsFound);
+        assertNotEquals(result.exitCode, exitCodes.duplicateGoalsFound);
     }
 }
 
@@ -60,11 +60,16 @@ void checkGoalName(String name, Boolean valid) {
 
 void checkInvalidGoalsNames({Goal+} goals, [String*] invalidGoals) {
     value writer = MockWriter();
-    Integer exitCode = callEngine(goals, [goals.first.name], writer);
+    value result = callEngine(goals, [goals.first.name], writer);
     if (nonempty invalidGoals) {
-        assertEquals(exitCode, exitCodes.invalidGoalFound);
+        assertEquals(result.exitCode, exitCodes.invalidGoalFound);
+        assertEquals(result.availableGoals, goals);
+        assertEquals(result.executionList, []);
+        assertEquals(result.executed, []);
+        assertEquals(result.failed, []);
+        assertEquals(result.notRun, []);
         assertEquals(writer.errorMessages.sequence[0], "# invalid goals found ``invalidGoals``");
     } else {
-        assertNotEquals(exitCode, exitCodes.invalidGoalFound);
+        assertNotEquals(result.exitCode, exitCodes.invalidGoalFound);
     }
 }

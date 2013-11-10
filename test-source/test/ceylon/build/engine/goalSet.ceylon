@@ -5,8 +5,13 @@ import ceylon.test { test, assertEquals, assertTrue }
 test void shouldListGoalsFromGoalSet() {
     value goals = goalsAndGoalSets();
     value writer = MockWriter();
-    Integer exitCode = callEngine(goals, [], writer);
-    assertEquals(exitCode, exitCodes.noGoalToRun);
+    value result = callEngine(goals, [], writer);
+    assertEquals(result.exitCode, exitCodes.noGoalToRun);
+    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(result.executionList, []);
+    assertEquals(result.executed, []);
+    assertEquals(result.failed, []);
+    assertEquals(result.notRun, []);
     assertEquals(writer.errorMessages.sequence[0], "# no goal to run, available goals are: [a, c, d, e, b, f, g]");
 }
 
@@ -18,8 +23,13 @@ test void shouldRunGoalsImportedFromGoalSet() {
     }
     value goals = goalsAndGoalSets(task);
     value writer = MockWriter();
-    Integer exitCode = callEngine(goals, ["d"], writer);
-    assertEquals(exitCode, exitCodes.success);
+    value result = callEngine(goals, ["d"], writer);
+    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(names(result.executionList), ["d"]);
+    assertEquals(names(result.executed), ["d"]);
+    assertEquals(result.failed, []);
+    assertEquals(result.notRun, []);
     assertTrue(executed);
     assertEquals(writer.infoMessages.sequence[1], "# running goals: [d] in order");
 }

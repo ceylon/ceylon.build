@@ -1,7 +1,7 @@
 import ceylon.build.task { Goal, Writer, Context, Outcome, done, GoalSet }
 import ceylon.collection { LinkedList, MutableList }
 import ceylon.test { assertEquals }
-import ceylon.build.engine { runEngine }
+import ceylon.build.engine { runEngine, EngineResult }
 
 Outcome noOp(Context context) => done;
 
@@ -11,7 +11,7 @@ Goal createTestGoal(String name, {Goal*} dependencies = []) {
 
 void assertElementsNamesAreEquals({Goal*} expected, {Goal*} actual) {
     String(Goal) name = (Goal n) => n.name;
-    assertEquals(expected.collect(name), actual.collect(name));
+    assertEquals(actual.collect(name), expected.collect(name));
 }
 
 class MockWriter() satisfies Writer {
@@ -34,7 +34,7 @@ class MockWriter() satisfies Writer {
     }
 }
 
-[String+] names({<Goal|GoalSet>+} goals) {
+[String*] names({<Goal|GoalSet|<Goal->{Outcome*}>>*} goals) {
     value namesList = LinkedList<String>();
     for (goal in goals) {
         switch (goal)
@@ -44,13 +44,16 @@ class MockWriter() satisfies Writer {
             for (innerGoal in goal.goals) {
                 namesList.add(innerGoal.name);
             }
+        } case (is Goal->{Outcome*}) {
+            namesList.add(goal.key.name);
         }
     }
     [String*] names = namesList.sequence;
-    assert(nonempty names);
     return names;
 }
 
-Integer callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goals), Writer writer = MockWriter()) {
+EngineResult callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goals), Writer writer = MockWriter()) {
     return runEngine(goals, "test project", arguments, writer);
 }
+
+

@@ -28,7 +28,14 @@ void assertArgumentsAreFiltered({String*} inputArguments, {String*} expectedGoal
     }
     value argumentsMap = HashMap<String, {String*}>();
     Goal a = Goal("a", [registerArguments("a", argumentsMap)]);
-    assertEquals(callEngine([a], ["a", *inputArguments]), exitCodes.success);
+    value goals = [a];
+    value result = callEngine(goals, ["a", *inputArguments]);
+    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(names(result.executionList), ["a"]);
+    assertEquals(names(result.executed), ["a"]);
+    assertEquals(result.failed, []);
+    assertEquals(result.notRun, []);
     assertEquals(argumentsMap.get("a"), expectedGoalArguments);
 }
 
@@ -41,7 +48,14 @@ void assertNoGoalToRun([String*] arguments) {
     value a = createTestGoal("a");
     value b = createTestGoal("b");
     value writer = MockWriter();
-    assertEquals(callEngine([a, b], arguments, writer), exitCodes.noGoalToRun);
+    value goals = [a, b];
+    value result = callEngine(goals, arguments, writer);
+    assertEquals(result.exitCode, exitCodes.noGoalToRun);
+    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(names(result.executionList), []);
+    assertEquals(names(result.executed), []);
+    assertEquals(result.failed, []);
+    assertEquals(result.notRun, []);
     assertEquals(writer.infoMessages, ["## ceylon.build: test project"]);
     value errorMessages = writer.errorMessages.sequence;
     assertEquals(errorMessages.size, 2);
@@ -55,7 +69,14 @@ test void shouldExitOnTaskFailure() {
     value b = Goal("b", [(Context context) => Failure()]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
-    assertEquals(callEngine([a, b, c, d], ["a", "b", "c", "-Da:foo"], writer), exitCodes.errorOnTaskExecution);
+    value goals = [a, b, c, d];
+    value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
+    assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
+    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(names(result.executionList), ["a", "b", "c"]);
+    assertEquals(names(result.executed), ["a"]);
+    assertEquals(names(result.failed), ["b"]);
+    assertEquals(names(result.notRun), ["c"]);
     assertEquals(writer.infoMessages,
         ["## ceylon.build: test project",
         "# running goals: [a, b, c] in order",
@@ -76,7 +97,14 @@ test void shouldExitOnTaskError() {
     value b = Goal("b", [throwException]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
-    assertEquals(callEngine([a, b, c, d], ["a", "b", "c", "-Da:foo"], writer), exitCodes.errorOnTaskExecution);
+    value goals = [a, b, c, d];
+    value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
+    assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
+    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(names(result.executionList), ["a", "b", "c"]);
+    assertEquals(names(result.executed), ["a"]);
+    assertEquals(names(result.failed), ["b"]);
+    assertEquals(names(result.notRun), ["c"]);
     assertEquals(writer.infoMessages,
         ["## ceylon.build: test project",
         "# running goals: [a, b, c] in order",
@@ -95,7 +123,14 @@ test void shouldRunGoals() {
     value b = Goal("b", [(Context context) => Success("b succeed")]);
     value c = createTestGoal("c");
     value d = createTestGoal("d");
-    assertEquals(callEngine([a, b, c, d], ["a", "b", "c", "-Da:foo"], writer), exitCodes.success);
+    value goals = [a, b, c, d];
+    value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
+    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(names(result.executionList), ["a", "b", "c"]);
+    assertEquals(names(result.executed), ["a", "b", "c"]);
+    assertEquals(names(result.failed), []);
+    assertEquals(names(result.notRun), []);
     value infoMessages = writer.infoMessages.sequence;
     assertEquals(infoMessages.size, 7);
     assertEquals(infoMessages[0], "## ceylon.build: test project");
