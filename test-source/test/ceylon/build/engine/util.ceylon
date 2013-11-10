@@ -1,17 +1,11 @@
 import ceylon.build.task { Goal, Writer, Context, Outcome, done, GoalSet }
 import ceylon.collection { LinkedList, MutableList }
-import ceylon.test { assertEquals }
 import ceylon.build.engine { runEngine, EngineResult }
 
 Outcome noOp(Context context) => done;
 
 Goal createTestGoal(String name, {Goal*} dependencies = []) {
     return Goal(name, [noOp], dependencies);
-}
-
-void assertElementsNamesAreEquals({Goal*} expected, {Goal*} actual) {
-    String(Goal) name = (Goal n) => n.name;
-    assertEquals(actual.collect(name), expected.collect(name));
 }
 
 class MockWriter() satisfies Writer {
@@ -55,5 +49,3 @@ class MockWriter() satisfies Writer {
 EngineResult callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goals), Writer writer = MockWriter()) {
     return runEngine(goals, "test project", arguments, writer);
 }
-
-
