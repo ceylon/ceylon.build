@@ -1,7 +1,7 @@
 import ceylon.build.task { Goal }
 import ceylon.collection { LinkedList, HashSet, MutableSet }
 
-shared class Dependency(goal, {Goal*} goals = []) {
+class Dependency(goal, {Goal*} goals = []) {
     
     shared Goal goal;
     
@@ -30,7 +30,7 @@ shared class Dependency(goal, {Goal*} goals = []) {
     string => "``goal.name`` -> ``dependencies``";
 }
 
-shared {Dependency*}  analyzeDependencyCycles({Goal+} goals) {
+{Dependency*}  analyzeDependencyCycles({Goal+} goals) {
     value goalsNames = HashSet<String>({ for (goal in goals) goal.name });
     value definitions = { for (goal in goals) Dependency(goal, goal.dependencies) };
     value resolved = LinkedList<Goal>();

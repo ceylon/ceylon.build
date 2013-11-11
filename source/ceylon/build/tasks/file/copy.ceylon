@@ -1,8 +1,13 @@
 import ceylon.build.task { Task, Context, Failure, done }
 import ceylon.file { Path, Resource, Nil, File, Directory, Visitor }
 
+"Base IO exception"
 shared class IOException(String message) extends Exception(message) {}
+
+"Exception thrown when a directory cannot be created"
 shared class CreateDirectoryException(String message) extends IOException(message) {}
+
+"Exception thrown when a file cannot be copied"
 shared class FileCopyException(String message) extends IOException(message) {}
 
 """Returns a `Task` to copy files and directories from `source` to `destination` using [[copyFiles]]"""

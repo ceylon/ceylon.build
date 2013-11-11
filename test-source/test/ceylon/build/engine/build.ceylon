@@ -1,9 +1,113 @@
-import ceylon.build.engine { buildTasks, exitCodes }
+import ceylon.build.engine { runEngine, exitCodes, EngineResult }
 import ceylon.build.task { Goal, Context, Failure, done, Writer }
 import ceylon.test { test, assertEquals }
 import ceylon.collection { MutableList, LinkedList }
 
-Integer execute([String*] arguments, Writer writer, MutableList<String> executedTasks) {
+test void shouldExitWhenNoGoalToRun() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = [];
+    value result = execute(goalsToRun, writer, executedTasks);
+    assertEquals(result.exitCode, exitCodes.noGoalToRun);
+    assertEquals(names(result.availableGoals), availableGoals);
+    assertEquals(execution(result), goalsToRun);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
+    assertEquals(executedTasks, []);
+}
+
+test void shouldExitWhenNoGoalWithTasksToRun() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = ["goalWithoutTasks"];
+    value result = execute(goalsToRun, writer, executedTasks);
+    assertEquals(result.exitCode, exitCodes.noGoalToRun);
+    assertEquals(names(result.availableGoals), availableGoals);
+    assertEquals(execution(result), []);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
+    assertEquals(executedTasks, []);
+}
+
+test void shouldExecuteGoalTask() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = ["goalWithOneTask"];
+    value result = execute(goalsToRun, writer, executedTasks);
+    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(names(result.availableGoals), availableGoals);
+    assertEquals(execution(result), goalsToRun);
+    assertEquals(success(result), goalsToRun);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
+    assertEquals(executedTasks, ["goalWithOneTask"]);
+}
+
+test void shouldExecuteGoalTasks() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = ["goalWithMultipleTasks"];
+    value result = execute(goalsToRun, writer, executedTasks);
+    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(names(result.availableGoals), availableGoals);
+    assertEquals(execution(result), goalsToRun);
+    assertEquals(success(result), goalsToRun);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
+    assertEquals(executedTasks, ["goalWithMultipleTasks-1", "goalWithMultipleTasks-2", "goalWithMultipleTasks-3"]);
+}
+
+test void shouldExecuteGoalTasksUntilTaskFailure() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = ["goalWithMultipleTasksFailingInTheMiddle"];
+    value result = execute(goalsToRun, writer, executedTasks);
+    assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
+    assertEquals(names(result.availableGoals), availableGoals);
+    assertEquals(execution(result), goalsToRun);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), goalsToRun);
+    assertEquals(notRun(result), []);
+    assertEquals(
+        executedTasks,
+        ["goalWithMultipleTasksFailingInTheMiddle-1", "goalWithMultipleTasksFailingInTheMiddle-2"]
+    );
+}
+
+test void shouldExecuteDependenciesTasks() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = ["goalWithOnlyDependencies"];
+    value result = execute(goalsToRun, writer, executedTasks);
+    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(names(result.availableGoals), availableGoals);
+    assertEquals(execution(result), ["goalWithOneTask", "goalWithMultipleTasks"]);
+    assertEquals(success(result), ["goalWithOneTask", "goalWithMultipleTasks"]);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
+    assertEquals(
+        executedTasks,
+        ["goalWithOneTask", "goalWithMultipleTasks-1", "goalWithMultipleTasks-2", "goalWithMultipleTasks-3"]
+    );
+}
+
+test void shouldExitWhenNoGoalWithTasksToRunEvenOnDependencies() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = ["goalWithOnlyDependenciesOnGoalsWithoutTasks"];
+    value result = execute(goalsToRun, writer, executedTasks);
+    assertEquals(result.exitCode, exitCodes.noGoalToRun);
+    assertEquals(names(result.availableGoals), availableGoals);
+    assertEquals(execution(result), []);
+    assertEquals(success(result), []);
+    assertEquals(failed(result), []);
+    assertEquals(notRun(result), []);
+    assertEquals(executedTasks, []);
+}
+
+EngineResult execute([String*] arguments, Writer writer, MutableList<String> executedTasks) {
     function createTask(String taskName) {
         return function(Context context) {
             executedTasks.add(taskName);
@@ -46,76 +150,23 @@ Integer execute([String*] arguments, Writer writer, MutableList<String> executed
         name = "goalWithOnlyDependenciesOnGoalsWithoutTasks";
         dependencies = [goalWithoutTasks];
     };
-    return buildTasks {
+    return runEngine {
         project = "My Build Project";
         goals = [
-            goalWithoutTasks, goalWithOneTask, goalWithMultipleTasks,
-            goalWithMultipleTasksFailingInTheMiddle, goalWithOnlyDependencies,
-            goalWithOnlyDependenciesOnGoalsWithoutTasks
+        goalWithoutTasks, goalWithOneTask, goalWithMultipleTasks,
+        goalWithMultipleTasksFailingInTheMiddle, goalWithOnlyDependencies,
+        goalWithOnlyDependenciesOnGoalsWithoutTasks
         ];
         arguments = arguments;
         writer = writer;
     };
 }
 
-test void shouldExitWhenNoGoalToRun() {
-    value executedTasks = LinkedList<String>();
-    value writer = MockWriter();
-    Integer exitCode = execute([], writer, executedTasks);
-    assertEquals(exitCodes.noGoalToRun, exitCode);
-    assertEquals([], executedTasks);
-}
-
-test void shouldExitWhenNoGoalWithTasksToRun() {
-    value executedTasks = LinkedList<String>();
-    value writer = MockWriter();
-    Integer exitCode = execute(["goalWithoutTasks"], writer, executedTasks);
-    assertEquals(exitCodes.noGoalToRun, exitCode);
-    assertEquals([], executedTasks);
-}
-
-test void shouldExecuteGoalTask() {
-    value executedTasks = LinkedList<String>();
-    value writer = MockWriter();
-    Integer exitCode = execute(["goalWithOneTask"], writer, executedTasks);
-    assertEquals(exitCodes.success, exitCode);
-    assertEquals(["goalWithOneTask"], executedTasks);
-}
-
-test void shouldExecuteGoalTasks() {
-    value executedTasks = LinkedList<String>();
-    value writer = MockWriter();
-    Integer exitCode = execute(["goalWithMultipleTasks"], writer, executedTasks);
-    assertEquals(exitCodes.success, exitCode);
-    assertEquals(["goalWithMultipleTasks-1", "goalWithMultipleTasks-2", "goalWithMultipleTasks-3"], executedTasks);
-}
-
-test void shouldExecuteGoalTasksUntilTaskFailure() {
-    value executedTasks = LinkedList<String>();
-    value writer = MockWriter();
-    Integer exitCode = execute(["goalWithMultipleTasksFailingInTheMiddle"], writer, executedTasks);
-    assertEquals(exitCodes.errorOnTaskExecution, exitCode);
-    assertEquals(
-        ["goalWithMultipleTasksFailingInTheMiddle-1", "goalWithMultipleTasksFailingInTheMiddle-2"],
-        executedTasks
-    );
-}
-
-test void shouldExecuteDependenciesTasks() {
-    value executedTasks = LinkedList<String>();
-    value writer = MockWriter();
-    Integer exitCode = execute(["goalWithOnlyDependencies"], writer, executedTasks);
-    assertEquals(exitCodes.success, exitCode);
-    assertEquals(
-        ["goalWithOneTask", "goalWithMultipleTasks-1", "goalWithMultipleTasks-2", "goalWithMultipleTasks-3"],
-        executedTasks
-    );
-}
-
-test void shouldExitWhenNoGoalWithTasksToRunEvenOnDependencies() {
-    value executedTasks = LinkedList<String>();
-    value writer = MockWriter();
-    Integer exitCode = execute(["goalWithOnlyDependenciesOnGoalsWithoutTasks"], writer, executedTasks);
-    assertEquals(exitCodes.noGoalToRun, exitCode);
-    assertEquals([], executedTasks);
-}
+[String+] availableGoals = [
+    "goalWithoutTasks",
+    "goalWithOneTask",
+    "goalWithMultipleTasks",
+    "goalWithMultipleTasksFailingInTheMiddle",
+    "goalWithOnlyDependencies",
+    "goalWithOnlyDependenciesOnGoalsWithoutTasks"
+];

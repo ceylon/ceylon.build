@@ -1,7 +1,7 @@
 import ceylon.build.task { Goal, GoalSet }
 import ceylon.collection { LinkedList }
 
-shared {Goal+} mergeGoalSetsWithGoals({<Goal|GoalSet>+} goals) {
+{Goal+} mergeGoalSetsWithGoals({<Goal|GoalSet>+} goals) {
     value goalsList = LinkedList<Goal>();
     for (item in goals) {
         switch (item)
