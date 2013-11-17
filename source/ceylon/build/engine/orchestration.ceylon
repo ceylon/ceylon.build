@@ -1,19 +1,21 @@
 import ceylon.build.task { Goal, Writer }
 import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
 
+String dash = "-";
+
 {Goal*} buildGoalExecutionList({Goal+} definitions, [String*] arguments, Writer writer) {
     value goalsRequested = findGoalsToExecute(definitions, arguments, writer);
     MutableList<Goal> goalsToExecute = LinkedList<Goal>();
     for (goal in goalsRequested) {
         goalsToExecute.addAll(linearize(goal));
     }
-    return reduce(goalsToExecute);
+    return resumeFrom(reduce(goalsToExecute), arguments, writer);
 }
 
 {Goal*} findGoalsToExecute({Goal+} definitions, [String*] arguments, Writer writer) {
     MutableList<Goal> goalsToExecute = LinkedList<Goal>();
     for (argument in arguments) {
-        if (!argument.startsWith(argumentPrefix)) {
+        if (!argument.startsWith(dash)) {
             for (definition in definitions) {
                 if (definition.name.equals(argument)) {
                     goalsToExecute.add(definition);
@@ -37,7 +39,7 @@ import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
     return goals;
 }
 
-{Goal*} reduce({Goal*} goals) {
+[Goal*] reduce({Goal*} goals) {
     MutableSet<String> reducedGoalsNames = HashSet<String>();
     MutableList<Goal> reducedGoals = LinkedList<Goal>();
     for (Goal goal in goals) {
@@ -46,5 +48,27 @@ import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
             reducedGoalsNames.add(goal.name);
         }
     }
-    return reducedGoals;
+    return reducedGoals.sequence;
+}
+
+{Goal*} resumeFrom([Goal*] goals, [String*] arguments, Writer writer) {
+    if (goals.empty) {
+        return [];
+    }
+    for (argument in arguments) {
+        value resumeFromOption = "--rf=";
+        if (argument.startsWith(resumeFromOption)) {
+            value from = argument.spanFrom(resumeFromOption.size);
+            for (index -> goal in entries(goals)) {
+                if (goal.name == from) {
+                    writer.error("# resume from ``from``");
+                    return goals.spanFrom(index);
+                }
+            } else {
+                writer.error("# No goal ``from`` to resume from found, stopping");
+                return [];
+            }
+        }
+    }
+    return goals;
 }
