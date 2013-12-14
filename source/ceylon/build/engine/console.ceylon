@@ -13,9 +13,16 @@ void console({<Goal|GoalSet>+} goals) {
         exitCodes.errorOnTaskExecution->"Error on task execution"
     });
     print("Available goals: ``mergeGoalSetsWithGoals(goals)``");
+    print("Enter Ctrl + D to quit");
     while (true) {
         process.write("> ");
-        String line = process.readLine().trimmed;
+        String? rawLine = process.readLine(); // workaround for https://github.com/ceylon/ceylon.language/issues/372
+        if (is Null rawLine) {
+            process.writeLine();
+            return;
+        }
+        assert(exists rawLine);
+        String line = rawLine.trimmed;
         value result = runEngine(goals,"",line.split().sequence);
         assert(exists msg = exitMessages[result.exitCode]);
         print(msg);
