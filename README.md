@@ -66,15 +66,15 @@ void run() {
     String myTestModule = "test.mod";
     value compileGoal = Goal {
         name = "compile";
-            compile {
-            moduleName = myModule;
-        };
+        compile {
+            modules = myModule;
+        }
     };
     value compileTestsGoal = Goal {
         name = "compile-tests";
         compileTests {
-            moduleName = myTestModule;
-        };
+            modules = myTestModule;
+        }
     };
     build {
         project = "My Build Project";
@@ -82,32 +82,32 @@ void run() {
         compileTestsGoal,
         Goal {
             name = "test";
+            dependencies = [compileGoal, compileTestsGoal];
             runModule {
                 moduleName = myTestModule;
                 version = "1.0.0";
-            };
-            dependencies = [compileGoal, compileTestsGoal];
+            }
         },
         Goal {
             name = "doc";
             document {
-                moduleName = myModule;
+                modules = myModule;
                 includeSourceCode = true;
-            };
+            }
         },
         Goal {
             name = "run";
             runModule {
                 moduleName = myModule;
                 version = "1.0";
-            };
+            }
         },
         Goal {
             name = "publish-local";
             compile {
-                moduleName = myModule;
-                outputModuleRepository = "~/.ceylon/repo";
-            };
+                modules = myModule;
+                outputRepository = "~/.ceylon/repo";
+            }
         }
     };
 }
