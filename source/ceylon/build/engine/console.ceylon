@@ -12,19 +12,7 @@ void console({<Goal|GoalSet>+} goals) {
         exitCodes.noGoalToRun->"No goal to run",
         exitCodes.errorOnTaskExecution->"Error on task execution"
     });
-    LinkedList<Goal> all = LinkedList<Goal>();
-    for (goal in goals) {
-        if (is Goal goal) {
-            all.add(goal);
-        } else if (is GoalSet goal) {
-            all.addAll(goal.goals);
-        }
-    }
-    print("Available goals:");
-    for (goal in all) {
-        print(goal.name);
-    }
-    print("");
+    print("Available goals: ``mergeGoalSetsWithGoals(goals)``");
     while (true) {
         process.write("> ");
         String line = process.readLine().trimmed;
