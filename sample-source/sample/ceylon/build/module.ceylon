@@ -5,4 +5,5 @@ module sample.ceylon.build "1.0.0" {
     import ceylon.build.tasks.ceylon "1.0.0";
     import ceylon.build.tasks.commandline "1.0.0";
     import ceylon.build.tasks.file "1.0.0";
+    import ceylon.build.tasks.misc "1.0.0";
 }

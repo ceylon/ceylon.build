@@ -53,9 +53,15 @@ shared void build(
     "Goals and GoalSets available in the engine"
     {<Goal|GoalSet>+} goals,
     "Project name to be displayed"
-    String project = "") {
-    value result = runEngine(goals, project, process.arguments, consoleWriter);
-    process.exit(result.exitCode);
+    String project = "",
+    "Run in interactive mode"
+    Boolean interactive = false) {
+    if (interactive) {
+        console(goals);
+    } else {
+        value result = runEngine(goals, project, process.arguments, consoleWriter);
+        process.exit(result.exitCode);
+    }
 }
 
 """Starts the goal engine and returns an [[EngineResult]] giving information about goals execution.
