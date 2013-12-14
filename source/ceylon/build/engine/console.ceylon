@@ -1,10 +1,9 @@
 import ceylon.build.task { Goal, GoalSet }
-import ceylon.collection { LinkedList }
-
+import ceylon.collection { HashMap }
 
 "An interactive console."
 void console({<Goal|GoalSet>+} goals) {
-    value exitMessages = LazyMap<Integer, String>({
+    value exitMessages = HashMap<Integer, String>({
         exitCodes.success->"Success",
         exitCodes.dependencyCycleFound->"Dependency Cycle Found",
         exitCodes.invalidGoalFound->"Invalid goal found",
