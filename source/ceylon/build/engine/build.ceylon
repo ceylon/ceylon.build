@@ -53,13 +53,12 @@ shared void build(
     "Goals and GoalSets available in the engine"
     {<Goal|GoalSet>+} goals,
     "Project name to be displayed"
-    String project = "",
-    "Run in interactive mode"
-    Boolean interactive = false) {
-    if (interactive) {
+    String project = "") {
+    value arguments = process.arguments;
+    if (interactive(arguments)) {
         console(goals);
     } else {
-        value result = runEngine(goals, project, process.arguments, consoleWriter);
+        value result = runEngine(goals, project, arguments, consoleWriter);
         process.exit(result.exitCode);
     }
 }

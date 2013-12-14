@@ -1,6 +1,11 @@
 import ceylon.build.task { Goal, GoalSet }
 import ceylon.collection { HashMap }
 
+"Returns `true` if `--console` option is found in `arguments`."
+Boolean interactive([String*] arguments) {
+    return arguments.contains("--console");
+}
+
 "An interactive console."
 void console({<Goal|GoalSet>+} goals) {
     value exitMessages = HashMap<Integer, String>({
@@ -22,7 +27,7 @@ void console({<Goal|GoalSet>+} goals) {
         }
         assert(exists rawLine);
         String line = rawLine.trimmed;
-        value result = runEngine(goals,"",line.split().sequence);
+        value result = runEngine(goals, "", line.split().sequence);
         assert(exists msg = exitMessages[result.exitCode]);
         print(msg);
     }
