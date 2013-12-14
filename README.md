@@ -125,3 +125,34 @@ For example, `compile` task has support for `--javac` argument and `doc` task fo
 arguments, then, the following command can be used:
 `ceylon run mybuildmodule/1.0.0 test doc -Dcompile:--javac=-g:source,lines,vars -Ddoc:--non-shared -Ddoc:--source-code`
 
+Console
+-----
+
+A simple interractive console is provided for running top level goals defined in a module:
+
+```ceylon
+Goal echoGoal = Goal {
+    name = "echo";
+    echo {
+        "Hello World";
+    }
+};
+
+"Basic build example"
+void run() {
+    console(`module sample.ceylon.build`);
+}
+```
+
+    Available goals:
+    echo
+    
+    > echo
+    ## ceylon.build: 
+    # running goals: [echo] in order
+    # running echo()
+    Hello World
+    ## success - duration 0s
+    Success
+
+See the `sample.ceylon.build.console` example.
