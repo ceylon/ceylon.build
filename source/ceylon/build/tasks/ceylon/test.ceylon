@@ -146,9 +146,10 @@ shared Task compileJsTests(
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties = [],
-        "Print messages while compiling
-         (corresponding command line parameter: `--verbose`)"
-        Boolean verbose = false,
+        "Produce verbose output. If no 'flags' are given then be verbose about everything,
+         otherwise just be vebose about the flags which are present
+         (corresponding command line parameter: `--verbose=<flags>`)"
+        {CompileJsVerboseMode*} verboseModes = [],
         "Ceylon executable that will be used or null to use current ceylon tool"
         String? ceylon = null,
         "Specifies the current working directory for this tool.
@@ -177,7 +178,7 @@ shared Task compileJsTests(
         profile = profile;
         skipSourceArchive = skipSourceArchive;
         systemProperties = systemProperties;
-        verbose = verbose;
+        verboseModes = verboseModes;
         ceylon = ceylon;
         currentWorkingDirectory = currentWorkingDirectory;
     };

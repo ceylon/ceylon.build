@@ -155,9 +155,9 @@ shared String compileJsCommand(
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties,
-        "Print messages while compiling
-         (corresponding command line parameter: `--verbose`)"
-        Boolean verbose,
+        "Produce verbose output.
+         (corresponding command line parameter: `--verbose[=<flags>]`)"
+        {CompileJsVerboseMode*}|AllVerboseModes verboseModes,
         "custom arguments to be added to commandline"
         {String*} arguments
         ) {
@@ -182,7 +182,7 @@ shared String compileJsCommand(
     appendProfile(sb, profile);
     appendSkipSourceArchive(sb, skipSourceArchive);
     appendSystemProperties(sb, systemProperties);
-    appendVerbose(sb, verbose);
+    appendVerboseModes(sb, verboseModes);
     appendArguments(sb, arguments);
     appendCompilationUnits(sb, modules, files);
     return sb.string;

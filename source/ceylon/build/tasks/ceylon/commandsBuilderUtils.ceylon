@@ -62,8 +62,8 @@ void appendSystemProperties(StringBuilder sb, {<String->String>*} systemProperti
     }
 }
 
-void appendVerboseModes(StringBuilder sb, {<CompileVerboseMode|RunVerboseMode>*}|AllVerboseModes verboseModes) {
-    if (is {<CompileVerboseMode|RunVerboseMode>*} verboseModes) {
+void appendVerboseModes(StringBuilder sb, {VerboseMode*}|AllVerboseModes verboseModes) {
+    if (is {VerboseMode*} verboseModes) {
         appendList(sb, "verbose", verboseModes);
     } else {
         appendFlag(sb, "verbose");

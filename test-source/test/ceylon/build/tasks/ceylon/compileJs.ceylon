@@ -1,5 +1,5 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { compileJsCommand }
+import ceylon.build.tasks.ceylon { compileJsCommand, all }
 
 test void shouldCreateCompileJsCommand() {
     assertEquals{
@@ -26,7 +26,38 @@ test void shouldCreateCompileJsCommand() {
             profile = false;
             skipSourceArchive = false;
             systemProperties = [];
-            verbose = false;
+            verboseModes = [];
+            arguments = [];
+        };
+    };
+}
+
+test void shouldCreateCompileJsCommandWithAllVerboseFlag() {
+    assertEquals{
+        expected = "compile-js --verbose myfile.ceylon";
+        actual = compileJsCommand {
+            currentWorkingDirectory = null;
+            modules = [];
+            files = ["myfile.ceylon"];
+            encoding = null;
+            sourceDirectories = [];
+            outputRepository = null;
+            repositories = [];
+            systemRepository = null;
+            cacheRepository = null;
+            user = null;
+            password = null;
+            offline = false;
+            compact = false;
+            lexicalScopeStyle = false;
+            noComments = false;
+            noIndent = false;
+            noModule = false;
+            optimize = false;
+            profile = false;
+            skipSourceArchive = false;
+            systemProperties = [];
+            verboseModes = all;
             arguments = [];
         };
     };
@@ -61,7 +92,7 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
             profile = true;
             skipSourceArchive = true;
             systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
-            verbose = true;
+            verboseModes = all;
             arguments = ["--source=foo", "--source=bar"];
         };
     };

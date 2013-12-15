@@ -156,9 +156,9 @@ shared Task compileJs(
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties = [],
-        "Print messages while compiling
-         (corresponding command line parameter: `--verbose`)"
-        Boolean verbose = false,
+        "Produce verbose output.
+         (corresponding command line parameter: `--verbose[=<flags>]`)"
+        {CompileJsVerboseMode*}|AllVerboseModes verboseModes = [],
         "Ceylon executable that will be used or null to use current ceylon tool"
         String? ceylon = null,
         "Specifies the current working directory for this tool.
@@ -192,7 +192,7 @@ shared Task compileJs(
             profile = profile;
             skipSourceArchive = skipSourceArchive;
             systemProperties = systemProperties;
-            verbose = verbose;
+            verboseModes = verboseModes;
             arguments = context.arguments;
         };
         return execute(context.writer, "compiling", ceylon, command);
