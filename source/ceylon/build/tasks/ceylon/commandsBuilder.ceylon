@@ -131,6 +131,9 @@ shared String compileJsCommand(
         "Equivalent to '--no-indent' '--no-comments'
          (corresponding command line parameter: `--compact`)"
         Boolean compact,
+        "Create lexical scope-style JS code
+         (corresponding command line parameter: `--lexical-scope-style`)"
+        Boolean lexicalScopeStyle,
         "Do NOT generate any comments
          (corresponding command line parameter: `--no-comments`)"
         Boolean noComments,
@@ -171,6 +174,7 @@ shared String compileJsCommand(
     appendPassword(sb, password);
     appendOfflineMode(sb, offline);
     appendCompact(sb, compact);
+    appendLexicalScopeStyle(sb, lexicalScopeStyle);
     appendNoComments(sb, noComments);
     appendNoIndent(sb, noIndent);
     appendNoModule(sb, noModule);

@@ -122,6 +122,9 @@ shared Task compileJsTests(
         "Equivalent to '--no-indent' '--no-comments'
          (corresponding command line parameter: `--compact`)"
         Boolean compact = false,
+        "Create lexical scope-style JS code
+         (corresponding command line parameter: `--lexical-scope-style`)"
+        Boolean lexicalScopeStyle = false,
         "Do NOT generate any comments
          (corresponding command line parameter: `--no-comments`)"
         Boolean noComments = false,
@@ -166,6 +169,7 @@ shared Task compileJsTests(
         password = password;
         offline = offline;
         compact = compact;
+        lexicalScopeStyle = lexicalScopeStyle;
         noComments = noComments;
         noIndent = noIndent;
         noModule = noModule;

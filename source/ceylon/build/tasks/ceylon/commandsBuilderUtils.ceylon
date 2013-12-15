@@ -79,6 +79,10 @@ void appendCompact(StringBuilder sb, Boolean compact) {
     appendFlag(sb, "compact", compact);
 }
 
+void appendLexicalScopeStyle(StringBuilder sb, Boolean lexicalScopeStyle) {
+    appendFlag(sb, "lexical-scope-style", lexicalScopeStyle);
+}
+
 void appendNoComments(StringBuilder sb, Boolean noComments) {
     appendFlag(sb, "no-comments", noComments);
 }
