@@ -46,6 +46,9 @@ shared Task compileTests(
         "Indicates that the default repositories should not be used
          (corresponding command line parameter: `--no-default-repositories`)"
         Boolean noDefaultRepositories = false,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties = [],
         "Produce verbose output. If no 'flags' are given then be verbose about everything,
          otherwise just be vebose about the flags which are present
          (corresponding command line parameter: `--verbose=<flags>`)"
@@ -72,6 +75,7 @@ shared Task compileTests(
         password = password;
         offline = offline;
         noDefaultRepositories = noDefaultRepositories;
+        systemProperties = systemProperties;
         verboseModes = verboseModes;
         ceylon = ceylon;
         currentWorkingDirectory = currentWorkingDirectory;
@@ -136,6 +140,9 @@ shared Task compileJsTests(
         "Do NOT generate .src archive - useful when doing joint compilation
          (corresponding command line parameter: `--skip-src-archive`)"
         Boolean skipSourceArchive = false,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties = [],
         "Print messages while compiling
          (corresponding command line parameter: `--verbose`)"
         Boolean verbose = false,
@@ -147,26 +154,27 @@ shared Task compileJsTests(
         String? currentWorkingDirectory = null
 ) {
     return compileJs {
-        modules;
-        files;
-        encoding;
-        testSourceDirectory;
-        outputRepository;
-        repositories;
-        systemRepository;
-        cacheRepository;
-        user;
-        password;
-        offline;
-        compact;
-        noComments;
-        noIndent;
-        noModule;
-        optimize;
-        profile;
-        skipSourceArchive;
-        verbose;
-        ceylon;
-        currentWorkingDirectory;
+        modules = modules;
+        files = files;
+        encoding = encoding;
+        sourceDirectories = testSourceDirectory;
+        outputRepository = outputRepository;
+        repositories = repositories;
+        systemRepository = systemRepository;
+        cacheRepository = cacheRepository;
+        user =user;
+        password = password;
+        offline = offline;
+        compact = compact;
+        noComments = noComments;
+        noIndent = noIndent;
+        noModule = noModule;
+        optimize = optimize;
+        profile = profile;
+        skipSourceArchive = skipSourceArchive;
+        systemProperties = systemProperties;
+        verbose = verbose;
+        ceylon = ceylon;
+        currentWorkingDirectory = currentWorkingDirectory;
     };
 }
