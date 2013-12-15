@@ -150,6 +150,9 @@ shared Task compileJs(
         "Do NOT generate .src archive - useful when doing joint compilation
          (corresponding command line parameter: `--skip-src-archive`)"
         Boolean skipSourceArchive = false,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties = [],
         "Print messages while compiling
          (corresponding command line parameter: `--verbose`)"
         Boolean verbose = false,
@@ -165,27 +168,28 @@ shared Task compileJs(
     checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
         value command = compileJsCommand {
-            currentWorkingDirectory;
-            modulesList;
-            filesList;
-            encoding;
-            stringIterable(sourceDirectories);
-            outputRepository;
-            stringIterable(repositories);
-            systemRepository;
-            cacheRepository;
-            user;
-            password;
-            offline;
-            compact;
-            noComments;
-            noIndent;
-            noModule;
-            optimize;
-            profile;
-            skipSourceArchive;
-            verbose;
-            context.arguments;
+            currentWorkingDirectory = currentWorkingDirectory;
+            modules = modulesList;
+            files = filesList;
+            encoding = encoding;
+            sourceDirectories = stringIterable(sourceDirectories);
+            outputRepository = outputRepository;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            user = user;
+            password = password;
+            offline = offline;
+            compact = compact;
+            noComments = noComments;
+            noIndent = noIndent;
+            noModule = noModule;
+            optimize = optimize;
+            profile = profile;
+            skipSourceArchive = skipSourceArchive;
+            systemProperties = systemProperties;
+            verbose = verbose;
+            arguments = context.arguments;
         };
         return execute(context.writer, "compiling", ceylon, command);
     };

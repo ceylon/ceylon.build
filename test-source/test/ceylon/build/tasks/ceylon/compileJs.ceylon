@@ -24,6 +24,7 @@ test void shouldCreateCompileJsCommand() {
             optimize = false;
             profile = false;
             skipSourceArchive = false;
+            systemProperties = [];
             verbose = false;
             arguments = [];
         };
@@ -35,8 +36,8 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
         expected = "compile-js --cwd=. --encoding=UTF-8 --source=source-a --source=source-b" +
                 " --out=~/.ceylon/repo --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
                 " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline --compact" +
-                " --no-comments --no-indent --no-module --optimize --profile" +
-                " --skip-src-archive --verbose --source=foo --source=bar module1 module2 file1.js file2.js";
+                " --no-comments --no-indent --no-module --optimize --profile --skip-src-archive" +
+                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo --verbose --source=foo --source=bar module1 module2 file1.js file2.js";
         actual = compileJsCommand {
             currentWorkingDirectory = ".";
             modules = ["module1", "module2"];
@@ -57,6 +58,7 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
             optimize = true;
             profile = true;
             skipSourceArchive = true;
+            systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
             verbose = true;
             arguments = ["--source=foo", "--source=bar"];
         };

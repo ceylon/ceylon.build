@@ -149,6 +149,9 @@ shared String compileJsCommand(
         "Do NOT generate .src archive - useful when doing joint compilation
          (corresponding command line parameter: `--skip-src-archive`)"
         Boolean skipSourceArchive,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties,
         "Print messages while compiling
          (corresponding command line parameter: `--verbose`)"
         Boolean verbose,
@@ -174,6 +177,7 @@ shared String compileJsCommand(
     appendOptimize(sb, optimize);
     appendProfile(sb, profile);
     appendSkipSourceArchive(sb, skipSourceArchive);
+    appendSystemProperties(sb, systemProperties);
     appendVerbose(sb, verbose);
     appendArguments(sb, arguments);
     appendCompilationUnits(sb, modules, files);
