@@ -10,8 +10,9 @@
    for command to exit before returning.
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
-module ceylon.build.tasks.commandline "1.0.0" {
+module ceylon.build.tasks.commandline "2.0.0" {
     shared import ceylon.build.task "1.0.0";
-    import ceylon.file "1.0.0";
-    shared import ceylon.process "1.0.0";
+    shared import ceylon.file "1.0.0";
+    import ceylon.process "1.0.0";
+    import java.base "7";
 }

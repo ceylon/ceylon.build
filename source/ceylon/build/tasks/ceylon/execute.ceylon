@@ -23,5 +23,5 @@ Integer executeWithCurrentCeylonRuntime(String command) {
 Integer executeInNewProcess(Writer writer, String title, String ceylon, String command) {
     value commandToExecute = "``ceylon`` ``command.trimmed``";
     writer.info("``title``: '``commandToExecute``'");
-    return executeCommand(commandToExecute) else 0;
+    return executeCommand(commandToExecute, writer) else 0;
 }

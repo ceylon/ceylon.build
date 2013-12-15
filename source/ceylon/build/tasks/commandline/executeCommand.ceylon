@@ -1,15 +1,9 @@
-import ceylon.build.task { Context, Task, Outcome, Failure, done }
-import ceylon.process {
-    Process, createProcess,
-    Input, currentInput,
-    Output, currentOutput,
-    Error, currentError,
-    currentEnvironment
-}
+import ceylon.build.task { Context, Task, Outcome, Failure, done, Writer }
+import ceylon.process { Process, createProcess, currentInput, currentEnvironment }
 import ceylon.file { current, Path }
 
 "Returns a `Task` that will run the given command in a new a new process using [[executeCommand]].
- Returns true if process exit code is `0`, false otherwise."
+ Task will report success if process exit code is `0`, otherwise, it will report a failure."
 see(`function executeCommand`)
 shared Task command(
         "The _command_ to be run in the new
@@ -18,28 +12,13 @@ shared Task command(
         String command,
         "The directory in which the process runs."
         Path path = current,
-        "The source for the standard input stream
-         of the process, or `null` if the standard
-         input should be piped from the current
-         process."
-        Input? input = currentInput,
-        "The destination for the standard output
-         stream ofthe process, or `null` if the
-         standard output should be piped to the
-         current process."
-        Output? output = currentOutput,
-        "The destination for the standard output
-         stream ofthe process, or `null` if the
-         standard error should be piped to the
-         current process."
-        Error? error = currentError,
         "Environment variables to pass to the
          process. By default the process inherits
          the environment variables of the current
          virtual machine process."
         {<String->String>*} environment = currentEnvironment) {
     return function(Context context) {
-        Integer exitCode = executeCommand(command, path, currentInput, currentOutput, currentError, environment) else 0;
+        Integer exitCode = executeCommand(command, context.writer, path, environment) else 0;
         return exitCodeToOutcome(exitCode, command, path);
     };
 }
@@ -52,29 +31,17 @@ shared Integer? executeCommand(
          process, usually a program with a list
          of its arguments."
         String command,
+        "The writer to which output and error messages will be written."
+        Writer writer,
         "The directory in which the process runs."
         Path path = current,
-        "The source for the standard input stream
-         of the process, or `null` if the standard
-         input should be piped from the current
-         process."
-        Input? input = currentInput,
-        "The destination for the standard output
-         stream ofthe process, or `null` if the
-         standard output should be piped to the
-         current process."
-        Output? output = currentOutput,
-        "The destination for the standard output
-         stream ofthe process, or `null` if the
-         standard error should be piped to the
-         current process."
-        Error? error = currentError,
         "Environment variables to pass to the
          process. By default the process inherits
          the environment variables of the current
          virtual machine process."
         {<String->String>*} environment = currentEnvironment) {
-    Process process = createProcess(command.trimmed, path, input, output, error, *environment);
+    Process process = createProcess(command.trimmed, path, currentInput, null, null, *environment);
+    pipeOutputs(process, writer);
     process.waitForExit();
     return process.exitCode;
 }
