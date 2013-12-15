@@ -1,5 +1,5 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { compileCommand, all, loader, cmrloader, benchmark, code, ast }
+import ceylon.build.tasks.ceylon { compileCommand, all, loader, cmr, benchmark, code, ast }
 
 test void shouldCreateCompileCommand() {
     assertEquals{
@@ -59,7 +59,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
                 " --sysrep=system-repository --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password" +
                 " --offline --no-default-repositories" +
-                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo --verbose=loader,ast,code,cmrloader,benchmark" +
+                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo --verbose=loader,ast,code,cmr,benchmark" +
                 " --source=foo --source=bar module1 module2 file1.ceylon file2.ceylon";
         actual = compileCommand {
             currentWorkingDirectory = ".";
@@ -78,7 +78,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
             offline = true;
             noDefaultRepositories = true;
             systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
-            verboseModes = [loader, ast, code, cmrloader, benchmark];
+            verboseModes = [loader, ast, code, cmr, benchmark];
             arguments = ["--source=foo", "--source=bar"];
         };
     };
