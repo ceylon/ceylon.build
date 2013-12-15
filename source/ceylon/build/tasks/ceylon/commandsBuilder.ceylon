@@ -54,6 +54,9 @@ shared String compileCommand(
         "Indicates that the default repositories should not be used
          (corresponding command line parameter: `--no-default-repositories`)"
         Boolean noDefaultRepositories,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties,
         "Indicates that the default repositories should not be used
          (corresponding command line parameter: `--no-default-repositories`)"
         {CompileVerboseMode*}|AllVerboseModes verboseModes,
@@ -75,6 +78,7 @@ shared String compileCommand(
     appendPassword(sb, password);
     appendOfflineMode(sb, offline);
     appendNoDefaultRepositories(sb, noDefaultRepositories);
+    appendSystemProperties(sb, systemProperties);
     appendVerboseModes(sb, verboseModes);
     appendArguments(sb, arguments);
     appendCompilationUnits(sb, modules, files);

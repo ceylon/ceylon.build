@@ -56,6 +56,12 @@ void appendOfflineMode(StringBuilder sb, Boolean offline) {
     appendFlag(sb, "offline", offline);
 }
 
+void appendSystemProperties(StringBuilder sb, {<String->String>*} systemProperties) {
+    for (systemProperty in systemProperties) {
+        appendParameter(sb, "define", "``systemProperty.key``=``systemProperty.item``");
+    }
+}
+
 void appendVerboseModes(StringBuilder sb, {<CompileVerboseMode|RunVerboseMode>*}|AllVerboseModes verboseModes) {
     if (is {<CompileVerboseMode|RunVerboseMode>*} verboseModes) {
         appendList(sb, "verbose", verboseModes);

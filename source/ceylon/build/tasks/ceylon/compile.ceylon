@@ -49,6 +49,9 @@ shared Task compile(
         "Indicates that the default repositories should not be used
          (corresponding command line parameter: `--no-default-repositories`)"
         Boolean noDefaultRepositories = false,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties = [],
         "Produce verbose output.
          (corresponding command line parameter: `--verbose=<flags>`)"
         {CompileVerboseMode*}|AllVerboseModes verboseModes = [],
@@ -64,23 +67,24 @@ shared Task compile(
     checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
         value command = compileCommand {
-            currentWorkingDirectory;
-            modulesList;
-            filesList;
-            encoding;
-            stringIterable(sourceDirectories);
-            stringIterable(resourceDirectories);
-            javacOptions;
-            outputRepository;
-            stringIterable(repositories);
-            systemRepository;
-            cacheRepository;
-            user;
-            password;
-            offline;
-            noDefaultRepositories;
-            verboseModes;
-            context.arguments;
+            currentWorkingDirectory = currentWorkingDirectory;
+            modules = modulesList;
+            files = filesList;
+            encoding = encoding;
+            sourceDirectories = stringIterable(sourceDirectories);
+            resourceDirectories = stringIterable(resourceDirectories);
+            javacOptions = javacOptions;
+            outputRepository = outputRepository;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            user =user;
+            password = password;
+            offline = offline;
+            noDefaultRepositories = noDefaultRepositories;
+            systemProperties = systemProperties;
+            verboseModes = verboseModes;
+            arguments = context.arguments;
         };
         return execute(context.writer, "compiling", ceylon, command);
     };

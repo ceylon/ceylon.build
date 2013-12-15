@@ -58,23 +58,23 @@ shared Task compileTests(
         String? currentWorkingDirectory = null
 ) {
     return compile {
-        modules;
-        files;
-        encoding;
-        testSourceDirectory;
-        testResourceDirectory;
-        javacOptions;
-        outputRepository;
-        repositories;
-        systemRepository;
-        cacheRepository;
-        user;
-        password;
-        offline;
-        noDefaultRepositories;
-        verboseModes;
-        ceylon;
-        currentWorkingDirectory;
+        modules = modules;
+        files = files;
+        encoding = encoding;
+        sourceDirectories = testSourceDirectory;
+        resourceDirectories = testResourceDirectory;
+        javacOptions = javacOptions;
+        outputRepository = outputRepository;
+        repositories = repositories;
+        systemRepository = systemRepository;
+        cacheRepository = cacheRepository;
+        user = user;
+        password = password;
+        offline = offline;
+        noDefaultRepositories = noDefaultRepositories;
+        verboseModes = verboseModes;
+        ceylon = ceylon;
+        currentWorkingDirectory = currentWorkingDirectory;
     };
 }
 

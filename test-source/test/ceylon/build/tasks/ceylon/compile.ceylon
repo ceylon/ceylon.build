@@ -19,6 +19,7 @@ test void shouldCreateCompileCommand() {
             password = null;
             offline = false;
             noDefaultRepositories = false;
+            systemProperties = [];
             verboseModes = [];
             arguments = [];
         };
@@ -44,6 +45,7 @@ test void shouldCreateCompileCommandWithAllVerboseFlag() {
             password = null;
             offline = false;
             noDefaultRepositories = false;
+            systemProperties = [];
             verboseModes = all;
             arguments = [];
         };
@@ -56,7 +58,8 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
                 " --resource=resource-a --resource=resource-c" +
                 " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
                 " --sysrep=system-repository --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password" +
-                " --offline --no-default-repositories --verbose=loader,ast,code,cmrloader,benchmark" +
+                " --offline --no-default-repositories" +
+                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo --verbose=loader,ast,code,cmrloader,benchmark" +
                 " --source=foo --source=bar module1 module2 file1.ceylon file2.ceylon";
         actual = compileCommand {
             currentWorkingDirectory = ".";
@@ -74,6 +77,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
             password = "ceylon-user-password";
             offline = true;
             noDefaultRepositories = true;
+            systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
             verboseModes = [loader, ast, code, cmrloader, benchmark];
             arguments = ["--source=foo", "--source=bar"];
         };
