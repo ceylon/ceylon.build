@@ -69,6 +69,9 @@ shared Task document(
         "Sets the header text to be placed at the top of each page.
          (corresponding command line parameter: `--header=<header>`)"
         String? header = null,
+        "Sets the footer text to be placed at the bottom of each page.
+         (corresponding command line parameter: `--footer=<footer>`)"
+        String? footer = null,
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties = [],
@@ -99,6 +102,7 @@ shared Task document(
             ignoreBrokenLink = ignoreBrokenLink;
             ignoreMissingDoc = ignoreMissingDoc;
             header = header;
+            footer = footer;
             systemProperties = systemProperties;
             arguments = context.arguments;
         };

@@ -261,6 +261,9 @@ shared String docCommand(
         "Sets the header text to be placed at the top of each page.
          (corresponding command line parameter: `--header=<header>`)"
         String? header,
+        "Sets the footer text to be placed at the bottom of each page.
+         (corresponding command line parameter: `--footer=<footer>`)"
+        String? footer,
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties,
@@ -286,6 +289,7 @@ shared String docCommand(
     appendIgnoreBrokenLink(sb, ignoreBrokenLink);
     appendIgnoreMissingDoc(sb, ignoreMissingDoc);
     appendHeader(sb, header);
+    appendFooter(sb, footer);
     appendSystemProperties(sb, systemProperties);
     appendArguments(sb, arguments);
     sb.append(" ");
