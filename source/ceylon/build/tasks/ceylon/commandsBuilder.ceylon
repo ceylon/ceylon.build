@@ -270,6 +270,9 @@ shared String docCommand(
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties,
+        "Produce verbose output.
+         (corresponding command line parameter: `--verbose=<flags>`)"
+        {DocVerboseMode*}|AllVerboseModes verboseModes,
         "custom arguments to be added to commandline"
         {String*} arguments
         ) {
@@ -295,6 +298,7 @@ shared String docCommand(
     appendHeader(sb, header);
     appendFooter(sb, footer);
     appendSystemProperties(sb, systemProperties);
+    appendVerboseModes(sb, verboseModes);
     appendArguments(sb, arguments);
     sb.append(" ");
     sb.append(" ".join(modules));

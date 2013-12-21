@@ -1,22 +1,27 @@
 "Verbose mode"
 shared interface VerboseMode {}
 
-"All verbose modes for jvm backend compilation / execution"
+"All verbose modes for jvm backend compilation / documentation / execution"
 shared interface AllVerboseModes {}
 
 "Verbose modes for jvm backend compilation"
-shared interface CompileVerboseMode of loader | ast | code | cmr | benchmark satisfies VerboseMode {}
+shared interface CompileVerboseMode of all | loader | ast | code | cmr | benchmark satisfies VerboseMode {}
 
 "Verbose modes for js backend compilation"
-shared interface CompileJsVerboseMode of loader satisfies VerboseMode {}
+shared interface CompileJsVerboseMode of all | loader satisfies VerboseMode {}
 
 "Verbose modes for jvm backend execution"
-shared interface RunVerboseMode of cmr satisfies VerboseMode {}
+shared interface RunVerboseMode of all | cmr satisfies VerboseMode {}
+
+"Verbose modes for documentation"
+shared interface DocVerboseMode of all | loader satisfies VerboseMode {}
 
 "All verbose modes"
-shared object all satisfies AllVerboseModes {}
+shared object all satisfies AllVerboseModes & CompileVerboseMode &
+        CompileJsVerboseMode & RunVerboseMode & DocVerboseMode { string => "all"; }
 "verbose mode: loader"
-shared object loader satisfies CompileVerboseMode & CompileJsVerboseMode { string => "loader"; }
+shared object loader satisfies CompileVerboseMode & CompileJsVerboseMode &
+        DocVerboseMode { string => "loader"; }
 "verbose mode: ast"
 shared object ast satisfies CompileVerboseMode { string => "ast"; }
 "verbose mode: code"

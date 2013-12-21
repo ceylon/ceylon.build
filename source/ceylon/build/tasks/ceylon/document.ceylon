@@ -78,6 +78,9 @@ shared Task document(
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties = [],
+        "Produce verbose output.
+         (corresponding command line parameter: `--verbose=<flags>`)"
+        {DocVerboseMode*}|AllVerboseModes verboseModes = [],
         "Ceylon executable that will be used or null to use current ceylon tool"
         String? ceylon = null,
         "Specifies the current working directory for this tool.
@@ -108,6 +111,7 @@ shared Task document(
             header = header;
             footer = footer;
             systemProperties = systemProperties;
+            verboseModes = verboseModes;
             arguments = context.arguments;
         };
         return execute(context.writer, "documenting", ceylon, command);
