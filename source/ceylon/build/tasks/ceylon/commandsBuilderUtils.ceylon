@@ -26,6 +26,10 @@ void appendSourceDirectories(StringBuilder sb, {String*} sourceDirectories) {
     }
 }
 
+void appendDocumentationDirectory(StringBuilder sb, String? documentationDirectory) {
+    appendParameter(sb, "doc", documentationDirectory);
+}
+
 void appendResourceDirectories(StringBuilder sb, {String*} resourceDirectories) {
     for (resourceDirectory in resourceDirectories) {
         appendParameter(sb, "resource", resourceDirectory);

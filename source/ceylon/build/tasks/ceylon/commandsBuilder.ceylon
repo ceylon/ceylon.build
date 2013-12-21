@@ -204,6 +204,10 @@ shared String docCommand(
          (default: './source')
          (corresponding command line parameter: `--source=<dirs>`)"
         {String*} sourceDirectories,
+        "A directory containing your module documentation
+         (default: './doc')
+         (corresponding command line parameter: `--doc=<dirs>`)"
+        String? documentationDirectory,
         "Specifies the output module repository (which must be publishable).
          (default: './modules')
          (corresponding command line parameter: `--out=<url>`)"
@@ -265,6 +269,7 @@ shared String docCommand(
     appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
     appendEncoding(sb, encoding);
     appendSourceDirectories(sb, sourceDirectories);
+    appendDocumentationDirectory(sb, documentationDirectory);
     appendOutputRepository(sb, outputRepository);
     appendRepositories(sb, repositories);
     appendSystemRepository(sb, systemRepository);

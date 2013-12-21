@@ -12,6 +12,10 @@ shared Task document(
          (default: './source')
          (corresponding command line parameter: `--source=<dirs>`)"
         String|{String*} sourceDirectories = [],
+        "A directory containing your module documentation
+         (default: './doc')
+         (corresponding command line parameter: `--doc=<dirs>`)"
+        String? documentationDirectory = null,
         "Specifies the output module repository (which must be publishable).
          (default: './modules')
          (corresponding command line parameter: `--out=<url>`)"
@@ -78,6 +82,7 @@ shared Task document(
             modules = multipleStringsIterable(modules);
             encoding = encoding;
             sourceDirectories = stringIterable(sourceDirectories);
+            documentationDirectory = documentationDirectory;
             outputRepository = outputRepository;
             repositories = stringIterable(repositories);
             systemRepository = systemRepository;

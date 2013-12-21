@@ -9,6 +9,7 @@ test void shouldCreateDocCommand() {
             modules = ["mymodule"];
             encoding = null;
             sourceDirectories = [];
+            documentationDirectory = null;
             outputRepository = null;
             repositories = [];
             systemRepository = null;
@@ -29,7 +30,7 @@ test void shouldCreateDocCommand() {
 
 test void shouldCreateDocCommandWithAllParametersSpecified() {
     assertEquals{
-        expected = "doc --cwd=. --encoding=UTF-8 --source=source-a --source=source-b" +
+        expected = "doc --cwd=. --encoding=UTF-8 --source=source-a --source=source-b --doc=./doc-folder" +
                 " --out=~/.ceylon/repo --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
                 " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline" +
                 " --link=http://doc.mymodule.org --non-shared --source-code" +
@@ -40,6 +41,7 @@ test void shouldCreateDocCommandWithAllParametersSpecified() {
             modules = ["mymodule1", "mymodule2"];
             encoding = "UTF-8";
             sourceDirectories = ["source-a", "source-b"];
+            documentationDirectory = "./doc-folder";
             outputRepository = "~/.ceylon/repo";
             repositories = ["dependencies1", "dependencies2"];
             systemRepository = "system-repository";
