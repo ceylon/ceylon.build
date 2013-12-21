@@ -254,6 +254,9 @@ shared String docCommand(
         "Do not print warnings about missing documentation.
          (corresponding command line parameter: `--ignore-missing-doc`)"
         Boolean ignoreMissingDoc,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties,
         "custom arguments to be added to commandline"
         {String*} arguments
         ) {
@@ -274,6 +277,7 @@ shared String docCommand(
     appendIncludeSourceCode(sb, includeSourceCode);
     appendIgnoreBrokenLink(sb, ignoreBrokenLink);
     appendIgnoreMissingDoc(sb, ignoreMissingDoc);
+    appendSystemProperties(sb, systemProperties);
     appendArguments(sb, arguments);
     sb.append(" ");
     sb.append(" ".join(modules));

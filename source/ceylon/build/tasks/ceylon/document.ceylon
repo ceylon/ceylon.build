@@ -62,6 +62,9 @@ shared Task document(
         "Do not print warnings about missing documentation.
          (corresponding command line parameter: `--ignore-missing-doc`)"
         Boolean ignoreMissingDoc = false,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties = [],
         "Ceylon executable that will be used or null to use current ceylon tool"
         String? ceylon = null,
         "Specifies the current working directory for this tool.
@@ -71,23 +74,24 @@ shared Task document(
 ) {
     return function(Context context) {
         value command = docCommand {
-            currentWorkingDirectory;
-            multipleStringsIterable(modules);
-            encoding;
-            stringIterable(sourceDirectories);
-            outputRepository;
-            stringIterable(repositories);
-            systemRepository;
-            cacheRepository;
-            user;
-            password;
-            offline;
-            link;
-            includeNonShared;
-            includeSourceCode;
-            ignoreBrokenLink;
-            ignoreMissingDoc;
-            context.arguments;
+            currentWorkingDirectory = currentWorkingDirectory;
+            modules = multipleStringsIterable(modules);
+            encoding = encoding;
+            sourceDirectories = stringIterable(sourceDirectories);
+            outputRepository = outputRepository;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            user = user;
+            password = password;
+            offline = offline;
+            link = link;
+            includeNonShared = includeNonShared;
+            includeSourceCode = includeSourceCode;
+            ignoreBrokenLink = ignoreBrokenLink;
+            ignoreMissingDoc = ignoreMissingDoc;
+            systemProperties = systemProperties;
+            arguments = context.arguments;
         };
         return execute(context.writer, "documenting", ceylon, command);
     };
