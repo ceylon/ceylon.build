@@ -22,6 +22,7 @@ test void shouldCreateDocCommand() {
             includeSourceCode = false;
             ignoreBrokenLink = false;
             ignoreMissingDoc = false;
+            header = null;
             systemProperties = [];
             arguments = [];
         };
@@ -34,7 +35,8 @@ test void shouldCreateDocCommandWithAllParametersSpecified() {
                 " --out=~/.ceylon/repo --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
                 " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline" +
                 " --link=http://doc.mymodule.org --non-shared --source-code" +
-                " --ignore-broken-link --ignore-missing-doc --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
+                " --ignore-broken-link --ignore-missing-doc --header=custom header"+
+                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
                 " --source=foo --source=bar mymodule1 mymodule2";
         actual = docCommand {
             currentWorkingDirectory = ".";
@@ -54,6 +56,7 @@ test void shouldCreateDocCommandWithAllParametersSpecified() {
             includeSourceCode = true;
             ignoreBrokenLink = true;
             ignoreMissingDoc = true;
+            header = "custom header";
             systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
             arguments = ["--source=foo", "--source=bar"];
         };

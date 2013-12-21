@@ -66,6 +66,9 @@ shared Task document(
         "Do not print warnings about missing documentation.
          (corresponding command line parameter: `--ignore-missing-doc`)"
         Boolean ignoreMissingDoc = false,
+        "Sets the header text to be placed at the top of each page.
+         (corresponding command line parameter: `--header=<header>`)"
+        String? header = null,
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties = [],
@@ -95,6 +98,7 @@ shared Task document(
             includeSourceCode = includeSourceCode;
             ignoreBrokenLink = ignoreBrokenLink;
             ignoreMissingDoc = ignoreMissingDoc;
+            header = header;
             systemProperties = systemProperties;
             arguments = context.arguments;
         };

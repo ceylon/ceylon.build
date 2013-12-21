@@ -258,6 +258,9 @@ shared String docCommand(
         "Do not print warnings about missing documentation.
          (corresponding command line parameter: `--ignore-missing-doc`)"
         Boolean ignoreMissingDoc,
+        "Sets the header text to be placed at the top of each page.
+         (corresponding command line parameter: `--header=<header>`)"
+        String? header,
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties,
@@ -282,6 +285,7 @@ shared String docCommand(
     appendIncludeSourceCode(sb, includeSourceCode);
     appendIgnoreBrokenLink(sb, ignoreBrokenLink);
     appendIgnoreMissingDoc(sb, ignoreMissingDoc);
+    appendHeader(sb, header);
     appendSystemProperties(sb, systemProperties);
     appendArguments(sb, arguments);
     sb.append(" ");

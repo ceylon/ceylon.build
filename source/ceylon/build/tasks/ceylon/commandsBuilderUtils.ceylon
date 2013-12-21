@@ -135,6 +135,10 @@ void appendIgnoreMissingDoc(StringBuilder sb, Boolean ignoreMissingDoc) {
     appendFlag(sb, "ignore-missing-doc", ignoreMissingDoc);
 }
 
+void appendHeader(StringBuilder sb, String? header) {
+    appendParameter(sb, "header", header);
+}
+
 void appendRun(StringBuilder sb, String? functionNameToRun) {
     appendParameter(sb, "run", functionNameToRun);
 }
