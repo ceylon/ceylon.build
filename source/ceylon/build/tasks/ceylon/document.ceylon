@@ -66,6 +66,9 @@ shared Task document(
         "Do not print warnings about missing documentation.
          (corresponding command line parameter: `--ignore-missing-doc`)"
         Boolean ignoreMissingDoc = false,
+        "Do not print warnings about missing throws annotation.
+         (corresponding command line parameter: `--ignore-missing-throws`)"
+        Boolean ignoreMissingThrows = false,
         "Sets the header text to be placed at the top of each page.
          (corresponding command line parameter: `--header=<header>`)"
         String? header = null,
@@ -101,6 +104,7 @@ shared Task document(
             includeSourceCode = includeSourceCode;
             ignoreBrokenLink = ignoreBrokenLink;
             ignoreMissingDoc = ignoreMissingDoc;
+            ignoreMissingThrows = ignoreMissingThrows;
             header = header;
             footer = footer;
             systemProperties = systemProperties;

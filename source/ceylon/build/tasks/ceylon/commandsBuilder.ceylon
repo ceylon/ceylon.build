@@ -258,6 +258,9 @@ shared String docCommand(
         "Do not print warnings about missing documentation.
          (corresponding command line parameter: `--ignore-missing-doc`)"
         Boolean ignoreMissingDoc,
+        "Do not print warnings about missing throws annotation.
+         (corresponding command line parameter: `--ignore-missing-throws`)"
+        Boolean ignoreMissingThrows,
         "Sets the header text to be placed at the top of each page.
          (corresponding command line parameter: `--header=<header>`)"
         String? header,
@@ -288,6 +291,7 @@ shared String docCommand(
     appendIncludeSourceCode(sb, includeSourceCode);
     appendIgnoreBrokenLink(sb, ignoreBrokenLink);
     appendIgnoreMissingDoc(sb, ignoreMissingDoc);
+    appendIgnoreMissingThrows(sb, ignoreMissingThrows);
     appendHeader(sb, header);
     appendFooter(sb, footer);
     appendSystemProperties(sb, systemProperties);

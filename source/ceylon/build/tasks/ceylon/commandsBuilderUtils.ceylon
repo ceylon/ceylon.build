@@ -135,6 +135,10 @@ void appendIgnoreMissingDoc(StringBuilder sb, Boolean ignoreMissingDoc) {
     appendFlag(sb, "ignore-missing-doc", ignoreMissingDoc);
 }
 
+void appendIgnoreMissingThrows(StringBuilder sb, Boolean ignoreMissingThrows) {
+    appendFlag(sb, "ignore-missing-throws", ignoreMissingThrows);
+}
+
 void appendHeader(StringBuilder sb, String? header) {
     appendParameter(sb, "header", header);
 }
