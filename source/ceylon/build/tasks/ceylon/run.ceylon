@@ -109,6 +109,9 @@ shared Task runJsModule(
         "Shows more detailed output in case of errors.
          (corresponding command line parameter: `--debug=<debug>`)"
         String? debug = null,
+        "Produce verbose output.
+         (corresponding command line parameter: `--verbose=<flags>`)"
+        {RunJsVerboseMode*}|AllVerboseModes verboseModes = [],
         "The path to the node.js executable. Will be searched in standard locations if not specified.
          (corresponding command line parameter: `--node-exe=<node-exe>`)"
         String? pathToNodeJs = null,
@@ -132,6 +135,7 @@ shared Task runJsModule(
             compileOnRun = compileOnRun;
             systemProperties = systemProperties;
             debug = debug;
+            verboseModes = verboseModes;
             pathToNodeJs = pathToNodeJs;
             arguments = context.arguments;
         };

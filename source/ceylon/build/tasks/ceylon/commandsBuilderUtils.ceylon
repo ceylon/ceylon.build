@@ -111,10 +111,6 @@ void appendSkipSourceArchive(StringBuilder sb, Boolean skipSourceArchive) {
     appendFlag(sb, "skip-src-archive", skipSourceArchive);
 }
 
-void appendVerbose(StringBuilder sb, Boolean verbose) {
-    appendFlag(sb, "verbose", verbose);
-}
-
 void appendLink(StringBuilder sb, String? link) {
     appendParameter(sb, "link", link);
 }

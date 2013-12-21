@@ -1,5 +1,5 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { runJsCommand, check }
+import ceylon.build.tasks.ceylon { runJsCommand, check, all, loader }
 
 test void shouldCreateRunJsCommand() {
     assertEquals{
@@ -16,6 +16,29 @@ test void shouldCreateRunJsCommand() {
             compileOnRun = null;
             systemProperties = [];
             debug = null;
+            verboseModes = [];
+            pathToNodeJs = null;
+            arguments = [];
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithAllVerboseFlag() {
+    assertEquals{
+        expected = "run-js --verbose mymodule/1.0.0";
+        actual = runJsCommand {
+            currentWorkingDirectory = null;
+            moduleName = "mymodule";
+            version = "1.0.0";
+            offline = false;
+            repositories = [];
+            systemRepository = null;
+            cacheRepository = null;
+            functionNameToRun = null;
+            compileOnRun = null;
+            systemProperties = [];
+            debug = null;
+            verboseModes = all;
             pathToNodeJs = null;
             arguments = [];
         };
@@ -27,7 +50,8 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
         expected = "run-js --cwd=. --offline --rep=dependencies1 --rep=dependencies2" +
                 " --sysrep=system-repository --cacherep=cache-rep" +
                 " --run=main --compile=check --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
-                " --debug=debug --node-exe=/usr/bin/nodejs mymodule/0.1 --foo bar=toto";
+                " --debug=debug --verbose=all,loader --node-exe=/usr/bin/nodejs mymodule/0.1" +
+                " --foo bar=toto";
         actual = runJsCommand {
             currentWorkingDirectory = ".";
             moduleName = "mymodule";
@@ -40,6 +64,7 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
             compileOnRun = check;
             systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
             debug = "debug";
+            verboseModes = [all, loader];
             pathToNodeJs = "/usr/bin/nodejs";
             arguments = ["--foo", "bar=toto"];
         };

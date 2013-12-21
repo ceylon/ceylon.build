@@ -13,15 +13,19 @@ shared interface CompileJsVerboseMode of all | loader satisfies VerboseMode {}
 "Verbose modes for jvm backend execution"
 shared interface RunVerboseMode of all | loader | cmr satisfies VerboseMode {}
 
+"Verbose modes for js backend execution"
+shared interface RunJsVerboseMode of all | loader satisfies VerboseMode {}
+
 "Verbose modes for documentation"
 shared interface DocVerboseMode of all | loader satisfies VerboseMode {}
 
 "All verbose modes"
 shared object all satisfies AllVerboseModes & CompileVerboseMode &
-        CompileJsVerboseMode & RunVerboseMode & DocVerboseMode { string => "all"; }
+        CompileJsVerboseMode & RunVerboseMode & RunJsVerboseMode &
+        DocVerboseMode { string => "all"; }
 "verbose mode: loader"
 shared object loader satisfies CompileVerboseMode & CompileJsVerboseMode &
-        RunVerboseMode & DocVerboseMode { string => "loader"; }
+        RunVerboseMode & RunJsVerboseMode & DocVerboseMode { string => "loader"; }
 "verbose mode: ast"
 shared object ast satisfies CompileVerboseMode { string => "ast"; }
 "verbose mode: code"
