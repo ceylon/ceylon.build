@@ -151,6 +151,10 @@ void appendRun(StringBuilder sb, String? functionNameToRun) {
     appendParameter(sb, "run", functionNameToRun);
 }
 
+void appendCompileOnRun(StringBuilder sb, CompileOnRun? compileOnRun) {
+    appendParameter<CompileOnRun>(sb, "compile", compileOnRun);
+}
+
 void appendDebug(StringBuilder sb, String? debug) {
     appendParameter(sb, "debug", debug);
 }

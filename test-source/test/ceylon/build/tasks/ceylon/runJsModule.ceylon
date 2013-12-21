@@ -1,5 +1,5 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { runJsCommand }
+import ceylon.build.tasks.ceylon { runJsCommand, check }
 
 test void shouldCreateRunJsCommand() {
     assertEquals{
@@ -13,6 +13,7 @@ test void shouldCreateRunJsCommand() {
             systemRepository = null;
             cacheRepository = null;
             functionNameToRun = null;
+            compileOnRun = null;
             systemProperties = [];
             debug = null;
             pathToNodeJs = null;
@@ -25,7 +26,7 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "run-js --cwd=. --offline --rep=dependencies1 --rep=dependencies2" +
                 " --sysrep=system-repository --cacherep=cache-rep" +
-                " --run=main --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
+                " --run=main --compile=check --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
                 " --debug=debug --node-exe=/usr/bin/nodejs mymodule/0.1 --foo bar=toto";
         actual = runJsCommand {
             currentWorkingDirectory = ".";
@@ -36,6 +37,7 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
             systemRepository = "system-repository";
             cacheRepository = "cache-rep";
             functionNameToRun = "main";
+            compileOnRun = check;
             systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
             debug = "debug";
             pathToNodeJs = "/usr/bin/nodejs";

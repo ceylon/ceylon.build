@@ -336,6 +336,9 @@ shared String runCommand(
         "Specifies the fully qualified name of a toplevel method or class with no parameters.
          (corresponding command line parameter: `--run=<toplevel>`)"
         String? functionNameToRun,
+        "Determines if and how compilation should be handled.
+         (corresponding command line parameter: `--compile[=<flags>]`)"
+        CompileOnRun? compileOnRun,
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties,
@@ -354,6 +357,7 @@ shared String runCommand(
     appendSystemRepository(sb, systemRepository);
     appendCacheRepository(sb, cacheRepository);
     appendRun(sb, functionNameToRun);
+    appendCompileOnRun(sb, compileOnRun);
     appendSystemProperties(sb, systemProperties);
     appendVerboseModes(sb, verboseModes);
     sb.append(" ");
@@ -392,6 +396,9 @@ shared String runJsCommand(
         "Specifies the fully qualified name of a toplevel method or class with no parameters.
          (corresponding command line parameter: `--run=<toplevel>`)"
         String? functionNameToRun,
+        "Determines if and how compilation should be handled.
+         (corresponding command line parameter: `--compile[=<flags>]`)"
+        CompileOnRun? compileOnRun,
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties,
@@ -412,6 +419,7 @@ shared String runJsCommand(
     appendSystemRepository(sb, systemRepository);
     appendCacheRepository(sb, cacheRepository);
     appendRun(sb, functionNameToRun);
+    appendCompileOnRun(sb, compileOnRun);
     appendSystemProperties(sb, systemProperties);
     appendDebug(sb, debug);
     appendPathToNodeJs(sb, pathToNodeJs);

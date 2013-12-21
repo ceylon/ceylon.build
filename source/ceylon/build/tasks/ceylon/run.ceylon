@@ -2,6 +2,17 @@ import ceylon.build.task { Task, Context }
 
 String defaultModuleVersion = "1.0.0";
 
+"Compile on run flag"
+shared interface CompileOnRun of never | once | force | check {}
+"Never attempt to compile"
+shared object never satisfies CompileOnRun { string => "never"; }
+"Compile only if not compiled"
+shared object once satisfies CompileOnRun { string => "once"; }
+"Always compile"
+shared object force satisfies CompileOnRun { string => "force"; }
+"Check and compile if needed"
+shared object check satisfies CompileOnRun { string => "check"; }
+
 "Runs a Ceylon module using `ceylon run` command line."
 shared Task runModule(
         "name of module to run"
@@ -29,6 +40,9 @@ shared Task runModule(
         "Specifies the fully qualified name of a toplevel method or class with no parameters.
          (corresponding command line parameter: `--run=<toplevel>`)"
         String? functionNameToRun = null,
+        "Determines if and how compilation should be handled.
+         (corresponding command line parameter: `--compile[=<flags>]`)"
+        CompileOnRun? compileOnRun = null,
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties = [],
@@ -53,6 +67,7 @@ shared Task runModule(
             systemRepository = systemRepository;
             cacheRepository = cacheRepository;
             functionNameToRun = functionNameToRun;
+            compileOnRun = compileOnRun;
             systemProperties = systemProperties;
             verboseModes = verboseModes;
             arguments = context.arguments;
@@ -85,6 +100,9 @@ shared Task runJsModule(
         "Specifies the fully qualified name of a toplevel method or class with no parameters.
          (corresponding command line parameter: `--run=<toplevel>`)"
         String? functionNameToRun = null,
+        "Determines if and how compilation should be handled.
+         (corresponding command line parameter: `--compile[=<flags>]`)"
+        CompileOnRun? compileOnRun = null,
         "Set system properties
          (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
         {<String->String>*} systemProperties = [],
@@ -111,8 +129,9 @@ shared Task runJsModule(
             systemRepository = systemRepository;
             cacheRepository = cacheRepository;
             functionNameToRun = functionNameToRun;
-            debug = debug;
+            compileOnRun = compileOnRun;
             systemProperties = systemProperties;
+            debug = debug;
             pathToNodeJs = pathToNodeJs;
             arguments = context.arguments;
         };
