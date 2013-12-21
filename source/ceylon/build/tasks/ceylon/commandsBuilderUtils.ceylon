@@ -74,7 +74,7 @@ void appendVerboseModes(StringBuilder sb, {VerboseMode*}|AllVerboseModes verbose
     }
 }
 
-void appendCompilationUnits(StringBuilder sb, {String*} modules, {String*} files) {
+void appendCompilationUnits(StringBuilder sb, {String*} modules, {String*} files = []) {
     sb.append(" ");
     sb.append(" ".join(concatenate(modules, files)));
 }
@@ -149,6 +149,10 @@ void appendRun(StringBuilder sb, String? functionNameToRun) {
 
 void appendCompileOnRun(StringBuilder sb, CompileOnRun? compileOnRun) {
     appendParameter<CompileOnRun>(sb, "compile", compileOnRun);
+}
+
+void appendTests(StringBuilder sb, {String*} tests) {
+    appendList(sb, "test", tests.map((String test) => "'``test``'"));
 }
 
 void appendDebug(StringBuilder sb, String? debug) {
