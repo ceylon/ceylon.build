@@ -14,6 +14,7 @@ test void shouldCreateRunCommand() {
             systemRepository = null;
             cacheRepository = null;
             functionNameToRun = null;
+            systemProperties = [];
             verboseModes = [];
             arguments = [];
         };
@@ -33,6 +34,7 @@ test void shouldCreateRunCommandWithAllVerboseFlag() {
             systemRepository = null;
             cacheRepository = null;
             functionNameToRun = null;
+            systemProperties = [];
             verboseModes = all;
             arguments = [];
         };
@@ -43,7 +45,8 @@ test void shouldCreateRunCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "run --cwd=. --no-default-repositories --offline --rep=dependencies1" +
                 " --rep=dependencies2 --sysrep=system-repository --cacherep=cache-rep" +
-                " --run=main --verbose=cmr mymodule/0.1 --foo bar=toto";
+                " --run=main --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
+                " --verbose=cmr mymodule/0.1 --foo bar=toto";
         actual = runCommand {
             currentWorkingDirectory = ".";
             moduleName = "mymodule";
@@ -54,6 +57,7 @@ test void shouldCreateRunCommandWithAllParametersSpecified() {
             systemRepository = "system-repository";
             cacheRepository = "cache-rep";
             functionNameToRun = "main";
+            systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
             verboseModes = [cmr];
             arguments = ["--foo", "bar=toto"];
         };

@@ -29,6 +29,9 @@ shared Task runModule(
         "Specifies the fully qualified name of a toplevel method or class with no parameters.
          (corresponding command line parameter: `--run=<toplevel>`)"
         String? functionNameToRun = null,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties = [],
         "Produce verbose output.
          (corresponding command line parameter: `--verbose=<flags>`)"
         {RunVerboseMode*}|AllVerboseModes verboseModes = [],
@@ -41,17 +44,18 @@ shared Task runModule(
 ) {
     return function(Context context) {
         value command = runCommand {
-            currentWorkingDirectory;
-            moduleName;
-            version;
-            noDefaultRepositories;
-            offline;
-            stringIterable(repositories);
-            systemRepository;
-            cacheRepository;
-            functionNameToRun;
-            verboseModes;
-            context.arguments;
+            currentWorkingDirectory = currentWorkingDirectory;
+            moduleName = moduleName;
+            version = version;
+            noDefaultRepositories = noDefaultRepositories;
+            offline = offline;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            functionNameToRun = functionNameToRun;
+            systemProperties = systemProperties;
+            verboseModes = verboseModes;
+            arguments = context.arguments;
         };
         return execute(context.writer, "running", ceylon, command);
     };
@@ -81,6 +85,9 @@ shared Task runJsModule(
         "Specifies the fully qualified name of a toplevel method or class with no parameters.
          (corresponding command line parameter: `--run=<toplevel>`)"
         String? functionNameToRun = null,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties = [],
         "Shows more detailed output in case of errors.
          (corresponding command line parameter: `--debug=<debug>`)"
         String? debug = null,
@@ -96,17 +103,18 @@ shared Task runJsModule(
 ) {
     return function(Context context) {
         value command = runJsCommand {
-            currentWorkingDirectory;
-            moduleName;
-            version;
-            offline;
-            stringIterable(repositories);
-            systemRepository;
-            cacheRepository;
-            functionNameToRun;
-            debug;
-            pathToNodeJs;
-            context.arguments;
+            currentWorkingDirectory = currentWorkingDirectory;
+            moduleName = moduleName;
+            version = version;
+            offline = offline;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            functionNameToRun = functionNameToRun;
+            debug = debug;
+            systemProperties = systemProperties;
+            pathToNodeJs = pathToNodeJs;
+            arguments = context.arguments;
         };
         return execute(context.writer, "running", ceylon, command);
     };

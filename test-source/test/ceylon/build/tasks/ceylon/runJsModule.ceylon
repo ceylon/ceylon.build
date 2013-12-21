@@ -13,6 +13,7 @@ test void shouldCreateRunJsCommand() {
             systemRepository = null;
             cacheRepository = null;
             functionNameToRun = null;
+            systemProperties = [];
             debug = null;
             pathToNodeJs = null;
             arguments = [];
@@ -24,7 +25,8 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
     assertEquals{
         expected = "run-js --cwd=. --offline --rep=dependencies1 --rep=dependencies2" +
                 " --sysrep=system-repository --cacherep=cache-rep" +
-                " --run=main --debug=debug --node-exe=/usr/bin/nodejs mymodule/0.1 --foo bar=toto";
+                " --run=main --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
+                " --debug=debug --node-exe=/usr/bin/nodejs mymodule/0.1 --foo bar=toto";
         actual = runJsCommand {
             currentWorkingDirectory = ".";
             moduleName = "mymodule";
@@ -34,6 +36,7 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
             systemRepository = "system-repository";
             cacheRepository = "cache-rep";
             functionNameToRun = "main";
+            systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
             debug = "debug";
             pathToNodeJs = "/usr/bin/nodejs";
             arguments = ["--foo", "bar=toto"];

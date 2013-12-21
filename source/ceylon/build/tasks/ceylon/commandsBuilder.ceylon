@@ -336,6 +336,9 @@ shared String runCommand(
         "Specifies the fully qualified name of a toplevel method or class with no parameters.
          (corresponding command line parameter: `--run=<toplevel>`)"
         String? functionNameToRun,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties,
         "Produce verbose output.
          (corresponding command line parameter: `--verbose=<flags>`)"
         {RunVerboseMode*}|AllVerboseModes verboseModes,
@@ -351,6 +354,7 @@ shared String runCommand(
     appendSystemRepository(sb, systemRepository);
     appendCacheRepository(sb, cacheRepository);
     appendRun(sb, functionNameToRun);
+    appendSystemProperties(sb, systemProperties);
     appendVerboseModes(sb, verboseModes);
     sb.append(" ");
     sb.append(moduleName);
@@ -388,6 +392,9 @@ shared String runJsCommand(
         "Specifies the fully qualified name of a toplevel method or class with no parameters.
          (corresponding command line parameter: `--run=<toplevel>`)"
         String? functionNameToRun,
+        "Set system properties
+         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
+        {<String->String>*} systemProperties,
         "Shows more detailed output in case of errors.
          (corresponding command line parameter: `--debug=<debug>`)"
         String? debug,
@@ -405,6 +412,7 @@ shared String runJsCommand(
     appendSystemRepository(sb, systemRepository);
     appendCacheRepository(sb, cacheRepository);
     appendRun(sb, functionNameToRun);
+    appendSystemProperties(sb, systemProperties);
     appendDebug(sb, debug);
     appendPathToNodeJs(sb, pathToNodeJs);
     sb.append(" ");
