@@ -264,7 +264,6 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
 class CompileArguments(
     modules,
     files = [],
-    currentWorkingDirectory = null,
     encoding = null,
     sourceDirectories = [],
     resourceDirectories = [],
@@ -279,6 +278,7 @@ class CompileArguments(
     noDefaultRepositories = false,
     systemProperties = [],
     verboseModes = [],
+    currentWorkingDirectory = null,
     arguments = []) {
     "name of modules to compile"
     shared {String*} modules;

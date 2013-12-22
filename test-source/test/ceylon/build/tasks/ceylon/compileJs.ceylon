@@ -328,7 +328,6 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
 class CompileJsArguments(
     modules,
     files = [],
-    currentWorkingDirectory = null,
     encoding = null,
     sourceDirectories = [],
     outputRepository = null,
@@ -348,6 +347,7 @@ class CompileJsArguments(
     skipSourceArchive = false,
     systemProperties = [],
     verboseModes = [],
+    currentWorkingDirectory = null,
     arguments = []) {
     "name of modules to compile"
     shared {String*} modules;
