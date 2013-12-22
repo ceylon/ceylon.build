@@ -15,7 +15,7 @@ shared Task command(
         "The _command_ to be run in the new
          process, usually a program with a list
          of its arguments."
-        String command,
+        String|[String+] command,
         "The directory in which the process runs."
         Path path = current,
         "The source for the standard input stream
@@ -51,7 +51,7 @@ shared Integer? executeCommand(
         "The _command_ to be run in the new
          process, usually a program with a list
          of its arguments."
-        String command,
+        String|[String+] command,
         "The directory in which the process runs."
         Path path = current,
         "The source for the standard input stream
@@ -74,7 +74,16 @@ shared Integer? executeCommand(
          the environment variables of the current
          virtual machine process."
         {<String->String>*} environment = currentEnvironment) {
-    Process process = createProcess(command.trimmed, path, input, output, error, *environment);
+    String commandToRun;
+    switch (command)
+    case (is String){
+        commandToRun = command.trimmed;
+    } case (is [String+]) {
+        // FIXME this is a workaround while waiting for createProcess to accept `String|[String+]`
+        // FIXME https://github.com/ceylon/ceylon-sdk/issues/172
+        commandToRun = " ".join(command).trimmed;
+    }
+    Process process = createProcess(commandToRun, path, input, output, error, *environment);
     process.waitForExit();
     return process.exitCode;
 }
@@ -84,7 +93,7 @@ shared Integer? executeCommand(
  If `exitCode` is `0`, a successfull outcome will be returned.
  
  If `exitCode` is not `0`, a failure outcome will be returned with information about executed command."
-shared Outcome exitCodeToOutcome(Integer exitCode, String command, Path path = current) {
+shared Outcome exitCodeToOutcome(Integer exitCode, String|[String+] command, Path path = current) {
     if (exitCode == 0) {
         return done;
     } else {
