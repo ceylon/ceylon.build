@@ -90,29 +90,31 @@ shared Task document(
 ) {
     return function(Context context) {
         value command = docCommand {
-            currentWorkingDirectory = currentWorkingDirectory;
-            modules = multipleStringsIterable(modules);
-            encoding = encoding;
-            sourceDirectories = stringIterable(sourceDirectories);
-            documentationDirectory = documentationDirectory;
-            outputRepository = outputRepository;
-            repositories = stringIterable(repositories);
-            systemRepository = systemRepository;
-            cacheRepository = cacheRepository;
-            user = user;
-            password = password;
-            offline = offline;
-            link = link;
-            includeNonShared = includeNonShared;
-            includeSourceCode = includeSourceCode;
-            ignoreBrokenLink = ignoreBrokenLink;
-            ignoreMissingDoc = ignoreMissingDoc;
-            ignoreMissingThrows = ignoreMissingThrows;
-            header = header;
-            footer = footer;
-            systemProperties = systemProperties;
-            verboseModes = verboseModes;
-            arguments = context.arguments;
+            DocArguments {
+                modules = multipleStringsIterable(modules);
+                encoding = encoding;
+                sourceDirectories = stringIterable(sourceDirectories);
+                documentationDirectory = documentationDirectory;
+                outputRepository = outputRepository;
+                repositories = stringIterable(repositories);
+                systemRepository = systemRepository;
+                cacheRepository = cacheRepository;
+                user = user;
+                password = password;
+                offline = offline;
+                link = link;
+                includeNonShared = includeNonShared;
+                includeSourceCode = includeSourceCode;
+                ignoreBrokenLink = ignoreBrokenLink;
+                ignoreMissingDoc = ignoreMissingDoc;
+                ignoreMissingThrows = ignoreMissingThrows;
+                header = header;
+                footer = footer;
+                systemProperties = systemProperties;
+                verboseModes = verboseModes;
+                currentWorkingDirectory = currentWorkingDirectory;
+                arguments = context.arguments;
+            };
         };
         return execute(context.writer, "documenting", ceylon, command);
     };

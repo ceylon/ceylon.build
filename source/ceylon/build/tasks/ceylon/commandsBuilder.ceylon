@@ -68,117 +68,31 @@ shared [String+] compileJsCommand(CompileJsArguments args) {
  
  First element of returned sequence is the tool name.
  Next elements are tool arguments."
-shared [String+] docCommand(
-        "Specifies the current working directory for this tool.
-         (default: the directory where the tool is run from)
-         (corresponding command line parameter: `--cwd=<dir>`)"
-        String? currentWorkingDirectory,
-        "list of modules to document"
-        {String+}  modules,
-        "encoding used for reading source files
-         (default: platform-specific)
-         (corresponding command line parameter: `--encoding=<encoding>`)"
-        String? encoding,
-        "Path to source files
-         (default: './source')
-         (corresponding command line parameter: `--source=<dirs>`)"
-        {String*} sourceDirectories,
-        "A directory containing your module documentation
-         (default: './doc')
-         (corresponding command line parameter: `--doc=<dirs>`)"
-        String? documentationDirectory,
-        "Specifies the output module repository (which must be publishable).
-         (default: './modules')
-         (corresponding command line parameter: `--out=<url>`)"
-        String? outputRepository,
-        "Specifies a module repository containing dependencies. Can be specified multiple times.
-         (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
-         (corresponding command line parameter: `--rep=<url>`)"
-        {String*} repositories,
-        "Specifies the system repository containing essential modules.
-         (default: '$CEYLON_HOME/repo')
-         (corresponding command line parameter: `--sysrep=<url>`)"
-        String? systemRepository,
-        "Specifies the folder to use for caching downloaded modules.
-         (default: '~/.ceylon/cache')
-         (corresponding command line parameter: `--cacherep=<url>`)"
-        String? cacheRepository,
-        "Sets the user name for use with an authenticated output repository
-         (corresponding command line parameter: `--user=<name>`)"
-        String? user,
-        "Sets the password for use with an authenticated output repository
-         (corresponding command line parameter: `--pass=<secret>`)"
-        String? password,
-        "Enables offline mode that will prevent the module loader from connecting to remote repositories.
-         (corresponding command line parameter: `--offline`)"
-        Boolean offline,
-        "The URL of a module repository containing documentation for external dependencies.
-         
-         Parameter url must be one of supported protocols (http://, https:// or file://).
-         Parameter url can be prefixed with module name pattern, separated by a '=' character,
-         determine for which external modules will be use.
-         
-         Examples:
-         
-         - --link https://modules.ceylon-lang.org/
-         - --link ceylon.math=https://modules.ceylon-lang.org/
-         
-         (corresponding command line parameter: `--link=<url>`)"
-        String? link,
-        "Includes documentation for package-private declarations.
-         (corresponding command line parameter: `--non-shared`)"
-        Boolean includeNonShared,
-        "Includes source code in the generated documentation.
-         (corresponding command line parameter: `--source-code`)"
-        Boolean includeSourceCode,
-        "Do not print warnings about broken links.
-         (corresponding command line parameter: `--ignore-broken-link`)"
-        Boolean ignoreBrokenLink,
-        "Do not print warnings about missing documentation.
-         (corresponding command line parameter: `--ignore-missing-doc`)"
-        Boolean ignoreMissingDoc,
-        "Do not print warnings about missing throws annotation.
-         (corresponding command line parameter: `--ignore-missing-throws`)"
-        Boolean ignoreMissingThrows,
-        "Sets the header text to be placed at the top of each page.
-         (corresponding command line parameter: `--header=<header>`)"
-        String? header,
-        "Sets the footer text to be placed at the bottom of each page.
-         (corresponding command line parameter: `--footer=<footer>`)"
-        String? footer,
-        "Set system properties
-         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
-        {<String->String>*} systemProperties,
-        "Produce verbose output.
-         (corresponding command line parameter: `--verbose=<flags>`)"
-        {DocVerboseMode*}|AllVerboseModes verboseModes,
-        "custom arguments to be added to commandline"
-        {String*} arguments
-        ) {
+shared [String+] docCommand(DocArguments args) {
     value command = initCommand("doc");
-    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
-    command.add(appendEncoding(encoding));
-    command.addAll(appendSourceDirectories(sourceDirectories));
-    command.add(appendDocumentationDirectory(documentationDirectory));
-    command.add(appendOutputRepository(outputRepository));
-    command.addAll(appendRepositories(repositories));
-    command.add(appendSystemRepository(systemRepository));
-    command.add(appendCacheRepository(cacheRepository));
-    command.add(appendUser(user));
-    command.add(appendPassword(password));
-    command.add(appendOfflineMode(offline));
-    command.add(appendLink(link));
-    command.add(appendIncludeNonShared(includeNonShared));
-    command.add(appendIncludeSourceCode(includeSourceCode));
-    command.add(appendIgnoreBrokenLink(ignoreBrokenLink));
-    command.add(appendIgnoreMissingDoc(ignoreMissingDoc));
-    command.add(appendIgnoreMissingThrows(ignoreMissingThrows));
-    command.add(appendHeader(header));
-    command.add(appendFooter(footer));
-    command.addAll(appendSystemProperties(systemProperties));
-    command.add(appendVerboseModes(verboseModes));
-    command.addAll(appendArguments(arguments));
-    command.addAll(appendCompilationUnits(modules));
+    command.add(appendCurrentWorkingDirectory(args.currentWorkingDirectory));
+    command.add(appendEncoding(args.encoding));
+    command.addAll(appendSourceDirectories(args.sourceDirectories));
+    command.add(appendDocumentationDirectory(args.documentationDirectory));
+    command.add(appendOutputRepository(args.outputRepository));
+    command.addAll(appendRepositories(args.repositories));
+    command.add(appendSystemRepository(args.systemRepository));
+    command.add(appendCacheRepository(args.cacheRepository));
+    command.add(appendUser(args.user));
+    command.add(appendPassword(args.password));
+    command.add(appendOfflineMode(args.offline));
+    command.add(appendLink(args.link));
+    command.add(appendIncludeNonShared(args.includeNonShared));
+    command.add(appendIncludeSourceCode(args.includeSourceCode));
+    command.add(appendIgnoreBrokenLink(args.ignoreBrokenLink));
+    command.add(appendIgnoreMissingDoc(args.ignoreMissingDoc));
+    command.add(appendIgnoreMissingThrows(args.ignoreMissingThrows));
+    command.add(appendHeader(args.header));
+    command.add(appendFooter(args.footer));
+    command.addAll(appendSystemProperties(args.systemProperties));
+    command.add(appendVerboseModes(args.verboseModes));
+    command.addAll(appendArguments(args.arguments));
+    command.addAll(appendCompilationUnits(args.modules));
     value sequence = command.coalesced.sequence;
     assert(nonempty sequence);
     return sequence;
