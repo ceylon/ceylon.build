@@ -143,7 +143,7 @@ test void shouldCreateCompileCommandWithPassword() {
     };
 }
 
-test void shouldCreateCompileCommandOffline() {
+test void shouldCreateCompileCommandWithOffline() {
     assertEquals{
         expected = "compile --offline mymodule";
         actual = callCompileCommand {
@@ -167,7 +167,7 @@ test void shouldCreateCompileCommandWithNoDefaultRepositories() {
     };
 }
 
-test void shouldCreateCompileCommandWithNSystemProperties() {
+test void shouldCreateCompileCommandWithSystemProperties() {
     assertEquals{
         expected = "compile --define=KEY1=value1 --define=KEY2=value2 mymodule";
         actual = callCompileCommand {
