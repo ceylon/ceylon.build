@@ -2,8 +2,8 @@ import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { all, never, runTestsCommand, loader, moduleVersion, defaultModuleVersion }
 
 test void shouldCreateTestCommand() {
-    assertEquals{
-        expected = "test mymodule";
+    assertEquals {
+        expected = ["test", "mymodule"];
         actual = runTestsCommand {
             currentWorkingDirectory = null;
             modules = [moduleVersion("mymodule")];
@@ -22,8 +22,8 @@ test void shouldCreateTestCommand() {
 }
 
 test void shouldCreateTestCommandWithAllVerboseFlag() {
-    assertEquals{
-        expected = "test --verbose mymodule";
+    assertEquals {
+        expected = ["test", "--verbose", "mymodule"];
         actual = runTestsCommand {
             currentWorkingDirectory = null;
             modules = [moduleVersion("mymodule", defaultModuleVersion)];
@@ -42,13 +42,12 @@ test void shouldCreateTestCommandWithAllVerboseFlag() {
 }
 
 test void shouldCreateTestCommandWithAllParametersSpecified() {
-    assertEquals{
-        expected = "test --cwd=. --no-default-repositories --offline --rep=dependencies1" +
-                " --rep=dependencies2 --sysrep=system-repository --cacherep=cache-rep" +
-                " --compile=never" +
-                " --test='package com.acme.foo.bar','class com.acme.foo.bar::Baz','function com.acme.foo.bar::baz'" +
-                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
-                " --verbose=all,loader --foo bar=toto mymodule/1.0.0";
+    assertEquals {
+        expected = ["test", "--cwd=.", "--no-default-repositories", "--offline", "--rep=dependencies1",
+            "--rep=dependencies2", "--sysrep=system-repository", "--cacherep=cache-rep", "--compile=never",
+            "--test='package com.acme.foo.bar','class com.acme.foo.bar::Baz','function com.acme.foo.bar::baz'",
+            "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--verbose=all,loader", "--foo",
+            "bar=toto", "mymodule/1.0.0"];
         actual = runTestsCommand {
             currentWorkingDirectory = ".";
             modules = [moduleVersion("mymodule", "1.0.0")];

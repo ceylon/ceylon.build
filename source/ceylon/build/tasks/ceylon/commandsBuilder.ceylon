@@ -1,8 +1,10 @@
+import ceylon.collection { ArrayList, MutableList }
+
 "Name of ceylon executable"
 shared String ceylonExecutable = operatingSystem.name.lowercased.startsWith("windows") then "ceylon.bat" else "ceylon";
 
 "Builds a ceylon compile command as a `String` and returns it."
-shared String compileCommand(
+shared [String+] compileCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -63,30 +65,31 @@ shared String compileCommand(
         "custom arguments to be added to commandline"
         {String*} arguments
         ) {
-    StringBuilder sb = StringBuilder();
-    sb.append("compile");
-    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
-    appendEncoding(sb, encoding);
-    appendSourceDirectories(sb, sourceDirectories);
-    appendResourceDirectories(sb, resourceDirectories);
-    appendJavacOptions(sb, javacOptions);
-    appendOutputRepository(sb, outputRepository);
-    appendRepositories(sb, repositories);
-    appendSystemRepository(sb, systemRepository);
-    appendCacheRepository(sb, cacheRepository);
-    appendUser(sb, user);
-    appendPassword(sb, password);
-    appendOfflineMode(sb, offline);
-    appendNoDefaultRepositories(sb, noDefaultRepositories);
-    appendSystemProperties(sb, systemProperties);
-    appendVerboseModes(sb, verboseModes);
-    appendArguments(sb, arguments);
-    appendCompilationUnits(sb, modules, files);
-    return sb.string;
+    value command = initCommand("compile");
+    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
+    command.add(appendEncoding(encoding));
+    command.addAll(appendSourceDirectories(sourceDirectories));
+    command.addAll(appendResourceDirectories(resourceDirectories));
+    command.add(appendJavacOptions(javacOptions));
+    command.add(appendOutputRepository(outputRepository));
+    command.addAll(appendRepositories(repositories));
+    command.add(appendSystemRepository(systemRepository));
+    command.add(appendCacheRepository(cacheRepository));
+    command.add(appendUser(user));
+    command.add(appendPassword(password));
+    command.add(appendOfflineMode(offline));
+    command.add(appendNoDefaultRepositories(noDefaultRepositories));
+    command.addAll(appendSystemProperties(systemProperties));
+    command.add(appendVerboseModes(verboseModes));
+    command.addAll(appendArguments(arguments));
+    command.addAll(appendCompilationUnits(modules, files));
+    value sequence = command.coalesced.sequence;
+    assert(nonempty sequence);
+    return sequence;
 }
 
 "Builds a ceylon compile-js command as a `String` and returns it."
-shared String compileJsCommand(
+shared [String+] compileJsCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -161,35 +164,36 @@ shared String compileJsCommand(
         "custom arguments to be added to commandline"
         {String*} arguments
         ) {
-    StringBuilder sb = StringBuilder();
-    sb.append("compile-js");
-    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
-    appendEncoding(sb, encoding);
-    appendSourceDirectories(sb, sourceDirectories);
-    appendOutputRepository(sb, outputRepository);
-    appendRepositories(sb, repositories);
-    appendSystemRepository(sb, systemRepository);
-    appendCacheRepository(sb, cacheRepository);
-    appendUser(sb, user);
-    appendPassword(sb, password);
-    appendOfflineMode(sb, offline);
-    appendCompact(sb, compact);
-    appendLexicalScopeStyle(sb, lexicalScopeStyle);
-    appendNoComments(sb, noComments);
-    appendNoIndent(sb, noIndent);
-    appendNoModule(sb, noModule);
-    appendOptimize(sb, optimize);
-    appendProfile(sb, profile);
-    appendSkipSourceArchive(sb, skipSourceArchive);
-    appendSystemProperties(sb, systemProperties);
-    appendVerboseModes(sb, verboseModes);
-    appendArguments(sb, arguments);
-    appendCompilationUnits(sb, modules, files);
-    return sb.string;
+    value command = initCommand("compile-js");
+    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
+    command.add(appendEncoding(encoding));
+    command.addAll(appendSourceDirectories(sourceDirectories));
+    command.add(appendOutputRepository(outputRepository));
+    command.addAll(appendRepositories(repositories));
+    command.add(appendSystemRepository(systemRepository));
+    command.add(appendCacheRepository(cacheRepository));
+    command.add(appendUser(user));
+    command.add(appendPassword(password));
+    command.add(appendOfflineMode(offline));
+    command.add(appendCompact(compact));
+    command.add(appendLexicalScopeStyle(lexicalScopeStyle));
+    command.add(appendNoComments(noComments));
+    command.add(appendNoIndent(noIndent));
+    command.add(appendNoModule(noModule));
+    command.add(appendOptimize(optimize));
+    command.add(appendProfile(profile));
+    command.add(appendSkipSourceArchive(skipSourceArchive));
+    command.addAll(appendSystemProperties(systemProperties));
+    command.add(appendVerboseModes(verboseModes));
+    command.addAll(appendArguments(arguments));
+    command.addAll(appendCompilationUnits(modules, files));
+    value sequence = command.coalesced.sequence;
+    assert(nonempty sequence);
+    return sequence;
 }
 
 "Builds a ceylon doc command as a `String` and returns it."
-shared String docCommand(
+shared [String+] docCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -276,36 +280,37 @@ shared String docCommand(
         "custom arguments to be added to commandline"
         {String*} arguments
         ) {
-    StringBuilder sb = StringBuilder();
-    sb.append("doc");
-    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
-    appendEncoding(sb, encoding);
-    appendSourceDirectories(sb, sourceDirectories);
-    appendDocumentationDirectory(sb, documentationDirectory);
-    appendOutputRepository(sb, outputRepository);
-    appendRepositories(sb, repositories);
-    appendSystemRepository(sb, systemRepository);
-    appendCacheRepository(sb, cacheRepository);
-    appendUser(sb, user);
-    appendPassword(sb, password);
-    appendOfflineMode(sb, offline);
-    appendLink(sb, link);
-    appendIncludeNonShared(sb, includeNonShared);
-    appendIncludeSourceCode(sb, includeSourceCode);
-    appendIgnoreBrokenLink(sb, ignoreBrokenLink);
-    appendIgnoreMissingDoc(sb, ignoreMissingDoc);
-    appendIgnoreMissingThrows(sb, ignoreMissingThrows);
-    appendHeader(sb, header);
-    appendFooter(sb, footer);
-    appendSystemProperties(sb, systemProperties);
-    appendVerboseModes(sb, verboseModes);
-    appendArguments(sb, arguments);
-    appendCompilationUnits(sb, modules);
-    return sb.string;
+    value command = initCommand("doc");
+    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
+    command.add(appendEncoding(encoding));
+    command.addAll(appendSourceDirectories(sourceDirectories));
+    command.add(appendDocumentationDirectory(documentationDirectory));
+    command.add(appendOutputRepository(outputRepository));
+    command.addAll(appendRepositories(repositories));
+    command.add(appendSystemRepository(systemRepository));
+    command.add(appendCacheRepository(cacheRepository));
+    command.add(appendUser(user));
+    command.add(appendPassword(password));
+    command.add(appendOfflineMode(offline));
+    command.add(appendLink(link));
+    command.add(appendIncludeNonShared(includeNonShared));
+    command.add(appendIncludeSourceCode(includeSourceCode));
+    command.add(appendIgnoreBrokenLink(ignoreBrokenLink));
+    command.add(appendIgnoreMissingDoc(ignoreMissingDoc));
+    command.add(appendIgnoreMissingThrows(ignoreMissingThrows));
+    command.add(appendHeader(header));
+    command.add(appendFooter(footer));
+    command.addAll(appendSystemProperties(systemProperties));
+    command.add(appendVerboseModes(verboseModes));
+    command.addAll(appendArguments(arguments));
+    command.addAll(appendCompilationUnits(modules));
+    value sequence = command.coalesced.sequence;
+    assert(nonempty sequence);
+    return sequence;
 }
 
 "Builds a ceylon run command as a `String` and returns it."
-shared String runCommand(
+shared [String+] runCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -349,26 +354,27 @@ shared String runCommand(
         "custom arguments to be added to commandline"
         {String*} arguments
         ) {
-    StringBuilder sb = StringBuilder();
-    sb.append("run");
-    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
-    appendNoDefaultRepositories(sb, noDefaultRepositories);
-    appendOfflineMode(sb, offline);
-    appendRepositories(sb, repositories);
-    appendSystemRepository(sb, systemRepository);
-    appendCacheRepository(sb, cacheRepository);
-    appendRun(sb, functionNameToRun);
-    appendCompileOnRun(sb, compileOnRun);
-    appendSystemProperties(sb, systemProperties);
-    appendVerboseModes(sb, verboseModes);
-    appendArguments(sb, arguments);
-    appendModule(sb, moduleName, version);
-    appendModuleArguments(sb, moduleArguments);
-    return sb.string;
+    value command = initCommand("run");
+    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
+    command.add(appendNoDefaultRepositories(noDefaultRepositories));
+    command.add(appendOfflineMode(offline));
+    command.addAll(appendRepositories(repositories));
+    command.add(appendSystemRepository(systemRepository));
+    command.add(appendCacheRepository(cacheRepository));
+    command.add(appendRun(functionNameToRun));
+    command.add(appendCompileOnRun(compileOnRun));
+    command.addAll(appendSystemProperties(systemProperties));
+    command.add(appendVerboseModes(verboseModes));
+    command.addAll(appendArguments(arguments));
+    command.add(appendModule(moduleName, version));
+    command.addAll(appendModuleArguments(moduleArguments));
+    value sequence = command.coalesced.sequence;
+    assert(nonempty sequence);
+    return sequence;
 }
 
 "Builds a ceylon run-js command as a `String` and returns it."
-shared String runJsCommand(
+shared [String+] runJsCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
          (corresponding command line parameter: `--cwd=<dir>`)"
@@ -415,27 +421,28 @@ shared String runJsCommand(
         "custom arguments to be added to commandline"
         {String*} arguments
         ) {
-    StringBuilder sb = StringBuilder();
-    sb.append("run-js");
-    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
-    appendOfflineMode(sb, offline);
-    appendRepositories(sb, repositories);
-    appendSystemRepository(sb, systemRepository);
-    appendCacheRepository(sb, cacheRepository);
-    appendRun(sb, functionNameToRun);
-    appendCompileOnRun(sb, compileOnRun);
-    appendSystemProperties(sb, systemProperties);
-    appendDebug(sb, debug);
-    appendVerboseModes(sb, verboseModes);
-    appendPathToNodeJs(sb, pathToNodeJs);
-    appendArguments(sb, arguments);
-    appendModule(sb, moduleName, version);
-    appendModuleArguments(sb, moduleArguments);
-    return sb.string;
+    value command = initCommand("run-js");
+    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
+    command.add(appendOfflineMode(offline));
+    command.addAll(appendRepositories(repositories));
+    command.add(appendSystemRepository(systemRepository));
+    command.add(appendCacheRepository(cacheRepository));
+    command.add(appendRun(functionNameToRun));
+    command.add(appendCompileOnRun(compileOnRun));
+    command.addAll(appendSystemProperties(systemProperties));
+    command.add(appendDebug(debug));
+    command.add(appendVerboseModes(verboseModes));
+    command.add(appendPathToNodeJs(pathToNodeJs));
+    command.addAll(appendArguments(arguments));
+    command.add(appendModule(moduleName, version));
+    command.addAll(appendModuleArguments(moduleArguments));
+    value sequence = command.coalesced.sequence;
+    assert(nonempty sequence);
+    return sequence;
 }
 
 "Builds a ceylon test command as a `String` and returns it."
-shared String runTestsCommand(
+shared [String+] runTestsCommand(
     "Specifies the current working directory for this tool.
      (default: the directory where the tool is run from)
      (corresponding command line parameter: `--cwd=<dir>`)"
@@ -476,19 +483,22 @@ shared String runTestsCommand(
     "custom arguments to be added to commandline"
     {String*} arguments
 ) {
-    StringBuilder sb = StringBuilder();
-    sb.append("test");
-    appendCurrentWorkingDirectory(sb, currentWorkingDirectory);
-    appendNoDefaultRepositories(sb, noDefaultRepositories);
-    appendOfflineMode(sb, offline);
-    appendRepositories(sb, repositories);
-    appendSystemRepository(sb, systemRepository);
-    appendCacheRepository(sb, cacheRepository);
-    appendCompileOnRun(sb, compileOnRun);
-    appendTests(sb, tests);
-    appendSystemProperties(sb, systemProperties);
-    appendVerboseModes(sb, verboseModes);
-    appendArguments(sb, arguments);
-    appendCompilationUnits(sb, modules);
-    return sb.string;
+    value command = initCommand("test");
+    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
+    command.add(appendNoDefaultRepositories(noDefaultRepositories));
+    command.add(appendOfflineMode(offline));
+    command.addAll(appendRepositories(repositories));
+    command.add(appendSystemRepository(systemRepository));
+    command.add(appendCacheRepository(cacheRepository));
+    command.add(appendCompileOnRun(compileOnRun));
+    command.add(appendTests(tests));
+    command.addAll(appendSystemProperties(systemProperties));
+    command.add(appendVerboseModes(verboseModes));
+    command.addAll(appendArguments(arguments));
+    command.addAll(appendCompilationUnits(modules));
+    value sequence = command.coalesced.sequence;
+    assert(nonempty sequence);
+    return sequence;
 }
+
+MutableList<String?> initCommand(String tool) => ArrayList<String?> { initialCapacity = 2; tool };

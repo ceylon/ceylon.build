@@ -2,8 +2,8 @@ import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { all, runCommand, cmr, never, defaultModuleVersion }
 
 test void shouldCreateRunCommand() {
-    assertEquals{
-        expected = "run mymodule";
+    assertEquals {
+        expected = ["run", "mymodule"];
         actual = runCommand {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
@@ -24,8 +24,8 @@ test void shouldCreateRunCommand() {
 }
 
 test void shouldCreateRunCommandWithAllVerboseFlag() {
-    assertEquals{
-        expected = "run --verbose mymodule/1.0.0";
+    assertEquals {
+        expected = ["run", "--verbose", "mymodule/1.0.0"];
         actual = runCommand {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
@@ -46,11 +46,11 @@ test void shouldCreateRunCommandWithAllVerboseFlag() {
 }
 
 test void shouldCreateRunCommandWithAllParametersSpecified() {
-    assertEquals{
-        expected = "run --cwd=. --no-default-repositories --offline --rep=dependencies1" +
-                " --rep=dependencies2 --sysrep=system-repository --cacherep=cache-rep" +
-                " --run=main --compile=never --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
-                " --verbose=cmr --foo bar=toto mymodule/0.1 -- arg1 arg2=value";
+    assertEquals {
+        expected = ["run", "--cwd=.", "--no-default-repositories", "--offline", "--rep=dependencies1",
+            "--rep=dependencies2", "--sysrep=system-repository", "--cacherep=cache-rep", "--run=main",
+            "--compile=never", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--verbose=cmr",
+            "--foo", "bar=toto", "mymodule/0.1", "--", "arg1", "arg2=value"];
         actual = runCommand {
             currentWorkingDirectory = ".";
             moduleName = "mymodule";

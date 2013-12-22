@@ -2,8 +2,8 @@ import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { runJsCommand, check, all, loader, defaultModuleVersion }
 
 test void shouldCreateRunJsCommand() {
-    assertEquals{
-        expected = "run-js mymodule";
+    assertEquals {
+        expected = ["run-js", "mymodule"];
         actual = runJsCommand {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
@@ -25,8 +25,8 @@ test void shouldCreateRunJsCommand() {
 }
 
 test void shouldCreateRunJsCommandWithAllVerboseFlag() {
-    assertEquals{
-        expected = "run-js --verbose mymodule/1.0.0";
+    assertEquals {
+        expected = ["run-js", "--verbose", "mymodule/1.0.0"];
         actual = runJsCommand {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
@@ -48,12 +48,11 @@ test void shouldCreateRunJsCommandWithAllVerboseFlag() {
 }
 
 test void shouldCreateRunJsCommandWithAllParametersSpecified() {
-    assertEquals{
-        expected = "run-js --cwd=. --offline --rep=dependencies1 --rep=dependencies2" +
-                " --sysrep=system-repository --cacherep=cache-rep" +
-                " --run=main --compile=check --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
-                " --debug=debug --verbose=all,loader --node-exe=/usr/bin/nodejs" +
-                " --foo bar=toto mymodule/0.1 -- arg1 arg2=value";
+    assertEquals {
+        expected = ["run-js", "--cwd=.", "--offline", "--rep=dependencies1", "--rep=dependencies2",
+            "--sysrep=system-repository", "--cacherep=cache-rep", "--run=main", "--compile=check",
+            "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--debug=debug", "--verbose=all,loader",
+            "--node-exe=/usr/bin/nodejs", "--foo", "bar=toto", "mymodule/0.1", "--", "arg1", "arg2=value"];
         actual = runJsCommand {
             currentWorkingDirectory = ".";
             moduleName = "mymodule";

@@ -2,8 +2,8 @@ import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { compileJsCommand, all, loader, AllVerboseModes, CompileJsVerboseMode }
 
 test void shouldCreateCompileJsCommand() {
-    assertEquals{
-        expected = "compile-js mymodule";
+    assertEquals {
+        expected = ["compile-js", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -13,8 +13,8 @@ test void shouldCreateCompileJsCommand() {
 }
 
 test void shouldCreateCompileJsCommandWithFiles() {
-    assertEquals{
-        expected = "compile-js file.ceylon";
+    assertEquals {
+        expected = ["compile-js", "file.ceylon"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = [];
@@ -25,8 +25,8 @@ test void shouldCreateCompileJsCommandWithFiles() {
 }
 
 test void shouldCreateCompileJsCommandWithEncoding() {
-    assertEquals{
-        expected = "compile-js --encoding=UTF-8 mymodule";
+    assertEquals {
+        expected = ["compile-js", "--encoding=UTF-8", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -36,8 +36,8 @@ test void shouldCreateCompileJsCommandWithEncoding() {
     };
 }
 test void shouldCreateCompileJsCommandWithSourceDirectories() {
-    assertEquals{
-        expected = "compile-js --source=src-x --source=src-y mymodule";
+    assertEquals {
+        expected = ["compile-js", "--source=src-x", "--source=src-y", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -48,8 +48,8 @@ test void shouldCreateCompileJsCommandWithSourceDirectories() {
 }
 
 test void shouldCreateCompileJsCommandWithOutputRepository() {
-    assertEquals{
-        expected = "compile-js --out=../modules mymodule";
+    assertEquals {
+        expected = ["compile-js", "--out=../modules", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -60,8 +60,8 @@ test void shouldCreateCompileJsCommandWithOutputRepository() {
 }
 
 test void shouldCreateCompileJsCommandWithRepositories() {
-    assertEquals{
-        expected = "compile-js --rep=../modules --rep=../../modules mymodule";
+    assertEquals {
+        expected = ["compile-js", "--rep=../modules", "--rep=../../modules", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -72,8 +72,8 @@ test void shouldCreateCompileJsCommandWithRepositories() {
 }
 
 test void shouldCreateCompileJsCommandWithSystemRepository() {
-    assertEquals{
-        expected = "compile-js --sysrep=~/.ceylon/repo mymodule";
+    assertEquals {
+        expected = ["compile-js", "--sysrep=~/.ceylon/repo", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -84,8 +84,8 @@ test void shouldCreateCompileJsCommandWithSystemRepository() {
 }
 
 test void shouldCreateCompileJsCommandWithCacheRepository() {
-    assertEquals{
-        expected = "compile-js --cacherep=~/.ceylon/cache mymodule";
+    assertEquals {
+        expected = ["compile-js", "--cacherep=~/.ceylon/cache", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -96,8 +96,8 @@ test void shouldCreateCompileJsCommandWithCacheRepository() {
 }
 
 test void shouldCreateCompileJsCommandWithUser() {
-    assertEquals{
-        expected = "compile-js --user=john.doe mymodule";
+    assertEquals {
+        expected = ["compile-js", "--user=john.doe", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -108,8 +108,8 @@ test void shouldCreateCompileJsCommandWithUser() {
 }
 
 test void shouldCreateCompileJsCommandWithPassword() {
-    assertEquals{
-        expected = "compile-js --pass=Pa$$w0rd mymodule";
+    assertEquals {
+        expected = ["compile-js", "--pass=Pa$$w0rd", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -120,8 +120,8 @@ test void shouldCreateCompileJsCommandWithPassword() {
 }
 
 test void shouldCreateCompileJsCommandWithOffline() {
-    assertEquals{
-        expected = "compile-js --offline mymodule";
+    assertEquals {
+        expected = ["compile-js", "--offline", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -132,8 +132,8 @@ test void shouldCreateCompileJsCommandWithOffline() {
 }
 
 test void shouldCreateCompileJsCommandWithCompact() {
-    assertEquals{
-        expected = "compile-js --compact mymodule";
+    assertEquals {
+        expected = ["compile-js", "--compact", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -144,8 +144,8 @@ test void shouldCreateCompileJsCommandWithCompact() {
 }
 
 test void shouldCreateCompileJsCommandWithLexicalScopeStyle() {
-    assertEquals{
-        expected = "compile-js --lexical-scope-style mymodule";
+    assertEquals {
+        expected = ["compile-js", "--lexical-scope-style", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -156,8 +156,8 @@ test void shouldCreateCompileJsCommandWithLexicalScopeStyle() {
 }
 
 test void shouldCreateCompileJsCommandWithNoComments() {
-    assertEquals{
-        expected = "compile-js --no-comments mymodule";
+    assertEquals {
+        expected = ["compile-js", "--no-comments", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -168,8 +168,8 @@ test void shouldCreateCompileJsCommandWithNoComments() {
 }
 
 test void shouldCreateCompileJsCommandWithNoIndent() {
-    assertEquals{
-        expected = "compile-js --no-indent mymodule";
+    assertEquals {
+        expected = ["compile-js", "--no-indent", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -180,8 +180,8 @@ test void shouldCreateCompileJsCommandWithNoIndent() {
 }
 
 test void shouldCreateCompileJsCommandWithNoModule() {
-    assertEquals{
-        expected = "compile-js --no-module mymodule";
+    assertEquals {
+        expected = ["compile-js", "--no-module", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -192,8 +192,8 @@ test void shouldCreateCompileJsCommandWithNoModule() {
 }
 
 test void shouldCreateCompileJsCommandWithOptimize() {
-    assertEquals{
-        expected = "compile-js --optimize mymodule";
+    assertEquals {
+        expected = ["compile-js", "--optimize", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -204,8 +204,8 @@ test void shouldCreateCompileJsCommandWithOptimize() {
 }
 
 test void shouldCreateCompileJsCommandWithProfile() {
-    assertEquals{
-        expected = "compile-js --profile mymodule";
+    assertEquals {
+        expected = ["compile-js", "--profile", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -216,8 +216,8 @@ test void shouldCreateCompileJsCommandWithProfile() {
 }
 
 test void shouldCreateCompileJsCommandWithSkipSourceArchive() {
-    assertEquals{
-        expected = "compile-js --skip-src-archive mymodule";
+    assertEquals {
+        expected = ["compile-js", "--skip-src-archive", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -228,8 +228,8 @@ test void shouldCreateCompileJsCommandWithSkipSourceArchive() {
 }
 
 test void shouldCreateCompileJsCommandWithSystemProperties() {
-    assertEquals{
-        expected = "compile-js --define=KEY1=value1 --define=KEY2=value2 mymodule";
+    assertEquals {
+        expected = ["compile-js", "--define=KEY1=value1", "--define=KEY2=value2", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -240,8 +240,8 @@ test void shouldCreateCompileJsCommandWithSystemProperties() {
 }
 
 test void shouldCreateCompileJsCommandWithAllVerboseFlag() {
-    assertEquals{
-        expected = "compile-js --verbose mymodule";
+    assertEquals {
+        expected = ["compile-js", "--verbose", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -252,8 +252,8 @@ test void shouldCreateCompileJsCommandWithAllVerboseFlag() {
 }
 
 test void shouldCreateCompileJsCommandWithVerboseModes() {
-    assertEquals{
-        expected = "compile-js --verbose=all,loader mymodule";
+    assertEquals {
+        expected = ["compile-js", "--verbose=all,loader", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -264,8 +264,8 @@ test void shouldCreateCompileJsCommandWithVerboseModes() {
 }
 
 test void shouldCreateCompileJsCommandWithCurrentWorkingDirectory() {
-    assertEquals{
-        expected = "compile-js --cwd=.. mymodule";
+    assertEquals {
+        expected = ["compile-js", "--cwd=..", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -276,8 +276,8 @@ test void shouldCreateCompileJsCommandWithCurrentWorkingDirectory() {
 }
 
 test void shouldCreateCompileJsCommandWithArguments() {
-    assertEquals{
-        expected = "compile-js arg1 arg2=value mymodule";
+    assertEquals {
+        expected = ["compile-js", "arg1", "arg2=value", "mymodule"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["mymodule"];
@@ -288,12 +288,13 @@ test void shouldCreateCompileJsCommandWithArguments() {
 }
 
 test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
-    assertEquals{
-        expected = "compile-js --cwd=. --encoding=UTF-8 --source=source-a --source=source-b" +
-                " --out=~/.ceylon/repo --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
-                " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline --compact" +
-                " --lexical-scope-style --no-comments --no-indent --no-module --optimize --profile --skip-src-archive" +
-                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo --verbose --source=foo --source=bar module1 module2 file1.js file2.js";
+    assertEquals {
+        expected = ["compile-js", "--cwd=.", "--encoding=UTF-8", "--source=source-a", "--source=source-b",
+        "--out=~/.ceylon/repo", "--rep=dependencies1", "--rep=dependencies2", "--sysrep=system-repository",
+        "--cacherep=cache-rep", "--user=ceylon-user", "--pass=ceylon-user-password", "--offline",
+        "--compact", "--lexical-scope-style", "--no-comments", "--no-indent", "--no-module", "--optimize",
+        "--profile", "--skip-src-archive", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--verbose",
+        "--source=foo", "--source=bar", "module1", "module2", "file1.js", "file2.js"];
         actual = callCompileJsCommand {
             CompileJsArguments {
                 modules = ["module1", "module2"];
@@ -424,7 +425,7 @@ class CompileJsArguments(
     shared {String*} arguments;
 }
 
-String callCompileJsCommand(CompileJsArguments args) {
+[String+] callCompileJsCommand(CompileJsArguments args) {
     return compileJsCommand {
         modules = args.modules;
         files = args.files;

@@ -2,8 +2,8 @@ import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { compileCommand, all, loader, cmr, benchmark, code, ast, CompileVerboseMode, AllVerboseModes }
 
 test void shouldCreateCompileCommand() {
-    assertEquals{
-        expected = "compile mymodule";
+    assertEquals {
+        expected = ["compile", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -13,8 +13,8 @@ test void shouldCreateCompileCommand() {
 }
 
 test void shouldCreateCompileCommandWithFiles() {
-    assertEquals{
-        expected = "compile file.ceylon";
+    assertEquals {
+        expected = ["compile", "file.ceylon"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = [];
@@ -25,8 +25,8 @@ test void shouldCreateCompileCommandWithFiles() {
 }
 
 test void shouldCreateCompileCommandWithEncoding() {
-    assertEquals{
-        expected = "compile --encoding=UTF-8 mymodule";
+    assertEquals {
+        expected = ["compile", "--encoding=UTF-8", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -36,8 +36,8 @@ test void shouldCreateCompileCommandWithEncoding() {
     };
 }
 test void shouldCreateCompileCommandWithSourceDirectories() {
-    assertEquals{
-        expected = "compile --source=src-x --source=src-y mymodule";
+    assertEquals {
+        expected = ["compile", "--source=src-x", "--source=src-y", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -48,8 +48,8 @@ test void shouldCreateCompileCommandWithSourceDirectories() {
 }
 
 test void shouldCreateCompileCommandWithResourceDirectories() {
-    assertEquals{
-        expected = "compile --resource=res-x --resource=res-y mymodule";
+    assertEquals {
+        expected = ["compile", "--resource=res-x", "--resource=res-y", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -60,8 +60,8 @@ test void shouldCreateCompileCommandWithResourceDirectories() {
 }
 
 test void shouldCreateCompileCommandWithJavacOptions() {
-    assertEquals{
-        expected = "compile --javac=-Xmx512m mymodule";
+    assertEquals {
+        expected = ["compile", "--javac=-Xmx512m", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -72,8 +72,8 @@ test void shouldCreateCompileCommandWithJavacOptions() {
 }
 
 test void shouldCreateCompileCommandWithOutputRepository() {
-    assertEquals{
-        expected = "compile --out=../modules mymodule";
+    assertEquals {
+        expected = ["compile", "--out=../modules", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -84,8 +84,8 @@ test void shouldCreateCompileCommandWithOutputRepository() {
 }
 
 test void shouldCreateCompileCommandWithRepositories() {
-    assertEquals{
-        expected = "compile --rep=../modules --rep=../../modules mymodule";
+    assertEquals {
+        expected = ["compile", "--rep=../modules", "--rep=../../modules", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -96,8 +96,8 @@ test void shouldCreateCompileCommandWithRepositories() {
 }
 
 test void shouldCreateCompileCommandWithSystemRepository() {
-    assertEquals{
-        expected = "compile --sysrep=~/.ceylon/repo mymodule";
+    assertEquals {
+        expected = ["compile", "--sysrep=~/.ceylon/repo", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -108,8 +108,8 @@ test void shouldCreateCompileCommandWithSystemRepository() {
 }
 
 test void shouldCreateCompileCommandWithCacheRepository() {
-    assertEquals{
-        expected = "compile --cacherep=~/.ceylon/cache mymodule";
+    assertEquals {
+        expected = ["compile", "--cacherep=~/.ceylon/cache", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -120,8 +120,8 @@ test void shouldCreateCompileCommandWithCacheRepository() {
 }
 
 test void shouldCreateCompileCommandWithUser() {
-    assertEquals{
-        expected = "compile --user=john.doe mymodule";
+    assertEquals {
+        expected = ["compile", "--user=john.doe", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -132,8 +132,8 @@ test void shouldCreateCompileCommandWithUser() {
 }
 
 test void shouldCreateCompileCommandWithPassword() {
-    assertEquals{
-        expected = "compile --pass=Pa$$w0rd mymodule";
+    assertEquals {
+        expected = ["compile", "--pass=Pa$$w0rd", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -144,8 +144,8 @@ test void shouldCreateCompileCommandWithPassword() {
 }
 
 test void shouldCreateCompileCommandWithOffline() {
-    assertEquals{
-        expected = "compile --offline mymodule";
+    assertEquals {
+        expected = ["compile", "--offline", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -156,8 +156,8 @@ test void shouldCreateCompileCommandWithOffline() {
 }
 
 test void shouldCreateCompileCommandWithNoDefaultRepositories() {
-    assertEquals{
-        expected = "compile --no-default-repositories mymodule";
+    assertEquals {
+        expected = ["compile", "--no-default-repositories", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -168,8 +168,8 @@ test void shouldCreateCompileCommandWithNoDefaultRepositories() {
 }
 
 test void shouldCreateCompileCommandWithSystemProperties() {
-    assertEquals{
-        expected = "compile --define=KEY1=value1 --define=KEY2=value2 mymodule";
+    assertEquals {
+        expected = ["compile", "--define=KEY1=value1", "--define=KEY2=value2", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -180,8 +180,8 @@ test void shouldCreateCompileCommandWithSystemProperties() {
 }
 
 test void shouldCreateCompileCommandWithVerboseModes() {
-    assertEquals{
-        expected = "compile --verbose=all,loader,ast,code,cmr,benchmark mymodule";
+    assertEquals {
+        expected = ["compile", "--verbose=all,loader,ast,code,cmr,benchmark", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -192,8 +192,8 @@ test void shouldCreateCompileCommandWithVerboseModes() {
 }
 
 test void shouldCreateCompileCommandWithAllVerboseFlag() {
-    assertEquals{
-        expected = "compile --verbose mymodule";
+    assertEquals {
+        expected = ["compile", "--verbose", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -204,8 +204,8 @@ test void shouldCreateCompileCommandWithAllVerboseFlag() {
 }
 
 test void shouldCreateCompileCommandWithCurrentWorkingDirectory() {
-    assertEquals{
-        expected = "compile --cwd=.. mymodule";
+    assertEquals {
+        expected = ["compile", "--cwd=..", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -216,8 +216,8 @@ test void shouldCreateCompileCommandWithCurrentWorkingDirectory() {
 }
 
 test void shouldCreateCompileCommandWithArguments() {
-    assertEquals{
-        expected = "compile arg1 arg2=value mymodule";
+    assertEquals {
+        expected = ["compile", "arg1", "arg2=value", "mymodule"];
         actual = callCompileCommand {
             CompileArguments {
                 modules = ["mymodule"];
@@ -228,14 +228,14 @@ test void shouldCreateCompileCommandWithArguments() {
 }
 
 test void shouldCreateCompileCommandWithAllParametersSpecified() {
-    assertEquals{
-        expected = "compile --cwd=. --encoding=UTF-8 --source=source-a --source=source-b" +
-                " --resource=resource-a --resource=resource-c" +
-                " --javac=-g:source,lines,vars --out=~/.ceylon/repo --rep=dependencies" +
-                " --sysrep=system-repository --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password" +
-                " --offline --no-default-repositories" +
-                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo --verbose=loader,ast,code,cmr,benchmark" +
-                " --source=foo --source=bar module1 module2 file1.ceylon file2.ceylon";
+    assertEquals {
+        expected = ["compile", "--cwd=.", "--encoding=UTF-8", "--source=source-a", "--source=source-b",
+            "--resource=resource-a", "--resource=resource-c", "--javac=-g:source,lines,vars",
+            "--out=~/.ceylon/repo", "--rep=dependencies", "--sysrep=system-repository",
+            "--cacherep=cache-rep", "--user=ceylon-user", "--pass=ceylon-user-password", "--offline",
+            "--no-default-repositories", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo",
+            "--verbose=loader,ast,code,cmr,benchmark", "--source=foo", "--source=bar", "module1",
+            "module2", "file1.ceylon", "file2.ceylon"];
         actual = callCompileCommand {
             CompileArguments {
                 currentWorkingDirectory = ".";
@@ -341,7 +341,7 @@ class CompileArguments(
     shared {String*} arguments;
 }
 
-String callCompileCommand(CompileArguments args) {
+[String+] callCompileCommand(CompileArguments args) {
     return compileCommand {
         modules = args.modules;
         files = args.files;

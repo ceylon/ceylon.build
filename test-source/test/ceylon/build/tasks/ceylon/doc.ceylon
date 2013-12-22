@@ -2,8 +2,8 @@ import ceylon.test { assertEquals, test }
 import ceylon.build.tasks.ceylon { docCommand, all, loader, DocVerboseMode, AllVerboseModes }
 
 test void shouldCreateDocCommand() {
-    assertEquals{
-        expected = "doc mymodule";
+    assertEquals {
+        expected = ["doc", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -13,8 +13,8 @@ test void shouldCreateDocCommand() {
 }
 
 test void shouldCreatedocCommandWithEncoding() {
-    assertEquals{
-        expected = "doc --encoding=UTF-8 mymodule";
+    assertEquals {
+        expected = ["doc", "--encoding=UTF-8", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -24,8 +24,8 @@ test void shouldCreatedocCommandWithEncoding() {
     };
 }
 test void shouldCreatedocCommandWithSourceDirectories() {
-    assertEquals{
-        expected = "doc --source=src-x --source=src-y mymodule";
+    assertEquals {
+        expected = ["doc", "--source=src-x", "--source=src-y", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -36,8 +36,8 @@ test void shouldCreatedocCommandWithSourceDirectories() {
 }
 
 test void shouldCreatedocCommandWithDocumentationDirectory() {
-    assertEquals{
-        expected = "doc --doc=../doc mymodule";
+    assertEquals {
+        expected = ["doc", "--doc=../doc", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -48,8 +48,8 @@ test void shouldCreatedocCommandWithDocumentationDirectory() {
 }
 
 test void shouldCreatedocCommandWithOutputRepository() {
-    assertEquals{
-        expected = "doc --out=../modules mymodule";
+    assertEquals {
+        expected = ["doc", "--out=../modules", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -60,8 +60,8 @@ test void shouldCreatedocCommandWithOutputRepository() {
 }
 
 test void shouldCreatedocCommandWithRepositories() {
-    assertEquals{
-        expected = "doc --rep=../modules --rep=../../modules mymodule";
+    assertEquals {
+        expected = ["doc", "--rep=../modules", "--rep=../../modules", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -72,8 +72,8 @@ test void shouldCreatedocCommandWithRepositories() {
 }
 
 test void shouldCreatedocCommandWithSystemRepository() {
-    assertEquals{
-        expected = "doc --sysrep=~/.ceylon/repo mymodule";
+    assertEquals {
+        expected = ["doc", "--sysrep=~/.ceylon/repo", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -84,8 +84,8 @@ test void shouldCreatedocCommandWithSystemRepository() {
 }
 
 test void shouldCreatedocCommandWithCacheRepository() {
-    assertEquals{
-        expected = "doc --cacherep=~/.ceylon/cache mymodule";
+    assertEquals {
+        expected = ["doc", "--cacherep=~/.ceylon/cache", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -96,8 +96,8 @@ test void shouldCreatedocCommandWithCacheRepository() {
 }
 
 test void shouldCreatedocCommandWithUser() {
-    assertEquals{
-        expected = "doc --user=john.doe mymodule";
+    assertEquals {
+        expected = ["doc", "--user=john.doe", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -108,8 +108,8 @@ test void shouldCreatedocCommandWithUser() {
 }
 
 test void shouldCreatedocCommandWithPassword() {
-    assertEquals{
-        expected = "doc --pass=Pa$$w0rd mymodule";
+    assertEquals {
+        expected = ["doc", "--pass=Pa$$w0rd", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -120,8 +120,8 @@ test void shouldCreatedocCommandWithPassword() {
 }
 
 test void shouldCreatedocCommandWithOffline() {
-    assertEquals{
-        expected = "doc --offline mymodule";
+    assertEquals {
+        expected = ["doc", "--offline", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -132,8 +132,8 @@ test void shouldCreatedocCommandWithOffline() {
 }
 
 test void shouldCreatedocCommandWithLink() {
-    assertEquals{
-        expected = "doc --link=https://modules.ceylon-lang.org mymodule";
+    assertEquals {
+        expected = ["doc", "--link=https://modules.ceylon-lang.org", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -144,8 +144,8 @@ test void shouldCreatedocCommandWithLink() {
 }
 
 test void shouldCreatedocCommandWithIncludeNonShared() {
-    assertEquals{
-        expected = "doc --non-shared mymodule";
+    assertEquals {
+        expected = ["doc", "--non-shared", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -156,8 +156,8 @@ test void shouldCreatedocCommandWithIncludeNonShared() {
 }
 
 test void shouldCreatedocCommandWithIncludeSourceCode() {
-    assertEquals{
-        expected = "doc --source-code mymodule";
+    assertEquals {
+        expected = ["doc", "--source-code", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -168,8 +168,8 @@ test void shouldCreatedocCommandWithIncludeSourceCode() {
 }
 
 test void shouldCreatedocCommandWithIgnoreBrokenLink() {
-    assertEquals{
-        expected = "doc --ignore-broken-link mymodule";
+    assertEquals {
+        expected = ["doc", "--ignore-broken-link", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -180,8 +180,8 @@ test void shouldCreatedocCommandWithIgnoreBrokenLink() {
 }
 
 test void shouldCreatedocCommandWithIgnoreMissingDoc() {
-    assertEquals{
-        expected = "doc --ignore-missing-doc mymodule";
+    assertEquals {
+        expected = ["doc", "--ignore-missing-doc", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -192,8 +192,8 @@ test void shouldCreatedocCommandWithIgnoreMissingDoc() {
 }
 
 test void shouldCreatedocCommandWithIgnoreMissingThrows() {
-    assertEquals{
-        expected = "doc --ignore-missing-throws mymodule";
+    assertEquals {
+        expected = ["doc", "--ignore-missing-throws", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -204,8 +204,8 @@ test void shouldCreatedocCommandWithIgnoreMissingThrows() {
 }
 
 test void shouldCreatedocCommandWithHeader() {
-    assertEquals{
-        expected = "doc --header=custom header mymodule";
+    assertEquals {
+        expected = ["doc", "--header=custom header", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -216,8 +216,8 @@ test void shouldCreatedocCommandWithHeader() {
 }
 
 test void shouldCreatedocCommandWithFooter() {
-    assertEquals{
-        expected = "doc --footer=custom footer mymodule";
+    assertEquals {
+        expected = ["doc", "--footer=custom footer", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -228,8 +228,8 @@ test void shouldCreatedocCommandWithFooter() {
 }
 
 test void shouldCreatedocCommandWithSystemProperties() {
-    assertEquals{
-        expected = "doc --define=KEY1=value1 --define=KEY2=value2 mymodule";
+    assertEquals {
+        expected = ["doc", "--define=KEY1=value1", "--define=KEY2=value2", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -240,8 +240,8 @@ test void shouldCreatedocCommandWithSystemProperties() {
 }
 
 test void shouldCreatedocCommandWithVerboseModes() {
-    assertEquals{
-        expected = "doc --verbose=all,loader mymodule";
+    assertEquals {
+        expected = ["doc", "--verbose=all,loader", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -252,8 +252,8 @@ test void shouldCreatedocCommandWithVerboseModes() {
 }
 
 test void shouldCreatedocCommandWithAllVerboseFlag() {
-    assertEquals{
-        expected = "doc --verbose mymodule";
+    assertEquals {
+        expected = ["doc", "--verbose", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -264,8 +264,8 @@ test void shouldCreatedocCommandWithAllVerboseFlag() {
 }
 
 test void shouldCreatedocCommandWithCurrentWorkingDirectory() {
-    assertEquals{
-        expected = "doc --cwd=.. mymodule";
+    assertEquals {
+        expected = ["doc", "--cwd=..", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -276,8 +276,8 @@ test void shouldCreatedocCommandWithCurrentWorkingDirectory() {
 }
 
 test void shouldCreatedocCommandWithArguments() {
-    assertEquals{
-        expected = "doc arg1 arg2=value mymodule";
+    assertEquals {
+        expected = ["doc", "arg1", "arg2=value", "mymodule"];
         actual = callDocCommand {
             DocArguments {
                 modules = ["mymodule"];
@@ -288,15 +288,14 @@ test void shouldCreatedocCommandWithArguments() {
 }
 
 test void shouldCreateDocCommandWithAllParametersSpecified() {
-    assertEquals{
-        expected = "doc --cwd=. --encoding=UTF-8 --source=source-a --source=source-b --doc=./doc-folder" +
-                " --out=~/.ceylon/repo --rep=dependencies1 --rep=dependencies2 --sysrep=system-repository" +
-                " --cacherep=cache-rep --user=ceylon-user --pass=ceylon-user-password --offline" +
-                " --link=http://doc.mymodule.org --non-shared --source-code" +
-                " --ignore-broken-link --ignore-missing-doc --ignore-missing-throws" +
-                " --header=custom header --footer=custom footer"+
-                " --define=ENV_VAR1=42 --define=ENV_VAR2=foo --verbose=all,loader" +
-                " --source=foo --source=bar mymodule1 mymodule2";
+    assertEquals {
+        expected = ["doc", "--cwd=.", "--encoding=UTF-8", "--source=source-a", "--source=source-b",
+        "--doc=./doc-folder", "--out=~/.ceylon/repo", "--rep=dependencies1", "--rep=dependencies2",
+        "--sysrep=system-repository", "--cacherep=cache-rep", "--user=ceylon-user",
+        "--pass=ceylon-user-password", "--offline", "--link=http://doc.mymodule.org", "--non-shared",
+        "--source-code", "--ignore-broken-link", "--ignore-missing-doc", "--ignore-missing-throws",
+        "--header=custom header", "--footer=custom footer", "--define=ENV_VAR1=42",
+        "--define=ENV_VAR2=foo", "--verbose=all,loader", "--source=foo", "--source=bar", "mymodule1", "mymodule2"];
         actual = docCommand {
             currentWorkingDirectory = ".";
             modules = ["mymodule1", "mymodule2"];
@@ -436,7 +435,7 @@ class DocArguments(
     shared {String*} arguments;
 }
 
-String callDocCommand(DocArguments args) {
+[String+] callDocCommand(DocArguments args) {
     return docCommand {
         modules = args.modules;
         encoding = args.encoding;

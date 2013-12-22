@@ -1,208 +1,152 @@
-void appendCurrentWorkingDirectory(StringBuilder sb, String? currentWorkingDirectory) {
-    appendParameter(sb, "cwd", currentWorkingDirectory);
-}
+String? appendCurrentWorkingDirectory(String? currentWorkingDirectory) =>
+    parameter("cwd", currentWorkingDirectory);
 
-void appendEncoding(StringBuilder sb, String? encoding) {
-    appendParameter(sb, "encoding", encoding);
-}
+String? appendEncoding(String? encoding) =>
+    parameter("encoding", encoding);
 
-void appendJavacOptions(StringBuilder sb, String? javacOptions) {
-    appendParameter(sb, "javac", javacOptions);
-}
 
-void appendOutputRepository(StringBuilder sb, String? outputRepository) {
-    appendParameter(sb, "out", outputRepository);
-}
+String? appendJavacOptions(String? javacOptions) =>
+    parameter("javac", javacOptions);
 
-void appendRepositories(StringBuilder sb, {String*} repositories) {
-    for (repository in repositories) {
-        appendParameter(sb, "rep", repository);
-    }
-}
+String? appendOutputRepository(String? outputRepository) =>
+    parameter("out", outputRepository);
 
-void appendSourceDirectories(StringBuilder sb, {String*} sourceDirectories) {
-    for (sourceDirectory in sourceDirectories) {
-        appendParameter(sb, "source", sourceDirectory);
-    }
-}
+{String*} appendRepositories({String*} repositories) =>
+    { for (repository in repositories) parameter("rep", repository) }.coalesced;
 
-void appendDocumentationDirectory(StringBuilder sb, String? documentationDirectory) {
-    appendParameter(sb, "doc", documentationDirectory);
-}
+{String*} appendSourceDirectories({String*} sourceDirectories) =>
+    { for (sourceDirectory in sourceDirectories) parameter("source", sourceDirectory) }.coalesced;
 
-void appendResourceDirectories(StringBuilder sb, {String*} resourceDirectories) {
-    for (resourceDirectory in resourceDirectories) {
-        appendParameter(sb, "resource", resourceDirectory);
-    }
-}
+String? appendDocumentationDirectory(String? documentationDirectory) =>
+    parameter("doc", documentationDirectory);
 
-void appendSystemRepository(StringBuilder sb, String? systemRepository) {
-    appendParameter(sb, "sysrep", systemRepository);
-}
+{String*} appendResourceDirectories({String*} resourceDirectories) =>
+    { for (resourceDirectory in resourceDirectories) parameter("resource", resourceDirectory) }.coalesced;
 
-void appendCacheRepository(StringBuilder sb, String? cacheRepository) {
-    appendParameter(sb, "cacherep", cacheRepository);
-}
+String? appendSystemRepository(String? systemRepository) =>
+    parameter("sysrep", systemRepository);
 
-void appendUser(StringBuilder sb, String? user) {
-    appendParameter(sb, "user", user);
-}
+String? appendCacheRepository(String? cacheRepository) =>
+    parameter("cacherep", cacheRepository);
 
-void appendPassword(StringBuilder sb, String? password) {
-    appendParameter(sb, "pass", password);
-}
+String? appendUser(String? user) =>
+    parameter("user", user);
 
-void appendNoDefaultRepositories(StringBuilder sb, Boolean noDefaultRepositories) {
-    appendFlag(sb, "no-default-repositories", noDefaultRepositories);
-}
+String? appendPassword(String? password) =>
+    parameter("pass", password);
 
-void appendOfflineMode(StringBuilder sb, Boolean offline) {
-    appendFlag(sb, "offline", offline);
-}
+String? appendNoDefaultRepositories(Boolean noDefaultRepositories) =>
+    flag("no-default-repositories", noDefaultRepositories);
 
-void appendSystemProperties(StringBuilder sb, {<String->String>*} systemProperties) {
-    for (systemProperty in systemProperties) {
-        appendParameter(sb, "define", "``systemProperty.key``=``systemProperty.item``");
-    }
-}
+String? appendOfflineMode(Boolean offline) =>
+    flag("offline", offline);
 
-void appendVerboseModes(StringBuilder sb, {VerboseMode*}|AllVerboseModes verboseModes) {
+{String*} appendSystemProperties({<String->String>*} systemProperties) => {
+    for (systemProperty in systemProperties)
+        parameter("define", "``systemProperty.key``=``systemProperty.item``")
+}.coalesced;
+
+String? appendVerboseModes({VerboseMode*}|AllVerboseModes verboseModes) {
     if (is {VerboseMode*} verboseModes) {
-        appendList(sb, "verbose", verboseModes);
+        return list("verbose", verboseModes);
     } else {
-        appendFlag(sb, "verbose");
+        return flag("verbose");
     }
 }
 
-void appendCompilationUnits(StringBuilder sb, {String*} modules, {String*} files = []) {
-    sb.append(" ");
-    sb.append(" ".join(concatenate(modules, files)));
-}
+{String*} appendCompilationUnits({String*} modules, {String*} files = []) => concatenate(modules, files);
 
-void appendModule(StringBuilder sb, String name, String? version) {
-    sb.append(" ");
-    sb.append(moduleVersion(name, version));
-}
+String? appendModule(String name, String? version) => moduleVersion(name, version);
 
-void appendCompact(StringBuilder sb, Boolean compact) {
-    appendFlag(sb, "compact", compact);
-}
+String? appendCompact(Boolean compact) =>
+    flag("compact", compact);
 
-void appendLexicalScopeStyle(StringBuilder sb, Boolean lexicalScopeStyle) {
-    appendFlag(sb, "lexical-scope-style", lexicalScopeStyle);
-}
+String? appendLexicalScopeStyle(Boolean lexicalScopeStyle) =>
+    flag("lexical-scope-style", lexicalScopeStyle);
 
-void appendNoComments(StringBuilder sb, Boolean noComments) {
-    appendFlag(sb, "no-comments", noComments);
-}
+String? appendNoComments(Boolean noComments) =>
+    flag("no-comments", noComments);
 
-void appendNoIndent(StringBuilder sb, Boolean noIndent) {
-    appendFlag(sb, "no-indent", noIndent);
-}
+String? appendNoIndent(Boolean noIndent) =>
+    flag("no-indent", noIndent);
 
-void appendNoModule(StringBuilder sb, Boolean noModule) {
-    appendFlag(sb, "no-module", noModule);
-}
+String? appendNoModule(Boolean noModule) =>
+    flag("no-module", noModule);
 
-void appendOptimize(StringBuilder sb, Boolean optimize) {
-    appendFlag(sb, "optimize", optimize);
-}
+String? appendOptimize(Boolean optimize) =>
+    flag("optimize", optimize);
 
-void appendProfile(StringBuilder sb, Boolean profile) {
-    appendFlag(sb, "profile", profile);
-}
+String? appendProfile(Boolean profile) =>
+    flag("profile", profile);
 
-void appendSkipSourceArchive(StringBuilder sb, Boolean skipSourceArchive) {
-    appendFlag(sb, "skip-src-archive", skipSourceArchive);
-}
+String? appendSkipSourceArchive(Boolean skipSourceArchive) =>
+    flag("skip-src-archive", skipSourceArchive);
 
-void appendLink(StringBuilder sb, String? link) {
-    appendParameter(sb, "link", link);
-}
+String? appendLink(String? link) =>
+    parameter("link", link);
 
-void appendIncludeNonShared(StringBuilder sb, Boolean includeNonShared) {
-    appendFlag(sb, "non-shared", includeNonShared);
-}
+String? appendIncludeNonShared(Boolean includeNonShared) =>
+    flag("non-shared", includeNonShared);
 
-void appendIncludeSourceCode(StringBuilder sb, Boolean includeSourceCode) {
-    appendFlag(sb, "source-code", includeSourceCode);
-}
+String? appendIncludeSourceCode(Boolean includeSourceCode) =>
+    flag("source-code", includeSourceCode);
 
-void appendIgnoreBrokenLink(StringBuilder sb, Boolean ignoreBrokenLink) {
-    appendFlag(sb, "ignore-broken-link", ignoreBrokenLink);
-}
+String? appendIgnoreBrokenLink(Boolean ignoreBrokenLink) =>
+    flag("ignore-broken-link", ignoreBrokenLink);
 
-void appendIgnoreMissingDoc(StringBuilder sb, Boolean ignoreMissingDoc) {
-    appendFlag(sb, "ignore-missing-doc", ignoreMissingDoc);
-}
+String? appendIgnoreMissingDoc(Boolean ignoreMissingDoc) =>
+    flag("ignore-missing-doc", ignoreMissingDoc);
 
-void appendIgnoreMissingThrows(StringBuilder sb, Boolean ignoreMissingThrows) {
-    appendFlag(sb, "ignore-missing-throws", ignoreMissingThrows);
-}
+String? appendIgnoreMissingThrows(Boolean ignoreMissingThrows) =>
+    flag("ignore-missing-throws", ignoreMissingThrows);
 
-void appendHeader(StringBuilder sb, String? header) {
-    appendParameter(sb, "header", header);
-}
+String? appendHeader(String? header) =>
+    parameter("header", header);
 
-void appendFooter(StringBuilder sb, String? footer) {
-    appendParameter(sb, "footer", footer);
-}
+String? appendFooter(String? footer) =>
+    parameter("footer", footer);
 
-void appendRun(StringBuilder sb, String? functionNameToRun) {
-    appendParameter(sb, "run", functionNameToRun);
-}
+String? appendRun(String? functionNameToRun) =>
+    parameter("run", functionNameToRun);
 
-void appendCompileOnRun(StringBuilder sb, CompileOnRun? compileOnRun) {
-    appendParameter<CompileOnRun>(sb, "compile", compileOnRun);
-}
+String? appendCompileOnRun(CompileOnRun? compileOnRun) =>
+    parameter<CompileOnRun>("compile", compileOnRun);
 
-void appendTests(StringBuilder sb, {String*} tests) {
-    appendList(sb, "test", tests.map((String test) => "'``test``'"));
-}
+String? appendTests({String*} tests) =>
+    list("test", tests.map((String test) => "'``test``'"));
 
-void appendDebug(StringBuilder sb, String? debug) {
-    appendParameter(sb, "debug", debug);
-}
+String? appendDebug(String? debug) =>
+    parameter("debug", debug);
 
-void appendPathToNodeJs(StringBuilder sb, String? pathToNodeJs) {
-    appendParameter(sb, "node-exe", pathToNodeJs);
-}
+String? appendPathToNodeJs(String? pathToNodeJs) =>
+    parameter("node-exe", pathToNodeJs);
 
-void appendArguments(StringBuilder sb, {String*} arguments) {
+{String*} appendArguments({String*} arguments) => arguments;
+
+{String*} appendModuleArguments({String*} arguments) {
     if (!arguments.empty) {
-        sb.append(" ");
-        sb.append(" ".join(arguments));
+        return concatenate({"--"}, arguments);
     }
+    return {};
 }
 
-void appendModuleArguments(StringBuilder sb, {String*} arguments) {
-    if (!arguments.empty) {
-        sb.append(" -- ");
-        sb.append(" ".join(arguments));
-    }
-}
-
-void appendFlag(StringBuilder sb, String flag, Boolean appendFlag = true) {
+String? flag(String flag, Boolean appendFlag = true) {
     if (appendFlag) {
-        sb.append(" --");
-        sb.append(flag);
+        return "--``flag``";
     }
+    return null;
 }
 
-void appendParameter<Value>(StringBuilder sb, String name, Value? val) {
+String? parameter<Value>(String name, Value? val) {
     if (exists val, !val.string.empty) {
-        sb.append(" --");
-        sb.append(name);
-        sb.append("=");
-        sb.append(val.string);
+        return "--``name``=``val.string``";
     }
+    return null;
 }
 
-void appendList<Value>(StringBuilder sb, String name, {Value*} items) given Value satisfies Object {
+String? list<Value>(String name, {Value*} items) given Value satisfies Object {
     if (!items.empty) {
-        sb.append(" --");
-        sb.append(name);
-        sb.append("=");
-        sb.append(",".join({for (item in items) item.string}));
+        return "--``name``=``",".join({ for (item in items) item.string })``";
     }
+    return null;
 }
