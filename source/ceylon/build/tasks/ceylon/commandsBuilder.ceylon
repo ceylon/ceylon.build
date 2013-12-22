@@ -88,7 +88,10 @@ shared [String+] compileCommand(
     return sequence;
 }
 
-"Builds a ceylon compile-js command as a `String` and returns it."
+"Builds a ceylon compile-js command as a `[String+]` and returns it.
+ 
+ First element of returned sequence is the tool name.
+ Next elements are tool arguments."
 shared [String+] compileJsCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
@@ -192,7 +195,10 @@ shared [String+] compileJsCommand(
     return sequence;
 }
 
-"Builds a ceylon doc command as a `String` and returns it."
+"Builds a ceylon doc command as a `[String+]` and returns it.
+ 
+ First element of returned sequence is the tool name.
+ Next elements are tool arguments."
 shared [String+] docCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
@@ -309,7 +315,10 @@ shared [String+] docCommand(
     return sequence;
 }
 
-"Builds a ceylon run command as a `String` and returns it."
+"Builds a ceylon run command as a `[String+]` and returns it.
+ 
+ First element of returned sequence is the tool name.
+ Next elements are tool arguments."
 shared [String+] runCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
@@ -373,7 +382,10 @@ shared [String+] runCommand(
     return sequence;
 }
 
-"Builds a ceylon run-js command as a `String` and returns it."
+"Builds a ceylon run-js command as a `[String+]` and returns it.
+ 
+ First element of returned sequence is the tool name.
+ Next elements are tool arguments."
 shared [String+] runJsCommand(
         "Specifies the current working directory for this tool.
          (default: the directory where the tool is run from)
@@ -441,7 +453,10 @@ shared [String+] runJsCommand(
     return sequence;
 }
 
-"Builds a ceylon test command as a `String` and returns it."
+"Builds a ceylon test command as a `[String+]` and returns it.
+ 
+ First element of returned sequence is the tool name.
+ Next elements are tool arguments."
 shared [String+] runTestsCommand(
     "Specifies the current working directory for this tool.
      (default: the directory where the tool is run from)
