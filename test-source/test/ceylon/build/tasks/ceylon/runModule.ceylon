@@ -8,6 +8,7 @@ test void shouldCreateRunCommand() {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
             version = "1.0.0";
+            moduleArguments = [];
             noDefaultRepositories = false;
             offline = false;
             repositories = [];
@@ -29,6 +30,7 @@ test void shouldCreateRunCommandWithAllVerboseFlag() {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
             version = "1.0.0";
+            moduleArguments = [];
             noDefaultRepositories = false;
             offline = false;
             repositories = [];
@@ -48,11 +50,12 @@ test void shouldCreateRunCommandWithAllParametersSpecified() {
         expected = "run --cwd=. --no-default-repositories --offline --rep=dependencies1" +
                 " --rep=dependencies2 --sysrep=system-repository --cacherep=cache-rep" +
                 " --run=main --compile=never --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
-                " --verbose=cmr mymodule/0.1 --foo bar=toto";
+                " --verbose=cmr --foo bar=toto mymodule/0.1 -- arg1 arg2=value";
         actual = runCommand {
             currentWorkingDirectory = ".";
             moduleName = "mymodule";
             version = "0.1";
+            moduleArguments = ["arg1", "arg2=value"];
             noDefaultRepositories = true;
             offline = true;
             repositories = ["dependencies1", "dependencies2"];

@@ -300,8 +300,7 @@ shared String docCommand(
     appendSystemProperties(sb, systemProperties);
     appendVerboseModes(sb, verboseModes);
     appendArguments(sb, arguments);
-    sb.append(" ");
-    sb.append(" ".join(modules));
+    appendCompilationUnits(sb, modules);
     return sb.string;
 }
 
@@ -315,6 +314,8 @@ shared String runCommand(
         String moduleName,
         "version of module to run"
         String version,
+        "Arguments to be passed to executed module"
+        {String*} moduleArguments,
         "Indicates that the default repositories should not be used
          (corresponding command line parameter: `--no-default-repositories`)"
         Boolean noDefaultRepositories,
@@ -360,11 +361,9 @@ shared String runCommand(
     appendCompileOnRun(sb, compileOnRun);
     appendSystemProperties(sb, systemProperties);
     appendVerboseModes(sb, verboseModes);
-    sb.append(" ");
-    sb.append(moduleName);
-    sb.append("/");
-    sb.append(version);
     appendArguments(sb, arguments);
+    appendModule(sb, moduleName, version);
+    appendModuleArguments(sb, moduleArguments);
     return sb.string;
 }
 
@@ -378,6 +377,8 @@ shared String runJsCommand(
         String moduleName,
         "version of module to run"
         String version,
+        "Arguments to be passed to executed module"
+        {String*} moduleArguments,
         "Enables offline mode that will prevent the module loader from connecting to remote repositories.
          (corresponding command line parameter: `--offline`)"
         Boolean offline,
@@ -427,11 +428,9 @@ shared String runJsCommand(
     appendDebug(sb, debug);
     appendVerboseModes(sb, verboseModes);
     appendPathToNodeJs(sb, pathToNodeJs);
-    sb.append(" ");
-    sb.append(moduleName);
-    sb.append("/");
-    sb.append(version);
     appendArguments(sb, arguments);
+    appendModule(sb, moduleName, version);
+    appendModuleArguments(sb, moduleArguments);
     return sb.string;
 }
 
@@ -489,7 +488,7 @@ shared String runTestsCommand(
     appendTests(sb, tests);
     appendSystemProperties(sb, systemProperties);
     appendVerboseModes(sb, verboseModes);
-    appendCompilationUnits(sb, modules);
     appendArguments(sb, arguments);
+    appendCompilationUnits(sb, modules);
     return sb.string;
 }

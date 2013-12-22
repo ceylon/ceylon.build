@@ -8,6 +8,7 @@ test void shouldCreateRunJsCommand() {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
             version = "1.0.0";
+            moduleArguments = [];
             offline = false;
             repositories = [];
             systemRepository = null;
@@ -30,6 +31,7 @@ test void shouldCreateRunJsCommandWithAllVerboseFlag() {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
             version = "1.0.0";
+            moduleArguments = [];
             offline = false;
             repositories = [];
             systemRepository = null;
@@ -50,12 +52,13 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
         expected = "run-js --cwd=. --offline --rep=dependencies1 --rep=dependencies2" +
                 " --sysrep=system-repository --cacherep=cache-rep" +
                 " --run=main --compile=check --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
-                " --debug=debug --verbose=all,loader --node-exe=/usr/bin/nodejs mymodule/0.1" +
-                " --foo bar=toto";
+                " --debug=debug --verbose=all,loader --node-exe=/usr/bin/nodejs" +
+                " --foo bar=toto mymodule/0.1 -- arg1 arg2=value";
         actual = runJsCommand {
             currentWorkingDirectory = ".";
             moduleName = "mymodule";
             version = "0.1";
+            moduleArguments = ["arg1", "arg2=value"];
             offline = true;
             repositories = ["dependencies1", "dependencies2"];
             systemRepository = "system-repository";

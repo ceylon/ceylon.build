@@ -1,12 +1,12 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { all, never, runTestsCommand, loader }
+import ceylon.build.tasks.ceylon { all, never, runTestsCommand, loader, moduleVersion }
 
 test void shouldCreateTestCommand() {
     assertEquals{
         expected = "test mymodule/1.0.0";
         actual = runTestsCommand {
             currentWorkingDirectory = null;
-            modules = ["mymodule/1.0.0"];
+            modules = [moduleVersion("mymodule", "1.0.0")];
             tests = [];
             noDefaultRepositories = false;
             offline = false;
@@ -26,7 +26,7 @@ test void shouldCreateTestCommandWithAllVerboseFlag() {
         expected = "test --verbose mymodule/1.0.0";
         actual = runTestsCommand {
             currentWorkingDirectory = null;
-            modules = ["mymodule/1.0.0"];
+            modules = [moduleVersion("mymodule", "1.0.0")];
             tests = [];
             noDefaultRepositories = false;
             offline = false;
@@ -48,10 +48,10 @@ test void shouldCreateTestCommandWithAllParametersSpecified() {
                 " --compile=never" +
                 " --test='package com.acme.foo.bar','class com.acme.foo.bar::Baz','function com.acme.foo.bar::baz'" +
                 " --define=ENV_VAR1=42 --define=ENV_VAR2=foo" +
-                " --verbose=all,loader mymodule/1.0.0 --foo bar=toto";
+                " --verbose=all,loader --foo bar=toto mymodule/1.0.0";
         actual = runTestsCommand {
             currentWorkingDirectory = ".";
-            modules = ["mymodule/1.0.0"];
+            modules = [moduleVersion("mymodule", "1.0.0")];
             tests = ["package com.acme.foo.bar", "class com.acme.foo.bar::Baz", "function com.acme.foo.bar::baz"];
             noDefaultRepositories = true;
             offline = true;

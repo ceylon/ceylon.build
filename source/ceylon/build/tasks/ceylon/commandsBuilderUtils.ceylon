@@ -79,6 +79,11 @@ void appendCompilationUnits(StringBuilder sb, {String*} modules, {String*} files
     sb.append(" ".join(concatenate(modules, files)));
 }
 
+void appendModule(StringBuilder sb, String name, String version) {
+    sb.append(" ");
+    sb.append(moduleVersion(name, version));
+}
+
 void appendCompact(StringBuilder sb, Boolean compact) {
     appendFlag(sb, "compact", compact);
 }
@@ -162,10 +167,17 @@ void appendDebug(StringBuilder sb, String? debug) {
 void appendPathToNodeJs(StringBuilder sb, String? pathToNodeJs) {
     appendParameter(sb, "node-exe", pathToNodeJs);
 }
-     
+
 void appendArguments(StringBuilder sb, {String*} arguments) {
     if (!arguments.empty) {
         sb.append(" ");
+        sb.append(" ".join(arguments));
+    }
+}
+
+void appendModuleArguments(StringBuilder sb, {String*} arguments) {
+    if (!arguments.empty) {
+        sb.append(" -- ");
         sb.append(" ".join(arguments));
     }
 }
