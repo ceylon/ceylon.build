@@ -17,7 +17,7 @@ shared object force satisfies CompileOnRun { string => "force"; }
 "Check and compile if needed"
 shared object check satisfies CompileOnRun { string => "check"; }
 
-"Runs a Ceylon module using `ceylon run` command line."
+"Runs a Ceylon module using `ceylon run` tool."
 shared Task runModule(
         "name of module to run"
         String moduleName,
@@ -83,7 +83,7 @@ shared Task runModule(
     };
 }
 
-"Runs a Ceylon module on node.js using `ceylon run-js` command line"
+"Runs a Ceylon module on node.js using `ceylon run-js` tool."
 shared Task runJsModule(
         "name of module to run"
         String moduleName,

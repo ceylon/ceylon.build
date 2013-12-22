@@ -1,6 +1,6 @@
 import ceylon.build.task { Task, Context }
 
-"Compiles a Ceylon module using `ceylon compile` command line."
+"Compiles a Ceylon module using `ceylon compile` tool."
 shared Task compile(
         "name of modules to compile"
         String|{String*} modules,
@@ -90,7 +90,7 @@ shared Task compile(
     };
 }
 
-"Compiles a Ceylon module to javascript using `ceylon compile-js` command line."
+"Compiles a Ceylon module to javascript using `ceylon compile-js` tool."
 shared Task compileJs(
         "name of modules to compile"
         String|{String*} modules,

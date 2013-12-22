@@ -1,6 +1,6 @@
 import ceylon.build.task { Task, Context }
 
-"Documents a Ceylon module using `ceylon doc` command line."
+"Documents a Ceylon module using `ceylon doc` tool."
 shared Task document(
         "list of modules to document"
         String|{String+}  modules,

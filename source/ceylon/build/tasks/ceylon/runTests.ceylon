@@ -1,6 +1,6 @@
 import ceylon.build.task { Context, Task }
 
-"Runs tests of Ceylon module using `ceylon test` command line."
+"Runs tests of Ceylon module using `ceylon test` tool."
 shared Task runTests(
     "name/version of modules to test"
     see(`function moduleVersion`)
