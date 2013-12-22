@@ -3,6 +3,7 @@ import ceylon.build.task { Context, Task }
 "Runs tests of Ceylon module using `ceylon run` command line."
 shared Task runTests(
     "name/version of modules to test"
+    see(`function moduleVersion`)
     String|{String*} modules,
     "Specifies which tests will be run.
      (corresponding command line parameter: `--test=<test>`)"

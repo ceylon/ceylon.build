@@ -442,6 +442,7 @@ shared String runTestsCommand(
      (corresponding command line parameter: `--cwd=<dir>`)"
     String? currentWorkingDirectory,
     "name/version of modules to test"
+    see(`function moduleVersion`)
     {String*} modules,
     "Specifies which tests will be run.
      (corresponding command line parameter: `--test=<test>`)"

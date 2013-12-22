@@ -1,6 +1,10 @@
 import ceylon.build.task { Task, Context }
 
-String defaultModuleVersion = "1.0.0";
+"Default module version (1.0.0)"
+shared String defaultModuleVersion = "1.0.0";
+
+"Build a module name/version string from a name and a version"
+shared String moduleVersion(String name, String version = defaultModuleVersion) => "``name``/``version``";
 
 "Compile on run flag"
 shared interface CompileOnRun of never | once | force | check {}
