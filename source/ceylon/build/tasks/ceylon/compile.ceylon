@@ -9,7 +9,7 @@ shared Task compile(
         "encoding used for reading source files
          (default: platform-specific)
          (corresponding command line parameter: `--encoding=<encoding>`)"
-        String? encoding = "",
+        String? encoding = null,
         "Path to source files
          (default: './source')
          (corresponding command line parameter: `--source=<dirs>`)"

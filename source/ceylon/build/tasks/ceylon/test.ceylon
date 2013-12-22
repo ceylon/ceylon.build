@@ -14,7 +14,7 @@ shared Task compileTests(
         "encoding used for reading source files
          (default: platform-specific)
          (corresponding command line parameter: `--encoding=<encoding>`)"
-        String? encoding = "",
+        String? encoding = null,
         "Passes an option to the underlying java compiler
          (corresponding command line parameter: `--javac=<option>`)"
         String? javacOptions = null,
