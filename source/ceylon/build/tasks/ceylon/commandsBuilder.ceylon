@@ -3,86 +3,29 @@ import ceylon.collection { ArrayList, MutableList }
 "Name of ceylon executable"
 shared String ceylonExecutable = operatingSystem.name.lowercased.startsWith("windows") then "ceylon.bat" else "ceylon";
 
-"Builds a ceylon compile command as a `String` and returns it."
-shared [String+] compileCommand(
-        "Specifies the current working directory for this tool.
-         (default: the directory where the tool is run from)
-         (corresponding command line parameter: `--cwd=<dir>`)"
-        String? currentWorkingDirectory,
-        "name of modules to compile"
-        {String*} modules,
-        "name of files to compile"
-        {String*} files,
-        "encoding used for reading source files
-         (default: platform-specific)
-         (corresponding command line parameter: `--encoding=<encoding>`)"
-        String? encoding,
-        "Path to source files
-         (default: './source')
-         (corresponding command line parameter: `--source=<dirs>`)"
-        {String*} sourceDirectories,
-        "Path to directory containing resource files
-         (default: './resource')
-         (corresponding command line parameter: `--resource=<dirs>`)"
-        {String*} resourceDirectories,
-        "Passes an option to the underlying java compiler
-         (corresponding command line parameter: `--javac=<option>`)"
-        String? javacOptions,
-        "Specifies the output module repository (which must be publishable).
-         (default: './modules')
-         (corresponding command line parameter: `--out=<url>`)"
-        String? outputRepository,
-        "Specifies a module repository containing dependencies. Can be specified multiple times.
-         (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
-         (corresponding command line parameter: `--rep=<url>`)"
-        {String*} repositories,
-        "Specifies the system repository containing essential modules.
-         (default: '$CEYLON_HOME/repo')
-         (corresponding command line parameter: `--sysrep=<url>`)"
-        String? systemRepository,
-        "Specifies the folder to use for caching downloaded modules.
-         (default: '~/.ceylon/cache')
-         (corresponding command line parameter: `--cacherep=<url>`)"
-        String? cacheRepository,
-        "Sets the user name for use with an authenticated output repository
-         (corresponding command line parameter: `--user=<name>`)"
-        String? user,
-        "Sets the password for use with an authenticated output repository
-         (corresponding command line parameter: `--pass=<secret>`)"
-        String? password,
-        "Enables offline mode that will prevent the module loader from connecting to remote repositories.
-         (corresponding command line parameter: `--offline`)"
-        Boolean offline,
-        "Indicates that the default repositories should not be used
-         (corresponding command line parameter: `--no-default-repositories`)"
-        Boolean noDefaultRepositories,
-        "Set system properties
-         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
-        {<String->String>*} systemProperties,
-        "Indicates that the default repositories should not be used
-         (corresponding command line parameter: `--no-default-repositories`)"
-        {CompileVerboseMode*}|AllVerboseModes verboseModes,
-        "custom arguments to be added to commandline"
-        {String*} arguments
-        ) {
+"Builds a ceylon compile command as a `[String+]` and returns it.
+ 
+ First element of returned sequence is the tool name.
+ Next elements are tool arguments."
+shared [String+] compileCommand(CompileArguments args) {
     value command = initCommand("compile");
-    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
-    command.add(appendEncoding(encoding));
-    command.addAll(appendSourceDirectories(sourceDirectories));
-    command.addAll(appendResourceDirectories(resourceDirectories));
-    command.add(appendJavacOptions(javacOptions));
-    command.add(appendOutputRepository(outputRepository));
-    command.addAll(appendRepositories(repositories));
-    command.add(appendSystemRepository(systemRepository));
-    command.add(appendCacheRepository(cacheRepository));
-    command.add(appendUser(user));
-    command.add(appendPassword(password));
-    command.add(appendOfflineMode(offline));
-    command.add(appendNoDefaultRepositories(noDefaultRepositories));
-    command.addAll(appendSystemProperties(systemProperties));
-    command.add(appendVerboseModes(verboseModes));
-    command.addAll(appendArguments(arguments));
-    command.addAll(appendCompilationUnits(modules, files));
+    command.add(appendCurrentWorkingDirectory(args.currentWorkingDirectory));
+    command.add(appendEncoding(args.encoding));
+    command.addAll(appendSourceDirectories(args.sourceDirectories));
+    command.addAll(appendResourceDirectories(args.resourceDirectories));
+    command.add(appendJavacOptions(args.javacOptions));
+    command.add(appendOutputRepository(args.outputRepository));
+    command.addAll(appendRepositories(args.repositories));
+    command.add(appendSystemRepository(args.systemRepository));
+    command.add(appendCacheRepository(args.cacheRepository));
+    command.add(appendUser(args.user));
+    command.add(appendPassword(args.password));
+    command.add(appendOfflineMode(args.offline));
+    command.add(appendNoDefaultRepositories(args.noDefaultRepositories));
+    command.addAll(appendSystemProperties(args.systemProperties));
+    command.add(appendVerboseModes(args.verboseModes));
+    command.addAll(appendArguments(args.arguments));
+    command.addAll(appendCompilationUnits(args.modules, args.files));
     value sequence = command.coalesced.sequence;
     assert(nonempty sequence);
     return sequence;

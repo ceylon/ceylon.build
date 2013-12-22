@@ -67,24 +67,26 @@ shared Task compile(
     checkCompilationUnits(modulesList, filesList);
     return function(Context context) {
         value command = compileCommand {
-            currentWorkingDirectory = currentWorkingDirectory;
-            modules = modulesList;
-            files = filesList;
-            encoding = encoding;
-            sourceDirectories = stringIterable(sourceDirectories);
-            resourceDirectories = stringIterable(resourceDirectories);
-            javacOptions = javacOptions;
-            outputRepository = outputRepository;
-            repositories = stringIterable(repositories);
-            systemRepository = systemRepository;
-            cacheRepository = cacheRepository;
-            user =user;
-            password = password;
-            offline = offline;
-            noDefaultRepositories = noDefaultRepositories;
-            systemProperties = systemProperties;
-            verboseModes = verboseModes;
-            arguments = context.arguments;
+            CompileArguments {
+                modules = modulesList;
+                files = filesList;
+                encoding = encoding;
+                sourceDirectories = stringIterable(sourceDirectories);
+                resourceDirectories = stringIterable(resourceDirectories);
+                javacOptions = javacOptions;
+                outputRepository = outputRepository;
+                repositories = stringIterable(repositories);
+                systemRepository = systemRepository;
+                cacheRepository = cacheRepository;
+                user =user;
+                password = password;
+                offline = offline;
+                noDefaultRepositories = noDefaultRepositories;
+                systemProperties = systemProperties;
+                verboseModes = verboseModes;
+                currentWorkingDirectory = currentWorkingDirectory;
+                arguments = context.arguments;
+            };
         };
         return execute(context.writer, "compiling", ceylon, command);
     };
