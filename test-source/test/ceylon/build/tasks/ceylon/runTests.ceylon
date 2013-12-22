@@ -1,12 +1,12 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { all, never, runTestsCommand, loader, moduleVersion }
+import ceylon.build.tasks.ceylon { all, never, runTestsCommand, loader, moduleVersion, defaultModuleVersion }
 
 test void shouldCreateTestCommand() {
     assertEquals{
-        expected = "test mymodule/1.0.0";
+        expected = "test mymodule";
         actual = runTestsCommand {
             currentWorkingDirectory = null;
-            modules = [moduleVersion("mymodule", "1.0.0")];
+            modules = [moduleVersion("mymodule")];
             tests = [];
             noDefaultRepositories = false;
             offline = false;
@@ -23,10 +23,10 @@ test void shouldCreateTestCommand() {
 
 test void shouldCreateTestCommandWithAllVerboseFlag() {
     assertEquals{
-        expected = "test --verbose mymodule/1.0.0";
+        expected = "test --verbose mymodule";
         actual = runTestsCommand {
             currentWorkingDirectory = null;
-            modules = [moduleVersion("mymodule", "1.0.0")];
+            modules = [moduleVersion("mymodule", defaultModuleVersion)];
             tests = [];
             noDefaultRepositories = false;
             offline = false;

@@ -3,7 +3,7 @@ import ceylon.build.tasks.ceylon { moduleVersion }
 
 test void shouldReturnModuleWithDefaultVersionString() {
     assertEquals {
-        expected = "mymodule/1.0.0";
+        expected = "mymodule";
         actual = moduleVersion("mymodule");
     };
 }

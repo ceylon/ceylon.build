@@ -313,7 +313,7 @@ shared String runCommand(
         "name of module to run"
         String moduleName,
         "version of module to run"
-        String version,
+        String? version,
         "Arguments to be passed to executed module"
         {String*} moduleArguments,
         "Indicates that the default repositories should not be used
@@ -376,7 +376,7 @@ shared String runJsCommand(
         "name of module to run"
         String moduleName,
         "version of module to run"
-        String version,
+        String? version,
         "Arguments to be passed to executed module"
         {String*} moduleArguments,
         "Enables offline mode that will prevent the module loader from connecting to remote repositories.

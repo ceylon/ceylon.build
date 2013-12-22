@@ -79,7 +79,7 @@ void appendCompilationUnits(StringBuilder sb, {String*} modules, {String*} files
     sb.append(" ".join(concatenate(modules, files)));
 }
 
-void appendModule(StringBuilder sb, String name, String version) {
+void appendModule(StringBuilder sb, String name, String? version) {
     sb.append(" ");
     sb.append(moduleVersion(name, version));
 }

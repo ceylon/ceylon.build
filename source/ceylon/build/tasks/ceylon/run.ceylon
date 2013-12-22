@@ -1,10 +1,15 @@
 import ceylon.build.task { Task, Context }
 
 "Default module version (1.0.0)"
-shared String defaultModuleVersion = "1.0.0";
+shared String? defaultModuleVersion = null;
 
 "Build a module name/version string from a name and a version"
-shared String moduleVersion(String name, String version = defaultModuleVersion) => "``name``/``version``";
+shared String moduleVersion(String name, String? version = defaultModuleVersion) {
+    if (exists version) {
+        return "``name``/``version``";
+    }
+    return name;
+}
 
 "Compile on run flag"
 shared interface CompileOnRun of never | once | force | check {}
@@ -22,7 +27,7 @@ shared Task runModule(
         "name of module to run"
         String moduleName,
         "version of module to run"
-        String version = defaultModuleVersion,
+        String? version = defaultModuleVersion,
         "Arguments to be passed to executed module"
         {String*} moduleArguments = [],
         "Indicates that the default repositories should not be used
@@ -88,7 +93,7 @@ shared Task runJsModule(
         "name of module to run"
         String moduleName,
         "version of module to run"
-        String version = defaultModuleVersion,
+        String? version = defaultModuleVersion,
         "Arguments to be passed to executed module"
         {String*} moduleArguments = [],
         "Enables offline mode that will prevent the module loader from connecting to remote repositories.

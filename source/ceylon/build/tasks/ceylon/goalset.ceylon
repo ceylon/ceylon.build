@@ -33,7 +33,7 @@ shared GoalSet ceylonModule(
     "test module name"
     String testModuleName = "test.``moduleName``",
     "test module version"
-    String testModuleVersion = "1.0.0",
+    String? testModuleVersion = defaultModuleVersion,
     "Targeted backend (JVM and/or Javascript)"
     Target target = Target { jvm = true; javascript = true; },
     """rename function that will be applied to each goal name"""
@@ -61,7 +61,7 @@ shared GoalSet ceylonModule(
     return GoalSet(goals);
 }
 
-[Goal+] jvmGoals(String(String) rename, String moduleName, String testModuleName, String testModuleVersion) {
+[Goal+] jvmGoals(String(String) rename, String moduleName, String testModuleName, String? testModuleVersion) {
     value compileGoal = Goal {
         name = rename("compile");
         compile {
@@ -87,7 +87,7 @@ shared GoalSet ceylonModule(
     return [compileGoal, compileTestsGoal, runTestsGoal, testGoal];
 }
 
-[Goal+] javascriptGoals(String(String) rename, String moduleName, String testModuleName, String testModuleVersion) {
+[Goal+] javascriptGoals(String(String) rename, String moduleName, String testModuleName, String? testModuleVersion) {
     value compileJsGoal = Goal {
         name = rename("compile-js");
         compileJs {

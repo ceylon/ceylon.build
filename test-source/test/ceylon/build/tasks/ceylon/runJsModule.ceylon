@@ -1,13 +1,13 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { runJsCommand, check, all, loader }
+import ceylon.build.tasks.ceylon { runJsCommand, check, all, loader, defaultModuleVersion }
 
 test void shouldCreateRunJsCommand() {
     assertEquals{
-        expected = "run-js mymodule/1.0.0";
+        expected = "run-js mymodule";
         actual = runJsCommand {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
-            version = "1.0.0";
+            version = defaultModuleVersion;
             moduleArguments = [];
             offline = false;
             repositories = [];

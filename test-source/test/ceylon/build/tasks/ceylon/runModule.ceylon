@@ -1,13 +1,13 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { all, runCommand, cmr, never }
+import ceylon.build.tasks.ceylon { all, runCommand, cmr, never, defaultModuleVersion }
 
 test void shouldCreateRunCommand() {
     assertEquals{
-        expected = "run mymodule/1.0.0";
+        expected = "run mymodule";
         actual = runCommand {
             currentWorkingDirectory = null;
             moduleName = "mymodule";
-            version = "1.0.0";
+            version = defaultModuleVersion;
             moduleArguments = [];
             noDefaultRepositories = false;
             offline = false;
