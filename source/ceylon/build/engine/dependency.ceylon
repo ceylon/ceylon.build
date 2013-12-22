@@ -12,7 +12,7 @@ class Dependency(goal, {Goal*} goals = []) {
     shared Boolean hasDependencies => !dependencies.empty;
     
     shared void removeDependency(Goal dependency) {
-        dependencies.removeElement(dependency);
+        dependencies.removeFirst(dependency);
     }
     
     shared {Dependency*} remainingDependencies({Goal*} resolvedGoals) {
