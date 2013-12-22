@@ -35,104 +35,30 @@ shared [String+] compileCommand(CompileArguments args) {
  
  First element of returned sequence is the tool name.
  Next elements are tool arguments."
-shared [String+] compileJsCommand(
-        "Specifies the current working directory for this tool.
-         (default: the directory where the tool is run from)
-         (corresponding command line parameter: `--cwd=<dir>`)"
-        String? currentWorkingDirectory,
-        "name of modules to compile"
-        {String*} modules,
-        "name of files to compile"
-        {String*} files,
-        "encoding used for reading source files
-         (default: platform-specific)
-         (corresponding command line parameter: `--encoding=<encoding>`)"
-        String? encoding,
-        "Path to source files
-         (default: './source')
-         (corresponding command line parameter: `--source=<dirs>`)"
-        {String*} sourceDirectories,
-        "Specifies the output module repository (which must be publishable).
-         (default: './modules')
-         (corresponding command line parameter: `--out=<url>`)"
-        String? outputRepository,
-        "Specifies a module repository containing dependencies. Can be specified multiple times.
-         (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
-         (corresponding command line parameter: `--rep=<url>`)"
-        {String*} repositories,
-        "Specifies the system repository containing essential modules.
-         (default: '$CEYLON_HOME/repo')
-         (corresponding command line parameter: `--sysrep=<url>`)"
-        String? systemRepository,
-        "Specifies the folder to use for caching downloaded modules.
-         (default: '~/.ceylon/cache')
-         (corresponding command line parameter: `--cacherep=<url>`)"
-        String? cacheRepository,
-        "Sets the user name for use with an authenticated output repository
-         (corresponding command line parameter: `--user=<name>`)"
-        String? user,
-        "Sets the password for use with an authenticated output repository
-         (corresponding command line parameter: `--pass=<secret>`)"
-        String? password,
-        "Enables offline mode that will prevent the module loader from connecting to remote repositories.
-         (corresponding command line parameter: `--offline`)"
-        Boolean offline,
-        "Equivalent to '--no-indent' '--no-comments'
-         (corresponding command line parameter: `--compact`)"
-        Boolean compact,
-        "Create lexical scope-style JS code
-         (corresponding command line parameter: `--lexical-scope-style`)"
-        Boolean lexicalScopeStyle,
-        "Do NOT generate any comments
-         (corresponding command line parameter: `--no-comments`)"
-        Boolean noComments,
-        "Do NOT indent code
-         (corresponding command line parameter: `--no-indent`)"
-        Boolean noIndent,
-        "Do NOT wrap generated code as CommonJS module
-         (corresponding command line parameter: `--no-module`)"
-        Boolean noModule,
-        "Create prototype-style JS code
-         (corresponding command line parameter: `--optimize`)"
-        Boolean optimize,
-        "Time the compilation phases (results are printed to standard error)
-         (corresponding command line parameter: `--profile`)"
-        Boolean profile,
-        "Do NOT generate .src archive - useful when doing joint compilation
-         (corresponding command line parameter: `--skip-src-archive`)"
-        Boolean skipSourceArchive,
-        "Set system properties
-         (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
-        {<String->String>*} systemProperties,
-        "Produce verbose output.
-         (corresponding command line parameter: `--verbose[=<flags>]`)"
-        {CompileJsVerboseMode*}|AllVerboseModes verboseModes,
-        "custom arguments to be added to commandline"
-        {String*} arguments
-        ) {
+shared [String+] compileJsCommand(CompileJsArguments args) {
     value command = initCommand("compile-js");
-    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
-    command.add(appendEncoding(encoding));
-    command.addAll(appendSourceDirectories(sourceDirectories));
-    command.add(appendOutputRepository(outputRepository));
-    command.addAll(appendRepositories(repositories));
-    command.add(appendSystemRepository(systemRepository));
-    command.add(appendCacheRepository(cacheRepository));
-    command.add(appendUser(user));
-    command.add(appendPassword(password));
-    command.add(appendOfflineMode(offline));
-    command.add(appendCompact(compact));
-    command.add(appendLexicalScopeStyle(lexicalScopeStyle));
-    command.add(appendNoComments(noComments));
-    command.add(appendNoIndent(noIndent));
-    command.add(appendNoModule(noModule));
-    command.add(appendOptimize(optimize));
-    command.add(appendProfile(profile));
-    command.add(appendSkipSourceArchive(skipSourceArchive));
-    command.addAll(appendSystemProperties(systemProperties));
-    command.add(appendVerboseModes(verboseModes));
-    command.addAll(appendArguments(arguments));
-    command.addAll(appendCompilationUnits(modules, files));
+    command.add(appendCurrentWorkingDirectory(args.currentWorkingDirectory));
+    command.add(appendEncoding(args.encoding));
+    command.addAll(appendSourceDirectories(args.sourceDirectories));
+    command.add(appendOutputRepository(args.outputRepository));
+    command.addAll(appendRepositories(args.repositories));
+    command.add(appendSystemRepository(args.systemRepository));
+    command.add(appendCacheRepository(args.cacheRepository));
+    command.add(appendUser(args.user));
+    command.add(appendPassword(args.password));
+    command.add(appendOfflineMode(args.offline));
+    command.add(appendCompact(args.compact));
+    command.add(appendLexicalScopeStyle(args.lexicalScopeStyle));
+    command.add(appendNoComments(args.noComments));
+    command.add(appendNoIndent(args.noIndent));
+    command.add(appendNoModule(args.noModule));
+    command.add(appendOptimize(args.optimize));
+    command.add(appendProfile(args.profile));
+    command.add(appendSkipSourceArchive(args.skipSourceArchive));
+    command.addAll(appendSystemProperties(args.systemProperties));
+    command.add(appendVerboseModes(args.verboseModes));
+    command.addAll(appendArguments(args.arguments));
+    command.addAll(appendCompilationUnits(args.modules, args.files));
     value sequence = command.coalesced.sequence;
     assert(nonempty sequence);
     return sequence;
