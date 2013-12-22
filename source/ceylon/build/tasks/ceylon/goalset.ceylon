@@ -76,9 +76,8 @@ shared GoalSet ceylonModule(
     };
     value runTestsGoal = Goal {
         name = rename("run-tests");
-        runModule {
-            moduleName = testModuleName;
-            version = testModuleVersion;
+        runTests {
+            modules = moduleVersion(testModuleName, testModuleVersion);
         }
     };
     value testGoal = Goal {
