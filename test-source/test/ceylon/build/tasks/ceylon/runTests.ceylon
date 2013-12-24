@@ -1,22 +1,13 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { all, never, runTestsCommand, loader, moduleVersion, defaultModuleVersion }
+import ceylon.build.tasks.ceylon { all, never, runTestsCommand, loader, moduleVersion, defaultModuleVersion, RunTestsArguments }
 
 test void shouldCreateTestCommand() {
     assertEquals {
         expected = ["test", "mymodule"];
         actual = runTestsCommand {
-            currentWorkingDirectory = null;
-            modules = [moduleVersion("mymodule")];
-            tests = [];
-            noDefaultRepositories = false;
-            offline = false;
-            repositories = [];
-            systemRepository = null;
-            cacheRepository = null;
-            compileOnRun = null;
-            systemProperties = [];
-            verboseModes = [];
-            arguments = [];
+            RunTestsArguments {
+                modules = [moduleVersion("mymodule")];
+            };
         };
     };
 }
@@ -25,18 +16,10 @@ test void shouldCreateTestCommandWithAllVerboseFlag() {
     assertEquals {
         expected = ["test", "--verbose", "mymodule"];
         actual = runTestsCommand {
-            currentWorkingDirectory = null;
-            modules = [moduleVersion("mymodule", defaultModuleVersion)];
-            tests = [];
-            noDefaultRepositories = false;
-            offline = false;
-            repositories = [];
-            systemRepository = null;
-            cacheRepository = null;
-            compileOnRun = null;
-            systemProperties = [];
-            verboseModes = all;
-            arguments = [];
+            RunTestsArguments {
+                modules = [moduleVersion("mymodule", defaultModuleVersion)];
+                verboseModes = all;
+            };
         };
     };
 }
@@ -49,18 +32,20 @@ test void shouldCreateTestCommandWithAllParametersSpecified() {
             "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--verbose=all,loader", "--foo",
             "bar=toto", "mymodule/1.0.0"];
         actual = runTestsCommand {
-            currentWorkingDirectory = ".";
-            modules = [moduleVersion("mymodule", "1.0.0")];
-            tests = ["package com.acme.foo.bar", "class com.acme.foo.bar::Baz", "function com.acme.foo.bar::baz"];
-            noDefaultRepositories = true;
-            offline = true;
-            repositories = ["dependencies1", "dependencies2"];
-            systemRepository = "system-repository";
-            cacheRepository = "cache-rep";
-            compileOnRun = never;
-            systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
-            verboseModes = [all, loader];
-            arguments = ["--foo", "bar=toto"];
+            RunTestsArguments {
+                modules = [moduleVersion("mymodule", "1.0.0")];
+                tests = ["package com.acme.foo.bar", "class com.acme.foo.bar::Baz", "function com.acme.foo.bar::baz"];
+                noDefaultRepositories = true;
+                offline = true;
+                repositories = ["dependencies1", "dependencies2"];
+                systemRepository = "system-repository";
+                cacheRepository = "cache-rep";
+                compileOnRun = never;
+                systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
+                verboseModes = [all, loader];
+                currentWorkingDirectory = ".";
+                arguments = ["--foo", "bar=toto"];
+             };
         };
     };
 }

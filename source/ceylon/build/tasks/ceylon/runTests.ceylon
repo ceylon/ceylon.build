@@ -44,18 +44,20 @@ shared Task runTests(
 ) {
     return function(Context context) {
         value command = runTestsCommand {
-            currentWorkingDirectory = currentWorkingDirectory;
-            modules = stringIterable(modules);
-            tests = stringIterable(tests);
-            noDefaultRepositories = noDefaultRepositories;
-            offline = offline;
-            repositories = stringIterable(repositories);
-            systemRepository = systemRepository;
-            cacheRepository = cacheRepository;
-            compileOnRun = compileOnRun;
-            systemProperties = systemProperties;
-            verboseModes = verboseModes;
-            arguments = context.arguments;
+            RunTestsArguments {
+                modules = stringIterable(modules);
+                tests = stringIterable(tests);
+                noDefaultRepositories = noDefaultRepositories;
+                offline = offline;
+                repositories = stringIterable(repositories);
+                systemRepository = systemRepository;
+                cacheRepository = cacheRepository;
+                compileOnRun = compileOnRun;
+                systemProperties = systemProperties;
+                verboseModes = verboseModes;
+                currentWorkingDirectory = currentWorkingDirectory;
+                arguments = context.arguments;
+            };
         };
         return execute(context.writer, "testing", ceylon, command);
     };

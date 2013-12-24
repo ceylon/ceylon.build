@@ -151,60 +151,20 @@ shared [String+] runJsCommand(RunJsArguments args) {
  
  First element of returned sequence is the tool name.
  Next elements are tool arguments."
-shared [String+] runTestsCommand(
-    "Specifies the current working directory for this tool.
-     (default: the directory where the tool is run from)
-     (corresponding command line parameter: `--cwd=<dir>`)"
-    String? currentWorkingDirectory,
-    "name/version of modules to test"
-    see(`function moduleVersion`)
-    {String*} modules,
-    "Specifies which tests will be run.
-     (corresponding command line parameter: `--test=<test>`)"
-    {String*} tests,
-    "Indicates that the default repositories should not be used
-     (corresponding command line parameter: `--no-default-repositories`)"
-    Boolean noDefaultRepositories,
-    "Enables offline mode that will prevent the module loader from connecting to remote repositories.
-     (corresponding command line parameter: `--offline`)"
-    Boolean offline,
-    "Specifies a module repository containing dependencies. Can be specified multiple times.
-     (default: 'modules', '~/.ceylon/repo', http://modules.ceylon-lang.org)
-     (corresponding command line parameter: `--rep=<url>`)"
-    {String*} repositories,
-    "Specifies the system repository containing essential modules.
-     (default: '$CEYLON_HOME/repo')
-     (corresponding command line parameter: `--sysrep=<url>`)"
-    String? systemRepository,
-    "Specifies the folder to use for caching downloaded modules.
-     (default: '~/.ceylon/cache')
-     (corresponding command line parameter: `--cacherep=<url>`)"
-    String? cacheRepository,
-    "Determines if and how compilation should be handled.
-     (corresponding command line parameter: `--compile[=<flags>]`)"
-    CompileOnRun? compileOnRun,
-    "Set system properties
-     (corresponding command line parameter: `--define=<key>=<value>`, `-D <key>=<value>`)"
-    {<String->String>*} systemProperties,
-    "Produce verbose output.
-     (corresponding command line parameter: `--verbose=<flags>`)"
-    {RunTestsVerboseMode*}|AllVerboseModes verboseModes,
-    "custom arguments to be added to commandline"
-    {String*} arguments
-) {
+shared [String+] runTestsCommand(RunTestsArguments args) {
     value command = initCommand("test");
-    command.add(appendCurrentWorkingDirectory(currentWorkingDirectory));
-    command.add(appendNoDefaultRepositories(noDefaultRepositories));
-    command.add(appendOfflineMode(offline));
-    command.addAll(appendRepositories(repositories));
-    command.add(appendSystemRepository(systemRepository));
-    command.add(appendCacheRepository(cacheRepository));
-    command.add(appendCompileOnRun(compileOnRun));
-    command.add(appendTests(tests));
-    command.addAll(appendSystemProperties(systemProperties));
-    command.add(appendVerboseModes(verboseModes));
-    command.addAll(appendArguments(arguments));
-    command.addAll(appendCompilationUnits(modules));
+    command.add(appendCurrentWorkingDirectory(args.currentWorkingDirectory));
+    command.add(appendNoDefaultRepositories(args.noDefaultRepositories));
+    command.add(appendOfflineMode(args.offline));
+    command.addAll(appendRepositories(args.repositories));
+    command.add(appendSystemRepository(args.systemRepository));
+    command.add(appendCacheRepository(args.cacheRepository));
+    command.add(appendCompileOnRun(args.compileOnRun));
+    command.add(appendTests(args.tests));
+    command.addAll(appendSystemProperties(args.systemProperties));
+    command.add(appendVerboseModes(args.verboseModes));
+    command.addAll(appendArguments(args.arguments));
+    command.addAll(appendCompilationUnits(args.modules));
     value sequence = command.coalesced.sequence;
     assert(nonempty sequence);
     return sequence;
