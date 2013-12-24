@@ -1,5 +1,5 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { RunJsArguments, runJsCommand, check, all, loader }
+import ceylon.build.tasks.ceylon { RunJsArguments, runJsCommand, all, loader, never, once, check, force }
 
 test void shouldCreateRunJsCommand() {
     assertEquals {
@@ -12,14 +12,217 @@ test void shouldCreateRunJsCommand() {
     };
 }
 
-test void shouldCreateRunJsCommandWithAllVerboseFlag() {
+test void shouldCreateRunJsCommandWithVersion() {
     assertEquals {
-        expected = ["run-js", "--verbose", "mymodule/1.0.0"];
+        expected = ["run-js", "mymodule/1.0.0"];
         actual = runJsCommand {
             RunJsArguments {
                 moduleName = "mymodule";
                 version = "1.0.0";
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithModuleArguments() {
+    assertEquals {
+        expected = ["run-js", "mymodule", "--", "--flag", "arg1", "arg2=value"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                moduleArguments = ["--flag", "arg1", "arg2=value"];
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithOffline() {
+    assertEquals {
+        expected = ["run-js", "--offline", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                offline = true;
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithRepositories() {
+    assertEquals {
+        expected = ["run-js", "--rep=dependencies1", "--rep=../dependencies2", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                repositories = ["dependencies1", "../dependencies2"];
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithSystemRepository() {
+    assertEquals {
+        expected = ["run-js", "--sysrep=../repo", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                systemRepository = "../repo";
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithCacheRepository() {
+    assertEquals {
+        expected = ["run-js", "--cacherep=../cache", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                cacheRepository = "../cache";
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithFunctionNameToRun() {
+    assertEquals {
+        expected = ["run-js", "--run=com.acme.bar.main", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                functionNameToRun = "com.acme.bar.main";
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithCompileOnRunJsNever() {
+    assertEquals {
+        expected = ["run-js", "--compile=never", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                compileOnRun = never;
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithCompileOnRunJsOnce() {
+    assertEquals {
+        expected = ["run-js", "--compile=once", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                compileOnRun = once;
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithCompileOnRunJsCheck() {
+    assertEquals {
+        expected = ["run-js", "--compile=check", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                compileOnRun = check;
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithCompileOnRunJsForce() {
+    assertEquals {
+        expected = ["run-js", "--compile=force", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                compileOnRun = force;
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithSystemProperties() {
+    assertEquals {
+        expected = ["run-js", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithDebug() {
+    assertEquals {
+        expected = ["run-js", "--debug=debug", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                debug = "debug";
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithAllVerboseFlag() {
+    assertEquals {
+        expected = ["run-js", "--verbose", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
                 verboseModes = all;
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithVerboseModes() {
+    assertEquals {
+        expected = ["run-js", "--verbose=all,loader", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                verboseModes = [all, loader];
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithPathToNodeJs() {
+    assertEquals {
+        expected = ["run-js", "--node-exe=/usr/bin/nodejs", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                pathToNodeJs = "/usr/bin/nodejs";
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithCurrentWorkingDirectory() {
+    assertEquals {
+        expected = ["run-js", "--cwd=..", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                currentWorkingDirectory = "..";
+            };
+        };
+    };
+}
+
+test void shouldCreateRunJsCommandWithArguments() {
+    assertEquals {
+        expected = ["run-js", "--foo", "bar=toto", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                arguments = ["--foo", "bar=toto"];
             };
         };
     };
