@@ -98,6 +98,9 @@ shared Task runJsModule(
         String? version = defaultModuleVersion,
         "Arguments to be passed to executed module"
         {String*} moduleArguments = [],
+        "Indicates that the default repositories should not be used
+         (corresponding command line parameter: `--no-default-repositories`)"
+        Boolean noDefaultRepositories = false,
         "Enables offline mode that will prevent the module loader from connecting to remote repositories.
          (corresponding command line parameter: `--offline`)"
         Boolean offline = false,
@@ -144,6 +147,7 @@ shared Task runJsModule(
                 moduleName = moduleName;
                 version = version;
                 moduleArguments = moduleArguments;
+                noDefaultRepositories = true;
                 offline = offline;
                 repositories = stringIterable(repositories);
                 systemRepository = systemRepository;

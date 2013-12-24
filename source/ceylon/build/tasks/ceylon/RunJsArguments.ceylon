@@ -3,6 +3,7 @@ shared class RunJsArguments(
     moduleName,
     version = null,
     moduleArguments = [],
+    noDefaultRepositories = false,
     offline = false,
     repositories = [],
     systemRepository = null,
@@ -24,6 +25,10 @@ shared class RunJsArguments(
     
     "Arguments to be passed to executed module"
     shared {String*} moduleArguments;
+    
+    "Indicates that the default repositories should not be used
+     (corresponding command line parameter: `--no-default-repositories`)"
+    shared Boolean noDefaultRepositories;
     
     "Enables offline mode that will prevent the module loader from connecting to remote repositories.
      (corresponding command line parameter: `--offline`)"

@@ -122,6 +122,7 @@ shared [String+] runJsCommand(RunJsArguments args) {
     value command = initCommand("run-js");
     command.add(appendCurrentWorkingDirectory(args.currentWorkingDirectory));
     command.add(appendOfflineMode(args.offline));
+    command.add(appendNoDefaultRepositories(args.noDefaultRepositories));
     command.addAll(appendRepositories(args.repositories));
     command.add(appendSystemRepository(args.systemRepository));
     command.add(appendCacheRepository(args.cacheRepository));

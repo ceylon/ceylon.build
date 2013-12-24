@@ -36,6 +36,18 @@ test void shouldCreateRunJsCommandWithModuleArguments() {
     };
 }
 
+test void shouldCreateRunJsCommandWithNoDefaultRepositories() {
+    assertEquals {
+        expected = ["run-js", "--no-default-repositories", "mymodule"];
+        actual = runJsCommand {
+            RunJsArguments {
+                moduleName = "mymodule";
+                noDefaultRepositories = true;
+            };
+        };
+    };
+}
+
 test void shouldCreateRunJsCommandWithOffline() {
     assertEquals {
         expected = ["run-js", "--offline", "mymodule"];
@@ -230,15 +242,17 @@ test void shouldCreateRunJsCommandWithArguments() {
 
 test void shouldCreateRunJsCommandWithAllParametersSpecified() {
     assertEquals {
-        expected = ["run-js", "--cwd=.", "--offline", "--rep=dependencies1", "--rep=dependencies2",
-            "--sysrep=system-repository", "--cacherep=cache-rep", "--run=main", "--compile=check",
-            "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--debug=debug", "--verbose=all,loader",
-            "--node-exe=/usr/bin/nodejs", "--foo", "bar=toto", "mymodule/0.1", "--", "arg1", "arg2=value"];
+        expected = ["run-js", "--cwd=.", "--offline", "--no-default-repositories", "--rep=dependencies1",
+            "--rep=dependencies2", "--sysrep=system-repository", "--cacherep=cache-rep", "--run=main",
+            "--compile=check", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--debug=debug",
+            "--verbose=all,loader", "--node-exe=/usr/bin/nodejs", "--foo", "bar=toto", "mymodule/0.1",
+            "--", "arg1", "arg2=value"];
         actual = runJsCommand {
             RunJsArguments {
                 moduleName = "mymodule";
                 version = "0.1";
                 moduleArguments = ["arg1", "arg2=value"];
+                noDefaultRepositories = true;
                 offline = true;
                 repositories = ["dependencies1", "dependencies2"];
                 systemRepository = "system-repository";
