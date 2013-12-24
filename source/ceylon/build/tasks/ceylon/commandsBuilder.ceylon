@@ -26,9 +26,7 @@ shared [String+] compileCommand(CompileArguments args) {
     command.add(appendVerboseModes(args.verboseModes));
     command.addAll(appendArguments(args.arguments));
     command.addAll(appendCompilationUnits(args.modules, args.files));
-    value sequence = command.coalesced.sequence;
-    assert(nonempty sequence);
-    return sequence;
+    return cleanCommand(command);
 }
 
 "Builds a ceylon compile-js command as a `[String+]` and returns it.
@@ -59,9 +57,7 @@ shared [String+] compileJsCommand(CompileJsArguments args) {
     command.add(appendVerboseModes(args.verboseModes));
     command.addAll(appendArguments(args.arguments));
     command.addAll(appendCompilationUnits(args.modules, args.files));
-    value sequence = command.coalesced.sequence;
-    assert(nonempty sequence);
-    return sequence;
+    return cleanCommand(command);
 }
 
 "Builds a ceylon doc command as a `[String+]` and returns it.
@@ -93,9 +89,7 @@ shared [String+] docCommand(DocArguments args) {
     command.add(appendVerboseModes(args.verboseModes));
     command.addAll(appendArguments(args.arguments));
     command.addAll(appendCompilationUnits(args.modules));
-    value sequence = command.coalesced.sequence;
-    assert(nonempty sequence);
-    return sequence;
+    return cleanCommand(command);
 }
 
 "Builds a ceylon run command as a `[String+]` and returns it.
@@ -117,9 +111,7 @@ shared [String+] runCommand(RunArguments args) {
     command.addAll(appendArguments(args.arguments));
     command.add(appendModule(args.moduleName, args.version));
     command.addAll(appendModuleArguments(args.moduleArguments));
-    value sequence = command.coalesced.sequence;
-    assert(nonempty sequence);
-    return sequence;
+    return cleanCommand(command);
 }
 
 "Builds a ceylon run-js command as a `[String+]` and returns it.
@@ -142,9 +134,7 @@ shared [String+] runJsCommand(RunJsArguments args) {
     command.addAll(appendArguments(args.arguments));
     command.add(appendModule(args.moduleName, args.version));
     command.addAll(appendModuleArguments(args.moduleArguments));
-    value sequence = command.coalesced.sequence;
-    assert(nonempty sequence);
-    return sequence;
+    return cleanCommand(command);
 }
 
 "Builds a ceylon test command as a `[String+]` and returns it.
@@ -165,9 +155,15 @@ shared [String+] runTestsCommand(RunTestsArguments args) {
     command.add(appendVerboseModes(args.verboseModes));
     command.addAll(appendArguments(args.arguments));
     command.addAll(appendCompilationUnits(args.modules));
+    return cleanCommand(command);
+}
+
+"Initializes a command Iterable whose first element is the tool name."
+MutableList<String?> initCommand(String tool) => ArrayList<String?> { initialCapacity = 2; tool };
+
+"Removes null elements from command and convert it to a non-empty sequence."
+[String+] cleanCommand({String?*} command) {
     value sequence = command.coalesced.sequence;
     assert(nonempty sequence);
     return sequence;
 }
-
-MutableList<String?> initCommand(String tool) => ArrayList<String?> { initialCapacity = 2; tool };
