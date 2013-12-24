@@ -1,5 +1,5 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { RunArguments, runCommand, all, cmr, never, check, once, force, loader }
+import ceylon.build.tasks.ceylon { RunArguments, runCommand, all, cmr, loader, never, once, check, force }
 
 test void shouldCreateRunCommand() {
     assertEquals {
