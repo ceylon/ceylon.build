@@ -112,8 +112,8 @@ String? appendRun(String? functionNameToRun) =>
 String? appendCompileOnRun(CompileOnRun? compileOnRun) =>
     parameter<CompileOnRun>("compile", compileOnRun);
 
-String? appendTests({String*} tests) =>
-    list("test", tests.map((String test) => "'``test``'"));
+{String*} appendTests({String*} tests) =>
+        { for (test in tests) parameter("test", "'``test``'") }.coalesced;
 
 String? appendDebug(String? debug) =>
     parameter("debug", debug);

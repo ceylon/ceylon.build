@@ -42,7 +42,9 @@ test void shouldCreateTestCommandWithTests() {
     assertEquals {
         expected = [
             "test",
-            "--test='package com.acme.foo.bar','class com.acme.foo.bar::Baz','function com.acme.foo.bar::baz'",
+            "--test='package com.acme.foo.bar'",
+            "--test='class com.acme.foo.bar::Baz'",
+            "--test='function com.acme.foo.bar::baz'",
             "mymodule"
         ];
         actual = runTestsCommand {
@@ -226,9 +228,9 @@ test void shouldCreateTestCommandWithAllParametersSpecified() {
     assertEquals {
         expected = ["test", "--cwd=.", "--no-default-repositories", "--offline", "--rep=dependencies1",
             "--rep=dependencies2", "--sysrep=system-repository", "--cacherep=cache-rep", "--compile=never",
-            "--test='package com.acme.foo.bar','class com.acme.foo.bar::Baz','function com.acme.foo.bar::baz'",
-            "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--verbose=all,loader", "--foo",
-            "bar=toto", "mymodule/1.0.0"];
+            "--test='package com.acme.foo.bar'", "--test='class com.acme.foo.bar::Baz'",
+            "--test='function com.acme.foo.bar::baz'", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo",
+            "--verbose=all,loader", "--foo", "bar=toto", "mymodule/1.0.0"];
         actual = runTestsCommand {
             RunTestsArguments {
                 modules = [moduleVersion("mymodule", "1.0.0")];

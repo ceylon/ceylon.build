@@ -151,7 +151,7 @@ shared [String+] runTestsCommand(RunTestsArguments args) {
     command.add(appendSystemRepository(args.systemRepository));
     command.add(appendCacheRepository(args.cacheRepository));
     command.add(appendCompileOnRun(args.compileOnRun));
-    command.add(appendTests(args.tests));
+    command.addAll(appendTests(args.tests));
     command.addAll(appendSystemProperties(args.systemProperties));
     command.add(appendVerboseModes(args.verboseModes));
     command.addAll(appendArguments(args.arguments));
