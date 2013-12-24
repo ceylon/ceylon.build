@@ -140,21 +140,23 @@ shared Task runJsModule(
 ) {
     return function(Context context) {
         value command = runJsCommand {
-            currentWorkingDirectory = currentWorkingDirectory;
-            moduleName = moduleName;
-            version = version;
-            moduleArguments = moduleArguments;
-            offline = offline;
-            repositories = stringIterable(repositories);
-            systemRepository = systemRepository;
-            cacheRepository = cacheRepository;
-            functionNameToRun = functionNameToRun;
-            compileOnRun = compileOnRun;
-            systemProperties = systemProperties;
-            debug = debug;
-            verboseModes = verboseModes;
-            pathToNodeJs = pathToNodeJs;
-            arguments = context.arguments;
+            RunJsArguments {
+                moduleName = moduleName;
+                version = version;
+                moduleArguments = moduleArguments;
+                offline = offline;
+                repositories = stringIterable(repositories);
+                systemRepository = systemRepository;
+                cacheRepository = cacheRepository;
+                functionNameToRun = functionNameToRun;
+                compileOnRun = compileOnRun;
+                systemProperties = systemProperties;
+                debug = debug;
+                verboseModes = verboseModes;
+                pathToNodeJs = pathToNodeJs;
+                currentWorkingDirectory = currentWorkingDirectory;
+                arguments = context.arguments;
+            };
         };
         return execute(context.writer, "running", ceylon, command);
     };
