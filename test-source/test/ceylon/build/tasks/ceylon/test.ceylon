@@ -1,11 +1,11 @@
 import ceylon.test { assertEquals, test }
-import ceylon.build.tasks.ceylon { RunTestsArguments, runTestsCommand, moduleVersion, all, loader, never, once, check, force }
+import ceylon.build.tasks.ceylon { TestArguments, testCommand, moduleVersion, all, loader, never, once, check, force }
 
 test void shouldCreateTestCommand() {
     assertEquals {
         expected = ["test", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
             };
         };
@@ -15,8 +15,8 @@ test void shouldCreateTestCommand() {
 test void shouldCreateTestCommandWithVersion() {
     assertEquals {
         expected = ["test", "mymodule/1.0.0"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule", "1.0.0")];
             };
         };
@@ -26,8 +26,8 @@ test void shouldCreateTestCommandWithVersion() {
 test void shouldCreateTestCommandWithMultiplesModules() {
     assertEquals {
         expected = ["test", "mymodule1", "mymodule2/1.5.3", "mymodule3/3.0.1"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [
                     moduleVersion("mymodule1"),
                     moduleVersion("mymodule2", "1.5.3"),
@@ -47,8 +47,8 @@ test void shouldCreateTestCommandWithTests() {
             "--test='function com.acme.foo.bar::baz'",
             "mymodule"
         ];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 tests = ["package com.acme.foo.bar", "class com.acme.foo.bar::Baz", "function com.acme.foo.bar::baz"];
             };
@@ -59,8 +59,8 @@ test void shouldCreateTestCommandWithTests() {
 test void shouldCreateTestCommandWithNoDefaultRepositories() {
     assertEquals {
         expected = ["test", "--no-default-repositories", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 noDefaultRepositories = true;
             };
@@ -71,8 +71,8 @@ test void shouldCreateTestCommandWithNoDefaultRepositories() {
 test void shouldCreateTestCommandWithOffline() {
     assertEquals {
         expected = ["test", "--offline", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 offline = true;
             };
@@ -83,8 +83,8 @@ test void shouldCreateTestCommandWithOffline() {
 test void shouldCreateTestCommandWithRepositories() {
     assertEquals {
         expected = ["test", "--rep=dependencies1", "--rep=../dependencies2", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 repositories = ["dependencies1", "../dependencies2"];
             };
@@ -95,8 +95,8 @@ test void shouldCreateTestCommandWithRepositories() {
 test void shouldCreateTestCommandWithSystemRepository() {
     assertEquals {
         expected = ["test", "--sysrep=../repo", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 systemRepository = "../repo";
             };
@@ -107,8 +107,8 @@ test void shouldCreateTestCommandWithSystemRepository() {
 test void shouldCreateTestCommandWithCacheRepository() {
     assertEquals {
         expected = ["test", "--cacherep=../cache", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 cacheRepository = "../cache";
             };
@@ -119,8 +119,8 @@ test void shouldCreateTestCommandWithCacheRepository() {
 test void shouldCreateTestCommandWithCompileOnRunNever() {
     assertEquals {
         expected = ["test", "--compile=never", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 compileOnRun = never;
             };
@@ -131,8 +131,8 @@ test void shouldCreateTestCommandWithCompileOnRunNever() {
 test void shouldCreateTestCommandWithCompileOnRunOnce() {
     assertEquals {
         expected = ["test", "--compile=once", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 compileOnRun = once;
             };
@@ -143,8 +143,8 @@ test void shouldCreateTestCommandWithCompileOnRunOnce() {
 test void shouldCreateTestCommandWithCompileOnRunCheck() {
     assertEquals {
         expected = ["test", "--compile=check", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 compileOnRun = check;
             };
@@ -155,8 +155,8 @@ test void shouldCreateTestCommandWithCompileOnRunCheck() {
 test void shouldCreateTestCommandWithCompileOnRunForce() {
     assertEquals {
         expected = ["test", "--compile=force", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 compileOnRun = force;
             };
@@ -167,8 +167,8 @@ test void shouldCreateTestCommandWithCompileOnRunForce() {
 test void shouldCreateTestCommandWithSystemProperties() {
     assertEquals {
         expected = ["test", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
             };
@@ -179,8 +179,8 @@ test void shouldCreateTestCommandWithSystemProperties() {
 test void shouldCreateTestCommandWithAllVerboseFlag() {
     assertEquals {
         expected = ["test", "--verbose", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 verboseModes = all;
             };
@@ -191,8 +191,8 @@ test void shouldCreateTestCommandWithAllVerboseFlag() {
 test void shouldCreateTestCommandWithVerboseModes() {
     assertEquals {
         expected = ["test", "--verbose=all,loader", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 verboseModes = [all, loader];
             };
@@ -203,8 +203,8 @@ test void shouldCreateTestCommandWithVerboseModes() {
 test void shouldCreateTestCommandWithCurrentWorkingDirectory() {
     assertEquals {
         expected = ["test", "--cwd=..", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 currentWorkingDirectory = "..";
             };
@@ -215,8 +215,8 @@ test void shouldCreateTestCommandWithCurrentWorkingDirectory() {
 test void shouldCreateTestCommandWithArguments() {
     assertEquals {
         expected = ["test", "--foo", "bar=toto", "mymodule"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule")];
                 arguments = ["--foo", "bar=toto"];
             };
@@ -231,8 +231,8 @@ test void shouldCreateTestCommandWithAllParametersSpecified() {
             "--test='package com.acme.foo.bar'", "--test='class com.acme.foo.bar::Baz'",
             "--test='function com.acme.foo.bar::baz'", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo",
             "--verbose=all,loader", "--foo", "bar=toto", "mymodule/1.0.0"];
-        actual = runTestsCommand {
-            RunTestsArguments {
+        actual = testCommand {
+            TestArguments {
                 modules = [moduleVersion("mymodule", "1.0.0")];
                 tests = ["package com.acme.foo.bar", "class com.acme.foo.bar::Baz", "function com.acme.foo.bar::baz"];
                 noDefaultRepositories = true;

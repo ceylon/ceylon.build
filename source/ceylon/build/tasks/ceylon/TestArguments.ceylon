@@ -1,5 +1,5 @@
 "Holds arguments to be passed to ceylon run tool."
-shared class RunTestsArguments(
+shared class TestArguments(
     modules,
     tests = [],
     noDefaultRepositories = false,
