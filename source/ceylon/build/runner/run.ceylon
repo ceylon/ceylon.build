@@ -77,10 +77,7 @@ GoalAnnotation goalAnnotation(FunctionDeclaration declaration) {
 }
 
 String goalName(GoalAnnotation annotation, FunctionDeclaration declaration) {
-    if (annotation.name.empty) {
-        return declaration.name;
-    }
-    return annotation.name;
+    return annotation.name.empty then declaration.name else annotation.name;
 }
 
 Function<Task|{Task*},[]> tasksHolder(String goalName, FunctionDeclaration declaration) {
