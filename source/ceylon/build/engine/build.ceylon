@@ -1,4 +1,5 @@
-import ceylon.build.task { Goal, GoalSet, Writer }
+import ceylon.build.task { HardCodedGoal = Goal, GoalSet, Writer }
+import ceylon.collection { HashSet, MutableSet }
 
 """Starts the goal engine and exits with one of [[exitCodes]] exit code.
    
@@ -51,16 +52,11 @@ import ceylon.build.task { Goal, GoalSet, Writer }
 see(`function runEngine`)
 shared void build(
     "Goals and GoalSets available in the engine"
-    {<Goal|GoalSet>+} goals,
+    {<HardCodedGoal|GoalSet>+} goals,
     "Project name to be displayed"
     String project = "") {
-    value arguments = process.arguments;
-    if (interactive(arguments)) {
-        console(goals);
-    } else {
-        value result = runEngine(goals, project, arguments, consoleWriter);
-        process.exit(result.exitCode);
-    }
+    value result = runEngine(goals, project, process.arguments, consoleWriter);
+    process.exit(result.exitCode);
 }
 
 """Starts the goal engine and returns an [[EngineResult]] giving information about goals execution.
@@ -111,7 +107,7 @@ shared void build(
    """
 shared EngineResult runEngine(
   "Goals and GoalSets available in the engine"
-  {<Goal|GoalSet>+} goals,
+  {<HardCodedGoal|GoalSet>+} goals,
   "Project name to be displayed"
   String project = "",
   "Arguments given to the engine (goals names and options).
@@ -120,10 +116,50 @@ shared EngineResult runEngine(
   "Writer to which info and error messages will be written.
    Default is to output to console."
   Writer writer = consoleWriter) {
+    {HardCodedGoal+} availableGoals = mergeGoalSetsWithGoals(goals);
+    value alreadyImportedGoals = HashSet<String>();
+    GoalDefinitionsBuilder map = GoalDefinitionsBuilder();
+    for (goal in availableGoals) {
+        map.add(toGoalDefinition(goal, false));
+        alreadyImportedGoals.add(goal.name);
+    }
+    for (goal in availableGoals) {
+        addInternalGoal(goal, map, alreadyImportedGoals);
+    }
+    return runEngineFromDefinitions(map, project, arguments, writer);
+}
+
+Goal toGoalDefinition(HardCodedGoal goal, Boolean internal) {
+    return Goal(goal.name, GoalProperties(internal, goal.tasks, [ for (g in goal.dependencies) g.name ]));
+}
+
+void addInternalGoal(HardCodedGoal goal, GoalDefinitionsBuilder map, MutableSet<String> alreadyImportedGoals) {
+    for (dependency in goal.dependencies) {
+        value name = dependency.name;
+        if (!alreadyImportedGoals.contains(name)) {
+            map.add(toGoalDefinition(dependency, true));
+            alreadyImportedGoals.add(dependency.name);
+            addInternalGoal(dependency, map, alreadyImportedGoals);
+        }
+    }
+}
+
+shared EngineResult runEngineFromDefinitions(
+    "Goals available in the engine"
+    GoalDefinitionsBuilder|GoalDefinitions goals,
+    "Project name to be displayed"
+    String project = "",
+    "Arguments given to the engine (goals names and options).
+     Default value is `process.arguments`"
+    [String*] arguments = process.arguments,
+    "Writer to which info and error messages will be written.
+     Default is to output to console."
+    Writer writer = consoleWriter) {
     Integer startTime = system.milliseconds;
-    writer.info("## ceylon.build: ``project``");
-    {Goal+} availableGoals = mergeGoalSetsWithGoals(goals);
-    value result = processGoals(availableGoals, arguments, writer);
+    if (goals is GoalDefinitionsBuilder) {
+        writer.info("## ceylon.build: ``project``");
+    }
+    value result = processGoals(goals, arguments, writer);
     Integer endTime = system.milliseconds;
     String duration = "duration ``(endTime - startTime) / 1000``s";
     if (result.exitCode == exitCodes.success) {
@@ -134,13 +170,22 @@ shared EngineResult runEngine(
     return result;
 }
 
-EngineResult processGoals({Goal+} availableGoals, [String*] arguments, Writer writer) {
-    value configCheckCode = checkConfiguration(availableGoals, writer);
-    if (!configCheckCode.valid) {
-        return EngineResult(availableGoals.sequence, [], configCheckCode.exitCode);
-    } else {
-        value goals = buildGoalExecutionList(availableGoals, arguments, writer).sequence;
-        value result = runGoals(goals, arguments, availableGoals, writer);
-        return EngineResult(availableGoals.sequence, result.executionResults, result.exitCode);
+EngineResult processGoals(GoalDefinitionsBuilder|GoalDefinitions goals, [String*] arguments, Writer writer) {
+    GoalDefinitions definitions;
+    switch (goals)
+    case (is GoalDefinitionsBuilder) {
+        value definitionValidationResult = goals.validate();
+        if (!definitionValidationResult.valid) {
+            value exitCode = reportInvalidDefinitions(definitionValidationResult, writer);
+            return EngineResult(definitionValidationResult.definitions, [], exitCode);
+        } else {
+            assert(exists defs = definitionValidationResult.definitions);
+            definitions = defs;
+        }
+    } case (is GoalDefinitions) {
+        definitions = goals;
     }
+    value goalsToRun = buildGoalExecutionList(definitions, arguments, writer).sequence;
+    value result = runGoals(goalsToRun, arguments, definitions, writer);
+    return EngineResult(definitions, result.executionResults, result.exitCode);
 }

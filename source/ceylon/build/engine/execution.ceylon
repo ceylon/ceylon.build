@@ -3,22 +3,22 @@ import ceylon.collection { LinkedList }
 
 String argumentPrefix = "-D";
 
-ExecutionResult runGoals({Goal*} goals, [String*] arguments, {Goal*} availableGoals, Writer writer) {
-    value results = LinkedList<GoalExecutionResult>();
+ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions definitions, Writer writer) {
+    value results = SequenceBuilder<GoalExecutionResult>();
     if (goals.empty) {
-        writer.error("# no goal to run, available goals are: ``goalsNames(availableGoals)``");
+        writer.error("# no goal to run, available goals are: ``definitions.availableGoals``");
         return ExecutionResult([], exitCodes.noGoalToRun);
     } else {
         Integer exitCode;
         writer.info("# running goals: ``goals`` in order");
         for (goal in goals) {
             value goalArguments = filterArgumentsForGoal(goal, arguments);
-            writer.info("# running ``goal.name``(``", ".join(goalArguments)``)");
-            value result = executeTasks(goal, goalArguments, writer);
-            results.add(result);
+            writer.info("# running ``goal``(``", ".join(goalArguments)``)");
+            value result = executeTasks(goal, definitions, goalArguments, writer);
+            results.append(result);
             if (!result.success) {
                 exitCode = exitCodes.errorOnTaskExecution;
-                results.addAll(notRunGoalsExecutionResult(goals.skipping(results.size), arguments));
+                results.appendAll(notRunGoalsExecutionResult(goals.skipping(results.size), arguments));
                 break;
             }
         } else {
@@ -30,14 +30,15 @@ ExecutionResult runGoals({Goal*} goals, [String*] arguments, {Goal*} availableGo
 
 String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name})``]";
 
-[String*] filterArgumentsForGoal(Goal goal, [String*] arguments) {
-    String prefix = "``argumentPrefix````goal.name``:";
+[String*] filterArgumentsForGoal(String goal, [String*] arguments) {
+    String prefix = "``argumentPrefix````goal``:";
     return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)];
 }
 
-GoalExecutionResult executeTasks(Goal goal, [String*] arguments, Writer writer) {
+GoalExecutionResult executeTasks(String goal, GoalDefinitions definitions, String[] arguments, Writer writer) {
     value outcomes = LinkedList<Outcome>();
-    for (Task task in goal.tasks) {
+    value properties = definitions.properties(goal);
+    for (Task task in properties.tasks) {
         value outcome = executeTask(task, arguments, writer);
         outcomes.add(outcome);
         reportOutcome(outcome, goal, writer);
@@ -57,7 +58,7 @@ Outcome executeTask(Task task, [String*] goalArguments, Writer writer) {
     }
 }
 
-void reportOutcome(Outcome outcome, Goal goal, Writer writer) {
+void reportOutcome(Outcome outcome, String goal, Writer writer) {
     if (is Success outcome) {
         if (!outcome.message.empty) {
             writer.info("``outcome.message``");
@@ -75,6 +76,6 @@ void reportOutcome(Outcome outcome, Goal goal, Writer writer) {
     }
 }
 
-GoalExecutionResult[] notRunGoalsExecutionResult({Goal*} notRunGoals, String[] arguments) {
+GoalExecutionResult[] notRunGoalsExecutionResult({String*} notRunGoals, String[] arguments) {
     return [ for (notRun in notRunGoals) GoalExecutionResult(notRun, filterArgumentsForGoal(notRun, arguments), [])];
 }

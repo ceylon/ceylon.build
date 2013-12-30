@@ -1,10 +1,8 @@
-import ceylon.build.task { Goal }
-import ceylon.collection { HashMap }
 import java.util.regex { Pattern { compilePattern = compile } }
 import ceylon.interop.java { javaString }
 
-{Goal*} invalidGoalsName({Goal+} goals) {
-    return goals.select((Goal goal) => invalidGoalName(goal.name));
+[String*] invalidGoalsName({String*} names) {
+    return names.select((String name) => invalidGoalName(name));
 }
 
 String validTaskNamePattern = "[a-z][a-zA-Z0-9-.]*";
@@ -15,12 +13,5 @@ Boolean invalidGoalName(String name) {
     return !validTaskName.matcher(javaString(name.string)).matches();
 }
 
-{String*} findDuplicateGoals({Goal+} goals) {
-    value map = HashMap<String, Integer>();
-    for (goal in goals) {
-        String name = goal.name;
-        Integer count = map.get(name) else 0;
-        map.put(name, count + 1);
-    }
-    return [ for (name -> count in map) if (count > 1) name ];
-}
+[String*] duplicatedDefinitions(Map<String, {GoalProperties+}> definitions)
+        => [ for (entry in definitions) if (entry.item.size > 1) entry.key ];

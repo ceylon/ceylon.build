@@ -1,28 +1,21 @@
-import ceylon.build.task { Goal, Writer }
+import ceylon.build.task { Writer }
 
-class ConfigurationCheck(shared Boolean valid, shared Integer exitCode) {}
-
-ConfigurationCheck checkConfiguration({Goal+} goals, Writer writer) {
-    ConfigurationCheck configCheck;
-    value invalidTasks = invalidGoalsName(goals);
-    if (!invalidTasks.empty) {
-        writer.error("# invalid goals found ``invalidTasks``");
+shared Integer reportInvalidDefinitions(DefinitionsValidationResult validationResult, Writer writer) {
+    Integer exitCode;
+    if (validationResult.hasInvalidNames) {
+        writer.error("# invalid goals found ``validationResult.invalidNames``");
         writer.error("# goal name should match following format: ```validTaskNamePattern```");
-        configCheck = ConfigurationCheck(false, exitCodes.invalidGoalFound);
-    } else {
-        value duplicateGoals = findDuplicateGoals(goals);
-        if (!duplicateGoals.empty) {
-            writer.error("# duplicate goal names found: ``duplicateGoals``");
-            configCheck = ConfigurationCheck(false, exitCodes.duplicateGoalsFound);
-        } else {
-            value cycles = analyzeDependencyCycles(goals);
-            if (!cycles.empty) {
-                writer.error("# goal dependency cycle found between: ``cycles``");
-                configCheck = ConfigurationCheck(false, exitCodes.dependencyCycleFound);
-            } else {
-                configCheck = ConfigurationCheck(true, exitCodes.success);
-            }
-        }
+        exitCode = exitCodes.invalidGoalFound;
     }
-    return configCheck;
+    else if (validationResult.hasDuplicatedDefinitions) {
+        writer.error("# duplicate goal names found: ``validationResult.duplicated``");
+        exitCode = exitCodes.duplicateGoalsFound;
+    }
+    else if (validationResult.hasDependencyCycles) {
+        writer.error("# goal dependency cycle found between: ``validationResult.dependencyCycles``");
+        exitCode = exitCodes.dependencyCycleFound;
+    } else {
+        throw Exception("!!Bug!! missing valid / invalid configuration check");
+    }
+    return exitCode;
 }

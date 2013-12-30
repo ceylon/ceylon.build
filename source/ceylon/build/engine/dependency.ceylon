@@ -1,39 +1,42 @@
-import ceylon.build.task { Goal }
-import ceylon.collection { LinkedList, HashSet, MutableSet }
+import ceylon.collection { LinkedList, HashSet }
 
-class Dependency(goal, {Goal*} goals = []) {
-    
-    shared Goal goal;
-    
-    value dependencies = LinkedList<Goal>(goals);
-    
-    shared Boolean hasNoDependencies => dependencies.empty;
-    
-    shared Boolean hasDependencies => !dependencies.empty;
-    
-    shared void removeDependency(Goal dependency) {
-        dependencies.removeFirst(dependency);
-    }
-    
-    shared {Dependency*} remainingDependencies({Goal*} resolvedGoals) {
-        value remaining = LinkedList<Dependency>();
-        for (goal in dependencies) {
-            value dependency = Dependency(goal, goal.dependencies);
-            for(resolvedGoal in resolvedGoals) {
-                dependency.removeDependency(resolvedGoal);
-            }
-            remaining.add(dependency);
+alias DependencyGraph => {<String->{String*}>*};
+
+"Returns the list of dependencies names, without duplicates in the order in which they are defined.
+ Not that this "
+{String*} dependencies(GoalProperties properties) {
+    value dependencies = SequenceBuilder<String>();
+    value alreadyAddedDependencies = HashSet<String>();
+    for (dependency in properties.dependencies) {
+        if (!alreadyAddedDependencies.contains(dependency)) {
+            dependencies.append(dependency);
+            alreadyAddedDependencies.add(dependency);
         }
-        return remaining;
     }
-    
-    string => "``goal.name`` -> ``dependencies``";
+    return dependencies.sequence;
 }
 
-{Dependency*}  analyzeDependencyCycles({Goal+} goals) {
-    value goalsNames = HashSet<String>({ for (goal in goals) goal.name });
-    value definitions = { for (goal in goals) Dependency(goal, goal.dependencies) };
-    value resolved = LinkedList<Goal>();
+class Dependency(goal, {String*} goals = []) {
+    
+    shared String goal;
+    
+    value _dependencies = LinkedList<String>(goals);
+    
+    shared {String*} dependencies => _dependencies.sequence;
+    
+    shared Boolean hasNoDependencies => _dependencies.empty;
+    
+    shared Boolean hasDependencies => !_dependencies.empty;
+    
+    shared void removeDependency(String dependency) {
+        _dependencies.removeFirst(dependency);
+    }
+    
+    string => "``goal`` -> ``_dependencies``";
+}
+
+DependencyGraph analyzeDependencyCycles(DependencyGraph goals) {
+    value definitions = { for (goal in goals) Dependency(goal.key, goal.item) };
     variable {Dependency*} unresolved = definitions;
     while (!unresolved.empty) {
         "goals definitions that are resolved (have no dependencies on definitions in `unresolvedThisRound`)"
@@ -48,34 +51,13 @@ class Dependency(goal, {Goal*} goals = []) {
             }
         }
         if (resolvedThisRound.empty) {
-            value newDefinitions = internalGoalDefinitions(unresolvedThisRound, resolved, goalsNames);
-            if (newDefinitions.empty) {
-                return unresolvedThisRound;
-            } else {
-                unresolvedThisRound.addAll(newDefinitions);
-            }
+            return [ for (dependency in unresolvedThisRound) dependency.goal->dependency.dependencies ];
         } else {
             removeDependenciesToResolvedDefinitions(unresolvedThisRound, resolvedThisRound);
         }
         unresolved = unresolvedThisRound;
-        resolved.addAll({ for (definition in resolvedThisRound) definition.goal });
     }
     return [];
-}
-
-{Dependency*} internalGoalDefinitions({Dependency*} unresolvedThisRound, {Goal*} resolved, MutableSet<String> goalsNames) {
-    value internalDependencies = LinkedList<Dependency>();
-    for (definition in unresolvedThisRound) {
-        value remaingDependencies = definition.remainingDependencies(resolved);
-        for (remainingDependency in remaingDependencies) {
-            String name = remainingDependency.goal.name;
-            if (!goalsNames.contains(name)) {
-                goalsNames.add(name);
-                internalDependencies.add(remainingDependency);
-            }
-        }
-    }
-    return internalDependencies;
 }
 
 void removeDependenciesToResolvedDefinitions({Dependency*} unresolvedThisRound, {Dependency*} resolvedThisRound) {
