@@ -26,10 +26,15 @@ shared void run() {
             goals.add(goal);
         }
         value ceylonBuildArguments = arguments[1...];
-        Integer exitCode = runEngineFromDefinitions {
+        Integer exitCode;
+        if (interactive(ceylonBuildArguments)) {
+            exitCode = console(goals);
+        } else {
+            exitCode = runEngineFromDefinitions {
                 goals = goals;
                 arguments =  ceylonBuildArguments;
             }.exitCode;
+        }
         process.exit(exitCode);
     } else {
         process.writeErrorLine("not found ``name``");
