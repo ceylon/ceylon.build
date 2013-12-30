@@ -1,12 +1,17 @@
 import ceylon.language.meta { modules }
 import ceylon.language.meta.declaration { FunctionDeclaration, Module }
 import ceylon.language.meta.model { IncompatibleTypeException, TypeApplicationException, Function }
-import ceylon.build.task { Goal, Task, GoalAnnotation }
+import ceylon.build.task { Task, GoalAnnotation }
 import org.jboss.modules {
     JBossModule = Module { ceylonModuleLoader = callerModuleLoader },
     ModuleIdentifier { createModuleIdentifier = create }
 }
-import ceylon.build.engine { runEngine }
+import ceylon.build.engine {
+    Goal,
+    GoalProperties,
+    GoalDefinitionsBuilder,
+    runEngineFromDefinitions
+}
 
 shared void run() {
     value arguments = process.arguments;
@@ -15,18 +20,17 @@ shared void run() {
     Module? mod = loadModule(name);
     if (exists mod) {
         value annotatedGoals = findAnnotatedGoals(mod);
-        value goalsBuilder = SequenceBuilder<Goal>();
+        value goals = GoalDefinitionsBuilder();
         for (functionDeclaration in annotatedGoals) {
-            value goal = createGoal(functionDeclaration);
-            goalsBuilder.append(goal);
+            value goal = createGoalDefinition(functionDeclaration);
+            goals.add(goal);
         }
-        value goals = goalsBuilder.sequence;
-        "No goals found"
-        assert(nonempty goals);
-        runEngine {
-            goals = goals;
-            arguments =  arguments[1...];
-        };
+        value ceylonBuildArguments = arguments[1...];
+        Integer exitCode = runEngineFromDefinitions {
+                goals = goals;
+                arguments =  ceylonBuildArguments;
+            }.exitCode;
+        process.exit(exitCode);
     } else {
         process.writeErrorLine("not found ``name``");
     }
@@ -63,11 +67,11 @@ void loadModuleInClassPath(String modName, String modVersion) {
     return annotatedGoals.sequence;
 }
 
-Goal createGoal(FunctionDeclaration declaration) {
+Goal createGoalDefinition(FunctionDeclaration declaration) {
     value annotation = goalAnnotation(declaration);
     value name = goalName(annotation, declaration);
     value holder = tasksHolder(name, declaration);
-    return Goal(name, tasks(holder));
+    return Goal(name, GoalProperties(annotation.internal, tasks(holder), annotation.dependencies));
 }
 
 GoalAnnotation goalAnnotation(FunctionDeclaration declaration) {
