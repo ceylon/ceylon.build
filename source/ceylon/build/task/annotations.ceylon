@@ -1,11 +1,21 @@
 import ceylon.language.meta.declaration { FunctionDeclaration }
 
+"The annotation for [[goal]]"
 shared final annotation class GoalAnnotation(name)
         satisfies OptionalAnnotation<GoalAnnotation, FunctionDeclaration> {
+    
+    "Goal name. If no name is provided, annotated
+     element's name will be used as name."
     shared String name;
     
     string => name;
 }
 
-shared annotation GoalAnnotation goal(String name = "", [FunctionDeclaration*] dependencies = [])
+"Annotation to mark a function as a goal
+ and to specify its properties"
+shared annotation GoalAnnotation goal(
+    
+    "Goal name. If no name is provided, annotated
+     element's name will be used as name."
+    String name = "")
         => GoalAnnotation(name);
