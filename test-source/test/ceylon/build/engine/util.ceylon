@@ -23,18 +23,25 @@ class MockWriter() satisfies Writer {
     shared actual void error(String message) => internalErrorMessages.add(message);
 }
 
+[String*] definitionsNames(EngineResult result) {
+    if (exists definitions = result.definitions) {
+        return definitions.availableGoals;
+    }
+    return [];
+}
+
 [String*] names({<Goal|GoalSet|<Goal->{Outcome*}>>*} goals) {
-    value namesList = LinkedList<String>();
+    value namesList = SequenceBuilder<String>();
     for (goal in goals) {
         switch (goal)
         case (is Goal) {
-            namesList.add(goal.name);
+            namesList.append(goal.name);
         } case (is GoalSet) {
             for (innerGoal in goal.goals) {
-                namesList.add(innerGoal.name);
+                namesList.append(innerGoal.name);
             }
         } case (is Goal->{Outcome*}) {
-            namesList.add(goal.key.name);
+            namesList.append(goal.key.name);
         }
     }
     [String*] names = namesList.sequence;
@@ -46,17 +53,17 @@ EngineResult callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goa
 }
 
 [String*] execution(EngineResult engineResult) {
-    return [for (result in engineResult.executionResults) result.goal.name];
+    return [for (result in engineResult.executionResults) result.goal];
 }
 
 [String*] success(EngineResult engineResult) {
-    return [for (result in engineResult.executionResults) if (result.success) result.goal.name];
+    return [for (result in engineResult.executionResults) if (result.success) result.goal];
 }
 
 [String*] failed(EngineResult engineResult) {
-    return [for (result in engineResult.executionResults) if (result.failed) result.goal.name];
+    return [for (result in engineResult.executionResults) if (result.failed) result.goal];
 }
 
 [String*] notRun(EngineResult engineResult) {
-    return [for (result in engineResult.executionResults) if (result.notRun) result.goal.name];
+    return [for (result in engineResult.executionResults) if (result.notRun) result.goal];
 }

@@ -7,12 +7,12 @@ test void shouldListGoalsFromGoalSet() {
     value writer = MockWriter();
     value result = callEngine(goals, [], writer);
     assertEquals(result.exitCode, exitCodes.noGoalToRun);
-    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(definitionsNames(result), sort(names(goals)));
     assertEquals(execution(result), []);
     assertEquals(success(result), []);
     assertEquals(failed(result), []);
     assertEquals(notRun(result), []);
-    assertEquals(writer.errorMessages.sequence[0], "# no goal to run, available goals are: [a, c, d, e, b, f, g]");
+    assertEquals(writer.errorMessages.sequence[0], "# no goal to run, available goals are: [a, b, c, d, e, f, g]");
 }
 
 test void shouldRunGoalsImportedFromGoalSet() {
@@ -25,7 +25,7 @@ test void shouldRunGoalsImportedFromGoalSet() {
     value writer = MockWriter();
     value result = callEngine(goals, ["d"], writer);
     assertEquals(result.exitCode, exitCodes.success);
-    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(definitionsNames(result), sort(names(goals)));
     assertEquals(execution(result), ["d"]);
     assertEquals(success(result), ["d"]);
     assertEquals(failed(result), []);

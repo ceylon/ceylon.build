@@ -31,7 +31,7 @@ void assertArgumentsAreFiltered({String*} inputArguments, {String*} expectedGoal
     value goals = [a];
     value result = callEngine(goals, ["a", *inputArguments]);
     assertEquals(result.exitCode, exitCodes.success);
-    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), ["a"]);
     assertEquals(success(result), ["a"]);
     assertEquals(failed(result), []);
@@ -51,7 +51,7 @@ void assertNoGoalToRun([String*] arguments) {
     value goals = [a, b];
     value result = callEngine(goals, arguments, writer);
     assertEquals(result.exitCode, exitCodes.noGoalToRun);
-    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), []);
     assertEquals(success(result), []);
     assertEquals(failed(result), []);
@@ -72,7 +72,7 @@ test void shouldExitOnTaskFailure() {
     value goals = [a, b, c, d];
     value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
     assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
-    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), ["a", "b", "c"]);
     assertEquals(success(result), ["a"]);
     assertEquals(failed(result), ["b"]);
@@ -100,7 +100,7 @@ test void shouldExitOnTaskError() {
     value goals = [a, b, c, d];
     value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
     assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
-    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), ["a", "b", "c"]);
     assertEquals(success(result), ["a"]);
     assertEquals(failed(result), ["b"]);
@@ -126,7 +126,7 @@ test void shouldRunGoals() {
     value goals = [a, b, c, d];
     value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
     assertEquals(result.exitCode, exitCodes.success);
-    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), ["a", "b", "c"]);
     assertEquals(success(result), ["a", "b", "c"]);
     assertEquals(failed(result), []);

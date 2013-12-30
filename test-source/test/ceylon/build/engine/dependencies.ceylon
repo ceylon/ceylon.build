@@ -26,7 +26,7 @@ test void shouldNotFoundCycleWhenNoCycle() {
 void checkNoDependencyCycle({Goal+} goals, {Goal+} expectedGoalsToBeRun = goals) {
     value result = callEngine(goals);
     assertEquals(result.exitCode, exitCodes.success);
-    assertEquals(names(result.availableGoals), names(goals));
+    assertEquals(definitionsNames(result), sort(names(goals)));
     assertEquals(execution(result), names(expectedGoalsToBeRun));
     assertEquals(success(result), names(expectedGoalsToBeRun));
     assertEquals(failed(result), []);

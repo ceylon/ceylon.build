@@ -109,7 +109,7 @@ test void testGoalsWithoutTasksReduction() {
 void checkGoalsToExecute({Goal+} availableGoals, [String*] arguments, {Goal*} expectedExecutionList) {
     value result = callEngine(availableGoals, arguments);
     assertEquals(result.exitCode, expectedExecutionList.empty then exitCodes.noGoalToRun else exitCodes.success);
-    assertEquals(names(result.availableGoals), names(availableGoals));
+    assertEquals(definitionsNames(result), names(availableGoals));
     assertEquals(execution(result), names(expectedExecutionList));
     assertEquals(success(result), names(expectedExecutionList));
     assertEquals(failed(result), []);

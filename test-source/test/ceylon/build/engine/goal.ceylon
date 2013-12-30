@@ -63,7 +63,7 @@ void checkInvalidGoalsNames({Goal+} goals, [String*] invalidGoals) {
     value result = callEngine(goals, [goals.first.name], writer);
     if (nonempty invalidGoals) {
         assertEquals(result.exitCode, exitCodes.invalidGoalFound);
-        assertEquals(result.availableGoals, goals);
+        assertEquals(result.definitions, null);
         assertEquals(execution(result), []);
         assertEquals(success(result), []);
         assertEquals(failed(result), []);
