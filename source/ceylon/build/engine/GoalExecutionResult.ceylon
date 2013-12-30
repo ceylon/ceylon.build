@@ -1,10 +1,10 @@
-import ceylon.build.task { Outcome, Goal, Failure }
+import ceylon.build.task { Outcome, Failure }
 
 "Represents a goal execution status result"
 shared class GoalExecutionResult(goal, arguments, outcomes) {
     
-    "Goal itself"
-    shared Goal goal;
+    "Goal name"
+    shared String goal;
     
     "Arguments being passed to the goal for execution"
     shared [String*] arguments;
