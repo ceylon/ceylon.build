@@ -1,4 +1,4 @@
-import ceylon.language.meta.declaration { FunctionDeclaration }
+import ceylon.language.meta.declaration { FunctionDeclaration, ValueDeclaration }
 
 "The annotation for [[goal]]"
 shared final annotation class GoalAnnotation(name, internal, dependencies)
@@ -35,3 +35,12 @@ shared annotation GoalAnnotation goal(
     "Dependencies to other goals."
     [String*] dependencies = [])
         => GoalAnnotation(name, internal, dependencies);
+
+
+"The annotation for [[include]]"
+shared final annotation class IncludeAnnotation()
+        satisfies OptionalAnnotation<IncludeAnnotation, ValueDeclaration> {
+}
+
+"Annotation to mark a function as an import of goals in returned object"
+shared annotation IncludeAnnotation include() => IncludeAnnotation();
