@@ -1,6 +1,6 @@
 """Represents the current context of a `Goal` execution.
    It contains arguments passed to the current `Goal` and also a `Writer` for output reporting."""
-shared class Context(arguments, writer) {
+shared final class Context(arguments, writer) {
     
     "arguments for the current `Goal`"
     shared {String*} arguments;

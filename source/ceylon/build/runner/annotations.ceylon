@@ -1,7 +1,8 @@
 import ceylon.language.meta { type }
-import ceylon.language.meta.declaration { FunctionDeclaration, Module, ValueDeclaration, OpenClassType }
+import ceylon.language.meta.declaration { FunctionDeclaration, Module, ValueDeclaration, OpenClassType, OpenClassOrInterfaceType }
 import ceylon.build.engine { GoalProperties, GoalDefinitionsBuilder, Goal }
-import ceylon.build.task { GoalAnnotation, Task, IncludeAnnotation }
+import ceylon.build.task { GoalAnnotation, Task, IncludeAnnotation, Context, done, Outcome, Success, Failure }
+import ceylon.language.meta.model { Type, FunctionModel, Function }
 
 GoalDefinitionsBuilder readAnnotations(Module mod) {
     value goals = GoalDefinitionsBuilder();
@@ -25,7 +26,7 @@ GoalDefinitionsBuilder readAnnotations(Module mod) {
     return annotatedGoals.sequence;
 }
 
-Goal goalDefinition(FunctionDeclaration declaration, Object()? container = null) {
+Goal goalDefinition(FunctionDeclaration declaration, Object? container = null) {
     value annotation = goalAnnotation(declaration);
     value name = goalName(annotation, declaration);
     value holder = tasksHolder(declaration, container);
@@ -42,20 +43,68 @@ String goalName(GoalAnnotation annotation, FunctionDeclaration declaration) {
     return annotation.name.empty then declaration.name else annotation.name;
 }
 
-<Task|{Task*}>() tasksHolder(FunctionDeclaration declaration, Object()? container = null) {
-    return function() {
-        Anything result;
-        if (exists container) {
-            result = declaration.memberInvoke(container());
-        } else {
-            result = declaration.invoke();
-        }
-        if (is Task|{Task*} result) {
-            return result;
-        } else {
-            throw unsupportedSignature(declaration);
-        }
-    };
+Anything invoke(FunctionDeclaration declaration, Object? container, Anything* arguments) {
+    Anything result;
+    if (exists container) {
+        result = declaration.memberInvoke(container, [], *arguments);
+    } else {
+        result = declaration.invoke([], *arguments);
+    }
+    return result;
+}
+
+Boolean isVoidWithNoParametersFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
+    return returnOpenType.declaration == `class Anything` && declaration.parameterDeclarations.empty;
+}
+
+Boolean isTaskFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
+     if (nonempty params = declaration.parameterDeclarations,
+            is OpenClassOrInterfaceType firstParamOpenType = params.first.openType) {
+        Boolean returnType = returnOpenType.declaration in [`class Outcome`, `class Success`, `class Failure`];
+        Boolean argumentsType = params.size == 1 && firstParamOpenType.declaration == `class Context`;
+        return returnType && argumentsType;
+    }
+    return false;
+}
+
+Boolean isTaskOrTasksDelegateFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
+    return declaration.parameterDeclarations.empty;
+}
+
+<Task|{Task*}>() tasksHolder(FunctionDeclaration declaration, Object? container = null) {
+    if (!declaration.typeParameterDeclarations.empty) {
+        throw unsupportedSignature("Function should not have type parameters", declaration);
+    }
+    if (!declaration.openType is OpenClassOrInterfaceType ) {
+        throw unsupportedSignature("Invalid return type", declaration);
+    }
+    assert(is OpenClassOrInterfaceType openType = declaration.openType);
+    if (isVoidWithNoParametersFunction(declaration, openType)) {
+        return function() {
+            return function(Context context) {
+                invoke(declaration, container);
+                return done;
+            };
+        };
+    } else if (isTaskFunction(declaration, openType)) {
+        return function() {
+            return function(Context context) {
+                assert(is Outcome outcome = invoke(declaration, container, context));
+                return outcome;
+            };
+        };
+    } else if (isTaskOrTasksDelegateFunction(declaration, openType)) {
+        return function() {
+            value result = invoke(declaration, container);
+            if (is Task|{Task*} result) {
+                return result;
+            } else {
+                throw unsupportedSignature("Invalid return type", declaration);
+            }
+        };
+    } else {
+        throw unsupportedSignature("Invalid signature", declaration);
+    }
 }
 
 {Task*} tasks(<Task|{Task*}>() holder) {
@@ -63,7 +112,7 @@ String goalName(GoalAnnotation annotation, FunctionDeclaration declaration) {
         
         variable {Task*}? _tasks = null;
         
-        shared {Task*} tasks {
+        {Task*} tasks {
             if (!_tasks exists) {
                 Task|{Task*} taskOrtasks = holder();
                 if (is Task taskOrtasks) {
@@ -96,32 +145,15 @@ String goalName(GoalAnnotation annotation, FunctionDeclaration declaration) {
 }
 
 {Goal*} goalsDefinition(ValueDeclaration declaration) {
-    variable Object? _instance = null;
-    function instance() {
-        if (!_instance exists) {
-            value model = declaration.apply<Object>();
-            _instance = model.get();
-        }
-        assert(exists instance = _instance);
-        return instance;
-    }
-    
+    value instance = declaration.apply<Object>().get();
+    value instanceTypeDeclaration = type(instance).declaration;
     value goals = SequenceBuilder<Goal>();
-    value openType = declaration.openType;
-    switch (openType)
-    case (is OpenClassType) {
-        value declarations = openType.declaration.annotatedDeclaredMemberDeclarations<FunctionDeclaration, GoalAnnotation>();
-        for (goalDeclaration in declarations) {
-            goals.append(goalDefinition(goalDeclaration, instance));
-        }
-    } else {
-        throw AssertionException(
-            "Invalid return type for `include` annotated function ```declaration.name```.
-             Return type should be a class.
-             found: ``openType``
-             type: ``type(openType)``");
+    value declarations = instanceTypeDeclaration.
+            annotatedDeclaredMemberDeclarations<FunctionDeclaration, GoalAnnotation>();
+    for (goalDeclaration in declarations) {
+        goals.append(goalDefinition(goalDeclaration, instance));
     }
-    return goals.sequence; 
+    return goals.sequence;
 }
 
 <Task|{Task*}>() containedTasksHolder(Object() instance, FunctionDeclaration declaration) {
@@ -132,13 +164,15 @@ String goalName(GoalAnnotation annotation, FunctionDeclaration declaration) {
     };
 }
 
-AssertionException unsupportedSignature(FunctionDeclaration declaration) {
+AssertionException unsupportedSignature(String message, FunctionDeclaration declaration) {
     value parametersTypeNames = { for (f in declaration.parameterDeclarations) f.openType.string };
     return AssertionException(
         "Unsupported signature for goal annotated function ```declaration.name```
+         ``message``
          found: ```declaration.openType``(``", ".join(parametersTypeNames)``)`
          expected: one of the following
-         - `Task()`: A task
-         - `{Task*}()`: A list of tasks");
-         //- `Anything`: a simple function");
+         - `Outcome(Context)`: a simple task function
+         - `Task()`: A function that returns a task
+         - `{Task*}()`: A function that returns a list of tasks
+         - `void()`: a simple function");
 }
