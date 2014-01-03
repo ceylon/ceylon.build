@@ -1,8 +1,7 @@
 import ceylon.language.meta { type }
-import ceylon.language.meta.declaration { FunctionDeclaration, Module, ValueDeclaration, OpenClassType, OpenClassOrInterfaceType }
+import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDeclaration, OpenClassOrInterfaceType }
 import ceylon.build.engine { GoalProperties, GoalDefinitionsBuilder, Goal }
 import ceylon.build.task { GoalAnnotation, Task, IncludeAnnotation, Context, done, Outcome, Success, Failure }
-import ceylon.language.meta.model { Type, FunctionModel, Function }
 
 GoalDefinitionsBuilder readAnnotations(Module mod) {
     value goals = GoalDefinitionsBuilder();
@@ -33,13 +32,15 @@ Goal goalDefinition(FunctionDeclaration declaration, Object? container = null) {
     return Goal(name, GoalProperties(annotation.internal, tasks(holder), annotation.dependencies));
 }
 
-GoalAnnotation goalAnnotation(FunctionDeclaration declaration) {
+"Returns `GoalAnnotation` associated to this declaration"
+throws(`class AssertionException`, "When no `GoalAnnotation` is found on this declaration")
+shared GoalAnnotation goalAnnotation(FunctionDeclaration declaration) {
     value annotations = declaration.annotations<GoalAnnotation>();
     assert (nonempty annotations, annotations.size == 1);
     return annotations.first;
 }
 
-String goalName(GoalAnnotation annotation, FunctionDeclaration declaration) {
+shared String goalName(GoalAnnotation annotation, FunctionDeclaration declaration) {
     return annotation.name.empty then declaration.name else annotation.name;
 }
 

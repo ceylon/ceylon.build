@@ -1,7 +1,7 @@
-import ceylon.language.meta.declaration { Module }
-import ceylon.test { test, assertEquals }
-import ceylon.build.runner { findAnnotatedGoals }
-import ceylon.build.task { goal }
+import ceylon.language.meta.declaration { Module, FunctionDeclaration }
+import ceylon.test { test, assertEquals, assertThatException }
+import ceylon.build.runner { findAnnotatedGoals, goalAnnotation }
+import ceylon.build.task { goal, GoalAnnotation }
 
 test void shouldNotFindGoalAnnotatedFunctionsIfNoPackage() {
     Module mod = mockModule();
@@ -21,11 +21,11 @@ test void shouldNotFindGoalAnnotatedFunctionsInEmptyPackages() {
 test void shouldNotFindGoalAnnotatedFunctionsIfNoFunctionsAnnotatedWithIt() {
     Module mod = mockModule {
         mockPackage {
-            mockFunctionDeclaration(shared(), doc("no doc")),
-            mockFunctionDeclaration()
+            mockFunctionDeclaration("name", shared(), doc("no doc")),
+            mockFunctionDeclaration("name")
         },
         mockPackage {
-            mockFunctionDeclaration(by("no one"))
+            mockFunctionDeclaration("name", by("no one"))
         }
     };
     value results = findAnnotatedGoals(mod);
@@ -33,17 +33,17 @@ test void shouldNotFindGoalAnnotatedFunctionsIfNoFunctionsAnnotatedWithIt() {
 }
 
 test void shouldFindGoalAnnotatedFunctions() {
-    value goal1 = mockFunctionDeclaration(goal(), doc("this is a goal"));
-    value goal2 = mockFunctionDeclaration(goal("hello"));
-    value goal3 = mockFunctionDeclaration(goal("bye"));
+    value goal1 = mockFunctionDeclaration("name", goal(), doc("this is a goal"));
+    value goal2 = mockFunctionDeclaration("name", goal("hello"));
+    value goal3 = mockFunctionDeclaration("name", goal("bye"));
     Module mod = mockModule {
         mockPackage {
-            mockFunctionDeclaration(shared(), doc("no doc")),
+            mockFunctionDeclaration("name", shared(), doc("no doc")),
             goal1,
             goal2
         },
         mockPackage {
-            mockFunctionDeclaration(by("no one")),
+            mockFunctionDeclaration("name", by("no one")),
             goal3
         }
     };
@@ -57,17 +57,17 @@ test void shouldNotFindGoalAnnotationWhenNoAnnotations() {
 }
 
 test void shouldNotFindGoalAnnotationWhenNoGoalAnnotation() {
-    FunctionDeclaration declaration = mockFunctionDeclaration(shared(), by("no one"));
+    FunctionDeclaration declaration = mockFunctionDeclaration("name", shared(), by("no one"));
     assertThatException(() => goalAnnotation(declaration)).hasType(`AssertionException`);
 }
 
 test void shouldNotFindGoalAnnotationWhenMultipleGoalAnnotation() {
-    FunctionDeclaration declaration = mockFunctionDeclaration(goal(), goal());
+    FunctionDeclaration declaration = mockFunctionDeclaration("name", goal(), goal());
     assertThatException(() => goalAnnotation(declaration)).hasType(`AssertionException`);
 }
 
 test void shouldFindGoalAnnotation() {
     GoalAnnotation annotation = goal();
-    FunctionDeclaration declaration = mockFunctionDeclaration(annotation);
+    FunctionDeclaration declaration = mockFunctionDeclaration("name", annotation);
     assertEquals(goalAnnotation(declaration), annotation);
 }

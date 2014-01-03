@@ -79,7 +79,7 @@ Package mockPackage({NestableDeclaration*} declarations = []) {
     return pkg;
 }
 
-FunctionDeclaration mockFunctionDeclaration(Annotation* associatedAnnotations) {
+FunctionDeclaration mockFunctionDeclaration(String declarationName = "name", Annotation* associatedAnnotations) {
     object functionDeclaration satisfies FunctionDeclaration {
         
         shared actual Boolean actual => notImplemented;
@@ -114,7 +114,7 @@ FunctionDeclaration mockFunctionDeclaration(Annotation* associatedAnnotations) {
         shared actual Method<Container,Return,Arguments> memberApply<Container, Return, Arguments>(Type<Container> containerType, Type<Anything>* typeArguments)
                 given Arguments satisfies Anything[] => notImplemented;
         
-        shared actual String name => notImplemented;
+        shared actual String name => declarationName;
         
         shared actual OpenType openType => notImplemented;
         
