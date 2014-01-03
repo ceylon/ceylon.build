@@ -17,7 +17,7 @@ GoalDefinitionsBuilder readAnnotations(Module mod) {
     return goals;
 }
 
-[FunctionDeclaration*] findAnnotatedGoals(Module mod) {
+shared [FunctionDeclaration*] findAnnotatedGoals(Module mod) {
     value annotatedGoals = SequenceBuilder<FunctionDeclaration>();
     for (pkg in mod.members) {
         value goalsFromPackage = pkg.annotatedMembers<FunctionDeclaration, GoalAnnotation>();

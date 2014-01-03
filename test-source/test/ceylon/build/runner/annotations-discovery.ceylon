@@ -1,0 +1,53 @@
+
+import ceylon.language.meta.declaration { Module, FunctionDeclaration }
+import ceylon.test { test, assertEquals }
+import ceylon.build.runner { findAnnotatedGoals }
+import ceylon.build.task { goal }
+
+test void shouldNotFindGoalAnnotatedFunctionsIfNoPackage() {
+    Module mod = mockModule();
+    value results = findAnnotatedGoals(mod);
+    assertEquals(results, []);    
+}
+
+test void shouldNotFindGoalAnnotatedFunctionsInEmptyPackages() {
+    Module mod = mockModule {
+        mockPackage(),
+        mockPackage()
+    };
+    value results = findAnnotatedGoals(mod);
+    assertEquals(results, []);    
+}
+
+test void shouldNotFindGoalAnnotatedFunctionsIfNoFunctionsAnnotatedWithIt() {
+    Module mod = mockModule {
+        mockPackage {
+            mockFunctionDeclaration(shared(), doc("no doc")),
+            mockFunctionDeclaration()
+        },
+        mockPackage {
+            mockFunctionDeclaration(by("no one"))
+        }
+    };
+    value results = findAnnotatedGoals(mod);
+    assertEquals(results, []);    
+}
+
+test void shouldFindGoalAnnotatedFunctions() {
+    value goal1 = mockFunctionDeclaration(goal(), doc("this is a goal"));
+    value goal2 = mockFunctionDeclaration(goal("hello"));
+    value goal3 = mockFunctionDeclaration(goal("bye"));
+    Module mod = mockModule {
+        mockPackage {
+            mockFunctionDeclaration(shared(), doc("no doc")),
+            goal1,
+            goal2
+        },
+        mockPackage {
+            mockFunctionDeclaration(by("no one")),
+            goal3
+        }
+    };
+    value results = findAnnotatedGoals(mod);
+    assertEquals(results, [goal1, goal2, goal3]);    
+}
