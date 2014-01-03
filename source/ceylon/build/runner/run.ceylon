@@ -20,7 +20,7 @@ shared void run() {
         }
         process.exit(exitCode);
     } else {
-        process.writeErrorLine("not found ``name``");
+        process.writeErrorLine("Module '``name``' not found");
         process.exit(1);
     }
 }
