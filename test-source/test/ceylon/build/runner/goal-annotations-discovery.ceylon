@@ -50,3 +50,24 @@ test void shouldFindGoalAnnotatedFunctions() {
     value results = findAnnotatedGoals(mod);
     assertEquals(results, [goal1, goal2, goal3]);
 }
+
+test void shouldNotFindGoalAnnotationWhenNoAnnotations() {
+    FunctionDeclaration declaration = mockFunctionDeclaration();
+    assertThatException(() => goalAnnotation(declaration)).hasType(`AssertionException`);
+}
+
+test void shouldNotFindGoalAnnotationWhenNoGoalAnnotation() {
+    FunctionDeclaration declaration = mockFunctionDeclaration(shared(), by("no one"));
+    assertThatException(() => goalAnnotation(declaration)).hasType(`AssertionException`);
+}
+
+test void shouldNotFindGoalAnnotationWhenMultipleGoalAnnotation() {
+    FunctionDeclaration declaration = mockFunctionDeclaration(goal(), goal());
+    assertThatException(() => goalAnnotation(declaration)).hasType(`AssertionException`);
+}
+
+test void shouldFindGoalAnnotation() {
+    GoalAnnotation annotation = goal();
+    FunctionDeclaration declaration = mockFunctionDeclaration(annotation);
+    assertEquals(goalAnnotation(declaration), annotation);
+}
