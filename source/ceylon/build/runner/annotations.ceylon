@@ -135,7 +135,7 @@ Boolean isTaskOrTasksDelegateFunction(FunctionDeclaration declaration, OpenClass
     return deferredTasks;
 }
 
-[ValueDeclaration*] findAnnotatedIncludes(Module mod) {
+shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
     value annotatedIncludes = SequenceBuilder<ValueDeclaration>();
     for (pkg in mod.members) {
         value includesFromPackage = pkg.annotatedMembers<ValueDeclaration, IncludeAnnotation>();
