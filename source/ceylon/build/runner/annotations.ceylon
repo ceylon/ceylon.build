@@ -28,8 +28,8 @@ shared [FunctionDeclaration*] findAnnotatedGoals(Module mod) {
 Goal goalDefinition(FunctionDeclaration declaration, Object? container = null) {
     value annotation = goalAnnotation(declaration);
     value name = goalName(annotation, declaration);
-    value holder = tasksHolder(declaration, container);
-    return Goal(name, GoalProperties(annotation.internal, tasks(holder), annotation.dependencies));
+    value tasks = extractTasks(declaration, container);
+    return Goal(name, GoalProperties(annotation.internal, tasks, annotation.dependencies));
 }
 
 "Returns `GoalAnnotation` associated to this declaration"
@@ -72,7 +72,7 @@ Boolean isTaskOrTasksDelegateFunction(FunctionDeclaration declaration, OpenClass
     return declaration.parameterDeclarations.empty;
 }
 
-<Task|{Task*}>() tasksHolder(FunctionDeclaration declaration, Object? container = null) {
+{Task*} extractTasks(FunctionDeclaration declaration, Object? container = null) {
     if (!declaration.typeParameterDeclarations.empty) {
         throw unsupportedSignature("Function should not have type parameters", declaration);
     }
@@ -81,51 +81,56 @@ Boolean isTaskOrTasksDelegateFunction(FunctionDeclaration declaration, OpenClass
     }
     assert(is OpenClassOrInterfaceType openType = declaration.openType);
     if (isVoidWithNoParametersFunction(declaration, openType)) {
-        return function() {
-            return function(Context context) {
-                invoke(declaration, container);
-                return done;
-            };
-        };
+        return tasksFromFunction(declaration, container);
     } else if (isTaskFunction(declaration, openType)) {
-        return function() {
-            return function(Context context) {
-                assert(is Outcome outcome = invoke(declaration, container, context));
-                return outcome;
-            };
-        };
+        return tasksFromTaskFunction(declaration, container);
     } else if (isTaskOrTasksDelegateFunction(declaration, openType)) {
-        return function() {
-            value result = invoke(declaration, container);
-            if (is Task|{Task*} result) {
-                return result;
-            } else {
-                throw unsupportedSignature("Invalid return type", declaration);
-            }
-        };
+        return tasksFromDelegate(declaration, container);
     } else {
         throw unsupportedSignature("Invalid signature", declaration);
     }
 }
 
-{Task*} tasks(<Task|{Task*}>() holder) {
+shared {Task*} tasksFromFunction(FunctionDeclaration declaration, Object? container) {
+    return {
+        function(Context context) {
+            invoke(declaration, container);
+            return done;
+        }
+    };
+}
+
+shared {Task*} tasksFromTaskFunction(FunctionDeclaration declaration, Object? container) {
+    return {
+        function(Context context) {
+            assert(is Outcome outcome = invoke(declaration, container, context));
+            return outcome;
+        }
+    };
+}
+
+shared {Task*} tasksFromDelegate(FunctionDeclaration declaration, Object? container) {
+    {Task*} holder() {
+        value result = invoke(declaration, container);
+        if (is Task result) {
+            return { result };
+        } else if (is {Task*} result) {
+            return result;
+        } else {
+            throw unsupportedSignature("Invalid return type", declaration);
+        }
+    }
+    return deferredTasks(holder);
+}
+
+shared {Task*} deferredTasks({Task*}() holder) {
     object deferredTasks satisfies {Task*} {
         
         variable {Task*}? _tasks = null;
         
         {Task*} tasks {
             if (!_tasks exists) {
-                Task|{Task*} taskOrtasks = holder();
-                if (is Task taskOrtasks) {
-                    _tasks = {taskOrtasks};
-                }
-                else if (is {Task*} taskOrtasks) {
-                    _tasks = taskOrtasks;
-                } else {
-                    throw AssertionException(
-                        "!!BUG!!: Invalid task type.
-                         Please report it here: https://github.com/ceylon/ceylon.build/issues/new");
-                }   
+                _tasks = holder();
             }
             assert(exists tasks = _tasks);
             return tasks;
@@ -155,14 +160,6 @@ shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
         goals.append(goalDefinition(goalDeclaration, instance));
     }
     return goals.sequence;
-}
-
-<Task|{Task*}>() containedTasksHolder(Object() instance, FunctionDeclaration declaration) {
-    return function() {
-        value result = declaration.memberInvoke(instance());
-        assert(is Task|{Task*} result);
-        return result;
-    };
 }
 
 AssertionException unsupportedSignature(String message, FunctionDeclaration declaration) {
