@@ -1,6 +1,6 @@
 import ceylon.test { test, assertEquals }
-import ceylon.build.runner { deferredTasks, tasksFromFunction, tasksFromTaskFunction, tasksFromDelegate, isVoidWithNoParametersFunction }
-import ceylon.build.task { Task, Context, Writer, Outcome, done }
+import ceylon.build.runner { deferredTasks, tasksFromFunction, tasksFromTaskFunction, tasksFromDelegate, isVoidWithNoParametersFunction, isTaskFunction }
+import ceylon.build.task { Task, Context, Writer, Outcome, done, Success, Failure }
 import ceylon.language.meta.declaration { OpenClassOrInterfaceType, FunctionDeclaration }
 
 Task task1 = function(Context context) { throw; };
@@ -212,4 +212,37 @@ test void shouldNotRecognizeVoidWithNoParametersFunction() {
 void assertRecognizeVoidWithNoParametersFunction(FunctionDeclaration declaration, Boolean expected) {
     assert(is OpenClassOrInterfaceType openType = declaration.openType);
     assertEquals(isVoidWithNoParametersFunction(declaration, openType), expected);
+}
+
+Outcome taskFunction0(Context context) => done;
+Success taskFunction1(Context context) => done;
+Failure taskFunction2(Context context) => Failure();
+Anything taskFunction3(Context context) => done;
+Anything taskFunction4() => 1;
+Outcome taskFunction5() => done;
+Outcome taskFunction6(Context context, Object obj) => done;
+
+test void shouldRecognizeTaskFunction() {
+    for (func in {`function taskFunction0`, `function taskFunction1`, `function taskFunction2`}) {
+        assertRecognizeTaskFunction(func, true);
+    }
+}
+
+test void shouldNotRecognizeTaskFunction() {
+    value functions = {
+        `function taskFunction3`,
+        `function taskFunction4`,
+        `function taskFunction5`,
+        `function taskFunction6`
+    };
+    for (func in functions) {
+        assertRecognizeTaskFunction(func, false);
+    }
+}
+
+void assertRecognizeTaskFunction(FunctionDeclaration declaration, Boolean expected) {
+    assert(is OpenClassOrInterfaceType openType = declaration.openType);
+    value actual = isTaskFunction(declaration, openType);
+    assertEquals(actual, expected,
+        "isTaskFunction(``declaration.name``) failed: expected ``expected`` but was ``actual``");
 }

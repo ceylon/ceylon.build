@@ -58,7 +58,7 @@ shared Boolean isVoidWithNoParametersFunction(FunctionDeclaration declaration, O
     return returnOpenType.declaration == `class Anything` && declaration.parameterDeclarations.empty;
 }
 
-Boolean isTaskFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
+shared Boolean isTaskFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
      if (nonempty params = declaration.parameterDeclarations,
             is OpenClassOrInterfaceType firstParamOpenType = params.first.openType) {
         Boolean returnType = returnOpenType.declaration in [`class Outcome`, `class Success`, `class Failure`];
