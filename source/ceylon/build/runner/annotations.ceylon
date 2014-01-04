@@ -54,7 +54,7 @@ Anything invoke(FunctionDeclaration declaration, Object? container, Anything* ar
     return result;
 }
 
-Boolean isVoidWithNoParametersFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
+shared Boolean isVoidWithNoParametersFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
     return returnOpenType.declaration == `class Anything` && declaration.parameterDeclarations.empty;
 }
 

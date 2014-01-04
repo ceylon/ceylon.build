@@ -1,6 +1,7 @@
 import ceylon.test { test, assertEquals }
-import ceylon.build.runner { deferredTasks, tasksFromFunction, tasksFromTaskFunction, tasksFromDelegate }
+import ceylon.build.runner { deferredTasks, tasksFromFunction, tasksFromTaskFunction, tasksFromDelegate, isVoidWithNoParametersFunction }
 import ceylon.build.task { Task, Context, Writer, Outcome, done }
+import ceylon.language.meta.declaration { OpenClassOrInterfaceType, FunctionDeclaration }
 
 Task task1 = function(Context context) { throw; };
 Task task2 = function(Context context) { throw; };
@@ -191,4 +192,24 @@ test void shouldCreateDeferredTasksIterableWithTwoIterations() {
     assertEquals(tasks.sequence, [task1, task2]);
     assertEquals(tasks.sequence, [task1, task2]);
     assertEquals(callCounter, 1);
+}
+
+void voidWithNoParametersFunction1() {}
+void voidWithParametersFunction(Context context) {}
+Outcome outcomeWithNoParametersFunction() => done;
+Outcome outcomeWithParametersFunction(Context context) => done;
+
+test void shouldRecognizeVoidWithNoParametersFunction() {
+    assertRecognizeVoidWithNoParametersFunction(`function voidWithNoParametersFunction1`, true);
+}
+
+test void shouldNotRecognizeVoidWithNoParametersFunction() {
+    assertRecognizeVoidWithNoParametersFunction(`function voidWithParametersFunction`, false);
+    assertRecognizeVoidWithNoParametersFunction(`function outcomeWithNoParametersFunction`, false);
+    assertRecognizeVoidWithNoParametersFunction(`function outcomeWithParametersFunction`, false);
+}
+
+void assertRecognizeVoidWithNoParametersFunction(FunctionDeclaration declaration, Boolean expected) {
+    assert(is OpenClassOrInterfaceType openType = declaration.openType);
+    assertEquals(isVoidWithNoParametersFunction(declaration, openType), expected);
 }
