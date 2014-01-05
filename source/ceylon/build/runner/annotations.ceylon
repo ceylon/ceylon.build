@@ -3,17 +3,34 @@ import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDecl
 import ceylon.build.engine { GoalProperties, GoalDefinitionsBuilder, Goal }
 import ceylon.build.task { GoalAnnotation, Task, IncludeAnnotation, Context, done, Outcome, Success, Failure }
 
-GoalDefinitionsBuilder readAnnotations(Module mod) {
+GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
+    value invalidDeclarations = SequenceBuilder<InvalidGoalDeclaration>();
     value goals = GoalDefinitionsBuilder();
     for (declaration in findAnnotatedGoals(mod)) {
-        goals.add(goalDefinition(declaration));
+        value goal = goalDefinition(declaration);
+        fillGoalsAndInvalidDeclarations(goal, goals, invalidDeclarations);
     }
     for (declaration in findAnnotatedIncludes(mod)) {
         for (goal in goalsDefinition(declaration)) {
-            goals.add(goal);
+            fillGoalsAndInvalidDeclarations(goal, goals, invalidDeclarations);
         }
     }
+    if (nonempty seq = invalidDeclarations.sequence) {
+        return seq;
+    }
     return goals;
+}
+
+void fillGoalsAndInvalidDeclarations(
+        Goal|InvalidGoalDeclaration goal,
+        GoalDefinitionsBuilder goals,
+        SequenceBuilder<InvalidGoalDeclaration> invalidDeclarations) {
+    switch (goal)
+    case (is Goal) {
+        goals.add(goal);
+    } case (is InvalidGoalDeclaration) {
+        invalidDeclarations.append(goal);
+    }
 }
 
 shared [FunctionDeclaration*] findAnnotatedGoals(Module mod) {
@@ -25,11 +42,14 @@ shared [FunctionDeclaration*] findAnnotatedGoals(Module mod) {
     return annotatedGoals.sequence;
 }
 
-Goal goalDefinition(FunctionDeclaration declaration, Object? container = null) {
+Goal|InvalidGoalDeclaration goalDefinition(FunctionDeclaration declaration, Object? container = null) {
     value annotation = goalAnnotation(declaration);
     value name = goalName(annotation, declaration);
     value tasks = extractTasks(declaration, container);
-    return Goal(name, GoalProperties(annotation.internal, tasks, annotation.dependencies));
+    if (exists tasks) {
+        return Goal(name, GoalProperties(annotation.internal, tasks, annotation.dependencies));
+    }
+    return InvalidGoalDeclaration(declaration);
 }
 
 "Returns `GoalAnnotation` associated to this declaration"
@@ -54,28 +74,26 @@ Anything invoke(FunctionDeclaration declaration, Object? container, Anything* ar
     return result;
 }
 
-{Task*} extractTasks(FunctionDeclaration declaration, Object? container = null) {
+{Task*}? extractTasks(FunctionDeclaration declaration, Object? container = null) {
     if (!declaration.typeParameterDeclarations.empty) {
-        throw unsupportedSignature("Function should not have type parameters", declaration);
+        return null;
     }
-    if (!declaration.openType is OpenClassOrInterfaceType ) {
-        throw unsupportedSignature("Invalid return type", declaration);
+    if (is OpenClassOrInterfaceType openType = declaration.openType) {
+        if (isVoidWithNoParametersFunction(declaration, openType)) {
+            return tasksFromFunction(declaration, container);
+        } else if (isTaskFunction(declaration, openType)) {
+            return tasksFromTaskFunction(declaration, container);
+        } else if (isTaskDelegateFunction(declaration)) {
+            return tasksFromTaskDelegate(declaration, container);
+        } else if (isTasksDelegateFunction(declaration)) {
+            return tasksFromTasksDelegate(declaration, container);
+        }
     }
-    assert(is OpenClassOrInterfaceType openType = declaration.openType);
-    if (isVoidWithNoParametersFunction(declaration, openType)) {
-        return tasksFromFunction(declaration, container);
-    } else if (isTaskFunction(declaration, openType)) {
-        return tasksFromTaskFunction(declaration, container);
-    } else if (isTaskDelegateFunction(declaration)) {
-        return tasksFromTaskDelegate(declaration, container);
-    }  if (isTasksDelegateFunction(declaration)) {
-        return tasksFromTasksDelegate(declaration, container);
-    } else {
-        throw unsupportedSignature("Invalid signature", declaration);
-    }
+    return null;
 }
 
-shared Boolean isVoidWithNoParametersFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
+shared Boolean isVoidWithNoParametersFunction(
+        FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
     return returnOpenType.declaration == `class Anything` && declaration.parameterDeclarations.empty;
 }
 
@@ -169,10 +187,10 @@ shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
     return annotatedIncludes.sequence;
 }
 
-{Goal*} goalsDefinition(ValueDeclaration declaration) {
+{<Goal|InvalidGoalDeclaration>*} goalsDefinition(ValueDeclaration declaration) {
     value instance = declaration.apply<Object>().get();
     value instanceTypeDeclaration = type(instance).declaration;
-    value goals = SequenceBuilder<Goal>();
+    value goals = SequenceBuilder<Goal|InvalidGoalDeclaration>();
     value declarations = instanceTypeDeclaration.
             annotatedDeclaredMemberDeclarations<FunctionDeclaration, GoalAnnotation>();
     for (goalDeclaration in declarations) {
@@ -181,15 +199,6 @@ shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
     return goals.sequence;
 }
 
-AssertionException unsupportedSignature(String message, FunctionDeclaration declaration) {
-    value parametersTypeNames = { for (f in declaration.parameterDeclarations) f.openType.string };
-    return AssertionException(
-        "Unsupported signature for goal annotated function ```declaration.name```
-         ``message``
-         found: ```declaration.openType``(``", ".join(parametersTypeNames)``)`
-         expected: one of the following
-         - `Outcome(Context)`: a simple task function
-         - `Task()`: A function that returns a task
-         - `{Task*}()`: A function that returns a list of tasks
-         - `void()`: a simple function");
+class InvalidGoalDeclaration(declaration) {
+    shared FunctionDeclaration declaration;
 }

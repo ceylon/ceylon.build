@@ -2,10 +2,10 @@ import ceylon.collection { HashMap }
 import ceylon.build.engine {
     GoalDefinitionsBuilder,
     runEngineFromDefinitions,
-    consoleWriter,
     exitCodes,
     reportInvalidDefinitions
 }
+import ceylon.build.task { Writer }
 
 "Returns `true` if `--console` option is found in `arguments`."
 Boolean interactive([String*] arguments) {
@@ -13,7 +13,7 @@ Boolean interactive([String*] arguments) {
 }
 
 "An interactive console."
-Integer console(GoalDefinitionsBuilder goals) {
+Integer console(GoalDefinitionsBuilder goals, Writer writer) {
     value exitMessages = HashMap<Integer, String>({
         exitCodes.success->"Success",
         exitCodes.dependencyCycleFound->"Dependency Cycle Found",
@@ -24,7 +24,7 @@ Integer console(GoalDefinitionsBuilder goals) {
     });
     value definitionValidationResult = goals.validate();
     if (!definitionValidationResult.valid) {
-        return reportInvalidDefinitions(definitionValidationResult, consoleWriter);
+        return reportInvalidDefinitions(definitionValidationResult, writer);
     } else {
         assert(exists definitions = definitionValidationResult.definitions);
         print("Available goals: ``definitions.availableGoals``");
@@ -38,7 +38,7 @@ Integer console(GoalDefinitionsBuilder goals) {
             }
             assert(exists rawLine);
             String line = rawLine.trimmed;
-            value result = runEngineFromDefinitions(definitions, "", line.split().sequence, consoleWriter);
+            value result = runEngineFromDefinitions(definitions, "", line.split().sequence, writer);
             assert(exists msg = exitMessages[result.exitCode]);
             print(msg);
         }
