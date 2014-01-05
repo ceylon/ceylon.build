@@ -54,6 +54,27 @@ Anything invoke(FunctionDeclaration declaration, Object? container, Anything* ar
     return result;
 }
 
+{Task*} extractTasks(FunctionDeclaration declaration, Object? container = null) {
+    if (!declaration.typeParameterDeclarations.empty) {
+        throw unsupportedSignature("Function should not have type parameters", declaration);
+    }
+    if (!declaration.openType is OpenClassOrInterfaceType ) {
+        throw unsupportedSignature("Invalid return type", declaration);
+    }
+    assert(is OpenClassOrInterfaceType openType = declaration.openType);
+    if (isVoidWithNoParametersFunction(declaration, openType)) {
+        return tasksFromFunction(declaration, container);
+    } else if (isTaskFunction(declaration, openType)) {
+        return tasksFromTaskFunction(declaration, container);
+    } else if (isTaskDelegateFunction(declaration)) {
+        return tasksFromTaskDelegate(declaration, container);
+    }  if (isTasksDelegateFunction(declaration)) {
+        return tasksFromTasksDelegate(declaration, container);
+    } else {
+        throw unsupportedSignature("Invalid signature", declaration);
+    }
+}
+
 shared Boolean isVoidWithNoParametersFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
     return returnOpenType.declaration == `class Anything` && declaration.parameterDeclarations.empty;
 }
@@ -68,27 +89,23 @@ shared Boolean isTaskFunction(FunctionDeclaration declaration, OpenClassOrInterf
     return false;
 }
 
-Boolean isTaskOrTasksDelegateFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
-    return declaration.parameterDeclarations.empty;
+// TODO doesn't work with `Outcome(Context)` subtypes like `Success(Context)` and `Failure(Context)`, ...
+shared Boolean isTaskDelegateFunction(FunctionDeclaration declaration) {
+    Boolean returnType = declaration.openType == `alias Task`.openType;
+    Boolean argumentsType = declaration.parameterDeclarations.empty;
+    return returnType && argumentsType;
 }
 
-{Task*} extractTasks(FunctionDeclaration declaration, Object? container = null) {
-    if (!declaration.typeParameterDeclarations.empty) {
-        throw unsupportedSignature("Function should not have type parameters", declaration);
-    }
-    if (!declaration.openType is OpenClassOrInterfaceType ) {
-        throw unsupportedSignature("Invalid return type", declaration);
-    }
-    assert(is OpenClassOrInterfaceType openType = declaration.openType);
-    if (isVoidWithNoParametersFunction(declaration, openType)) {
-        return tasksFromFunction(declaration, container);
-    } else if (isTaskFunction(declaration, openType)) {
-        return tasksFromTaskFunction(declaration, container);
-    } else if (isTaskOrTasksDelegateFunction(declaration, openType)) {
-        return tasksFromDelegate(declaration, container);
-    } else {
-        throw unsupportedSignature("Invalid signature", declaration);
-    }
+{Task*} tasks() { throw; }
+
+// TODO Doesn't work for `{Task*}` subtypes like `{Task+}`,`[Task*]`,`[Task+]`, ...
+shared Boolean isTasksDelegateFunction(FunctionDeclaration declaration) {
+    value expectedType = `function tasks`;
+    value expectedOpenType = expectedType.openType;
+    value declarationOpenType = declaration.openType;
+    Boolean returnType = declarationOpenType == expectedOpenType;
+    Boolean argumentsType = declaration.parameterDeclarations.empty;
+    return returnType && argumentsType;
 }
 
 shared {Task*} tasksFromFunction(FunctionDeclaration declaration, Object? container) {
@@ -109,16 +126,18 @@ shared {Task*} tasksFromTaskFunction(FunctionDeclaration declaration, Object? co
     };
 }
 
-shared {Task*} tasksFromDelegate(FunctionDeclaration declaration, Object? container) {
+shared {Task*} tasksFromTaskDelegate(FunctionDeclaration declaration, Object? container) {
     {Task*} holder() {
-        value result = invoke(declaration, container);
-        if (is Task result) {
-            return { result };
-        } else if (is {Task*} result) {
-            return result;
-        } else {
-            throw unsupportedSignature("Invalid return type", declaration);
-        }
+        assert(is Task task = invoke(declaration, container));
+        return { task };
+    }
+    return deferredTasks(holder);
+}
+
+shared {Task*} tasksFromTasksDelegate(FunctionDeclaration declaration, Object? container) {
+    {Task*} holder() {
+        assert(is {Task*} task = invoke(declaration, container));
+        return task;
     }
     return deferredTasks(holder);
 }
