@@ -1,8 +1,7 @@
 import ceylon.test { test, assertEquals }
 import ceylon.build.runner { deferredTasks, tasksFromFunction, tasksFromTaskFunction, isVoidWithNoParametersFunction, isTaskFunction, tasksFromTasksImport, tasksFromTaskImport, isTaskImport, isTasksImport }
 import ceylon.build.task { Task, Context, Writer, Outcome, done, Success, Failure }
-import ceylon.language.meta.declaration { OpenClassOrInterfaceType, FunctionDeclaration }
-import ceylon.language.meta.model { Value }
+import ceylon.language.meta.model { Value, Function }
 
 Task task1 = function(Context context) { throw; };
 Task task2 = function(Context context) { throw; };
@@ -22,7 +21,7 @@ void voidFunction() => tasksFromFunctionCallCounter++;
 test void shouldEmbedFunctionInTasks() {
     tasksFromFunctionCallCounter = 0;
     value context = mockContext();
-    assert(nonempty tasks = tasksFromFunction(`function voidFunction`, null).sequence);
+    assert(nonempty tasks = tasksFromFunction(`voidFunction`).sequence);
     assertEquals(tasksFromFunctionCallCounter, 0);
     tasks.first(context);
     assertEquals(tasksFromFunctionCallCounter, 1);
@@ -37,7 +36,7 @@ class TestVoidMethod() {
 test void shouldEmbedcallCounterMethodInTasks() {
     value context = mockContext();
     value obj = TestVoidMethod();
-    assert(nonempty tasks = tasksFromFunction(`function TestVoidMethod.method`, obj).sequence);
+    assert(nonempty tasks = tasksFromFunction(`TestVoidMethod.method`.bind(obj)).sequence);
     assertEquals(obj.callCounter, 0);
     tasks.first(context);
     assertEquals(obj.callCounter, 1);
@@ -52,7 +51,7 @@ Outcome taskFunction(Context context) {
 test void shouldEmbedTaskFunctionInTasks() {
     tasksFromTaskFunctionCallCounter = 0;
     value context = mockContext();
-    assert(nonempty tasks = tasksFromTaskFunction(`function taskFunction`, null).sequence);
+    assert(nonempty tasks = tasksFromTaskFunction(`taskFunction`).sequence);
     assertEquals(tasksFromTaskFunctionCallCounter, 0);
     tasks.first(context);
     assertEquals(tasksFromTaskFunctionCallCounter, 1);
@@ -70,7 +69,7 @@ class TestTaskMethod() {
 test void shouldEmbedTaskMethodInTasks() {
     value context = mockContext();
     value obj = TestTaskMethod();
-    assert(nonempty tasks = tasksFromTaskFunction(`function TestTaskMethod.attribute`, obj).sequence);
+    assert(nonempty tasks = tasksFromTaskFunction(`TestTaskMethod.attribute`.bind(obj)).sequence);
     assertEquals(obj.callCounter, 0);
     tasks.first(context);
     assertEquals(obj.callCounter, 1);
@@ -205,18 +204,17 @@ Outcome outcomeWithNoParametersFunction() => done;
 Outcome outcomeWithParametersFunction(Context context) => done;
 
 test void shouldRecognizeVoidWithNoParametersFunction() {
-    assertRecognizeVoidWithNoParametersFunction(`function voidWithNoParametersFunction1`, true);
+    assertRecognizeVoidWithNoParametersFunction(`voidWithNoParametersFunction1`, true);
 }
 
 test void shouldNotRecognizeVoidWithNoParametersFunction() {
-    assertRecognizeVoidWithNoParametersFunction(`function voidWithParametersFunction`, false);
-    assertRecognizeVoidWithNoParametersFunction(`function outcomeWithNoParametersFunction`, false);
-    assertRecognizeVoidWithNoParametersFunction(`function outcomeWithParametersFunction`, false);
+    assertRecognizeVoidWithNoParametersFunction(`voidWithParametersFunction`, false);
+    assertRecognizeVoidWithNoParametersFunction(`outcomeWithNoParametersFunction`, false);
+    assertRecognizeVoidWithNoParametersFunction(`outcomeWithParametersFunction`, false);
 }
 
-void assertRecognizeVoidWithNoParametersFunction(FunctionDeclaration declaration, Boolean expected) {
-    assert(is OpenClassOrInterfaceType openType = declaration.openType);
-    assertEquals(isVoidWithNoParametersFunction(declaration, openType), expected);
+void assertRecognizeVoidWithNoParametersFunction(Function<Anything, Nothing> model, Boolean expected) {
+    assertEquals(isVoidWithNoParametersFunction(model), expected);
 }
 
 Outcome taskFunction0(Context context) => done;
@@ -228,28 +226,27 @@ Outcome taskFunction5() => done;
 Outcome taskFunction6(Context context, Object obj) => done;
 
 test void shouldRecognizeTaskFunction() {
-    for (func in {`function taskFunction0`, `function taskFunction1`, `function taskFunction2`}) {
+    for (func in {`taskFunction0`, `taskFunction1`, `taskFunction2`}) {
         assertRecognizeTaskFunction(func, true);
     }
 }
 
 test void shouldNotRecognizeTaskFunction() {
     value functions = {
-        `function taskFunction3`,
-        `function taskFunction4`,
-        `function taskFunction5`,
-        `function taskFunction6`
+        `taskFunction3`,
+        `taskFunction4`,
+        `taskFunction5`,
+        `taskFunction6`
     };
     for (func in functions) {
         assertRecognizeTaskFunction(func, false);
     }
 }
 
-void assertRecognizeTaskFunction(FunctionDeclaration declaration, Boolean expected) {
-    assert(is OpenClassOrInterfaceType openType = declaration.openType);
-    value actual = isTaskFunction(declaration, openType);
+void assertRecognizeTaskFunction(Function<Anything, Nothing> model, Boolean expected) {
+    value actual = isTaskFunction(model);
     assertEquals(actual, expected,
-        "isTaskFunction(``declaration.name``) failed: expected ``expected`` but was ``actual``");
+        "isTaskFunction(``model.declaration.name``) failed: expected ``expected`` but was ``actual``");
 }
 
 Task taskImport0 { throw; }

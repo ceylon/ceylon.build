@@ -1,8 +1,8 @@
 import ceylon.language.meta { type }
-import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDeclaration, OpenClassOrInterfaceType, FunctionOrValueDeclaration, ClassDeclaration }
-import ceylon.language.meta.model { Value }
+import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDeclaration, FunctionOrValueDeclaration, ClassDeclaration }
+import ceylon.language.meta.model { Value, Function, Type }
 import ceylon.build.engine { GoalProperties, GoalDefinitionsBuilder, Goal }
-import ceylon.build.task { GoalAnnotation, Task, IncludeAnnotation, Context, done, Outcome, Success, Failure }
+import ceylon.build.task { GoalAnnotation, Task, IncludeAnnotation, Context, done, Outcome }
 
 GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
     value invalidDeclarations = SequenceBuilder<InvalidGoalDeclaration>();
@@ -75,85 +75,14 @@ shared String goalName(GoalAnnotation annotation, FunctionOrValueDeclaration dec
             return tasksFromTasksImport(valueModel);
         }
     } case (is FunctionDeclaration) {
-        if (!declaration.typeParameterDeclarations.empty) {
-            return null;
-        }
-        if (is OpenClassOrInterfaceType openType = declaration.openType) {
-            if (isVoidWithNoParametersFunction(declaration, openType)) {
-                return tasksFromFunction(declaration, container);
-            } else if (isTaskFunction(declaration, openType)) {
-                return tasksFromTaskFunction(declaration, container);
-            }
+        value func = functionFromDeclaration(declaration, container);
+        if (isVoidWithNoParametersFunction(func)) {
+            return tasksFromFunction(func);
+        } else if (isTaskFunction(func)) {
+            return tasksFromTaskFunction(func);
         }
     }
     return null;
-}
-
-shared Boolean isVoidWithNoParametersFunction(
-        FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
-    return returnOpenType.declaration == `class Anything` && declaration.parameterDeclarations.empty;
-}
-
-shared Boolean isTaskFunction(FunctionDeclaration declaration, OpenClassOrInterfaceType returnOpenType) {
-     if (nonempty params = declaration.parameterDeclarations,
-            is OpenClassOrInterfaceType firstParamOpenType = params.first.openType) {
-        Boolean returnType = returnOpenType.declaration in [`class Outcome`, `class Success`, `class Failure`];
-        Boolean argumentsType = params.size == 1 && firstParamOpenType.declaration == `class Context`;
-        return returnType && argumentsType;
-    }
-    return false;
-}
-
-shared Boolean isTaskImport(Value<Anything,Nothing> model) {
-    return model.type.subtypeOf(`Task`);
-}
-
-shared Boolean isTasksImport(Value<Anything,Nothing> model) {
-    return model.type.subtypeOf(`{Task*}`);
-}
-
-shared {Task*} tasksFromFunction(FunctionDeclaration declaration, Object? container) {
-    return {
-        function(Context context) {
-            invoke(declaration, container);
-            return done;
-        }
-    };
-}
-
-shared {Task*} tasksFromTaskFunction(FunctionDeclaration declaration, Object? container) {
-    return {
-        function(Context context) {
-            assert(is Outcome outcome = invoke(declaration, container, context));
-            return outcome;
-        }
-    };
-}
-
-Anything invoke(FunctionDeclaration declaration, Object? container, Anything* arguments) {
-    Anything result;
-    if (exists container) {
-        result = declaration.memberInvoke(container, [], *arguments);
-    } else {
-        result = declaration.invoke([], *arguments);
-    }
-    return result;
-}
-
-shared {Task*} tasksFromTaskImport(Value<Anything,Nothing> model) {
-    {Task*} holder() {
-        assert(is Task task = model.get());
-        return { task };
-    }
-    return deferredTasks(holder);
-}
-
-shared {Task*} tasksFromTasksImport(Value<Anything,Nothing> model) {
-    {Task*} holder() {
-        assert(is {Task*} task = model.get());
-        return task;
-    }
-    return deferredTasks(holder);
 }
 
 Value valueFromDeclaration(ValueDeclaration valueDeclaration, Anything containerInstance) {
@@ -163,6 +92,67 @@ Value valueFromDeclaration(ValueDeclaration valueDeclaration, Anything container
         return attribute.bind(containerInstance);
     }
     return valueDeclaration.apply<Anything>();
+}
+
+Function<Anything, Nothing> functionFromDeclaration(
+    FunctionDeclaration declaration, Object? containerInstance) {
+    if (exists containerInstance) {
+        value containerType = type(containerInstance);
+        assert(exists method = containerType.getMethod<Nothing, Anything, Nothing>(declaration.name));
+        return method.bind(containerInstance);
+    }
+    return declaration.apply<Anything, Nothing>();
+}
+
+shared Boolean isTaskImport(Value<Anything,Nothing> val) {
+    return val.type.subtypeOf(`Task`);
+}
+
+shared Boolean isTasksImport(Value<Anything,Nothing> val) {
+    return val.type.subtypeOf(`{Task*}`);
+}
+
+shared Boolean isVoidWithNoParametersFunction(Function<Anything,Nothing> func) {
+    return func.type.exactly(`Anything`) && func.parameterTypes.empty;
+}
+
+shared Boolean isTaskFunction(Function<Anything, Nothing> func) {
+    return func.type.subtypeOf(`Outcome`) &&
+            func.parameterTypes.every((Type<Anything> type) => type.subtypeOf(`Context`));
+}
+
+shared {Task*} tasksFromTaskImport(Value<Anything,Nothing> val) {
+    {Task*} holder() {
+        assert(is Task task = val.get());
+        return { task };
+    }
+    return deferredTasks(holder);
+}
+
+shared {Task*} tasksFromTasksImport(Value<Anything,Nothing> val) {
+    {Task*} holder() {
+        assert(is {Task*} task = val.get());
+        return task;
+    }
+    return deferredTasks(holder);
+}
+
+shared {Task*} tasksFromFunction(Function<Anything,Nothing> func) {
+    return {
+        function(Context context) {
+            func.apply();
+            return done;
+        }
+    };
+}
+
+shared {Task*} tasksFromTaskFunction(Function<Anything, Nothing> func) {
+    return {
+        function(Context context) {
+            assert(is Outcome outcome = func.apply(context));
+            return outcome;
+        }
+    };
 }
 
 shared {Task*} deferredTasks({Task*}() holder) {
