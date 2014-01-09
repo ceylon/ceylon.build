@@ -1,8 +1,8 @@
-import ceylon.language.meta.declaration { FunctionDeclaration, ValueDeclaration }
+import ceylon.language.meta.declaration { FunctionOrValueDeclaration, ValueDeclaration }
 
 "The annotation for [[goal]]"
 shared final annotation class GoalAnnotation(name, internal, dependencies)
-        satisfies OptionalAnnotation<GoalAnnotation, FunctionDeclaration> {
+        satisfies OptionalAnnotation<GoalAnnotation, FunctionOrValueDeclaration> {
     
     "Goal name. If no name is provided, annotated
      element's name will be used as name."

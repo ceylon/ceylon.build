@@ -57,7 +57,5 @@ void reportInvalidDeclarations([InvalidGoalDeclaration+] invalidDeclarations, Wr
 
 String unsupportedSignature(InvalidGoalDeclaration invalid) {
     value declaration = invalid.declaration;
-    value parametersTypeNames = { for (f in declaration.parameterDeclarations) f.openType.string };
-    return "Unsupported signature for goal annotated function ```declaration.name```
-            found: ```declaration.openType``(``", ".join(parametersTypeNames)``)`";
+    return "Unsupported signature for goal annotated function ```declaration.name```";
 }

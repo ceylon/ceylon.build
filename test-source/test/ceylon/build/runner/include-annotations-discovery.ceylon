@@ -1,11 +1,11 @@
 import ceylon.language.meta.declaration { Module }
 import ceylon.test { test, assertEquals }
-import ceylon.build.runner { findAnnotatedGoals, findAnnotatedIncludes }
+import ceylon.build.runner { findPackageMembersAnnotatedWithGoals, findAnnotatedIncludes }
 import ceylon.build.task { include }
 
 test void shouldNotFindIncludeAnnotatedValuesIfNoPackage() {
     Module mod = mockModule();
-    value results = findAnnotatedGoals(mod);
+    value results = findPackageMembersAnnotatedWithGoals(mod);
     assertEquals(results, []);
 }
 
@@ -14,7 +14,7 @@ test void shouldNotFindIncludeAnnotatedValuesInEmptyPackages() {
         mockPackage(),
         mockPackage()
     };
-    value results = findAnnotatedGoals(mod);
+    value results = findPackageMembersAnnotatedWithGoals(mod);
     assertEquals(results, []);
 }
 
@@ -28,7 +28,7 @@ test void shouldNotFindIncludeAnnotatedValuesIfNoValuesAnnotatedWithIt() {
             mockValueDeclaration(by("no one"))
         }
     };
-    value results = findAnnotatedGoals(mod);
+    value results = findPackageMembersAnnotatedWithGoals(mod);
     assertEquals(results, []);
 }
 
