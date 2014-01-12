@@ -1,6 +1,6 @@
 
 "This class holds information about goals execution (success / failures) for a given engine execution"
-shared class EngineResult(definitions, executionResults, exitCode) {
+shared class EngineResult(definitions, executionResults, status) {
     
     "Goals definitions"
     shared GoalDefinitions? definitions;
@@ -8,7 +8,7 @@ shared class EngineResult(definitions, executionResults, exitCode) {
     "Goals execution results (ordered according to goal execution)"
     shared [GoalExecutionResult*] executionResults;
     
-    "Exit code"
-    see(`value exitCodes`)
-    shared Integer exitCode;
+    "execution status"
+    see(`interface Status`)
+    shared Status status;
 }

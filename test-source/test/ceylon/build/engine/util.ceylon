@@ -56,7 +56,7 @@ EngineResult callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goa
     return [for (result in engineResult.executionResults) result.goal];
 }
 
-[String*] success(EngineResult engineResult) {
+[String*] succeed(EngineResult engineResult) {
     return [for (result in engineResult.executionResults) if (result.success) result.goal];
 }
 

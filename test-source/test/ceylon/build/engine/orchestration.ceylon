@@ -1,4 +1,4 @@
-import ceylon.build.engine { exitCodes }
+import ceylon.build.engine { success, noGoalToRun  }
 import ceylon.build.task { Goal }
 import ceylon.test { assertEquals, test }
 
@@ -108,10 +108,10 @@ test void testGoalsWithoutTasksReduction() {
 
 void checkGoalsToExecute({Goal+} availableGoals, [String*] arguments, {Goal*} expectedExecutionList) {
     value result = callEngine(availableGoals, arguments);
-    assertEquals(result.exitCode, expectedExecutionList.empty then exitCodes.noGoalToRun else exitCodes.success);
+    assertEquals(result.status, expectedExecutionList.empty then noGoalToRun else success);
     assertEquals(definitionsNames(result), names(availableGoals));
     assertEquals(execution(result), names(expectedExecutionList));
-    assertEquals(success(result), names(expectedExecutionList));
+    assertEquals(succeed(result), names(expectedExecutionList));
     assertEquals(failed(result), []);
     assertEquals(notRun(result), []);
 }

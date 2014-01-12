@@ -1,5 +1,5 @@
 import ceylon.test { test, assertEquals, assertNotEquals  }
-import ceylon.build.engine { exitCodes }
+import ceylon.build.engine { duplicateGoalsFound, invalidGoalFound }
 import ceylon.build.task { Goal }
 
 test void testDuplicateGoals() {
@@ -12,10 +12,10 @@ void checkDuplicateGoals({Goal+} goals, [String*] duplicates) {
     value writer = MockWriter();
     value result = callEngine(goals, [goals.first.name], writer);
     if (nonempty duplicates) {
-        assertEquals(result.exitCode, exitCodes.duplicateGoalsFound);
+        assertEquals(result.status, duplicateGoalsFound);
         assertEquals(writer.errorMessages.sequence[0], "# duplicate goal names found: ``duplicates``");
     } else {
-        assertNotEquals(result.exitCode, exitCodes.duplicateGoalsFound);
+        assertNotEquals(result.status, duplicateGoalsFound);
     }
 }
 
@@ -62,14 +62,14 @@ void checkInvalidGoalsNames({Goal+} goals, [String*] invalidGoals) {
     value writer = MockWriter();
     value result = callEngine(goals, [goals.first.name], writer);
     if (nonempty invalidGoals) {
-        assertEquals(result.exitCode, exitCodes.invalidGoalFound);
+        assertEquals(result.status, invalidGoalFound);
         assertEquals(result.definitions, null);
         assertEquals(execution(result), []);
-        assertEquals(success(result), []);
+        assertEquals(succeed(result), []);
         assertEquals(failed(result), []);
         assertEquals(notRun(result), []);
         assertEquals(writer.errorMessages.sequence[0], "# invalid goals found ``invalidGoals``");
     } else {
-        assertNotEquals(result.exitCode, exitCodes.invalidGoalFound);
+        assertNotEquals(result.status, invalidGoalFound);
     }
 }

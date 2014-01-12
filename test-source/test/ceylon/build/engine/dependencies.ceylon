@@ -1,6 +1,6 @@
-import ceylon.build.engine { exitCodes }
 import ceylon.build.task { Goal }
 import ceylon.test { test, assertEquals }
+import ceylon.build.engine { success }
 
 test void shouldNotFoundCycleWhenNoDependencies() {
     Goal a = createTestGoal("a");
@@ -25,10 +25,10 @@ test void shouldNotFoundCycleWhenNoCycle() {
 
 void checkNoDependencyCycle({Goal+} goals, {Goal+} expectedGoalsToBeRun = goals) {
     value result = callEngine(goals);
-    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(result.status, success);
     assertEquals(definitionsNames(result), sort(names(goals)));
     assertEquals(execution(result), names(expectedGoalsToBeRun));
-    assertEquals(success(result), names(expectedGoalsToBeRun));
+    assertEquals(succeed(result), names(expectedGoalsToBeRun));
     assertEquals(failed(result), []);
     assertEquals(notRun(result), []);
 }

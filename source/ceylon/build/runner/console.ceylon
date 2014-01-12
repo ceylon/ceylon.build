@@ -2,8 +2,7 @@ import ceylon.collection { HashMap }
 import ceylon.build.engine {
     GoalDefinitionsBuilder,
     runEngineFromDefinitions,
-    exitCodes,
-    reportInvalidDefinitions
+    reportInvalidDefinitions, Status, success, noGoalToRun, errorOnTaskExecution, duplicateGoalsFound, invalidGoalFound, dependencyCycleFound
 }
 import ceylon.build.task { Writer }
 
@@ -13,15 +12,7 @@ Boolean interactive([String*] arguments) {
 }
 
 "An interactive console."
-Integer console(GoalDefinitionsBuilder goals, Writer writer) {
-    value exitMessages = HashMap<Integer, String>({
-        exitCodes.success->"Success",
-        exitCodes.dependencyCycleFound->"Dependency Cycle Found",
-        exitCodes.invalidGoalFound->"Invalid goal found",
-        exitCodes.duplicateGoalsFound->"Duplicate goals found",
-        exitCodes.noGoalToRun->"No goal to run",
-        exitCodes.errorOnTaskExecution->"Error on task execution"
-    });
+Status console(GoalDefinitionsBuilder goals, Writer writer) {
     value definitionValidationResult = goals.validate();
     if (!definitionValidationResult.valid) {
         return reportInvalidDefinitions(definitionValidationResult, writer);
@@ -34,13 +25,26 @@ Integer console(GoalDefinitionsBuilder goals, Writer writer) {
             String? rawLine = process.readLine();
             if (is Null rawLine) {
                 process.writeLine();
-                return exitCodes.success;
+                return success;
             }
             assert(exists rawLine);
             String line = rawLine.trimmed;
             value result = runEngineFromDefinitions(definitions, "", line.split().sequence, writer);
-            assert(exists msg = exitMessages[result.exitCode]);
-            print(msg);
+            print(statusToMessage(result.status));
         }
     }
+}
+
+Map<Status, String> statusMessages = HashMap<Status, String>({
+    success -> "Success",
+    dependencyCycleFound -> "Dependency Cycle Found",
+    invalidGoalFound -> "Invalid goal found",
+    duplicateGoalsFound -> "Duplicate goals found",
+    noGoalToRun -> "No goal to run",
+    errorOnTaskExecution -> "Error on task execution"
+});
+
+String statusToMessage(Status status) {
+    assert(exists msg = statusMessages[status]);
+    return msg;
 }

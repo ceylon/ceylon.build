@@ -1,5 +1,5 @@
 import ceylon.build.task { Goal, Task, Context, Success, Failure, done }
-import ceylon.build.engine { exitCodes }
+import ceylon.build.engine { errorOnTaskExecution, success, noGoalToRun }
 import ceylon.test { assertEquals, assertTrue, test }
 import ceylon.collection { HashMap, MutableMap }
 
@@ -30,10 +30,10 @@ void assertArgumentsAreFiltered({String*} inputArguments, {String*} expectedGoal
     Goal a = Goal("a", [registerArguments("a", argumentsMap)]);
     value goals = [a];
     value result = callEngine(goals, ["a", *inputArguments]);
-    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(result.status, success);
     assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), ["a"]);
-    assertEquals(success(result), ["a"]);
+    assertEquals(succeed(result), ["a"]);
     assertEquals(failed(result), []);
     assertEquals(notRun(result), []);
     assertEquals(argumentsMap.get("a"), expectedGoalArguments);
@@ -50,10 +50,10 @@ void assertNoGoalToRun([String*] arguments) {
     value writer = MockWriter();
     value goals = [a, b];
     value result = callEngine(goals, arguments, writer);
-    assertEquals(result.exitCode, exitCodes.noGoalToRun);
+    assertEquals(result.status, noGoalToRun);
     assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), []);
-    assertEquals(success(result), []);
+    assertEquals(succeed(result), []);
     assertEquals(failed(result), []);
     assertEquals(notRun(result), []);
     assertEquals(writer.infoMessages, ["## ceylon.build: test project"]);
@@ -71,10 +71,10 @@ test void shouldExitOnTaskFailure() {
     value d = createTestGoal("d");
     value goals = [a, b, c, d];
     value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
-    assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
+    assertEquals(result.status, errorOnTaskExecution);
     assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), ["a", "b", "c"]);
-    assertEquals(success(result), ["a"]);
+    assertEquals(succeed(result), ["a"]);
     assertEquals(failed(result), ["b"]);
     assertEquals(notRun(result), ["c"]);
     assertEquals(writer.infoMessages,
@@ -99,10 +99,10 @@ test void shouldExitOnTaskError() {
     value d = createTestGoal("d");
     value goals = [a, b, c, d];
     value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
-    assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
+    assertEquals(result.status, errorOnTaskExecution);
     assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), ["a", "b", "c"]);
-    assertEquals(success(result), ["a"]);
+    assertEquals(succeed(result), ["a"]);
     assertEquals(failed(result), ["b"]);
     assertEquals(notRun(result), ["c"]);
     assertEquals(writer.infoMessages,
@@ -125,10 +125,10 @@ test void shouldRunGoals() {
     value d = createTestGoal("d");
     value goals = [a, b, c, d];
     value result = callEngine(goals, ["a", "b", "c", "-Da:foo"], writer);
-    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(result.status, success);
     assertEquals(definitionsNames(result), names(goals));
     assertEquals(execution(result), ["a", "b", "c"]);
-    assertEquals(success(result), ["a", "b", "c"]);
+    assertEquals(succeed(result), ["a", "b", "c"]);
     assertEquals(failed(result), []);
     assertEquals(notRun(result), []);
     value infoMessages = writer.infoMessages.sequence;

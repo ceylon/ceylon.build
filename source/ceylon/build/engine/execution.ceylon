@@ -7,9 +7,9 @@ ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions d
     value results = SequenceBuilder<GoalExecutionResult>();
     if (goals.empty) {
         writer.error("# no goal to run, available goals are: ``definitions.availableGoals``");
-        return ExecutionResult([], exitCodes.noGoalToRun);
+        return ExecutionResult([], noGoalToRun);
     } else {
-        Integer exitCode;
+        Status status;
         writer.info("# running goals: ``goals`` in order");
         for (goal in goals) {
             value goalArguments = filterArgumentsForGoal(goal, arguments);
@@ -17,14 +17,14 @@ ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions d
             value result = executeTasks(goal, definitions, goalArguments, writer);
             results.append(result);
             if (!result.success) {
-                exitCode = exitCodes.errorOnTaskExecution;
+                status = errorOnTaskExecution;
                 results.appendAll(notRunGoalsExecutionResult(goals.skipping(results.size), arguments));
                 break;
             }
         } else {
-            exitCode = exitCodes.success;
+            status = success;
         }
-        return ExecutionResult(results.sequence, exitCode);
+        return ExecutionResult(results.sequence, status);
     }
 }
 

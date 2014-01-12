@@ -1,7 +1,7 @@
 import ceylon.build.task { HardCodedGoal = Goal, GoalSet, Writer }
 import ceylon.collection { HashSet, MutableSet }
 
-"""Starts the goal engine and exits with one of [[exitCodes]] exit code.
+"""Starts the goal engine and exits with exit code 0 in case of success and 1 in case of failure.
    
    Command line arguments retrieved by `process.arguments` will be used to determine which goals have to be run.
    
@@ -50,13 +50,14 @@ import ceylon.collection { HashSet, MutableSet }
    Launching the program with goals `a, d, c` (in order) will result in the execution of `a, b, c, d` (still in order)
    """
 see(`function runEngine`)
+deprecated("Prefer declarative over imperative build syntax")
 shared void build(
     "Goals and GoalSets available in the engine"
     {<HardCodedGoal|GoalSet>+} goals,
     "Project name to be displayed"
     String project = "") {
     value result = runEngine(goals, project, process.arguments, consoleWriter);
-    process.exit(result.exitCode);
+    process.exit(result.status == success then 0 else 1);
 }
 
 """Starts the goal engine and returns an [[EngineResult]] giving information about goals execution.
@@ -105,6 +106,7 @@ shared void build(
    ```
    Launching the program with goals `a, d, c` (in order) will result in the execution of `a, b, c, d` (still in order)
    """
+deprecated("Prefer declarative over imperative build syntax")
 shared EngineResult runEngine(
   "Goals and GoalSets available in the engine"
   {<HardCodedGoal|GoalSet>+} goals,
@@ -162,7 +164,7 @@ shared EngineResult runEngineFromDefinitions(
     value result = processGoals(goals, arguments, writer);
     Integer endTime = system.milliseconds;
     String duration = "duration ``(endTime - startTime) / 1000``s";
-    if (result.exitCode == exitCodes.success) {
+    if (result.status == success) {
         writer.info("## success - ``duration``");
     } else {
         writer.error("## failure - ``duration``");
@@ -176,8 +178,8 @@ EngineResult processGoals(GoalDefinitionsBuilder|GoalDefinitions goals, [String*
     case (is GoalDefinitionsBuilder) {
         value definitionValidationResult = goals.validate();
         if (!definitionValidationResult.valid) {
-            value exitCode = reportInvalidDefinitions(definitionValidationResult, writer);
-            return EngineResult(definitionValidationResult.definitions, [], exitCode);
+            value status = reportInvalidDefinitions(definitionValidationResult, writer);
+            return EngineResult(definitionValidationResult.definitions, [], status);
         } else {
             assert(exists defs = definitionValidationResult.definitions);
             definitions = defs;
@@ -187,5 +189,5 @@ EngineResult processGoals(GoalDefinitionsBuilder|GoalDefinitions goals, [String*
     }
     value goalsToRun = buildGoalExecutionList(definitions, arguments, writer).sequence;
     value result = runGoals(goalsToRun, arguments, definitions, writer);
-    return EngineResult(definitions, result.executionResults, result.exitCode);
+    return EngineResult(definitions, result.executionResults, result.status);
 }

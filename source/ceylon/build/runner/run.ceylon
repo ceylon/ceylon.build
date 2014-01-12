@@ -1,6 +1,18 @@
 import ceylon.language.meta.declaration { Module }
-import ceylon.build.engine { GoalDefinitionsBuilder, runEngineFromDefinitions, consoleWriter }
+import ceylon.build.engine {
+    GoalDefinitionsBuilder,
+    runEngineFromDefinitions,
+    consoleWriter,
+    Status,
+    success,
+    errorOnTaskExecution,
+    dependencyCycleFound,
+    noGoalToRun,
+    duplicateGoalsFound,
+    invalidGoalFound
+}
 import ceylon.build.task { Writer }
+import ceylon.collection { HashMap }
 
 shared void run() {
     value writer = consoleWriter;
@@ -26,18 +38,32 @@ shared void run() {
 }
 
 Integer start(GoalDefinitionsBuilder goals, Writer writer, [String*] arguments) {
-    Integer exitCode;
+    Status status;
     value ceylonBuildArguments = arguments[1...];
     if (interactive(ceylonBuildArguments)) {
-        exitCode = console(goals, writer);
+        status = console(goals, writer);
     } else {
         value result = runEngineFromDefinitions {
             goals = goals;
             arguments =  ceylonBuildArguments;
         };
-        exitCode = result.exitCode;
+        status = result.status;
     }
-    return exitCode;
+    return statusToExitCode(status);
+}
+
+Map<Status, Integer> statusExitCodes = HashMap<Status, Integer>({
+    success -> exitCodes.success,
+    dependencyCycleFound -> exitCodes.dependencyCycleFound,
+    invalidGoalFound -> exitCodes.invalidGoalFound,
+    duplicateGoalsFound -> exitCodes.duplicateGoalsFound,
+    noGoalToRun -> exitCodes.noGoalToRun,
+    errorOnTaskExecution -> exitCodes.errorOnTaskExecution
+});
+
+Integer statusToExitCode(Status status) {
+    return statusExitCodes[status] else -1;
+    
 }
 
 void reportInvalidDeclarations([InvalidGoalDeclaration+] invalidDeclarations, Writer writer) {

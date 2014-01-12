@@ -1,4 +1,4 @@
-import ceylon.build.engine { exitCodes }
+import ceylon.build.engine { noGoalToRun, success }
 import ceylon.build.task { Goal, GoalSet, Task, Context, Outcome, done }
 import ceylon.test { test, assertEquals, assertTrue }
 
@@ -6,10 +6,10 @@ test void shouldListGoalsFromGoalSet() {
     value goals = goalsAndGoalSets();
     value writer = MockWriter();
     value result = callEngine(goals, [], writer);
-    assertEquals(result.exitCode, exitCodes.noGoalToRun);
+    assertEquals(result.status, noGoalToRun);
     assertEquals(definitionsNames(result), sort(names(goals)));
     assertEquals(execution(result), []);
-    assertEquals(success(result), []);
+    assertEquals(succeed(result), []);
     assertEquals(failed(result), []);
     assertEquals(notRun(result), []);
     assertEquals(writer.errorMessages.sequence[0], "# no goal to run, available goals are: [a, b, c, d, e, f, g]");
@@ -24,10 +24,10 @@ test void shouldRunGoalsImportedFromGoalSet() {
     value goals = goalsAndGoalSets(task);
     value writer = MockWriter();
     value result = callEngine(goals, ["d"], writer);
-    assertEquals(result.exitCode, exitCodes.success);
+    assertEquals(result.status, success);
     assertEquals(definitionsNames(result), sort(names(goals)));
     assertEquals(execution(result), ["d"]);
-    assertEquals(success(result), ["d"]);
+    assertEquals(succeed(result), ["d"]);
     assertEquals(failed(result), []);
     assertEquals(notRun(result), []);
     assertTrue(executed);
