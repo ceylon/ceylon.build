@@ -52,14 +52,16 @@ Integer start(GoalDefinitionsBuilder goals, Writer writer, [String*] arguments) 
     return statusToExitCode(status);
 }
 
-Map<Status, Integer> statusExitCodes = HashMap<Status, Integer>({
-    success -> exitCodes.success,
-    dependencyCycleFound -> exitCodes.dependencyCycleFound,
-    invalidGoalFound -> exitCodes.invalidGoalFound,
-    duplicateGoalsFound -> exitCodes.duplicateGoalsFound,
-    noGoalToRun -> exitCodes.noGoalToRun,
-    errorOnTaskExecution -> exitCodes.errorOnTaskExecution
-});
+Map<Status, Integer> statusExitCodes = HashMap<Status, Integer> {
+    entries = {
+        success -> exitCodes.success,
+        dependencyCycleFound -> exitCodes.dependencyCycleFound,
+        invalidGoalFound -> exitCodes.invalidGoalFound,
+        duplicateGoalsFound -> exitCodes.duplicateGoalsFound,
+        noGoalToRun -> exitCodes.noGoalToRun,
+        errorOnTaskExecution -> exitCodes.errorOnTaskExecution
+    };
+};
 
 Integer statusToExitCode(Status status) {
     return statusExitCodes[status] else -1;

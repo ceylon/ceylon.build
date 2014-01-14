@@ -2,7 +2,7 @@ import ceylon.collection { HashMap }
 
 shared class GoalDefinitions({<String->GoalProperties>*} definitions) {
     
-    Map<String, GoalProperties> map = HashMap(definitions);
+    Map<String, GoalProperties> map = HashMap { entries = definitions; };
             
     shared [String*] availableGoals =
         [ for (definition in definitions) if (!definition.item.internal) definition.key ]

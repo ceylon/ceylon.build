@@ -35,14 +35,16 @@ Status console(GoalDefinitionsBuilder goals, Writer writer) {
     }
 }
 
-Map<Status, String> statusMessages = HashMap<Status, String>({
-    success -> "Success",
-    dependencyCycleFound -> "Dependency Cycle Found",
-    invalidGoalFound -> "Invalid goal found",
-    duplicateGoalsFound -> "Duplicate goals found",
-    noGoalToRun -> "No goal to run",
-    errorOnTaskExecution -> "Error on task execution"
-});
+Map<Status, String> statusMessages = HashMap<Status, String> {
+    entries = {
+        success -> "Success",
+        dependencyCycleFound -> "Dependency Cycle Found",
+        invalidGoalFound -> "Invalid goal found",
+        duplicateGoalsFound -> "Duplicate goals found",
+        noGoalToRun -> "No goal to run",
+        errorOnTaskExecution -> "Error on task execution"
+    };
+};
 
 String statusToMessage(Status status) {
     assert(exists msg = statusMessages[status]);

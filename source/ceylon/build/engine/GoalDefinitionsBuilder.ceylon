@@ -27,7 +27,9 @@ shared final class GoalDefinitionsBuilder() {
                 definitionsMap.put(name, seqBuilder);
             }
         }
-        return HashMap({ for (entry in definitionsMap) entry.key->entry.item.sequence });
+        return HashMap {
+            entries = { for (entry in definitionsMap) entry.key->entry.item.sequence };
+        };
     }
     
     "Transforms a `Map<String,{GoalProperties+}>` into a `DependencyGraph`.
