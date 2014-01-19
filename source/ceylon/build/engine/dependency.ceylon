@@ -31,7 +31,7 @@ class Dependency(goal, {Goal*} goals = []) {
 }
 
 {Dependency*}  analyzeDependencyCycles({Goal+} goals) {
-    value goalsNames = HashSet<String>({ for (goal in goals) goal.name });
+    value goalsNames = HashSet<String> { elements = { for (goal in goals) goal.name }; };
     value definitions = { for (goal in goals) Dependency(goal, goal.dependencies) };
     value resolved = LinkedList<Goal>();
     variable {Dependency*} unresolved = definitions;

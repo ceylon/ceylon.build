@@ -8,14 +8,16 @@ Boolean interactive([String*] arguments) {
 
 "An interactive console."
 void console({<Goal|GoalSet>+} goals) {
-    value exitMessages = HashMap<Integer, String>({
-        exitCodes.success->"Success",
-        exitCodes.dependencyCycleFound->"Dependency Cycle Found",
-        exitCodes.invalidGoalFound->"Invalid goal found",
-        exitCodes.duplicateGoalsFound->"Duplicate goals found",
-        exitCodes.noGoalToRun->"No goal to run",
-        exitCodes.errorOnTaskExecution->"Error on task execution"
-    });
+    value exitMessages = HashMap<Integer, String> {
+        entries = {
+            exitCodes.success->"Success",
+            exitCodes.dependencyCycleFound->"Dependency Cycle Found",
+            exitCodes.invalidGoalFound->"Invalid goal found",
+            exitCodes.duplicateGoalsFound->"Duplicate goals found",
+            exitCodes.noGoalToRun->"No goal to run",
+            exitCodes.errorOnTaskExecution->"Error on task execution"
+        };
+    };
     print("Available goals: ``mergeGoalSetsWithGoals(goals)``");
     print("Enter Ctrl + D to quit");
     while (true) {
