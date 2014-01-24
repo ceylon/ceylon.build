@@ -1,22 +1,14 @@
-import ceylon.build.engine { build }
-import ceylon.build.task { Goal }
-import ceylon.build.tasks.ceylon { compile, document }
+import ceylon.build.task { goal }
+import ceylon.build.tasks.ceylon { compileModule = compile, document }
 
-"Basic build example"
-void run() {
-    build {
-        project = "My Build Project";
-        Goal {
-            name = "compile";
-            compile {
-                modules = "mymodule";
-            }
-        },
-        Goal {
-            name = "doc";
-            document {
-                modules = "mymodule";
-            }
-        }
+shared goal void compile() {
+    compileModule {
+        modules = "mymodule";
+    };
+}
+
+shared goal void doc() {
+    document {
+        modules = "mymodule";
     };
 }

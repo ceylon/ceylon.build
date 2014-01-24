@@ -1,4 +1,4 @@
-import ceylon.build.task { Writer }
+import ceylon.build.task { Writer, noop }
 import ceylon.collection { HashSet, MutableSet }
 
 {String*} buildGoalExecutionList(GoalDefinitions definitions, [String*] arguments, Writer writer) {
@@ -40,7 +40,7 @@ import ceylon.collection { HashSet, MutableSet }
     value reducedGoals = SequenceBuilder<String>();
     for (goal in goals) {
         value properties = definitions.properties(goal);
-        if (!reducedGoalsNames.contains(goal) && !properties.tasks.empty) {
+        if (!reducedGoalsNames.contains(goal) && properties.task != noop) {
             reducedGoals.append(goal);
             reducedGoalsNames.add(goal);
         }

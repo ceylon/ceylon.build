@@ -8,3 +8,7 @@ shared final class Context(arguments, writer) {
     "The output writer"
     shared Writer writer;
 }
+
+// TODO implement context toplevel attribute
+Writer writer = nothing;
+shared Context context = Context([], writer);

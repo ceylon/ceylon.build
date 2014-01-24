@@ -1,5 +1,35 @@
-import ceylon.build.task { Task, goal, include, Outcome, Context, done }
+import ceylon.build.task { goal, include, context, GoalAnnotation }
 import ceylon.build.tasks.misc { echo }
+import ceylon.language.meta.declaration { Declaration }
+
+shared class FooBar() {
+    goal shared void foo() {
+        echo("foo");
+    }
+    goal shared void bar() {
+        echo("foo");
+    }
+}
+
+"Say Hello"
+goal shared void hello() {
+    echo("hello");
+}
+
+"Say Bye"
+goal shared void bye() {
+    echo("bye");
+}
+
+goal { dependencies = [`function bar`]; }
+shared void foo() {
+    echo("foo");
+}
+
+goal
+shared void bar() {
+    echo("bar");
+}
 
 goal
 void reallySimpleTask() {
@@ -7,39 +37,45 @@ void reallySimpleTask() {
 }
 
 goal
-Outcome simpleTask(Context context) {
+void simpleTask() {
     context.writer.info("hello");
-    return done;
 }
 
 goal
-Task taskImportValue = echo("hello");
+void taskImport() {
+     echo("hello");
+}
 
 goal
-{Task*} tasksImportValue = {
-    echo("hello"),
-    echo("hello")
-};
+void tasksImports() {
+    echo("hello");
+    echo("hello");
+}
 
-goal { dependencies = ["compile"]; }
+goal { dependencies = [`function CeylonModule.compile`]; }
 void deploy() {
     print("deploying");
 }
 
 goal
-Outcome start(Context context) {
+void start() {
     context.writer.info("starting");
-    return done;
 }
 
 goal
-{Task*} restart => {
-    echo("stopping (fast)"),
-    echo("starting (fast)")
-};
+void restart() {
+    echo("stopping (fast)");
+    echo("starting (fast)");
+}
 
 goal
-Task stop => echo("stopping");
+void stop() => echo("stopping");
+
+shared class SubCeylonModule() extends CeylonModule("mymodule", "1.0.0") {
+    
+    goal("newname")
+    shared actual void clean() => super.clean();
+}
 
 include {
 // #Desired syntax for goal name renaming in include annotation.
@@ -49,7 +85,15 @@ include {
 //    //    `function CeylonModule.runTests` -> "run.tests"
 //    //};
 }
-shared CeylonModule ceylon => CeylonModule("mymodule", "1.0.0");
+//shared object ceylon extends CeylonModule("mymodule", "1.0.0") {
+//    
+//    goal("newname")
+//    shared actual void clean() => super.clean();
+//}
+shared SubCeylonModule ceylon = SubCeylonModule();
+
+Declaration cleanDeclaration1 = `function CeylonModule.clean`;
+//Declaration cleanDeclaration2 = `function ceylon.clean`;
 
 // In practice, this class will not belong to the build module
 // but to an external tasks module and will be imported in the
@@ -58,29 +102,33 @@ shared class CeylonModule(String name, String version) {
     
     String moduleVersion = "``name``/``version``";
     
-    goal
-    shared void clean() {
+    goal("oldname")
+    shared default void clean() {
         print("cleaning modules/");
     }
     
     goal
-    shared {Task*} compile = {
-        echo("compiling ``name``"),
-        echo("copying to local repository")
-    };
+    shared void compile() {
+        echo("compiling ``name``");
+        echo("copying to local repository");
+    }
     
     goal("compile-tests")
-    shared Task compileTests = echo("compiling test.``moduleVersion``");
+    shared void compileTests() => echo("compiling test.``moduleVersion``");
     
     goal("run-tests")
-    shared Task runTests = echo("running test.``moduleVersion``");
+    shared void runTests() => echo("running test.``moduleVersion``");
     
-    goal { dependencies = ["compile", "compile-tests", "run-tests"]; }
-    shared {Task*} test = {};
+    goal //{ dependencies = ["compile", "compile-tests", "run-tests"]; }
+    shared void test() {}
     
     goal
-    shared Outcome doc(Context context) {
+    shared void doc() {
         context.writer.info("documenting");
-        return done;
     }
+}
+
+void run() {
+    print(`function CeylonModule.clean`.annotations<GoalAnnotation>());
+    print(`function SubCeylonModule.clean`.annotations<GoalAnnotation>());
 }

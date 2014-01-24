@@ -1,5 +1,4 @@
-import ceylon.build.task { Goal, Task, Context, Writer, Outcome, Success, Failure }
-import ceylon.collection { LinkedList }
+import ceylon.build.task { Goal, Writer, Outcome, Failure, done }
 
 String argumentPrefix = "-D";
 
@@ -36,46 +35,39 @@ String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name
 }
 
 GoalExecutionResult executeTasks(String goal, GoalDefinitions definitions, String[] arguments, Writer writer) {
-    value outcomes = LinkedList<Outcome>();
     value properties = definitions.properties(goal);
-    for (Task task in properties.tasks) {
-        value outcome = executeTask(task, arguments, writer);
-        outcomes.add(outcome);
-        reportOutcome(outcome, goal, writer);
-        outcomes.add(outcome);
-        if (is Failure outcome) {
-            break;
-        }
-    }
-    return GoalExecutionResult(goal, arguments, outcomes.sequence);
+    value outcome = executeTask(properties.task, arguments, writer);
+    reportOutcome(outcome, goal, writer);
+    return GoalExecutionResult(goal, arguments, outcome);
 }
 
-Outcome executeTask(Task task, [String*] goalArguments, Writer writer) {
+Outcome executeTask(Anything() task, [String*] goalArguments, Writer writer) {
     try {
-        return task(Context(goalArguments, writer));
+        // TODO set context: context = Context(goalArguments, writer)
+        task();
+        return done;
     } catch (Exception exception) {
         return Failure("", exception);
     }
 }
 
 void reportOutcome(Outcome outcome, String goal, Writer writer) {
-    if (is Success outcome) {
-        if (!outcome.message.empty) {
-            writer.info("``outcome.message``");
-        }
-    } else if (is Failure outcome) {
+    if (is Failure outcome) {
         writer.error("# goal ``goal`` failure, stopping");
         value message = outcome.message;
         if (!message.empty) {
             writer.error(message);
         }
         value exception = outcome.exception;
-        if (exists exception) {
+        // TODO there will always be an exception but if it's a TaskException, do not log the stack
+        if (exists exception) { 
             writer.exception(exception);
         }
     }
 }
 
 GoalExecutionResult[] notRunGoalsExecutionResult({String*} notRunGoals, String[] arguments) {
-    return [ for (notRun in notRunGoals) GoalExecutionResult(notRun, filterArgumentsForGoal(notRun, arguments), [])];
+    return [ for (notRun in notRunGoals)
+        GoalExecutionResult(notRun, filterArgumentsForGoal(notRun, arguments), null)
+    ];
 }

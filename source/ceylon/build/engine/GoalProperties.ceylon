@@ -1,6 +1,5 @@
-import ceylon.build.task { Task }
 
-shared final class GoalProperties(internal, tasks, dependencies) {
+shared final class GoalProperties(internal, task, dependencies) {
     
     "If `true`, goal will be an internal goal which means
      it will only be accessible as a dependency but
@@ -8,10 +7,10 @@ shared final class GoalProperties(internal, tasks, dependencies) {
     shared Boolean internal;
     
     "Tasks to be run"
-    shared {Task*} tasks;
+    shared Anything() task;
     
     "Dependencies to other goals."
     shared [String*] dependencies;
     
-    string => "[internal:``internal``, tasks:``tasks.size``, dependencies: ``dependencies``]";
+    string => "[internal:``internal``, dependencies: ``dependencies``]";
 }

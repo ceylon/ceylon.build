@@ -1,8 +1,8 @@
 import ceylon.language.meta { type }
 import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDeclaration, FunctionOrValueDeclaration, ClassDeclaration }
-import ceylon.language.meta.model { Value, Function, Type }
+import ceylon.language.meta.model { Value, Function }
 import ceylon.build.engine { GoalProperties, GoalDefinitionsBuilder, Goal }
-import ceylon.build.task { GoalAnnotation, Task, IncludeAnnotation, Context, done, Outcome }
+import ceylon.build.task { GoalAnnotation, IncludeAnnotation }
 
 GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
     value invalidDeclarations = SequenceBuilder<InvalidGoalDeclaration>();
@@ -34,21 +34,22 @@ void fillGoalsAndInvalidDeclarations(
     }
 }
 
-shared [FunctionOrValueDeclaration*] findPackageMembersAnnotatedWithGoals(Module mod) {
-    value annotatedGoals = SequenceBuilder<FunctionOrValueDeclaration>();
+shared [FunctionDeclaration*] findPackageMembersAnnotatedWithGoals(Module mod) {
+    value annotatedGoals = SequenceBuilder<FunctionDeclaration>();
     for (pkg in mod.members) {
         annotatedGoals.appendAll(pkg.annotatedMembers<FunctionDeclaration, GoalAnnotation>());
-        annotatedGoals.appendAll(pkg.annotatedMembers<ValueDeclaration, GoalAnnotation>());
     }
     return annotatedGoals.sequence;
 }
 
-Goal|InvalidGoalDeclaration goalDefinition(FunctionOrValueDeclaration declaration, Object? container = null) {
+Goal|InvalidGoalDeclaration goalDefinition(FunctionDeclaration declaration, Object? container = null) {
     value annotation = goalAnnotation(declaration);
     value name = goalName(annotation, declaration);
-    value tasks = extractTasks(declaration, container);
-    if (exists tasks) {
-        return Goal(name, GoalProperties(annotation.internal, tasks, annotation.dependencies));
+    value task = extractTasks(declaration, container);
+    if (isFunctionWithoutParameters(declaration)) {
+        value internal = declaration.annotations<SharedAnnotation>().size == 0;
+        value dependencies = [ ];//for (dependency in annotation.dependencies) goalName(goalAnnotation(declaration), dependency) ];
+        return Goal(name, GoalProperties(internal, task, dependencies));
     }
     return InvalidGoalDeclaration(declaration);
 }
@@ -65,24 +66,9 @@ shared String goalName(GoalAnnotation annotation, FunctionOrValueDeclaration dec
     return annotation.name.empty then declaration.name else annotation.name;
 }
 
-{Task*}? extractTasks(FunctionOrValueDeclaration declaration, Object? container = null) {
-    switch (declaration)
-    case (is ValueDeclaration) {
-        value valueModel = valueFromDeclaration(declaration, container);
-        if (isTaskImport(valueModel)) {
-            return tasksFromTaskImport(valueModel);
-        } else if (isTasksImport(valueModel)) {
-            return tasksFromTasksImport(valueModel);
-        }
-    } case (is FunctionDeclaration) {
-        value func = functionFromDeclaration(declaration, container);
-        if (isVoidWithNoParametersFunction(func)) {
-            return tasksFromFunction(func);
-        } else if (isTaskFunction(func)) {
-            return tasksFromTaskFunction(func);
-        }
-    }
-    return null;
+Anything() extractTasks(FunctionDeclaration declaration, Object? container = null) {
+    value func = functionFromDeclaration(declaration, container);
+    return tasksFromFunction(func);
 }
 
 Value valueFromDeclaration(ValueDeclaration valueDeclaration, Anything containerInstance) {
@@ -94,84 +80,21 @@ Value valueFromDeclaration(ValueDeclaration valueDeclaration, Anything container
     return valueDeclaration.apply<Anything>();
 }
 
-Function<Anything, Nothing> functionFromDeclaration(
+Function<Anything, []> functionFromDeclaration(
     FunctionDeclaration declaration, Object? containerInstance) {
     if (exists containerInstance) {
         value containerType = type(containerInstance);
-        assert(exists method = containerType.getMethod<Nothing, Anything, Nothing>(declaration.name));
+        assert(exists method = containerType.getMethod<Nothing, Anything, []>(declaration.name));
         return method.bind(containerInstance);
     }
-    return declaration.apply<Anything, Nothing>();
+    return declaration.apply<Anything, []>();
 }
 
-shared Boolean isTaskImport(Value<Anything,Nothing> val) {
-    return val.type.subtypeOf(`Task`);
+shared Boolean isFunctionWithoutParameters(FunctionDeclaration declaration) {
+    return declaration.parameterDeclarations.empty && declaration.typeParameterDeclarations.empty;
 }
 
-shared Boolean isTasksImport(Value<Anything,Nothing> val) {
-    return val.type.subtypeOf(`{Task*}`);
-}
-
-shared Boolean isVoidWithNoParametersFunction(Function<Anything,Nothing> func) {
-    return func.type.exactly(`Anything`) && func.parameterTypes.empty;
-}
-
-shared Boolean isTaskFunction(Function<Anything, Nothing> func) {
-    return func.type.subtypeOf(`Outcome`) &&
-            func.parameterTypes.every((Type<Anything> type) => type.subtypeOf(`Context`));
-}
-
-shared {Task*} tasksFromTaskImport(Value<Anything,Nothing> val) {
-    {Task*} holder() {
-        assert(is Task task = val.get());
-        return { task };
-    }
-    return deferredTasks(holder);
-}
-
-shared {Task*} tasksFromTasksImport(Value<Anything,Nothing> val) {
-    {Task*} holder() {
-        assert(is {Task*} task = val.get());
-        return task;
-    }
-    return deferredTasks(holder);
-}
-
-shared {Task*} tasksFromFunction(Function<Anything,Nothing> func) {
-    return {
-        function(Context context) {
-            func.apply();
-            return done;
-        }
-    };
-}
-
-shared {Task*} tasksFromTaskFunction(Function<Anything, Nothing> func) {
-    return {
-        function(Context context) {
-            assert(is Outcome outcome = func.apply(context));
-            return outcome;
-        }
-    };
-}
-
-shared {Task*} deferredTasks({Task*}() holder) {
-    object deferredTasks satisfies {Task*} {
-        
-        variable {Task*}? _tasks = null;
-        
-        {Task*} tasks {
-            if (!_tasks exists) {
-                _tasks = holder();
-            }
-            assert(exists tasks = _tasks);
-            return tasks;
-        }
-        
-        iterator() => tasks.iterator();
-    }
-    return deferredTasks;
-}
+shared Anything() tasksFromFunction(Function<Anything,[]> func) => () => func.apply();
 
 shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
     value annotatedIncludes = SequenceBuilder<ValueDeclaration>();
@@ -193,13 +116,10 @@ shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
     return goals.sequence;
 }
 
-FunctionOrValueDeclaration[] findClassMembersAnnotatedWithGoal(
+FunctionDeclaration[] findClassMembersAnnotatedWithGoal(
         ClassDeclaration instanceTypeDeclaration) {
-    value functionDeclarations = instanceTypeDeclaration.
+    return instanceTypeDeclaration.
             annotatedDeclaredMemberDeclarations<FunctionDeclaration, GoalAnnotation>();
-    value valuesDeclarations = instanceTypeDeclaration.
-            annotatedDeclaredMemberDeclarations<ValueDeclaration, GoalAnnotation>();
-    return concatenate(functionDeclarations, valuesDeclarations);
 }
 
 class InvalidGoalDeclaration(declaration) {
