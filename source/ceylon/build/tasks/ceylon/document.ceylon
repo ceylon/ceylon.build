@@ -1,7 +1,7 @@
-import ceylon.build.task { Task, Context }
+import ceylon.build.task { context }
 
 "Documents a Ceylon module using `ceylon doc` tool."
-shared Task document(
+shared void document(
         "list of modules to document"
         String|{String+}  modules,
         "encoding used for reading source files
@@ -88,36 +88,34 @@ shared Task document(
          (corresponding command line parameter: `--cwd=<dir>`)"
         String? currentWorkingDirectory = null
 ) {
-    return function(Context context) {
-        value command = docCommand {
-            DocArguments {
-                modules = multipleStringsIterable(modules);
-                encoding = encoding;
-                sourceDirectories = stringIterable(sourceDirectories);
-                documentationDirectory = documentationDirectory;
-                outputRepository = outputRepository;
-                repositories = stringIterable(repositories);
-                systemRepository = systemRepository;
-                cacheRepository = cacheRepository;
-                user = user;
-                password = password;
-                offline = offline;
-                link = link;
-                includeNonShared = includeNonShared;
-                includeSourceCode = includeSourceCode;
-                ignoreBrokenLink = ignoreBrokenLink;
-                ignoreMissingDoc = ignoreMissingDoc;
-                ignoreMissingThrows = ignoreMissingThrows;
-                header = header;
-                footer = footer;
-                systemProperties = systemProperties;
-                verboseModes = verboseModes;
-                currentWorkingDirectory = currentWorkingDirectory;
-                arguments = context.arguments;
-            };
+    value command = docCommand {
+        DocArguments {
+            modules = multipleStringsIterable(modules);
+            encoding = encoding;
+            sourceDirectories = stringIterable(sourceDirectories);
+            documentationDirectory = documentationDirectory;
+            outputRepository = outputRepository;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            user = user;
+            password = password;
+            offline = offline;
+            link = link;
+            includeNonShared = includeNonShared;
+            includeSourceCode = includeSourceCode;
+            ignoreBrokenLink = ignoreBrokenLink;
+            ignoreMissingDoc = ignoreMissingDoc;
+            ignoreMissingThrows = ignoreMissingThrows;
+            header = header;
+            footer = footer;
+            systemProperties = systemProperties;
+            verboseModes = verboseModes;
+            currentWorkingDirectory = currentWorkingDirectory;
+            arguments = context.arguments;
         };
-        return execute(context.writer, "documenting", ceylon, command);
     };
+    execute(context.writer, "documenting", ceylon, command);
 }
 
 "Builds a ceylon doc command as a `[String+]` and returns it.

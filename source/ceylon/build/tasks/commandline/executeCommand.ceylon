@@ -1,4 +1,3 @@
-import ceylon.build.task { Context, Task, Outcome, Failure, done }
 import ceylon.process {
     Process, createProcess,
     Input, currentInput,
@@ -11,7 +10,7 @@ import ceylon.file { current, Path }
 "Returns a `Task` that will run the given command in a new a new process using [[executeCommand]].
  Returns true if process exit code is `0`, false otherwise."
 see(`function executeCommand`)
-shared Task command(
+shared void command(
         "The _command_ to be run in the new
          process, usually the name or path of a
          program. Command arguments must be passed
@@ -41,11 +40,9 @@ shared Task command(
          the environment variables of the current
          virtual machine process."
         {<String->String>*} environment = currentEnvironment) {
-    return function(Context context) {
-        Integer exitCode = executeCommand(command, arguments, path,
-            currentInput, currentOutput, currentError, environment) else 0;
-        return exitCodeToOutcome(exitCode, command, arguments, path);
-    };
+    Integer exitCode = executeCommand(command, arguments, path,
+        currentInput, currentOutput, currentError, environment) else 0;
+    reportOutcome(exitCode, command, arguments, path);
 }
 
 "Creates and starts a new process, running the given command.
@@ -91,11 +88,9 @@ shared Integer? executeCommand(
  If `exitCode` is `0`, a successfull outcome will be returned.
  
  If `exitCode` is not `0`, a failure outcome will be returned with information about executed command."
-shared Outcome exitCodeToOutcome(Integer exitCode, String command, [String*] arguments, Path path = current) {
-    if (exitCode == 0) {
-        return done;
-    } else {
-        return Failure(
+shared void reportOutcome(Integer exitCode, String command, [String*] arguments, Path path = current) {
+    if (exitCode != 0) {
+        throw Exception(
                 "command:            ``command````arguments.empty then "" else " "````" ".join(arguments)``\n" +
                 "working directory:  ``path``\n" +
                 "exits with code:    ``exitCode``");

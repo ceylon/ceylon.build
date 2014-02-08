@@ -1,7 +1,7 @@
-import ceylon.build.task { Context, Task }
+import ceylon.build.task { context }
 
 "Runs tests of Ceylon module using `ceylon test` tool."
-shared Task test(
+shared void test(
     "name/version of modules to test"
     see(`function moduleVersion`)
     String|{String*} modules,
@@ -42,25 +42,23 @@ shared Task test(
      (corresponding command line parameter: `--cwd=<dir>`)"
     String? currentWorkingDirectory = null
 ) {
-    return function(Context context) {
-        value command = testCommand {
-            TestArguments {
-                modules = stringIterable(modules);
-                tests = stringIterable(tests);
-                noDefaultRepositories = noDefaultRepositories;
-                offline = offline;
-                repositories = stringIterable(repositories);
-                systemRepository = systemRepository;
-                cacheRepository = cacheRepository;
-                compileOnRun = compileOnRun;
-                systemProperties = systemProperties;
-                verboseModes = verboseModes;
-                currentWorkingDirectory = currentWorkingDirectory;
-                arguments = context.arguments;
-            };
+    value command = testCommand {
+        TestArguments {
+            modules = stringIterable(modules);
+            tests = stringIterable(tests);
+            noDefaultRepositories = noDefaultRepositories;
+            offline = offline;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            compileOnRun = compileOnRun;
+            systemProperties = systemProperties;
+            verboseModes = verboseModes;
+            currentWorkingDirectory = currentWorkingDirectory;
+            arguments = context.arguments;
         };
-        return execute(context.writer, "testing", ceylon, command);
     };
+    execute(context.writer, "testing", ceylon, command);
 }
 
 "Builds a ceylon test command as a `[String+]` and returns it.

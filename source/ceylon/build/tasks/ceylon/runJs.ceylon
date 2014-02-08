@@ -1,7 +1,7 @@
-import ceylon.build.task { Context, Task }
+import ceylon.build.task { context }
 
 "Runs a Ceylon module on node.js using `ceylon run-js` tool."
-shared Task runJsModule(
+shared void runJsModule(
     "name of module to run"
     String moduleName,
     "version of module to run"
@@ -51,29 +51,27 @@ shared Task runJsModule(
      (corresponding command line parameter: `--cwd=<dir>`)"
     String? currentWorkingDirectory = null
 ) {
-    return function(Context context) {
-        value command = runJsCommand {
-            RunJsArguments {
-                moduleName = moduleName;
-                version = version;
-                moduleArguments = moduleArguments;
-                noDefaultRepositories = true;
-                offline = offline;
-                repositories = stringIterable(repositories);
-                systemRepository = systemRepository;
-                cacheRepository = cacheRepository;
-                functionNameToRun = functionNameToRun;
-                compileOnRun = compileOnRun;
-                systemProperties = systemProperties;
-                debug = debug;
-                verboseModes = verboseModes;
-                pathToNodeJs = pathToNodeJs;
-                currentWorkingDirectory = currentWorkingDirectory;
-                arguments = context.arguments;
-            };
+    value command = runJsCommand {
+        RunJsArguments {
+            moduleName = moduleName;
+            version = version;
+            moduleArguments = moduleArguments;
+            noDefaultRepositories = true;
+            offline = offline;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            functionNameToRun = functionNameToRun;
+            compileOnRun = compileOnRun;
+            systemProperties = systemProperties;
+            debug = debug;
+            verboseModes = verboseModes;
+            pathToNodeJs = pathToNodeJs;
+            currentWorkingDirectory = currentWorkingDirectory;
+            arguments = context.arguments;
         };
-        return execute(context.writer, "running", ceylon, command);
     };
+    execute(context.writer, "running", ceylon, command);
 }
 
 "Builds a ceylon run-js command as a `[String+]` and returns it.

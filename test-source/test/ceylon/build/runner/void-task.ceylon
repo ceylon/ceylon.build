@@ -1,10 +1,7 @@
 import ceylon.test { test, assertEquals }
 import ceylon.build.runner { tasksFromFunction, isFunctionWithoutParameters }
-import ceylon.build.task { Task, Context, Writer }
+import ceylon.build.task { Context, Writer }
 import ceylon.language.meta.declaration { FunctionDeclaration }
-
-Task task1 = function(Context context) { throw; };
-Task task2 = function(Context context) { throw; };
 
 Context mockContext() {
     object writer satisfies Writer {

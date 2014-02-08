@@ -1,115 +1,131 @@
-import ceylon.build.task { Goal, GoalSet, keepCurrentName }
+import ceylon.build.task { goal, noop }
 
-"Compilation / Execution targets"
-shared class Target(jvm, javascript) {
+shared interface CeylonModule {
     
-    "`true` if target is JVM backend"
-    shared Boolean jvm;
-    
-    "`true` if target is Javascript backend"
-    shared Boolean javascript;
-}
-
-"""Returns a `GoalSet` providing goals to compile, test and document ceylon modules.
-   
-   Following goals will be returned:
-   - `"doc"`: document module
-   
-   JVM specific goals:
-   - `"compile"`: compile module
-   - `"compile-tests"`: compile test module
-   - `"run-tests"`: run test module
-   - `"test"`: compile module, compile test module and run test module
-   
-   Javascript specific goals:
-   - `"compile-js"`: compile module
-   - `"compile-js-tests"`: compile test module
-   - `"run-js-tests"`: run test module
-   - `"test-js"`: compile module, compile test module and run test module
-   """
-shared GoalSet ceylonModule(
     "module name"
-    String moduleName,
+    shared formal String moduleName;
+    
+    goal
+    shared default void doc() => package.document { modules = moduleName; };
+}
+
+shared interface CeylonTestModule satisfies CeylonModule {
+    
     "test module name"
-    String testModuleName = "test.``moduleName``",
+    shared default String testModuleName => "test.``moduleName``";
+    
     "test module version"
-    String? testModuleVersion = defaultModuleVersion,
-    "Targeted backend (JVM and/or Javascript)"
-    Target target = Target { jvm = true; javascript = true; },
-    """rename function that will be applied to each goal name"""
-    String(String) rename = keepCurrentName()) {
-    [Goal*] jvmTargetGoals;
-    if (target.jvm) {
-        jvmTargetGoals = jvmGoals(rename, moduleName, testModuleName, testModuleVersion);
-    } else {
-        jvmTargetGoals = [];
-    }
-    [Goal*] javascriptTargetGoals;
-    if (target.javascript) {
-        javascriptTargetGoals = javascriptGoals(rename, moduleName, testModuleName, testModuleVersion);
-    } else {
-        javascriptTargetGoals = [];
-    }
-    value docGoal = Goal {
-        name = rename("doc");
-        document {
-            modules = moduleName;
-        }
-    };
-    value goals = concatenate(jvmTargetGoals, javascriptTargetGoals, [docGoal]);
-    assert(nonempty goals);
-    return GoalSet(goals);
+    shared default String? testModuleVersion => defaultModuleVersion;
 }
 
-[Goal+] jvmGoals(String(String) rename, String moduleName, String testModuleName, String? testModuleVersion) {
-    value compileGoal = Goal {
-        name = rename("compile");
-        compile {
-            modules = moduleName;
-        }
-    };
-    value compileTestsGoal = Goal {
-        name = rename("compile-tests");
-        compileTests {
-            modules = testModuleName;
-        }
-    };
-    value runTestsGoal = Goal {
-        name = rename("run-tests");
-        test {
-            modules = moduleVersion(testModuleName, testModuleVersion);
-        }
-    };
-    value testGoal = Goal {
-        name = rename("test");
-        dependencies = [compileGoal, compileTestsGoal, runTestsGoal];
-    };
-    return [compileGoal, compileTestsGoal, runTestsGoal, testGoal];
+shared interface CeylonJvmModule satisfies CeylonTestModule {
+    
+    goal
+    shared default void compile() => package.compile { modules = moduleName; };
+    
+    goal {
+        name = "compile-tests";
+    }
+    shared default void compileTests() => package.compileTests { modules = testModuleName; };
+    
+    goal {
+        name = "run-tests";
+    }
+    shared default void runTests() => package.test { modules = moduleVersion(testModuleName, testModuleVersion); };
+    
+    goal {
+        dependencies = [`function compile`, `function compileTests`, `function runTests`];
+    }
+    shared default void test() {}
 }
 
-[Goal+] javascriptGoals(String(String) rename, String moduleName, String testModuleName, String? testModuleVersion) {
-    value compileJsGoal = Goal {
-        name = rename("compile-js");
-        compileJs {
-            modules = moduleName;
-        }
+shared interface CeylonJsModule satisfies CeylonTestModule {
+    
+    goal {
+        name = "compile-js";
+    }
+    shared default void compileJs() => package.compileJs { modules = moduleName; };
+    
+    goal {
+        name = "compile-js-tests";
+    }
+    shared default void compileJsTests() => package.compileJsTests { modules = moduleName; };
+    
+    goal {
+        name = "run-js-tests";
+    }
+    shared default void runJsTests() => package.runJsModule {
+        moduleName = testModuleName;
+        version = testModuleVersion;
     };
-    value compileJsTestsGoal = Goal {
-        name = rename("compile-js-tests");
-        compileJsTests {
-            modules = testModuleName;
-        }
-    };
-    value runJsTestsGoal = Goal {
-        name = rename("run-js-tests");
-        runJsModule {
-            moduleName = testModuleName;
-            version = testModuleVersion;
-        }
-    };
-    value testJsGoal = Goal {
-        name = rename("test-js");
-        dependencies = [compileJsGoal, compileJsTestsGoal, runJsTestsGoal];
-    };
-    return [compileJsGoal, compileJsTestsGoal, runJsTestsGoal, testJsGoal];
+    
+    goal {
+        name = "test-js";
+        dependencies = [`function compileJs`, `function compileJsTests`, `function runJsTests`];
+    }
+    shared default void testJs() {}
+}
+
+shared CeylonJvmModule ceylonJvmModule(
+    String moduleName,
+    String testModuleName = "test.``moduleName``",
+    String? testModuleVersion = defaultModuleVersion) {
+    value moduleNameAlias = moduleName;
+    value testModuleNameAlias = testModuleName;
+    value testModuleVersionAlias = testModuleVersion;
+    object o satisfies CeylonJvmModule {
+        
+        "module name"
+        shared actual String moduleName = moduleNameAlias;
+        "test module name"
+        shared actual String testModuleName = testModuleNameAlias;
+        "test module version"
+        shared actual String? testModuleVersion = testModuleVersionAlias;
+        
+        test = noop;
+    }
+    return o;
+}
+
+shared CeylonJsModule ceylonJsModule(
+    String moduleName,
+    String testModuleName = "test.``moduleName``",
+    String? testModuleVersion = defaultModuleVersion) {
+    value moduleNameAlias = moduleName;
+    value testModuleNameAlias = testModuleName;
+    value testModuleVersionAlias = testModuleVersion;
+    object o satisfies CeylonJsModule {
+        
+        "module name"
+        shared actual String moduleName = moduleNameAlias;
+        "test module name"
+        shared actual String testModuleName = testModuleNameAlias;
+        "test module version"
+        shared actual String? testModuleVersion = testModuleVersionAlias;
+        
+        testJs = noop;
+    }
+    return o;
+}
+
+shared CeylonJvmModule & CeylonJsModule ceylonJvmAndJsModule(
+    String moduleName,
+    String testModuleName = "test.``moduleName``",
+    String? testModuleVersion = defaultModuleVersion) {
+    value moduleNameAlias = moduleName;
+    value testModuleNameAlias = testModuleName;
+    value testModuleVersionAlias = testModuleVersion;
+    object o satisfies CeylonJvmModule & CeylonJsModule {
+        
+        "module name"
+        shared actual String moduleName = moduleNameAlias;
+        "test module name"
+        shared actual String testModuleName = testModuleNameAlias;
+        "test module version"
+        shared actual String? testModuleVersion = testModuleVersionAlias;
+        
+        test = noop;
+        testJs = noop;
+    }
+    return o;
 }

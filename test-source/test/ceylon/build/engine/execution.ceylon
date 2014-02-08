@@ -1,4 +1,4 @@
-import ceylon.build.task { Failure, done, context }
+import ceylon.build.task { context }
 import ceylon.build.engine { errorOnTaskExecution, success, noGoalToRun }
 import ceylon.test { assertEquals, assertTrue, test }
 import ceylon.collection { HashMap, MutableMap }
@@ -18,12 +18,11 @@ test void testArgumentFiltering() {
 
 void assertArgumentsAreFiltered([String*] inputArguments, [String*] expectedGoalArguments ) {
     Anything() registerArguments(String taskName, MutableMap<String, [String*]> argumentsMap) {
-        return function() {
+        return void() {
             if (argumentsMap.defines(taskName)) {
-                return Failure("``taskName`` have already arguments");
+                throw AssertionException("``taskName`` have already arguments");
             }
             argumentsMap.put(taskName, context.arguments);
-            return done;
         };
     }
     value argumentsMap = HashMap<String, [String*]>();

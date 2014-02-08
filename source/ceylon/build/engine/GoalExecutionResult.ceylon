@@ -1,4 +1,4 @@
-import ceylon.build.task { Outcome, Failure }
+
 
 "Represents a goal execution status result"
 shared class GoalExecutionResult(goal, arguments, outcome) {

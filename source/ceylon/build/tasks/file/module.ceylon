@@ -3,8 +3,8 @@
    ### Delete
    
    This module provides two functions to delete files and directories.
-   - [[deletePath]]: function to delete files / directories that can be used in your own tasks
-   - [[delete]]: function creating a wrapper `Task` for [[deletePath]] function
+   - [[delete]]: function to delete files / directories that can be used in your own tasks
+   - [[delete]]: function creating a wrapper `Task` for [[delete]] function
    
    Here is an example of a task which will delete `"modules"` directory.
    ```ceylon

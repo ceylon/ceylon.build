@@ -1,4 +1,4 @@
-import ceylon.build.task { Task, Context, Failure, done }
+import ceylon.build.task { context }
 import ceylon.file { Path, Resource, Nil, File, Directory, Visitor }
 
 "Base IO exception"
@@ -9,30 +9,6 @@ shared class CreateDirectoryException(String message) extends IOException(messag
 
 "Exception thrown when a file cannot be copied"
 shared class FileCopyException(String message) extends IOException(message) {}
-
-"""Returns a `Task` to copy files and directories from `source` to `destination` using [[copyFiles]]"""
-see(`function copyFiles`)
-shared Task copy(
-        "Source path from where files will be taken"
-        Path source,
-        "Destination path where files will be copied"
-        Path destination,
-        """If `true`, will overwrite already existing files.
-           If `false` and a file with a same name already exist in `destination`, `FileCopyException` will be raised"""
-        Boolean overwrite = false,
-        "Copy `FileFilter` has to return `true` to copy files, `false` not to copy them"
-        FileFilter filter = allFiles
-        ) {
-    return function(Context context) {
-        context.writer.info("copying ``source`` to ``destination``");
-        try {
-            copyFiles(source, destination, overwrite, filter);
-            return done;
-        } catch (IOException exception) {
-            return Failure("error during copy from ``source`` to ``destination``", exception);
-        }
-    };
-}
 
 """Copies files and directories from `source` to `destination`
    
@@ -70,6 +46,7 @@ shared void copyFiles(
         "Copy `FileFilter` has to return `true` to copy files, `false` not to copy them"
         FileFilter filter = allFiles
         ) {
+    context.writer.info("copying ``source`` to ``destination``");
     createDestinationDirectory(source, destination);
     Path targettedDestination = getRealDestinationPath(source, destination);
     source.visit(CopyVisitor(source, targettedDestination, overwrite, filter));

@@ -1,10 +1,9 @@
-import ceylon.build.task { Task }
 import ceylon.build.tasks.ceylon { compile, CompileVerboseMode }
 
 """Compiles a Ceylon test module using `ceylon compile` tool.
    
    `--source` command line parameter is set to `"test-source"`"""
-shared Task compileTests(
+shared void compileTests(
         "name of modules to compile"
         String|{String*} modules,
         "name of files to compile"
@@ -58,7 +57,7 @@ shared Task compileTests(
          (corresponding command line parameter: `--cwd=<dir>`)"
         String? currentWorkingDirectory = null
 ) {
-    return compile {
+    compile {
         modules = modules;
         files = files;
         encoding = encoding;

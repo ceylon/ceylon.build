@@ -1,9 +1,6 @@
-import ceylon.build.task { Task, Context, done }
+import ceylon.build.task { context }
 
 """Returns a `Task` to that echoes the specified message on the console"""
-shared Task echo(String message) {
-    return function(Context context) {
-        context.writer.info(message);
-        return done;
-    };
+shared void echo(String message) {
+    context.writer.info(message);
 }

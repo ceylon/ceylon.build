@@ -1,4 +1,8 @@
-import ceylon.build.task { Goal, Writer, Outcome, Failure, done, setContextForTask, clearTaskContext }
+import ceylon.build.task {
+    Writer,
+    setContextForTask,
+    clearTaskContext
+}
 
 String argumentPrefix = "-D";
 
@@ -37,35 +41,30 @@ String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name
 
 GoalExecutionResult executeTasks(String goal, GoalDefinitions definitions, String[] arguments, Writer writer) {
     value properties = definitions.properties(goal);
-    setContextForTask(arguments, writer);
     value outcome = executeTask(properties.task, arguments, writer);
-    clearTaskContext();
     reportOutcome(outcome, goal, writer);
     return GoalExecutionResult(goal, arguments, outcome);
 }
 
-Outcome executeTask(Anything() task, [String*] goalArguments, Writer writer) {
+Outcome executeTask(Anything() task, [String*] arguments, Writer writer) {
+    variable Outcome outcome;
+    setContextForTask(arguments, writer);
     try {
-        // TODO set context: context = Context(goalArguments, writer)
         task();
-        return done;
+        outcome = ok;
     } catch (Exception exception) {
-        return Failure("", exception);
+        outcome = Failure(exception);
     }
+    clearTaskContext();
+    return outcome;
 }
 
 void reportOutcome(Outcome outcome, String goal, Writer writer) {
     if (is Failure outcome) {
         writer.error("# goal ``goal`` failure, stopping");
-        value message = outcome.message;
-        if (!message.empty) {
-            writer.error(message);
-        }
         value exception = outcome.exception;
         // TODO there will always be an exception but if it's a TaskException, do not log the stack
-        if (exists exception) { 
-            writer.exception(exception);
-        }
+        writer.exception(exception);
     }
 }
 
