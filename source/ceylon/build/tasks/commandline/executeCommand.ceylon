@@ -13,9 +13,12 @@ import ceylon.file { current, Path }
 see(`function executeCommand`)
 shared Task command(
         "The _command_ to be run in the new
-         process, usually a program with a list
-         of its arguments."
-        String|[String+] command,
+         process, usually the name or path of a
+         program. Command arguments must be passed
+         via the [[arguments]] sequence."
+        String command,
+        "The arguments to the [[command]]."
+        [String*] arguments = [],
         "The directory in which the process runs."
         Path path = current,
         "The source for the standard input stream
@@ -39,8 +42,9 @@ shared Task command(
          virtual machine process."
         {<String->String>*} environment = currentEnvironment) {
     return function(Context context) {
-        Integer exitCode = executeCommand(command, path, currentInput, currentOutput, currentError, environment) else 0;
-        return exitCodeToOutcome(exitCode, command, path);
+        Integer exitCode = executeCommand(command, arguments, path,
+            currentInput, currentOutput, currentError, environment) else 0;
+        return exitCodeToOutcome(exitCode, command, arguments, path);
     };
 }
 
@@ -49,9 +53,12 @@ shared Task command(
 see(`function createProcess`)
 shared Integer? executeCommand(
         "The _command_ to be run in the new
-         process, usually a program with a list
-         of its arguments."
-        String|[String+] command,
+         process, usually the name or path of a
+         program. Command arguments must be passed
+         via the [[arguments]] sequence."
+        String command,
+        "The arguments to the [[command]]."
+        [String*] arguments = [],
         "The directory in which the process runs."
         Path path = current,
         "The source for the standard input stream
@@ -74,16 +81,7 @@ shared Integer? executeCommand(
          the environment variables of the current
          virtual machine process."
         {<String->String>*} environment = currentEnvironment) {
-    String commandToRun;
-    switch (command)
-    case (is String){
-        commandToRun = command.trimmed;
-    } case (is [String+]) {
-        // FIXME this is a workaround while waiting for createProcess to accept `String|[String+]`
-        // FIXME https://github.com/ceylon/ceylon-sdk/issues/172
-        commandToRun = " ".join(command).trimmed;
-    }
-    Process process = createProcess(commandToRun, path, input, output, error, *environment);
+    Process process = createProcess(command, arguments, path, input, output, error, *environment);
     process.waitForExit();
     return process.exitCode;
 }
@@ -93,12 +91,12 @@ shared Integer? executeCommand(
  If `exitCode` is `0`, a successfull outcome will be returned.
  
  If `exitCode` is not `0`, a failure outcome will be returned with information about executed command."
-shared Outcome exitCodeToOutcome(Integer exitCode, String|[String+] command, Path path = current) {
+shared Outcome exitCodeToOutcome(Integer exitCode, String command, [String*] arguments, Path path = current) {
     if (exitCode == 0) {
         return done;
     } else {
         return Failure(
-                "command:            ``command``\n" +
+                "command:            ``command````arguments.empty then "" else " "````" ".join(arguments)``\n" +
                 "working directory:  ``path``\n" +
                 "exits with code:    ``exitCode``");
     }
