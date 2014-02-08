@@ -1,11 +1,11 @@
-import ceylon.build.task { Goal, GoalSet, Writer, Context, Outcome, done }
+import ceylon.build.task { Writer }
 import ceylon.collection { LinkedList, MutableList }
-import ceylon.build.engine { runEngine, EngineResult }
+import ceylon.build.engine { runEngine, EngineResult, GoalDefinitionsBuilder, Goal, GoalProperties }
 
-Outcome noOp(Context context) => done;
+void emptyFunction() {}
 
-Goal createTestGoal(String name, {Goal*} dependencies = []) {
-    return Goal(name, [noOp], dependencies);
+Goal createTestGoal(String name, [String*] dependencies = [], Anything() fn = emptyFunction, Boolean internal = false) {
+    return Goal(name, GoalProperties(internal, fn, dependencies));
 }
 
 class MockWriter() satisfies Writer {
@@ -30,26 +30,12 @@ class MockWriter() satisfies Writer {
     return [];
 }
 
-[String*] names({<Goal|GoalSet|<Goal->{Outcome*}>>*} goals) {
-    value namesList = SequenceBuilder<String>();
-    for (goal in goals) {
-        switch (goal)
-        case (is Goal) {
-            namesList.append(goal.name);
-        } case (is GoalSet) {
-            for (innerGoal in goal.goals) {
-                namesList.append(innerGoal.name);
-            }
-        } case (is Goal->{Outcome*}) {
-            namesList.append(goal.key.name);
-        }
-    }
-    [String*] names = namesList.sequence;
-    return names;
+[String*] names({<Goal>*} goals) {
+    return [ for (goal in goals) goal.name ];
 }
 
-EngineResult callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goals), Writer writer = MockWriter()) {
-    return runEngine(goals, "test project", arguments, writer);
+EngineResult callEngine(GoalDefinitionsBuilder builder, [String*] arguments, Writer writer = MockWriter()) {
+    return runEngine(builder, arguments, writer);
 }
 
 [String*] execution(EngineResult engineResult) {
@@ -66,4 +52,12 @@ EngineResult callEngine({<Goal|GoalSet>+} goals, [String*] arguments = names(goa
 
 [String*] notRun(EngineResult engineResult) {
     return [for (result in engineResult.executionResults) if (result.notRun) result.goal];
+}
+
+GoalDefinitionsBuilder builderFromGoals({Goal*} availableGoals) {
+    value builder = GoalDefinitionsBuilder();
+    for (goal in availableGoals) {
+        builder.add(goal);
+    }
+    return builder;
 }

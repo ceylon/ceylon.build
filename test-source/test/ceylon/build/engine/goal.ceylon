@@ -1,6 +1,5 @@
 import ceylon.test { test, assertEquals, assertNotEquals  }
-import ceylon.build.engine { duplicateGoalsFound, invalidGoalFound }
-import ceylon.build.task { Goal }
+import ceylon.build.engine { Goal, duplicateGoalsFound, invalidGoalFound }
 
 test void testDuplicateGoals() {
     checkDuplicateGoals([createTestGoal("a"), createTestGoal("b"), createTestGoal("c")], []);
@@ -10,7 +9,8 @@ test void testDuplicateGoals() {
 
 void checkDuplicateGoals({Goal+} goals, [String*] duplicates) {
     value writer = MockWriter();
-    value result = callEngine(goals, [goals.first.name], writer);
+    value builder = builderFromGoals(goals);
+    value result = callEngine(builder, [goals.first.name], writer);
     if (nonempty duplicates) {
         assertEquals(result.status, duplicateGoalsFound);
         assertEquals(writer.errorMessages.sequence[0], "# duplicate goal names found: ``duplicates``");
@@ -55,12 +55,13 @@ test void testValidateGoalsName() {
 }
 
 void checkGoalName(String name, Boolean valid) {
-    checkInvalidGoalsNames([Goal(name)], valid then [] else [name]);
+    checkInvalidGoalsNames([createTestGoal(name)], valid then [] else [name]);
 }
 
 void checkInvalidGoalsNames({Goal+} goals, [String*] invalidGoals) {
     value writer = MockWriter();
-    value result = callEngine(goals, [goals.first.name], writer);
+    value builder = builderFromGoals(goals);
+    value result = callEngine(builder, [goals.first.name], writer);
     if (nonempty invalidGoals) {
         assertEquals(result.status, invalidGoalFound);
         assertEquals(result.definitions, null);

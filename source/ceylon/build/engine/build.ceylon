@@ -1,10 +1,8 @@
 import ceylon.build.task { Writer }
 
-shared EngineResult runEngineFromDefinitions(
+shared EngineResult runEngine(
     "Goals available in the engine"
     GoalDefinitionsBuilder|GoalDefinitions goals,
-    "Project name to be displayed"
-    String project = "",
     "Arguments given to the engine (goals names and options).
      Default value is `process.arguments`"
     [String*] arguments = process.arguments,
@@ -13,7 +11,7 @@ shared EngineResult runEngineFromDefinitions(
     Writer writer = consoleWriter) {
     Integer startTime = system.milliseconds;
     if (goals is GoalDefinitionsBuilder) {
-        writer.info("## ceylon.build: ``project``");
+        writer.info("## ceylon.build");
     }
     value result = processGoals(goals, arguments, writer);
     Integer endTime = system.milliseconds;

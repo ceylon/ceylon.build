@@ -1,6 +1,6 @@
 import ceylon.language.meta.declaration { ValueDeclaration, FunctionDeclaration }
 
-shared void noop() {}
+shared Anything() noop = void() {};
 
 "The annotation for [[goal]]"
 shared final annotation class GoalAnnotation(name

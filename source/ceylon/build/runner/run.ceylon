@@ -1,7 +1,7 @@
 import ceylon.language.meta.declaration { Module }
 import ceylon.build.engine {
     GoalDefinitionsBuilder,
-    runEngineFromDefinitions,
+    runEngine,
     consoleWriter,
     Status,
     success,
@@ -43,7 +43,7 @@ Integer start(GoalDefinitionsBuilder goals, Writer writer, [String*] arguments) 
     if (interactive(ceylonBuildArguments)) {
         status = console(goals, writer);
     } else {
-        value result = runEngineFromDefinitions {
+        value result = runEngine {
             goals = goals;
             arguments =  ceylonBuildArguments;
         };

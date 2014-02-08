@@ -1,9 +1,10 @@
-import ceylon.build.task { Goal, Writer, Outcome, Failure, done }
+import ceylon.build.task { Goal, Writer, Outcome, Failure, done, setContextForTask, clearTaskContext }
 
 String argumentPrefix = "-D";
 
 ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions definitions, Writer writer) {
     value results = SequenceBuilder<GoalExecutionResult>();
+    print(goals);
     if (goals.empty) {
         writer.error("# no goal to run, available goals are: ``definitions.availableGoals``");
         return ExecutionResult([], noGoalToRun);
@@ -36,7 +37,9 @@ String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name
 
 GoalExecutionResult executeTasks(String goal, GoalDefinitions definitions, String[] arguments, Writer writer) {
     value properties = definitions.properties(goal);
+    setContextForTask(arguments, writer);
     value outcome = executeTask(properties.task, arguments, writer);
+    clearTaskContext();
     reportOutcome(outcome, goal, writer);
     return GoalExecutionResult(goal, arguments, outcome);
 }

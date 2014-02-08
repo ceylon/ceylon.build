@@ -1,20 +1,20 @@
-import ceylon.build.engine { success, noGoalToRun  }
-import ceylon.build.task { Goal }
+import ceylon.build.engine { Goal, success, noGoalToRun  }
 import ceylon.test { assertEquals, test }
+import ceylon.build.task { noop }
 
 test void shouldNotFindGoalToExecuteIfNoneIsRequested() {
-    Goal a = createTestGoal("a");
+    value a = createTestGoal("a");
     checkGoalsToExecute([a], [], []);
 }
 
 test void shouldNotFindGoalToExecuteIfUnknownGoalIsRequested() {
-    Goal a = createTestGoal("a");
+    value a = createTestGoal("a");
     checkGoalsToExecute([a], ["a", "b"], []);
 }
 
 test void shouldFindRequestedGoalToExecute() {
-    Goal a = createTestGoal("a");
-    Goal b = createTestGoal("b");
+    value a = createTestGoal("a");
+    value b = createTestGoal("b");
     checkGoalsToExecute([a], ["a"], [a]);
     checkGoalsToExecute([a, b], ["a"], [a]);
     checkGoalsToExecute([a, b], ["a", "b"], [a, b]);
@@ -23,21 +23,21 @@ test void shouldFindRequestedGoalToExecute() {
 }
 
 test void shouldFindRequestedGoalWithDependenciesToExecute() {
-    Goal a = createTestGoal("a");
-    Goal b = createTestGoal("b", [a]);
+    value a = createTestGoal("a");
+    value b = createTestGoal("b", ["a"]);
     checkGoalsToExecute([a], ["a"], [a]);
     checkGoalsToExecute([b], ["a"], []);
-    checkGoalsToExecute([b], ["b"], [a, b]);
+    checkGoalsToExecute([a, b], ["b"], [a, b]);
     checkGoalsToExecute([a, b], ["a", "b"], [a, b]);
     checkGoalsToExecute([a, b], ["b", "a"], [a, b]);
 }
 
 test void testGoalsLinearization() {
-    Goal a = createTestGoal("a");
-    Goal b = createTestGoal("b", [a]);
-    Goal c = createTestGoal("c", [b]);
-    Goal d = createTestGoal("d", [b, a]);
-    {Goal+} goals = [a, b, c, d];
+    value a = createTestGoal("a");
+    value b = createTestGoal("b", ["a"]);
+    value c = createTestGoal("c", ["b"]);
+    value d = createTestGoal("d", ["b", "a"]);
+    value goals = [a, b, c, d];
     checkGoalsToExecute(goals, ["a"], [a]);
     checkGoalsToExecute(goals, ["b"], [a, b]);
     checkGoalsToExecute(goals, ["c"], [a, b, c]);
@@ -45,11 +45,11 @@ test void testGoalsLinearization() {
 }
 
 test void testGoalsWithoutTasksLinearization() {
-    Goal a = Goal("a", []);
-    Goal b = Goal("b", [], [a]);
-    Goal c = Goal("c", [noOp], [b]);
-    Goal d = Goal("d", [noOp], [b, a]);
-    {Goal+} goals = [a, b, c, d];
+    value a = createTestGoal("a", [], noop);
+    value b = createTestGoal("b", ["a"], noop);
+    value c = createTestGoal("c", ["b"]);
+    value d = createTestGoal("d", ["b", "a"]);
+    value goals = [a, b, c, d];
     checkGoalsToExecute(goals, ["a"], []);
     checkGoalsToExecute(goals, ["b"], []);
     checkGoalsToExecute(goals, ["c"], [c]);
@@ -57,11 +57,11 @@ test void testGoalsWithoutTasksLinearization() {
 }
 
 test void testGoalsWithMultipleTasksLinearization() {
-    Goal a = Goal("a", [noOp, noOp]);
-    Goal b = Goal("b", [noOp, noOp], [a]);
-    Goal c = Goal("c", [noOp], [b]);
-    Goal d = Goal("d", [noOp], [b, a]);
-    {Goal+} goals = [a, b, c, d];
+    value a = createTestGoal("a");
+    value b = createTestGoal("b", ["a"]);
+    value c = createTestGoal("c", ["b"]);
+    value d = createTestGoal("d", ["b", "a"]);
+    value goals = [a, b, c, d];
     checkGoalsToExecute(goals, ["a"], [a]);
     checkGoalsToExecute(goals, ["b"], [a, b]);
     checkGoalsToExecute(goals, ["c"], [a, b, c]);
@@ -69,10 +69,10 @@ test void testGoalsWithMultipleTasksLinearization() {
 }
 
 test void testGoalsReduction() {
-    Goal a = Goal("a", [noOp]);
-    Goal b = Goal("b", [noOp]);
-    Goal c = Goal("c", [noOp]);
-    {Goal+} goals = [a, b, c];
+    value a = createTestGoal("a");
+    value b = createTestGoal("b");
+    value c = createTestGoal("c");
+    value goals = [a, b, c];
     checkGoalsToExecute(goals, [], []);
     checkGoalsToExecute(goals, ["a"], [a]);
     checkGoalsToExecute(goals, ["a", "a"], [a]);
@@ -83,9 +83,9 @@ test void testGoalsReduction() {
 }
 
 test void testGoalsWithMultipleTasksReduction() {
-    Goal a = Goal("a", [noOp, noOp]);
-    Goal b = Goal("b", [noOp]);
-    {Goal+} goals = [a, b];
+    value a = createTestGoal("a");
+    value b = createTestGoal("b");
+    value goals = [a, b];
     checkGoalsToExecute(goals, [], []);
     checkGoalsToExecute(goals, ["a"], [a]);
     checkGoalsToExecute(goals, ["a", "a"], [a]);
@@ -95,9 +95,9 @@ test void testGoalsWithMultipleTasksReduction() {
 }
 
 test void testGoalsWithoutTasksReduction() {
-    Goal a = Goal("a", []);
-    Goal b = Goal("b", [noOp]);
-    {Goal+} goals = [a, b];
+    value a = createTestGoal("a", [], noop);
+    value b = createTestGoal("b");
+    value goals = [a, b];
     checkGoalsToExecute(goals, [], []);
     checkGoalsToExecute(goals, ["a"], []);
     checkGoalsToExecute(goals, ["a", "a"], []);
@@ -106,8 +106,9 @@ test void testGoalsWithoutTasksReduction() {
     checkGoalsToExecute(goals, ["b", "a", "b"], [b]);
 }
 
-void checkGoalsToExecute({Goal+} availableGoals, [String*] arguments, {Goal*} expectedExecutionList) {
-    value result = callEngine(availableGoals, arguments);
+void checkGoalsToExecute({Goal*} availableGoals, [String*] arguments, {Goal*} expectedExecutionList) {
+    value builder = builderFromGoals(availableGoals);
+    value result = callEngine(builder, arguments);
     assertEquals(result.status, expectedExecutionList.empty then noGoalToRun else success);
     assertEquals(definitionsNames(result), names(availableGoals));
     assertEquals(execution(result), names(expectedExecutionList));

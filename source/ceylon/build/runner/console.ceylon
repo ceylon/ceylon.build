@@ -1,7 +1,7 @@
 import ceylon.collection { HashMap }
 import ceylon.build.engine {
     GoalDefinitionsBuilder,
-    runEngineFromDefinitions,
+    runEngine,
     reportInvalidDefinitions, Status, success, noGoalToRun, errorOnTaskExecution, duplicateGoalsFound, invalidGoalFound, dependencyCycleFound
 }
 import ceylon.build.task { Writer }
@@ -29,7 +29,7 @@ Status console(GoalDefinitionsBuilder goals, Writer writer) {
             }
             assert(exists rawLine);
             String line = rawLine.trimmed;
-            value result = runEngineFromDefinitions(definitions, "", line.split().sequence, writer);
+            value result = runEngine(definitions, line.split().sequence, writer);
             print(statusToMessage(result.status));
         }
     }

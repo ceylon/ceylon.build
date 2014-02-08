@@ -1,5 +1,5 @@
-import ceylon.build.engine { runEngine, EngineResult, noGoalToRun, errorOnTaskExecution, success }
-import ceylon.build.task { Goal, Context, Failure, done, Writer }
+import ceylon.build.engine { runEngine, EngineResult, noGoalToRun, errorOnTaskExecution, success, GoalDefinitionsBuilder, Goal, GoalProperties }
+import ceylon.build.task { Writer, noop }
 import ceylon.test { test, assertEquals }
 import ceylon.collection { MutableList, LinkedList }
 
@@ -108,55 +108,79 @@ test void shouldExitWhenNoGoalWithTasksToRunEvenOnDependencies() {
 }
 
 EngineResult execute([String*] arguments, Writer writer, MutableList<String> executedTasks) {
-    function createTask(String taskName) {
-        return function(Context context) {
-            executedTasks.add(taskName);
-            return done;
+    value builder = GoalDefinitionsBuilder();
+    builder.add {
+        Goal {
+            name = "goalWithoutTasks";
+            properties = GoalProperties {
+                internal = false;
+                task = noop;
+                dependencies = [];
+            };
         };
-    }
-    
-    Goal goalWithoutTasks = Goal {
-        name = "goalWithoutTasks";
     };
-    
-    Goal goalWithOneTask = Goal {
-        name = "goalWithOneTask";
-        createTask("goalWithOneTask")
+    builder.add {
+        Goal {
+            name = "goalWithOneTask";
+            properties = GoalProperties {
+                internal = false;
+                task = () => executedTasks.add("goalWithOneTask");
+                dependencies = [];
+            };
+        };
     };
-    
-    Goal goalWithMultipleTasks = Goal {
-        name = "goalWithMultipleTasks";
-        createTask("goalWithMultipleTasks-1"),
-        createTask("goalWithMultipleTasks-2"),
-        createTask("goalWithMultipleTasks-3")
+    builder.add {
+        Goal {
+            name = "goalWithMultipleTasks";
+            properties = GoalProperties {
+                internal = false;
+                task = void() {
+                    executedTasks.add("goalWithMultipleTasks-1");
+                    executedTasks.add("goalWithMultipleTasks-2");
+                    executedTasks.add("goalWithMultipleTasks-3");
+                };
+                dependencies = [];
+            };
+        };
     };
-    
-    Goal goalWithMultipleTasksFailingInTheMiddle = Goal {
-        name = "goalWithMultipleTasksFailingInTheMiddle";
-        createTask("goalWithMultipleTasksFailingInTheMiddle-1"),
-        function(Context context) {
-            executedTasks.add("goalWithMultipleTasksFailingInTheMiddle-2");
-            return Failure("fail to execute task 'run'");
-        },
-        createTask("goalWithMultipleTasksFailingInTheMiddle-3")
+    builder.add {
+        Goal {
+            name = "goalWithMultipleTasksFailingInTheMiddle";
+            properties = GoalProperties {
+                internal = false;
+                task = void() {
+                    executedTasks.add("goalWithMultipleTasksFailingInTheMiddle-1");
+                    executedTasks.add("goalWithMultipleTasksFailingInTheMiddle-2");
+                    "fail to execute task 'run'"
+                    assert(1 == 0);
+                    executedTasks.add("goalWithMultipleTasksFailingInTheMiddle-3");
+                };
+                dependencies = [];
+            };
+        };
     };
-    
-    Goal goalWithOnlyDependencies = Goal {
-        name = "goalWithOnlyDependencies";
-        dependencies = [goalWithoutTasks, goalWithOneTask, goalWithMultipleTasks];
+    builder.add {
+        Goal {
+            name = "goalWithOnlyDependencies";
+            properties = GoalProperties {
+                internal = false;
+                task = noop;
+                dependencies = ["goalWithoutTasks","goalWithOneTask","goalWithMultipleTasks"];
+            };
+        };
     };
-    
-    Goal goalWithOnlyDependenciesOnGoalsWithoutTasks = Goal {
-        name = "goalWithOnlyDependenciesOnGoalsWithoutTasks";
-        dependencies = [goalWithoutTasks];
+    builder.add {
+        Goal {
+            name = "goalWithOnlyDependenciesOnGoalsWithoutTasks";
+            properties = GoalProperties {
+                internal = false;
+                task = noop;
+                dependencies = ["goalWithoutTasks"];
+            };
+        };
     };
     return runEngine {
-        project = "My Build Project";
-        goals = [
-        goalWithoutTasks, goalWithOneTask, goalWithMultipleTasks,
-        goalWithMultipleTasksFailingInTheMiddle, goalWithOnlyDependencies,
-        goalWithOnlyDependenciesOnGoalsWithoutTasks
-        ];
+        goals = builder;
         arguments = arguments;
         writer = writer;
     };
