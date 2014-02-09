@@ -11,8 +11,12 @@ ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions d
     if (goals.empty) {
         if (definitions.availableGoals.empty) {
             writer.error("# no available goals");
+            if (!definitions.internalGoals.empty) {
+                writer.error("# following internal goals exist: ``displayGoalsList(definitions.internalGoals)``");
+                writer.error("# did you forgot to make them shared?");
+            }
         } else {
-            writer.error("# no goal to run, available goals are: ``" ".join(definitions.availableGoals)``");
+            writer.error("# no goal to run, available goals are: ``displayGoalsList(definitions.availableGoals)``");
         }
         return ExecutionResult([], noGoalToRun);
     } else {
@@ -35,7 +39,7 @@ ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions d
     }
 }
 
-String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name})``]";
+String displayGoalsList([String*] goals) => "[``", ".join(goals)``]";
 
 [String*] filterArgumentsForGoal(String goal, [String*] arguments) {
     String prefix = "``argumentPrefix````goal``:";

@@ -3,10 +3,18 @@ import ceylon.collection { HashMap }
 shared class GoalDefinitions({<String->GoalProperties>*} definitions) {
     
     Map<String, GoalProperties> map = HashMap { entries = definitions; };
-            
+    
+    value stringSort = (String a, String b) => a.compare(b);
+    
     shared [String*] availableGoals =
-        [ for (definition in definitions) if (!definition.item.internal) definition.key ]
-            .sort((String a, String b) => a.compare(b));
+        [ for (definition in definitions)
+            if (!definition.item.internal)
+                definition.key ].sort(stringSort);
+    
+    shared [String*] internalGoals =
+        [ for (definition in definitions)
+            if (definition.item.internal)
+                definition.key ].sort(stringSort);
     
     shared Boolean defines(String goal) => map.defines(goal);
     

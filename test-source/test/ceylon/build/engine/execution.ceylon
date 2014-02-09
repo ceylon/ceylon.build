@@ -61,7 +61,7 @@ void assertNoGoalToRun([String*] arguments) {
     assertEquals(writer.infoMessages, ["## ceylon.build"]);
     value errorMessages = writer.errorMessages.sequence;
     assertEquals(errorMessages.size, 2);
-    assertEquals(errorMessages[0], "# no goal to run, available goals are: a b");
+    assertEquals(errorMessages[0], "# no goal to run, available goals are: [a, b]");
     assertEquals(errorMessages[1]?.startsWith("## failure - duration "), true);
 }
 
