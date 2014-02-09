@@ -8,9 +8,12 @@ String argumentPrefix = "-D";
 
 ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions definitions, Writer writer) {
     value results = SequenceBuilder<GoalExecutionResult>();
-    print(goals);
     if (goals.empty) {
-        writer.error("# no goal to run, available goals are: ``definitions.availableGoals``");
+        if (definitions.availableGoals.empty) {
+            writer.error("# no available goals");
+        } else {
+            writer.error("# no goal to run, available goals are: ``" ".join(definitions.availableGoals)``");
+        }
         return ExecutionResult([], noGoalToRun);
     } else {
         Status status;
