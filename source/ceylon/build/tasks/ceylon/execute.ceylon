@@ -13,14 +13,14 @@ void execute(Writer writer, String title, String? ceylon, [String+] arguments) {
     reportOutcome(exitCode, ceylon else "<ceylon>", arguments);
 }
 
-"Executes ceylon command using `CeylonTool`"
-Integer executeWithCurrentCeylonRuntime([String+] command) {
-    return start(*command);
-}
-
 "Executes ceylon command with given ceylon executable in a new process"
 Integer executeInNewProcess(Writer writer, String title, String ceylon, [String+] arguments) {
     value commandToExecute = [ceylon, *arguments];
     writer.info("``title``: '``" ".join(commandToExecute)``'");
     return executeCommand(ceylon, arguments) else 0;
+}
+
+"Executes ceylon command using `CeylonTool`"
+Integer executeWithCurrentCeylonRuntime([String+] arguments) {
+    return start(*arguments);
 }
