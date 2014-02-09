@@ -14,7 +14,7 @@ import ceylon.collection { HashSet, MutableSet }
     value goalsToExecute = SequenceBuilder<String>();
     for (argument in arguments) {
         if (!argument.startsWith(argumentPrefix)) {
-            if (definitions.defines(argument) && !definitions.properties(argument).internal) {
+            if (definitions.defines(argument)) {
                 goalsToExecute.append(argument);
             } else {
                 writer.error("# goal '``argument``' not found, stopping");
