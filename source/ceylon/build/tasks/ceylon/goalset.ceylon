@@ -5,20 +5,27 @@ shared interface CeylonModule {
     "module name"
     shared formal String moduleName;
     
+    "test module name"
+    shared default String testModuleName => testModuleNameFromModuleName(moduleName);
+    
+    "test module version"
+    shared default String? testModuleVersion => defaultModuleVersion;
+    
     goal
     shared default void doc() => package.document { modules = moduleName; };
 }
 
-shared interface CeylonTestModule satisfies CeylonModule {
+shared class CeylonBaseModule(moduleName, testModuleName, testModuleVersion) satisfies CeylonModule {
     
+    "module name"
+    shared actual String moduleName;
     "test module name"
-    shared default String testModuleName => "test.``moduleName``";
-    
+    shared actual String testModuleName;
     "test module version"
-    shared default String? testModuleVersion => defaultModuleVersion;
+    shared actual String? testModuleVersion;
 }
 
-shared interface CeylonJvmModule satisfies CeylonTestModule {
+shared interface CeylonJvmModule satisfies CeylonModule {
     
     goal
     shared default void compile() => package.compile { modules = moduleName; };
@@ -39,7 +46,7 @@ shared interface CeylonJvmModule satisfies CeylonTestModule {
     shared default void test() {}
 }
 
-shared interface CeylonJsModule satisfies CeylonTestModule {
+shared interface CeylonJsModule satisfies CeylonModule {
     
     goal {
         name = "compile-js";
@@ -68,64 +75,38 @@ shared interface CeylonJsModule satisfies CeylonTestModule {
 
 shared CeylonJvmModule ceylonJvmModule(
     String moduleName,
-    String testModuleName = "test.``moduleName``",
+    String testModuleName = testModuleNameFromModuleName(moduleName),
     String? testModuleVersion = defaultModuleVersion) {
     value moduleNameAlias = moduleName;
     value testModuleNameAlias = testModuleName;
     value testModuleVersionAlias = testModuleVersion;
-    object o satisfies CeylonJvmModule {
-        
-        "module name"
-        shared actual String moduleName = moduleNameAlias;
-        "test module name"
-        shared actual String testModuleName = testModuleNameAlias;
-        "test module version"
-        shared actual String? testModuleVersion = testModuleVersionAlias;
-        
-        test = noop;
-    }
+    object o extends CeylonBaseModule(moduleNameAlias, testModuleNameAlias, testModuleVersionAlias)
+            satisfies CeylonJvmModule { }
     return o;
 }
 
 shared CeylonJsModule ceylonJsModule(
     String moduleName,
-    String testModuleName = "test.``moduleName``",
+    String testModuleName = testModuleNameFromModuleName(moduleName),
     String? testModuleVersion = defaultModuleVersion) {
     value moduleNameAlias = moduleName;
     value testModuleNameAlias = testModuleName;
     value testModuleVersionAlias = testModuleVersion;
-    object o satisfies CeylonJsModule {
-        
-        "module name"
-        shared actual String moduleName = moduleNameAlias;
-        "test module name"
-        shared actual String testModuleName = testModuleNameAlias;
-        "test module version"
-        shared actual String? testModuleVersion = testModuleVersionAlias;
-        
-        testJs = noop;
-    }
+    object o extends CeylonBaseModule(moduleNameAlias, testModuleNameAlias, testModuleVersionAlias)
+            satisfies CeylonJsModule { }
     return o;
 }
 
 shared CeylonJvmModule & CeylonJsModule ceylonJvmAndJsModule(
     String moduleName,
-    String testModuleName = "test.``moduleName``",
+    String testModuleName = testModuleNameFromModuleName(moduleName),
     String? testModuleVersion = defaultModuleVersion) {
     value moduleNameAlias = moduleName;
     value testModuleNameAlias = testModuleName;
     value testModuleVersionAlias = testModuleVersion;
-    object o satisfies CeylonJvmModule & CeylonJsModule {
-        
-        "module name"
-        shared actual String moduleName = moduleNameAlias;
-        "test module name"
-        shared actual String testModuleName = testModuleNameAlias;
-        "test module version"
-        shared actual String? testModuleVersion = testModuleVersionAlias;
-        
-        test = noop;
-        testJs = noop;
-    }
+    object o extends CeylonBaseModule(moduleNameAlias, testModuleNameAlias, testModuleVersionAlias)
+            satisfies CeylonJvmModule & CeylonJsModule { }
     return o;
 }
+
+String testModuleNameFromModuleName(String moduleName) => "test.``moduleName``";
