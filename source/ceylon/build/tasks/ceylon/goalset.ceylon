@@ -1,4 +1,4 @@
-import ceylon.build.task { goal, noop }
+import ceylon.build.task { goal }
 
 shared interface CeylonModule {
     
@@ -15,7 +15,11 @@ shared interface CeylonModule {
     shared default void doc() => package.document { modules = moduleName; };
 }
 
-shared class CeylonBaseModule(moduleName, testModuleName, testModuleVersion) satisfies CeylonModule {
+shared class CeylonBaseModule(
+    moduleName,
+    testModuleName = testModuleNameFromModuleName(moduleName),
+    testModuleVersion = defaultModuleVersion)
+    satisfies CeylonModule {
     
     "module name"
     shared actual String moduleName;
