@@ -8,6 +8,7 @@ project, written for ceylon.build'
 . $CEYLON_HOME/bin/ceylon-sh-setup
 
 # FIXME: make these customisable via command-line
+RUNNER_VERSION=1.0.0
 BUILD_MODULE=build
 BUILD_MODULE_VERSION=1
 BUILD_MODULE_SOURCE=build
@@ -38,5 +39,5 @@ then
  $CEYLON_HOME/bin/ceylon compile --source $BUILD_MODULE_SOURCE $BUILD_MODULE
 fi
 
-$CEYLON_HOME/bin/ceylon run $BUILD_MODULE/$BUILD_MODULE_VERSION $@
+$CEYLON_HOME/bin/ceylon run ceylon.build.runner/$RUNNER_VERSION $BUILD_MODULE/$BUILD_MODULE_VERSION $@
 
