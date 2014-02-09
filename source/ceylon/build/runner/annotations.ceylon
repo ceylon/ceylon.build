@@ -118,8 +118,7 @@ shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
 
 FunctionDeclaration[] findClassMembersAnnotatedWithGoal(
         ClassDeclaration instanceTypeDeclaration) {
-    return instanceTypeDeclaration.
-            annotatedDeclaredMemberDeclarations<FunctionDeclaration, GoalAnnotation>();
+    return instanceTypeDeclaration.annotatedMemberDeclarations<FunctionDeclaration, GoalAnnotation>();
 }
 
 class InvalidGoalDeclaration(declaration) {
