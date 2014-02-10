@@ -25,7 +25,7 @@ ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions d
         for (goal in goals) {
             value goalArguments = filterArgumentsForGoal(goal, arguments);
             writer.info("# running ``goal``(``", ".join(goalArguments)``)");
-            value result = executeTasks(goal, definitions, goalArguments, writer);
+            value result = executeGoal(goal, definitions, goalArguments, writer);
             results.append(result);
             if (!result.success) {
                 status = errorOnTaskExecution;
@@ -46,7 +46,7 @@ String displayGoalsList([String*] goals) => "[``", ".join(goals)``]";
     return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)];
 }
 
-GoalExecutionResult executeTasks(String goal, GoalDefinitions definitions, String[] arguments, Writer writer) {
+GoalExecutionResult executeGoal(String goal, GoalDefinitions definitions, String[] arguments, Writer writer) {
     value properties = definitions.properties(goal);
     value outcome = executeTask(properties.task, arguments, writer);
     reportOutcome(outcome, goal, writer);
