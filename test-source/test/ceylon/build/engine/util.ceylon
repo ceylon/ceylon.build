@@ -35,7 +35,7 @@ class MockWriter() satisfies Writer {
 }
 
 EngineResult callEngine(GoalDefinitionsBuilder builder, [String*] arguments, Writer writer = MockWriter()) {
-    return runEngine(builder, arguments, writer);
+    return runEngine(builder, writer, arguments);
 }
 
 [String*] execution(EngineResult engineResult) {

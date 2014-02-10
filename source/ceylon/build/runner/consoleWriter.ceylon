@@ -4,7 +4,7 @@ import ceylon.build.task { Writer }
  
  Outputs are standard output for `info(String)` and
  standard error output for `error(String)` and `exception(Exception)`"
-shared object consoleWriter satisfies Writer {
+object consoleWriter satisfies Writer {
     
     "Write a message to standard output"
     shared actual void info(String message) {

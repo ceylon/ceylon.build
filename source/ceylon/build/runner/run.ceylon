@@ -2,7 +2,6 @@ import ceylon.language.meta.declaration { Module }
 import ceylon.build.engine {
     GoalDefinitionsBuilder,
     runEngine,
-    consoleWriter,
     Status,
     success,
     errorOnTaskExecution,
@@ -45,6 +44,7 @@ Integer start(GoalDefinitionsBuilder goals, Writer writer, [String*] arguments) 
     } else {
         value result = runEngine {
             goals = goals;
+            writer = writer;
             arguments =  ceylonBuildArguments;
         };
         status = result.status;

@@ -29,7 +29,7 @@ Status console(GoalDefinitionsBuilder goals, Writer writer) {
             }
             assert(exists rawLine);
             String line = rawLine.trimmed;
-            value result = runEngine(definitions, line.split().sequence, writer);
+            value result = runEngine(definitions, writer, line.split().sequence);
             print(statusToMessage(result.status));
         }
     }

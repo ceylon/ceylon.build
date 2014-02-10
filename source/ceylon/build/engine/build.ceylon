@@ -3,12 +3,12 @@ import ceylon.build.task { Writer }
 shared EngineResult runEngine(
     "Goals available in the engine"
     GoalDefinitionsBuilder|GoalDefinitions goals,
-    "Arguments given to the engine (goals names and options).
-     Default value is `process.arguments`"
-    [String*] arguments = process.arguments,
     "Writer to which info and error messages will be written.
      Default is to output to console."
-    Writer writer = consoleWriter) {
+    Writer writer,
+    "Arguments given to the engine (goals names and options).
+     Default value is `process.arguments`"
+    [String*] arguments = process.arguments) {
     Integer startTime = system.milliseconds;
     if (goals is GoalDefinitionsBuilder) {
         writer.info("## ceylon.build");
