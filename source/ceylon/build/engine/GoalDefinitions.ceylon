@@ -4,17 +4,17 @@ shared class GoalDefinitions({<String->GoalProperties>*} definitions) {
     
     Map<String, GoalProperties> map = HashMap { entries = definitions; };
     
-    value stringSort = (String a, String b) => a.compare(b);
+    value stringComparison = (String a, String b) => a.compare(b);
     
     shared [String*] availableGoals =
         [ for (definition in definitions)
             if (!definition.item.internal)
-                definition.key ].sort(stringSort);
+                definition.key ].sort(stringComparison);
     
     shared [String*] internalGoals =
         [ for (definition in definitions)
             if (definition.item.internal)
-                definition.key ].sort(stringSort);
+                definition.key ].sort(stringComparison);
     
     shared Boolean defines(String goal) => map.defines(goal);
     
