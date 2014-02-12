@@ -1,5 +1,5 @@
 import ceylon.build.engine { runEngine, EngineResult, noGoalToRun, errorOnTaskExecution, success, GoalDefinitionsBuilder, Goal, GoalProperties }
-import ceylon.build.task { Writer, noop }
+import ceylon.build.task { Writer }
 import ceylon.test { test, assertEquals }
 import ceylon.collection { MutableList, LinkedList }
 
@@ -114,7 +114,7 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
             name = "goalWithoutTasks";
             properties = GoalProperties {
                 internal = false;
-                task = noop;
+                task = null;
                 dependencies = [];
             };
         };
@@ -164,7 +164,7 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
             name = "goalWithOnlyDependencies";
             properties = GoalProperties {
                 internal = false;
-                task = noop;
+                task = null;
                 dependencies = ["goalWithoutTasks","goalWithOneTask","goalWithMultipleTasks"];
             };
         };
@@ -174,7 +174,7 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
             name = "goalWithOnlyDependenciesOnGoalsWithoutTasks";
             properties = GoalProperties {
                 internal = false;
-                task = noop;
+                task = null;
                 dependencies = ["goalWithoutTasks"];
             };
         };

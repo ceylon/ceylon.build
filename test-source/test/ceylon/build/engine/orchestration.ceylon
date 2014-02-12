@@ -45,8 +45,8 @@ test void testGoalsLinearization() {
 }
 
 test void testGoalsWithoutTasksLinearization() {
-    value a = createTestGoal("a", [], noop);
-    value b = createTestGoal("b", ["a"], noop);
+    value a = createTestGoal("a", [], null);
+    value b = createTestGoal("b", ["a"], null);
     value c = createTestGoal("c", ["b"]);
     value d = createTestGoal("d", ["b", "a"]);
     value goals = [a, b, c, d];
@@ -95,7 +95,7 @@ test void testGoalsWithMultipleTasksReduction() {
 }
 
 test void testGoalsWithoutTasksReduction() {
-    value a = createTestGoal("a", [], noop);
+    value a = createTestGoal("a", [], null);
     value b = createTestGoal("b");
     value goals = [a, b];
     checkGoalsToExecute(goals, [], []);

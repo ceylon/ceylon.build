@@ -1,4 +1,4 @@
-import ceylon.build.task { goal }
+import ceylon.build.task { goal, noop, NoOp }
 
 shared interface CeylonModule {
     
@@ -47,7 +47,7 @@ shared interface CeylonJvmModule satisfies CeylonModule {
     goal {
         dependencies = [`function compile`, `function compileTests`, `function runTests`];
     }
-    shared default void test() {}
+    shared default NoOp test => noop;
 }
 
 shared interface CeylonJsModule satisfies CeylonModule {
@@ -74,7 +74,7 @@ shared interface CeylonJsModule satisfies CeylonModule {
         name = "test-js";
         dependencies = [`function compileJs`, `function compileJsTests`, `function runJsTests`];
     }
-    shared default void testJs() {}
+    shared default NoOp testJs => noop;
 }
 
 shared CeylonJvmModule ceylonJvmModule(
@@ -85,7 +85,9 @@ shared CeylonJvmModule ceylonJvmModule(
     value testModuleNameAlias = testModuleName;
     value testModuleVersionAlias = testModuleVersion;
     object o extends CeylonBaseModule(moduleNameAlias, testModuleNameAlias, testModuleVersionAlias)
-            satisfies CeylonJvmModule { }
+            satisfies CeylonJvmModule {
+        test = noop;
+    }
     return o;
 }
 
@@ -97,7 +99,9 @@ shared CeylonJsModule ceylonJsModule(
     value testModuleNameAlias = testModuleName;
     value testModuleVersionAlias = testModuleVersion;
     object o extends CeylonBaseModule(moduleNameAlias, testModuleNameAlias, testModuleVersionAlias)
-            satisfies CeylonJsModule { }
+            satisfies CeylonJsModule {
+        testJs = noop;
+    }
     return o;
 }
 
@@ -109,7 +113,10 @@ shared CeylonJvmModule & CeylonJsModule ceylonJvmAndJsModule(
     value testModuleNameAlias = testModuleName;
     value testModuleVersionAlias = testModuleVersion;
     object o extends CeylonBaseModule(moduleNameAlias, testModuleNameAlias, testModuleVersionAlias)
-            satisfies CeylonJvmModule & CeylonJsModule { }
+            satisfies CeylonJvmModule & CeylonJsModule {
+        test = noop;
+        testJs = noop;
+    }
     return o;
 }
 

@@ -4,7 +4,7 @@ import ceylon.build.engine { runEngine, EngineResult, GoalDefinitionsBuilder, Go
 
 void emptyFunction() {}
 
-Goal createTestGoal(String name, [String*] dependencies = [], Anything() fn = emptyFunction, Boolean internal = false) {
+Goal createTestGoal(String name, [String*] dependencies = [], Anything()? fn = emptyFunction, Boolean internal = false) {
     return Goal(name, GoalProperties(internal, fn, dependencies));
 }
 

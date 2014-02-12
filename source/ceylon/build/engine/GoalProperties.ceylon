@@ -7,7 +7,7 @@ shared final class GoalProperties(internal, task, dependencies) {
     shared Boolean internal;
     
     "Tasks to be run"
-    shared Anything() task;
+    shared Anything()? task;
     
     "Dependencies to other goals."
     shared [String*] dependencies;

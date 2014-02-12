@@ -1,11 +1,13 @@
-import ceylon.language.meta.declaration { ValueDeclaration, FunctionDeclaration }
+import ceylon.language.meta.declaration { ValueDeclaration, FunctionOrValueDeclaration }
 
-shared Anything() noop = void() {};
+shared abstract class NoOp() of noop {}
+
+shared object noop extends NoOp() {}
 
 "The annotation for [[goal]]"
 shared final annotation class GoalAnnotation(name
 //, dependencies
-) satisfies OptionalAnnotation<GoalAnnotation, FunctionDeclaration> {
+) satisfies OptionalAnnotation<GoalAnnotation, FunctionOrValueDeclaration> {
     
     "Goal name. If no name is provided, annotated
      element's name will be used as name."
@@ -26,7 +28,7 @@ shared annotation GoalAnnotation goal(
     String name = "",
     
     "Dependencies to other goals."
-    [FunctionDeclaration*] dependencies = [])
+    [FunctionOrValueDeclaration*] dependencies = [])
         => GoalAnnotation(name);
 
 

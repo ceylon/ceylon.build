@@ -48,7 +48,9 @@ String displayGoalsList([String*] goals) => "[``", ".join(goals)``]";
 
 GoalExecutionResult executeGoal(String goal, GoalDefinitions definitions, String[] arguments, Writer writer) {
     value properties = definitions.properties(goal);
-    value outcome = executeTask(properties.task, arguments, writer);
+    "Goal with noop leaked into execution list"
+    assert (exists task = properties.task);
+    value outcome = executeTask(task, arguments, writer);
     reportOutcome(outcome, goal, writer);
     return GoalExecutionResult(goal, arguments, outcome);
 }

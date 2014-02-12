@@ -1,5 +1,5 @@
 import ceylon.test { test, assertEquals }
-import ceylon.build.runner { tasksFromFunction, isFunctionWithoutParameters }
+import ceylon.build.runner { isFunctionWithoutParameters, functionModelToFunction }
 import ceylon.build.task { Context, Writer }
 import ceylon.language.meta.declaration { FunctionDeclaration }
 
@@ -17,7 +17,7 @@ void voidFunction() => tasksFromFunctionCallCounter++;
 
 test void shouldEmbedFunctionInTasks() {
     tasksFromFunctionCallCounter = 0;
-    value task = tasksFromFunction(`voidFunction`);
+    value task = functionModelToFunction(`voidFunction`);
     assertEquals(tasksFromFunctionCallCounter, 0);
     task();
     assertEquals(tasksFromFunctionCallCounter, 1);
@@ -31,7 +31,7 @@ class TestVoidMethod() {
 
 test void shouldEmbedcallCounterMethodInTasks() {
     value obj = TestVoidMethod();
-    value task = tasksFromFunction(`TestVoidMethod.method`.bind(obj));
+    value task = functionModelToFunction(`TestVoidMethod.method`.bind(obj));
     assertEquals(obj.callCounter, 0);
     task();
     assertEquals(obj.callCounter, 1);

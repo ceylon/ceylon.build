@@ -2,7 +2,7 @@ import ceylon.language.meta { type }
 import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDeclaration, FunctionOrValueDeclaration, ClassDeclaration }
 import ceylon.language.meta.model { Value, Function }
 import ceylon.build.engine { GoalProperties, GoalDefinitionsBuilder, Goal }
-import ceylon.build.task { GoalAnnotation, IncludeAnnotation }
+import ceylon.build.task { GoalAnnotation, IncludeAnnotation, NoOp }
 
 GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
     value invalidDeclarations = SequenceBuilder<InvalidGoalDeclaration>();
@@ -34,22 +34,22 @@ void fillGoalsAndInvalidDeclarations(
     }
 }
 
-shared [FunctionDeclaration*] findPackageMembersAnnotatedWithGoals(Module mod) {
-    value annotatedGoals = SequenceBuilder<FunctionDeclaration>();
+shared [FunctionOrValueDeclaration*] findPackageMembersAnnotatedWithGoals(Module mod) {
+    value annotatedGoals = SequenceBuilder<FunctionOrValueDeclaration>();
     for (pkg in mod.members) {
-        annotatedGoals.appendAll(pkg.annotatedMembers<FunctionDeclaration, GoalAnnotation>());
+        annotatedGoals.appendAll(pkg.annotatedMembers<FunctionOrValueDeclaration, GoalAnnotation>());
     }
     return annotatedGoals.sequence;
 }
 
-Goal|InvalidGoalDeclaration goalDefinition(FunctionDeclaration declaration, Object? container = null) {
+Goal|InvalidGoalDeclaration goalDefinition(FunctionOrValueDeclaration declaration, Object? container = null) {
     value annotation = goalAnnotation(declaration);
     value name = goalName(annotation, declaration);
-    value task = extractTasks(declaration, container);
-    if (isFunctionWithoutParameters(declaration)) {
+    if (checkSignature(declaration, container)) {
+        value callable = extractCallable(declaration, container);
         value internal = declaration.annotations<SharedAnnotation>().size == 0;
         value dependencies = [ ];//for (dependency in annotation.dependencies) goalName(goalAnnotation(declaration), dependency) ];
-        return Goal(name, GoalProperties(internal, task, dependencies));
+        return Goal(name, GoalProperties(internal, callable, dependencies));
     }
     return InvalidGoalDeclaration(declaration);
 }
@@ -66,12 +66,17 @@ shared String goalName(GoalAnnotation annotation, FunctionOrValueDeclaration dec
     return annotation.name.empty then declaration.name else annotation.name;
 }
 
-Anything() extractTasks(FunctionDeclaration declaration, Object? container = null) {
-    value func = functionFromDeclaration(declaration, container);
-    return tasksFromFunction(func);
+Anything()? extractCallable(FunctionOrValueDeclaration declaration, Object? container = null) {
+    switch (declaration)
+    case (is FunctionDeclaration) {
+        value func = functionModelFromDeclaration(declaration, container);
+        return functionModelToFunction(func);
+    } case (is ValueDeclaration) {
+        return null;
+    }
 }
 
-Value valueFromDeclaration(ValueDeclaration valueDeclaration, Anything containerInstance) {
+Value valueModelFromDeclaration(ValueDeclaration valueDeclaration, Anything containerInstance) {
     if (exists containerInstance) {
         value containerType = type(containerInstance);
         assert(exists attribute = containerType.getAttribute<Nothing, Anything>(valueDeclaration.name));
@@ -80,7 +85,7 @@ Value valueFromDeclaration(ValueDeclaration valueDeclaration, Anything container
     return valueDeclaration.apply<Anything>();
 }
 
-Function<Anything, []> functionFromDeclaration(
+Function<Anything, []> functionModelFromDeclaration(
     FunctionDeclaration declaration, Object? containerInstance) {
     if (exists containerInstance) {
         value containerType = type(containerInstance);
@@ -90,11 +95,22 @@ Function<Anything, []> functionFromDeclaration(
     return declaration.apply<Anything, []>();
 }
 
-shared Boolean isFunctionWithoutParameters(FunctionDeclaration declaration) {
-    return declaration.parameterDeclarations.empty && declaration.typeParameterDeclarations.empty;
+Boolean checkSignature(FunctionOrValueDeclaration declaration, Anything containerInstance) {
+    switch (declaration)
+    case (is FunctionDeclaration) {
+        return isFunctionWithoutParameters(declaration);
+    } case (is ValueDeclaration) {
+        return isNoOp(declaration, containerInstance);
+    }
 }
 
-shared Anything() tasksFromFunction(Function<Anything,[]> func) => () => func.apply();
+shared Boolean isFunctionWithoutParameters(FunctionDeclaration declaration)
+    => declaration.parameterDeclarations.empty && declaration.typeParameterDeclarations.empty;
+
+Boolean isNoOp(ValueDeclaration declaration, Anything containerInstance)
+    => valueModelFromDeclaration(declaration, containerInstance).type.subtypeOf(`NoOp`);
+
+shared Anything() functionModelToFunction(Function<Anything,[]> func) => () => func.apply();
 
 shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
     value annotatedIncludes = SequenceBuilder<ValueDeclaration>();
