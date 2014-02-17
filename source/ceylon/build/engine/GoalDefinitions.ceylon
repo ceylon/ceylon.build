@@ -19,8 +19,9 @@ shared class GoalDefinitions({<String->GoalProperties>*} definitions) {
     shared Boolean defines(String goal) => map.defines(goal);
     
     shared GoalProperties properties(String goal) {
-        "No goal defined with given name"
-        assert(exists propeties = map.get(goal));
-        return propeties;
+        if (exists propeties = map.get(goal)) {
+            return propeties;
+        }
+        throw AssertionException("No goal defined with name ``goal``");
     }
 }

@@ -1,5 +1,5 @@
 import ceylon.test { test, assertEquals, assertNotEquals  }
-import ceylon.build.engine { Goal, duplicateGoalsFound, invalidGoalFound }
+import ceylon.build.engine { Goal, duplicateGoalsFound, invalidGoalFound, GoalDefinitionsBuilder }
 
 test void testDuplicateGoals() {
     checkDuplicateGoals([createTestGoal("a"), createTestGoal("b"), createTestGoal("c")], []);
@@ -9,7 +9,7 @@ test void testDuplicateGoals() {
 
 void checkDuplicateGoals({Goal+} goals, [String*] duplicates) {
     value writer = MockWriter();
-    value builder = builderFromGoals(goals);
+    value builder = GoalDefinitionsBuilder(goals);
     value result = callEngine(builder, [goals.first.name], writer);
     if (nonempty duplicates) {
         assertEquals(result.status, duplicateGoalsFound);
@@ -60,7 +60,7 @@ void checkGoalName(String name, Boolean valid) {
 
 void checkInvalidGoalsNames({Goal+} goals, [String*] invalidGoals) {
     value writer = MockWriter();
-    value builder = builderFromGoals(goals);
+    value builder = GoalDefinitionsBuilder(goals);
     value result = callEngine(builder, [goals.first.name], writer);
     if (nonempty invalidGoals) {
         assertEquals(result.status, invalidGoalFound);

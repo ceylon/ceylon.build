@@ -1,6 +1,5 @@
-import ceylon.build.engine { Goal, success, noGoalToRun  }
+import ceylon.build.engine { Goal, success, noGoalToRun, GoalDefinitionsBuilder  }
 import ceylon.test { assertEquals, test }
-import ceylon.build.task { noop }
 
 test void shouldNotFindGoalToExecuteIfNoneIsRequested() {
     value a = createTestGoal("a");
@@ -107,7 +106,7 @@ test void testGoalsWithoutTasksReduction() {
 }
 
 void checkGoalsToExecute({Goal*} availableGoals, [String*] arguments, {Goal*} expectedExecutionList) {
-    value builder = builderFromGoals(availableGoals);
+    value builder = GoalDefinitionsBuilder(availableGoals);
     value result = callEngine(builder, arguments);
     assertEquals(result.status, expectedExecutionList.empty then noGoalToRun else success);
     assertEquals(definitionsNames(result), names(availableGoals));

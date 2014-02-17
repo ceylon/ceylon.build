@@ -1,8 +1,9 @@
 import ceylon.collection { HashMap }
 
-shared final class GoalDefinitionsBuilder() {
+shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
     
     value definitions = SequenceBuilder<Goal>();
+    definitions.appendAll(goals);
     
     shared void add(Goal definition) {
         definitions.append(definition);

@@ -1,5 +1,5 @@
 import ceylon.build.task { context }
-import ceylon.build.engine { errorOnTaskExecution, success, noGoalToRun }
+import ceylon.build.engine { errorOnTaskExecution, success, noGoalToRun, GoalDefinitionsBuilder }
 import ceylon.test { assertEquals, assertTrue, test }
 import ceylon.collection { HashMap, MutableMap }
 
@@ -29,7 +29,7 @@ void assertArgumentsAreFiltered([String*] inputArguments, [String*] expectedGoal
     value goalNameA = "a";
     value a = createTestGoal(goalNameA, [], registerArguments(goalNameA, argumentsMap));
     value goals = [a];
-    value builder = builderFromGoals(goals);
+    value builder = GoalDefinitionsBuilder(goals);
     value result = callEngine(builder, [goalNameA, *inputArguments]);
     assertEquals(result.status, success);
     assertEquals(definitionsNames(result), names([a]));
@@ -50,7 +50,7 @@ void assertNoGoalToRun([String*] arguments) {
     value b = createTestGoal("b");
     value writer = MockWriter();
     value goals = [a, b];
-    value builder = builderFromGoals(goals);
+    value builder = GoalDefinitionsBuilder(goals);
     value result = callEngine(builder, arguments, writer);
     assertEquals(result.status, noGoalToRun);
     assertEquals(definitionsNames(result), names(goals));
@@ -75,7 +75,7 @@ test void shouldExitOnTaskError() {
     value c = createTestGoal("c");
     value d = createTestGoal("d");
     value goals = [a, b, c, d];
-    value builder = builderFromGoals(goals);
+    value builder = GoalDefinitionsBuilder(goals);
     value result = callEngine(builder, ["a", "b", "c", "-Da:foo"], writer);
     assertEquals(result.status, errorOnTaskExecution);
     assertEquals(definitionsNames(result), names(goals));
@@ -102,7 +102,7 @@ test void shouldRunGoals() {
     value c = createTestGoal("c");
     value d = createTestGoal("d");
     value goals = [a, b, c, d];
-    value builder = builderFromGoals(goals);
+    value builder = GoalDefinitionsBuilder(goals);
     value result = callEngine(builder, ["a", "b", "c", "-Da:foo"], writer);
     assertEquals(result.status, success);
     assertEquals(definitionsNames(result), names(goals));
