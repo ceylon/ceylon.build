@@ -25,7 +25,7 @@ test void shouldFindRequestedGoalWithDependenciesToExecute() {
     value a = createTestGoal("a");
     value b = createTestGoal("b", ["a"]);
     checkGoalsToExecute([a], ["a"], [a]);
-    checkGoalsToExecute([b], ["a"], []);
+    checkGoalsToExecute([a, b], ["a"], [a]);
     checkGoalsToExecute([a, b], ["b"], [a, b]);
     checkGoalsToExecute([a, b], ["a", "b"], [a, b]);
     checkGoalsToExecute([a, b], ["b", "a"], [a, b]);

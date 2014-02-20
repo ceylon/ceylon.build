@@ -7,8 +7,8 @@ shared object success satisfies Status {}
 
 "Status returned when execution failed"
 shared interface ExecutionFailure of
-        invalidGoalFound | duplicateGoalsFound | dependencyCycleFound |
-        noGoalToRun | errorOnTaskExecution
+        invalidGoalFound | duplicateGoalsFound | undefinedGoalsFound |
+        dependencyCycleFound | noGoalToRun | errorOnTaskExecution
         satisfies Status {}
 
 "Status returned when an invalid `Goal` is found
@@ -18,6 +18,9 @@ shared object invalidGoalFound satisfies ExecutionFailure {}
 
 "Status returned when multiples `Goal` have the same name"
 shared object duplicateGoalsFound satisfies ExecutionFailure {}
+
+"Status returned when undefined `Goal` are referenced by dependencies"
+shared object undefinedGoalsFound satisfies ExecutionFailure {}
 
 "Status returned when a dependency cycle has been found"
 shared object dependencyCycleFound satisfies ExecutionFailure {}
