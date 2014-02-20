@@ -9,6 +9,7 @@ String failingGoal3 = "failingGoal3";
 String goalWithoutTask = "goalWithoutTask";
 String goalWithATask = "goalWithATask";
 String internalGoal = "internalGoal";
+String goalWithDependencies = "goalWithDependencies";
 String goalWithOnlyDependencies = "goalWithOnlyDependencies";
 String goalWithOnlyDependenciesOnGoalsWithoutTask = "goalWithOnlyDependenciesOnGoalsWithoutTask";
 
@@ -19,6 +20,7 @@ String goalWithOnlyDependenciesOnGoalsWithoutTask = "goalWithOnlyDependenciesOnG
     goalWithoutTask,
     goalWithATask,
     internalGoal,
+    goalWithDependencies,
     goalWithOnlyDependencies,
     goalWithOnlyDependenciesOnGoalsWithoutTask
 ];
@@ -107,6 +109,28 @@ test void shouldExecuteInternalGoal() {
 }
 
 test void shouldExecuteDependencies() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = [goalWithDependencies];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = success;
+        available = sort(availableGoals);
+        toRun = [goalWithATask, goalWithDependencies];
+        successful = [goalWithATask, goalWithDependencies];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``goalWithATask``, ``goalWithDependencies``] in order",
+            "# running ``goalWithATask``()",
+            "# running ``goalWithDependencies``()"];
+        errorMessages = [];
+    };
+    assertEquals(executedTasks, [goalWithATask, goalWithDependencies]);
+}
+
+test void shouldExecuteGoalWithOnlyDependencies() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
     value goalsToRun = [goalWithOnlyDependencies];
@@ -214,6 +238,15 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
                 dependencies = [];
             };
         },
+        Goal {
+            name = goalWithDependencies;
+            properties = GoalProperties {
+                internal = false;
+                task() => executedTasks.add(goalWithDependencies);
+                dependencies = [goalWithATask];
+            };
+        },
+        Goal {
             name = goalWithOnlyDependencies;
             properties = GoalProperties {
                 internal = false;
