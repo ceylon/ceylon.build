@@ -8,6 +8,7 @@ String failingGoal2 = "failingGoal2";
 String failingGoal3 = "failingGoal3";
 String goalWithoutTask = "goalWithoutTask";
 String goalWithATask = "goalWithATask";
+String internalGoal = "internalGoal";
 String goalWithOnlyDependencies = "goalWithOnlyDependencies";
 String goalWithOnlyDependenciesOnGoalsWithoutTask = "goalWithOnlyDependenciesOnGoalsWithoutTask";
 
@@ -17,6 +18,7 @@ String goalWithOnlyDependenciesOnGoalsWithoutTask = "goalWithOnlyDependenciesOnG
     failingGoal3,
     goalWithoutTask,
     goalWithATask,
+    internalGoal,
     goalWithOnlyDependencies,
     goalWithOnlyDependenciesOnGoalsWithoutTask
 ];
@@ -62,7 +64,7 @@ test void shouldExitWhenNoGoalWithTasksToRun() {
     assertEquals(executedTasks, []);
 }
 
-test void shouldExecuteGoalTask() {
+test void shouldExecuteGoal() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
     value goalsToRun = [goalWithATask];
@@ -78,6 +80,27 @@ test void shouldExecuteGoalTask() {
         infoMessages = [ceylonBuildStartMessage,
             "# running goals: [``goalWithATask``] in order",
             "# running ``goalWithATask``()"];
+        errorMessages = [];
+    };
+    assertEquals(executedTasks, goalsToRun);
+}
+
+test void shouldExecuteInternalGoal() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = [internalGoal];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = success;
+        available = sort(availableGoals);
+        toRun = goalsToRun;
+        successful = goalsToRun;
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``internalGoal``] in order",
+            "# running ``internalGoal``()"];
         errorMessages = [];
     };
     assertEquals(executedTasks, goalsToRun);
@@ -179,11 +202,18 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
             name = goalWithATask;
             properties = GoalProperties {
                 internal = false;
-                task = () => executedTasks.add(goalWithATask);
+                task() => executedTasks.add(goalWithATask);
                 dependencies = [];
             };
         },
         Goal {
+            name = internalGoal;
+            properties = GoalProperties {
+                internal = false;
+                task() => executedTasks.add(internalGoal);
+                dependencies = [];
+            };
+        },
             name = goalWithOnlyDependencies;
             properties = GoalProperties {
                 internal = false;
@@ -203,7 +233,7 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
             name = failingGoal1;
             properties = GoalProperties {
                 internal = false;
-                task = () => executedTasks.add(failingGoal1); 
+                task() => executedTasks.add(failingGoal1);
                 dependencies = [];
             };
         },
@@ -211,7 +241,7 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
             name = failingGoal2;
             properties = GoalProperties {
                 internal = false;
-                task = void() { throw Exception("boom"); }; 
+                task = void() { throw Exception("boom"); };
                 dependencies = [];
             };
         },
@@ -219,7 +249,7 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
             name = failingGoal3;
             properties = GoalProperties {
                 internal = false;
-                task = () => executedTasks.add(failingGoal3); 
+                task() => executedTasks.add(failingGoal3);
                 dependencies = [failingGoal1,failingGoal2];
             };
         }
