@@ -26,7 +26,7 @@ String goalWithOnlyDependenciesOnGoalsWithoutTask = "goalWithOnlyDependenciesOnG
 ];
 
 String ceylonBuildStartMessage = "## ceylon.build";
-String noGoalToRunMessage = "# no goal to run, available goals are: ``availableGoals``";
+String noGoalToRunMessage = "# no goal to run, available goals are: ``sort(availableGoals)``";
 
 test void shouldExitWhenNoGoalToRun() {
     value executedTasks = LinkedList<String>();

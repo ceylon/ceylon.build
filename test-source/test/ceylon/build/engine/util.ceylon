@@ -1,6 +1,6 @@
 import ceylon.build.task { Writer }
 import ceylon.collection { LinkedList, MutableList }
-import ceylon.build.engine { runEngine, EngineResult, GoalDefinitionsBuilder, Goal, GoalProperties, Status, success }
+import ceylon.build.engine { runEngine, EngineResult, GoalDefinitionsBuilder, Goal, GoalProperties, Status, successStatus = success }
 import ceylon.test { assertEquals, assertTrue }
 
 void emptyFunction() {}
@@ -55,7 +55,7 @@ void checkExecutionResult(
         return [for (result in engineResult.executionResults) result.goal];
     }
     
-    [String*] sucess(EngineResult engineResult) {
+    [String*] success(EngineResult engineResult) {
         return [for (result in engineResult.executionResults) if (result.success) result.goal];
     }
     
@@ -70,12 +70,12 @@ void checkExecutionResult(
     assertEquals(result.status, status);
     assertEquals(definitionsNames(result), available);
     assertEquals(executionList(result), toRun);
-    assertEquals(sucess(result), successful);
+    assertEquals(success(result), successful);
     assertEquals(failure(result), failed);
     assertEquals(notExecuted(result), notRun);
     assertEquals(notExecuted(result), notRun);
     assertEquals(notExecuted(result), notRun);
-    if (result.status == success) {
+    if (result.status == successStatus) {
         assertEquals(writer.infoMessages[0..writer.infoMessages.size-2], infoMessages);
         assertTrue((writer.infoMessages.last else "").startsWith("## success"));
         assertEquals(writer.infoMessages.size, infoMessages.size + 1);
