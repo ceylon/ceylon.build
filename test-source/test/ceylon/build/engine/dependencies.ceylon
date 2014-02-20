@@ -86,7 +86,7 @@ test void shouldFindSimpleCycle() {
         failed = [];
         notRun = [];
         writer = writer;
-        infoMessages =  [ceylonBuildStartMessage];
+        infoMessages = [ceylonBuildStartMessage];
         errorMessages = ["# goal dependency cycle found between: [a->[b], b->[a]]"];
     };
 }
@@ -113,7 +113,7 @@ test void shouldFindComplexCycle() {
         failed = [];
         notRun = [];
         writer = writer;
-        infoMessages =  [ceylonBuildStartMessage];
+        infoMessages = [ceylonBuildStartMessage];
         errorMessages = ["# goal dependency cycle found between: [a->[b], b->[c], c->[a], d->[c], e->[b, c], f->[d]]"];
     };
 }
@@ -134,7 +134,7 @@ test void shouldFoundUndefinedGoalDefinition() {
         failed = [];
         notRun = [];
         writer = writer;
-        infoMessages =  [ceylonBuildStartMessage];
+        infoMessages = [ceylonBuildStartMessage];
         errorMessages = ["# undefined goal referenced from dependency: [a]"];
     };
 }
