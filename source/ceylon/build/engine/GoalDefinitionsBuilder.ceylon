@@ -20,7 +20,8 @@ shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
         value invalidNames = invalidGoalsName(original.map((String->{GoalProperties+} entry) => entry.key));
         value duplicated = duplicatedDefinitions(original);
         value undefined = undefinedGoals(original);
-        value cycles = !duplicated.empty then analyzeDependencyCycles(toDependencyGraph(original)) else [];
+        value canCheckForDependencyCycles = undefined.empty && duplicated.empty;
+        value cycles = canCheckForDependencyCycles then analyzeDependencyCycles(toDependencyGraph(original)) else [];
         return DefinitionsValidationResult(original, invalidNames, undefined, duplicated, cycles);
     }
     

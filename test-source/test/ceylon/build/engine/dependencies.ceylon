@@ -1,7 +1,7 @@
 import ceylon.test { test }
-import ceylon.build.engine { Goal, success, GoalDefinitionsBuilder, runEngine, dependencyCycleFound, undefinedGoalsFound }
+import ceylon.build.engine { success, GoalDefinitionsBuilder, runEngine, dependencyCycleFound, undefinedGoalsFound }
 
-test void shouldNotFoundCycleWhenNoDependencies() {
+test void shouldNotFindCycleWhenNoDependencies() {
     value writer = MockWriter();
     value a = createTestGoal("a");
     value b = createTestGoal("b");
@@ -31,7 +31,7 @@ test void shouldNotFoundCycleWhenNoDependencies() {
     };
 }
 
-test void shouldNotFoundCycleWhenNoCycle() {
+test void shouldNotFindCycleWhenNoCycle() {
     value writer = MockWriter();
     value a = createTestGoal("a");
     value b = createTestGoal("b");
@@ -64,6 +64,57 @@ test void shouldNotFoundCycleWhenNoCycle() {
             "# running e()",
             "# running a()"];
         errorMessages = [];
+    };
+}
+
+test void shouldFindSimpleCycle() {
+    value writer = MockWriter();
+    value a = createTestGoal("a", ["b"]);
+    value b = createTestGoal("b", ["a"]);
+    value c = createTestGoal("c", []);
+    value goals = [a, b, c];
+    checkExecutionResult {
+        result = runEngine {
+            goals = GoalDefinitionsBuilder(goals);
+            arguments = ["c"];
+            writer = writer;
+        };
+        status = dependencyCycleFound;
+        available = [];
+        toRun = [];
+        successful = [];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages =  [ceylonBuildStartMessage];
+        errorMessages = ["# goal dependency cycle found between: [a->[b], b->[a]]"];
+    };
+}
+
+test void shouldFindComplexCycle() {
+    value writer = MockWriter();
+    value a = createTestGoal("a", ["b"]);
+    value b = createTestGoal("b", ["c"]);
+    value c = createTestGoal("c", ["a"]);
+    value d = createTestGoal("d", ["c"]);
+    value e = createTestGoal("e", ["b", "c"]);
+    value f = createTestGoal("f", ["d"]);
+    value goals = [a, b, c, d, e, f];
+    checkExecutionResult {
+        result = runEngine {
+            goals = GoalDefinitionsBuilder(goals);
+            arguments = ["c"];
+            writer = writer;
+        };
+        status = dependencyCycleFound;
+        available = [];
+        toRun = [];
+        successful = [];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages =  [ceylonBuildStartMessage];
+        errorMessages = ["# goal dependency cycle found between: [a->[b], b->[c], c->[a], d->[c], e->[b, c], f->[d]]"];
     };
 }
 
