@@ -1,6 +1,6 @@
 import ceylon.build.task { Writer }
 import ceylon.collection { LinkedList, MutableList }
-import ceylon.build.engine { runEngine, EngineResult, GoalDefinitionsBuilder, Goal, GoalProperties, Status, successStatus = success }
+import ceylon.build.engine { EngineResult, Goal, GoalProperties, Status, successStatus = success }
 import ceylon.test { assertEquals, assertTrue }
 
 void emptyFunction() {}
@@ -24,19 +24,8 @@ class MockWriter() satisfies Writer {
     shared actual void error(String message) => internalErrorMessages.add(message);
 }
 
-[String*] definitionsNames(EngineResult result) {
-    if (exists definitions = result.definitions) {
-        return definitions.availableGoals;
-    }
-    return [];
-}
-
 [String*] names({<Goal>*} goals) {
     return [ for (goal in goals) goal.name ];
-}
-
-EngineResult callEngine(GoalDefinitionsBuilder builder, [String*] arguments, Writer writer = MockWriter()) {
-    return runEngine(builder, writer, arguments);
 }
 
 void checkExecutionResult(
@@ -50,6 +39,13 @@ void checkExecutionResult(
     MockWriter writer,
     [String*] infoMessages,
     [String*] errorMessages) {
+    
+    [String*] definitionsNames(EngineResult result) {
+        if (exists definitions = result.definitions) {
+            return definitions.availableGoals;
+        }
+        return [];
+    }
     
     [String*] executionList(EngineResult engineResult) {
         return [for (result in engineResult.executionResults) result.goal];
@@ -86,24 +82,4 @@ void checkExecutionResult(
         assertTrue((writer.errorMessages.last else "").startsWith("## failure"));
         assertEquals(writer.errorMessages.size, errorMessages.size + 1);
     }
-}
-
-// TODO remove
-[String*] execution(EngineResult engineResult) {
-    return [for (result in engineResult.executionResults) result.goal];
-}
-
-// TODO remove
-[String*] succeed(EngineResult engineResult) {
-    return [for (result in engineResult.executionResults) if (result.success) result.goal];
-}
-
-// TODO remove
-[String*] failed(EngineResult engineResult) {
-    return [for (result in engineResult.executionResults) if (result.failed) result.goal];
-}
-
-// TODO remove
-[String*] notRun(EngineResult engineResult) {
-    return [for (result in engineResult.executionResults) if (result.notRun) result.goal];
 }

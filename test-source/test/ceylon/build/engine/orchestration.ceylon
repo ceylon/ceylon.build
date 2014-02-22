@@ -1,5 +1,5 @@
-import ceylon.build.engine { Goal, success, noGoalToRun, GoalDefinitionsBuilder  }
-import ceylon.test { assertEquals, test }
+import ceylon.build.engine { Goal, success, noGoalToRun, GoalDefinitionsBuilder, runEngine, Status  }
+import ceylon.test { test }
 
 test void shouldNotFindGoalToExecuteIfNoneIsRequested() {
     value a = createTestGoal("a");
@@ -8,7 +8,23 @@ test void shouldNotFindGoalToExecuteIfNoneIsRequested() {
 
 test void shouldNotFindGoalToExecuteIfUnknownGoalIsRequested() {
     value a = createTestGoal("a");
-    checkGoalsToExecute([a], ["a", "b"], []);
+    value writer = MockWriter();
+    checkExecutionResult {
+        result = runEngine {
+            goals = GoalDefinitionsBuilder([a]);
+            arguments = ["a", "b"];
+            writer = writer;
+        };
+        status = noGoalToRun;
+        available = ["a"];
+        toRun = [];
+        successful = [];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage];
+        errorMessages = ["# goal 'b' not found, stopping", "# no goal to run, available goals are: [a]"];
+    };
 }
 
 test void shouldFindRequestedGoalToExecute() {
@@ -105,13 +121,38 @@ test void testGoalsWithoutTasksReduction() {
     checkGoalsToExecute(goals, ["b", "a", "b"], [b]);
 }
 
-void checkGoalsToExecute({Goal*} availableGoals, [String*] arguments, {Goal*} expectedExecutionList) {
-    value builder = GoalDefinitionsBuilder(availableGoals);
-    value result = callEngine(builder, arguments);
-    assertEquals(result.status, expectedExecutionList.empty then noGoalToRun else success);
-    assertEquals(definitionsNames(result), names(availableGoals));
-    assertEquals(execution(result), names(expectedExecutionList));
-    assertEquals(succeed(result), names(expectedExecutionList));
-    assertEquals(failed(result), []);
-    assertEquals(notRun(result), []);
+void checkGoalsToExecute([Goal*] availableGoals, [String*] arguments, [Goal*] expectedExecutionList) {
+    value writer = MockWriter();
+    value toRun = names(expectedExecutionList);
+    value availableGoalsSorted = sort(names(availableGoals));
+    Status status;
+    [String*] infoMessages;
+    [String*] errorMessages;
+    if (expectedExecutionList.empty) {
+        status = noGoalToRun;
+        infoMessages = [ceylonBuildStartMessage];
+        errorMessages = ["# no goal to run, available goals are: ``availableGoalsSorted``"];
+    } else {
+        status = success;
+        infoMessages = concatenate(
+            [ceylonBuildStartMessage, "# running goals: ``toRun`` in order"],
+            [ for (goal in toRun) "# running ``goal``()"]);
+        errorMessages = [];
+    }
+    checkExecutionResult {
+        result = runEngine {
+            goals = GoalDefinitionsBuilder(availableGoals);
+            arguments = arguments;
+            writer = writer;
+        };
+        status = status;
+        available = availableGoalsSorted;
+        toRun = toRun;
+        successful = toRun;
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = infoMessages;
+        errorMessages = errorMessages;
+    };
 }

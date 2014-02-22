@@ -86,26 +86,6 @@ void checkGoalName(String name, Boolean valid) {
     checkInvalidGoalsNames([createTestGoal(name)], valid then [] else [name]);
 }
 
-void checkSuccess([Goal+] goals, String[] goalsToRun, MockWriter writer) => checkExecutionResult {
-            result = runEngine {
-                goals = GoalDefinitionsBuilder(goals);
-                arguments = goalsToRun;
-                writer = writer;
-            };
-            status = success;
-            available = sort(goalsToRun);
-            toRun = goalsToRun;
-            successful = goalsToRun;
-            failed = [];
-            notRun = [];
-            writer = writer;
-            infoMessages = concatenate(
-                [ceylonBuildStartMessage, "# running goals: ``goalsToRun`` in order"],
-                [ for (goal in goalsToRun) "# running ``goal``()"]
-            ).sequence;
-            errorMessages = [];
-        };
-
 void checkInvalidGoalsNames([Goal+] goals, [String*] invalidGoals) {
     value goalsToRun = names(goals);
     value writer = MockWriter();
@@ -133,3 +113,23 @@ void checkInvalidGoalsNames([Goal+] goals, [String*] invalidGoals) {
         checkSuccess(goals, goalsToRun, writer);
     }
 }
+
+void checkSuccess([Goal+] goals, String[] goalsToRun, MockWriter writer) => checkExecutionResult {
+    result = runEngine {
+        goals = GoalDefinitionsBuilder(goals);
+        arguments = goalsToRun;
+        writer = writer;
+    };
+    status = success;
+    available = sort(goalsToRun);
+    toRun = goalsToRun;
+    successful = goalsToRun;
+    failed = [];
+    notRun = [];
+    writer = writer;
+    infoMessages = concatenate(
+        [ceylonBuildStartMessage, "# running goals: ``goalsToRun`` in order"],
+        [ for (goal in goalsToRun) "# running ``goal``()"]
+    );
+    errorMessages = [];
+};
