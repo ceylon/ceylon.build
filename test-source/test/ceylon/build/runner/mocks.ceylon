@@ -187,4 +187,4 @@ ValueDeclaration mockValueDeclaration(Annotation* associatedAnnotations) {
 
 "Evaluate `nothing` and throws if called.
  Useful to remove `nothing` warning in mocking context"
-Nothing notImplemented => nothing;
+Nothing notImplemented => `nothing`.get();
