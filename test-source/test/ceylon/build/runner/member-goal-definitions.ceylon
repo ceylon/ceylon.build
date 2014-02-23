@@ -1,6 +1,7 @@
-import ceylon.test { test }
+import ceylon.test { test, assertEquals }
 import ceylon.build.task { goal, noop, NoOp }
-import ceylon.build.runner { goalDefinition }
+import ceylon.build.runner { goalDefinition, goalsDefinition, InvalidGoalDeclaration }
+import ceylon.build.engine { Goal }
 
 class Container() {
     
@@ -83,3 +84,36 @@ test void shouldFailToBuildInvalidGoalDefinitionAttribute() {
     value container = Container();
     checkInvalidGoalDefinition(goalDefinition(`value Container.invalidGoalAttribute`, container));
 }
+
+Container containerValue = Container();
+
+test void shouldFindAndBuildIncludedGoals() {
+    value definitions = goalsDefinition(`value containerValue`);
+    assertEquals {
+        actual = [ for (definition in definitions) convert(definition) ];
+        expected = [
+            ExpectedDefinition("goal-with-name-specified-method"),
+            ExpectedDefinition("goalMethodWithReturnType"),
+            InvalidGoalDeclaration(`function Container.invalidGoalMethod`),
+            ExpectedDefinition("goalMethod")
+        ];
+    };
+}
+
+// TODO add tests with inheritance (goal name specified in supertype / interfaces,
+// TODO and another test were refined in subtype)
+ExpectedDefinition|InvalidGoalDeclaration convert(Goal|InvalidGoalDeclaration definition) {
+    switch (definition)
+    case (is Goal) {
+        value properties = definition.properties;
+        return ExpectedDefinition {
+            name = definition.name;
+            task = properties.task exists;
+            internal = properties.internal;
+            dependencies = properties.dependencies;
+        };
+    } case (is InvalidGoalDeclaration)  {
+        return definition;
+    }
+}
+
