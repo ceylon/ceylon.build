@@ -1,7 +1,7 @@
-import ceylon.language.meta.declaration { Module, FunctionDeclaration }
-import ceylon.test { test, assertEquals, assertThatException }
-import ceylon.build.runner { findPackageMembersAnnotatedWithGoals, goalAnnotation }
-import ceylon.build.task { goal, GoalAnnotation }
+import ceylon.language.meta.declaration { Module }
+import ceylon.test { test, assertEquals }
+import ceylon.build.runner { findPackageMembersAnnotatedWithGoals }
+import ceylon.build.task { goal }
 
 test void shouldNotFindGoalAnnotatedFunctionsIfNoPackage() {
     Module mod = mockModule();
@@ -49,25 +49,4 @@ test void shouldFindGoalAnnotatedFunctions() {
     };
     value results = findPackageMembersAnnotatedWithGoals(mod);
     assertEquals(results, [goal1, goal2, goal3]);
-}
-
-test void shouldNotFindGoalAnnotationWhenNoAnnotations() {
-    FunctionDeclaration declaration = mockFunctionDeclaration();
-    assertThatException(() => goalAnnotation(declaration)).hasType(`AssertionException`);
-}
-
-test void shouldNotFindGoalAnnotationWhenNoGoalAnnotation() {
-    FunctionDeclaration declaration = mockFunctionDeclaration("name", shared(), by("no one"));
-    assertThatException(() => goalAnnotation(declaration)).hasType(`AssertionException`);
-}
-
-test void shouldNotFindGoalAnnotationWhenMultipleGoalAnnotation() {
-    FunctionDeclaration declaration = mockFunctionDeclaration("name", goal(), goal());
-    assertThatException(() => goalAnnotation(declaration)).hasType(`AssertionException`);
-}
-
-test void shouldFindGoalAnnotation() {
-    GoalAnnotation annotation = goal();
-    FunctionDeclaration declaration = mockFunctionDeclaration("name", annotation);
-    assertEquals(goalAnnotation(declaration), annotation);
 }
