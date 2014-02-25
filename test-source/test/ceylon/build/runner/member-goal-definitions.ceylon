@@ -1,7 +1,6 @@
 import ceylon.test { test, assertEquals }
 import ceylon.build.task { goal, noop, NoOp }
 import ceylon.build.runner { goalDefinition, goalsDefinition, InvalidGoalDeclaration }
-import ceylon.build.engine { Goal }
 import ceylon.collection { HashSet }
 
 class Container() {
