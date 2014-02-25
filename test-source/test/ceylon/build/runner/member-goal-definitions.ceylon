@@ -91,7 +91,7 @@ Container containerValue = Container();
 test void shouldFindAndBuildIncludedGoals() {
     value definitions = goalsDefinition(`value containerValue`);
     assertEquals {
-        actual = HashSet { for (definition in definitions) convert(definition) };
+        actual = HashSet { elements = expectedDefinitionList(definitions); };
         expected = HashSet {
             ExpectedDefinition("goal-with-name-specified-method"),
             ExpectedDefinition("goalMethodWithReturnType"),
@@ -99,22 +99,5 @@ test void shouldFindAndBuildIncludedGoals() {
             ExpectedDefinition("goalMethod")
         };
     };
-}
-
-// TODO add tests with inheritance (goal name specified in supertype / interfaces,
-// TODO and another test were refined in subtype)
-ExpectedDefinition|InvalidGoalDeclaration convert(Goal|InvalidGoalDeclaration definition) {
-    switch (definition)
-    case (is Goal) {
-        value properties = definition.properties;
-        return ExpectedDefinition {
-            name = definition.name;
-            task = properties.task exists;
-            internal = properties.internal;
-            dependencies = properties.dependencies;
-        };
-    } case (is InvalidGoalDeclaration)  {
-        return definition;
-    }
 }
 

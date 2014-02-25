@@ -38,6 +38,24 @@ final class ExpectedDefinition(name, task = true, dependencies = [], internal = 
     string => "ExpectedDefinition[name:``name``, task:``task``, internal:``internal``, dependencies:``dependencies``]";
 }
 
+{<ExpectedDefinition|InvalidGoalDeclaration>*} expectedDefinitionList({<Goal|InvalidGoalDeclaration>*} definitions)
+        => { for (definition in definitions) convert(definition) };
+
+ExpectedDefinition|InvalidGoalDeclaration convert(Goal|InvalidGoalDeclaration definition) {
+    switch (definition)
+    case (is Goal) {
+        value properties = definition.properties;
+        return ExpectedDefinition {
+            name = definition.name;
+            task = properties.task exists;
+            internal = properties.internal;
+            dependencies = properties.dependencies;
+        };
+    } case (is InvalidGoalDeclaration)  {
+        return definition;
+    }
+}
+
 void checkGoalDefinition(
     Goal|InvalidGoalDeclaration goal,
     ExpectedDefinition expectedDefinition,
