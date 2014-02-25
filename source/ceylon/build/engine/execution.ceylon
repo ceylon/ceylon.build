@@ -1,5 +1,6 @@
 import ceylon.build.task {
     Writer,
+    GoalException,
     setContextForTask,
     clearTaskContext
 }
@@ -72,8 +73,11 @@ void reportOutcome(Outcome outcome, String goal, Writer writer) {
     if (is Failure outcome) {
         writer.error("# goal ``goal`` failure, stopping");
         value exception = outcome.exception;
-        // TODO there will always be an exception but if it's a TaskException, do not log the stack
-        writer.exception(exception);
+        if (is GoalException exception) {
+            writer.error(exception.message);
+        } else {
+            writer.exception(exception);
+        }
     }
 }
 

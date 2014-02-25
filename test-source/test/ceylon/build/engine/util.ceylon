@@ -19,9 +19,18 @@ class MockWriter() satisfies Writer {
     
     shared [String*] errorMessages => internalErrorMessages.sequence;
     
+    MutableList<Exception> internalWrittenExceptions = LinkedList<Exception>();
+    
+    shared [Exception*] writtenExceptions => internalWrittenExceptions.sequence;
+    
     shared actual void info(String message) => internalInfoMessages.add(message);
     
     shared actual void error(String message) => internalErrorMessages.add(message);
+    
+    shared actual void exception(Exception exception) {
+        error(exception.message);
+        internalWrittenExceptions.add(exception);
+    }
 }
 
 [String*] names({<Goal>*} goals) {

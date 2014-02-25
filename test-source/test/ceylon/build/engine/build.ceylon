@@ -1,11 +1,12 @@
 import ceylon.build.engine { runEngine, EngineResult, noGoalToRun, errorOnTaskExecution, success, GoalDefinitionsBuilder, Goal, GoalProperties }
-import ceylon.build.task { Writer }
+import ceylon.build.task { Writer, GoalException }
 import ceylon.test { test, assertEquals }
 import ceylon.collection { MutableList, LinkedList }
 
 String failingGoal1 = "failingGoal1";
 String failingGoal2 = "failingGoal2";
 String failingGoal3 = "failingGoal3";
+String failingGoal4 = "failingGoal4";
 String goalWithoutTask = "goalWithoutTask";
 String goalWithATask = "goalWithATask";
 String internalGoal = "internalGoal";
@@ -17,6 +18,7 @@ String goalWithOnlyDependenciesOnGoalsWithoutTask = "goalWithOnlyDependenciesOnG
     failingGoal1,
     failingGoal2,
     failingGoal3,
+    failingGoal4,
     goalWithoutTask,
     goalWithATask,
     internalGoal,
@@ -188,6 +190,29 @@ test void shouldExecuteFailingGoal() {
             "# running ``failingGoal2``()"];
         errorMessages = ["# goal ``failingGoal2`` failure, stopping", "boom"];
     };
+    assertEquals(writer.writtenExceptions.size, 1);
+    assertEquals(executedTasks, []);
+}
+
+test void shouldExecuteFailingGoalWithoutWritingException() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = [failingGoal4];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = errorOnTaskExecution;
+        available = sort(availableGoals);
+        toRun = goalsToRun;
+        successful = [];
+        failed = goalsToRun;
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``failingGoal4``] in order",
+            "# running ``failingGoal4``()"];
+        errorMessages = ["# goal ``failingGoal4`` failure, stopping", "Something went wrong"];
+    };
+    assertEquals(writer.writtenExceptions.size, 0);
     assertEquals(executedTasks, []);
 }
 
@@ -284,6 +309,14 @@ EngineResult execute([String*] arguments, Writer writer, MutableList<String> exe
                 internal = false;
                 task() => executedTasks.add(failingGoal3);
                 dependencies = [failingGoal1,failingGoal2];
+            };
+        },
+        Goal {
+            name = failingGoal4;
+            properties = GoalProperties {
+                internal = false;
+                task = void() { throw GoalException("Something went wrong"); };
+                dependencies = [];
             };
         }
     };
