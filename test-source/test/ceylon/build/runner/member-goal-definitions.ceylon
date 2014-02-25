@@ -2,6 +2,7 @@ import ceylon.test { test, assertEquals }
 import ceylon.build.task { goal, noop, NoOp }
 import ceylon.build.runner { goalDefinition, goalsDefinition, InvalidGoalDeclaration }
 import ceylon.build.engine { Goal }
+import ceylon.collection { HashSet }
 
 class Container() {
     
@@ -90,13 +91,13 @@ Container containerValue = Container();
 test void shouldFindAndBuildIncludedGoals() {
     value definitions = goalsDefinition(`value containerValue`);
     assertEquals {
-        actual = [ for (definition in definitions) convert(definition) ];
-        expected = [
+        actual = HashSet { for (definition in definitions) convert(definition) };
+        expected = HashSet {
             ExpectedDefinition("goal-with-name-specified-method"),
             ExpectedDefinition("goalMethodWithReturnType"),
             InvalidGoalDeclaration(`function Container.invalidGoalMethod`),
             ExpectedDefinition("goalMethod")
-        ];
+        };
     };
 }
 
