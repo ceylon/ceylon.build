@@ -92,10 +92,12 @@ test void shouldFindAndBuildIncludedGoals() {
     assertEquals {
         actual = HashSet { elements = expectedDefinitionList(definitions); };
         expected = HashSet {
+            ExpectedDefinition("goalMethod"),
             ExpectedDefinition("goal-with-name-specified-method"),
             ExpectedDefinition("goalMethodWithReturnType"),
             InvalidGoalDeclaration(`function Container.invalidGoalMethod`),
-            ExpectedDefinition("goalMethod")
+            InvalidGoalDeclaration(`value Container.invalidGoalAttribute`),
+            ExpectedDefinition("noopGoalAttribute", false)
         };
     };
 }

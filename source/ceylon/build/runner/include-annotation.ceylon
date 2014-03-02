@@ -1,6 +1,6 @@
 import ceylon.build.engine { Goal }
 import ceylon.language.meta { type }
-import ceylon.language.meta.declaration { FunctionDeclaration, ClassDeclaration, ValueDeclaration, Module }
+import ceylon.language.meta.declaration { FunctionOrValueDeclaration, ClassDeclaration, ValueDeclaration, Module }
 import ceylon.build.task { GoalAnnotation, IncludeAnnotation }
 
 shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
@@ -23,6 +23,6 @@ shared {<Goal|InvalidGoalDeclaration>*} goalsDefinition(ValueDeclaration declara
     return goals.sequence;
 }
 
-FunctionDeclaration[] findClassMembersAnnotatedWithGoal(ClassDeclaration instanceTypeDeclaration) {
-    return instanceTypeDeclaration.annotatedMemberDeclarations<FunctionDeclaration, GoalAnnotation>();
+[FunctionOrValueDeclaration*] findClassMembersAnnotatedWithGoal(ClassDeclaration instanceTypeDeclaration) {
+    return instanceTypeDeclaration.annotatedMemberDeclarations<FunctionOrValueDeclaration, GoalAnnotation>();
 }
