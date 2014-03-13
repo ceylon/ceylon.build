@@ -121,8 +121,6 @@ String? appendDebug(String? debug) =>
 String? appendPathToNodeJs(String? pathToNodeJs) =>
     parameter("node-exe", pathToNodeJs);
 
-{String*} appendArguments({String*} arguments) => arguments;
-
 {String*} appendModuleArguments({String*} arguments) {
     if (!arguments.empty) {
         return concatenate({"--"}, arguments);

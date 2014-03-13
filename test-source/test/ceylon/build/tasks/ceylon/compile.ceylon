@@ -215,18 +215,6 @@ test void shouldCreateCompileCommandWithCurrentWorkingDirectory() {
     };
 }
 
-test void shouldCreateCompileCommandWithArguments() {
-    assertEquals {
-        expected = ["compile", "arg1", "arg2=value", "mymodule"];
-        actual = compileCommand {
-            CompileArguments {
-                modules = ["mymodule"];
-                arguments = ["arg1", "arg2=value"];
-            };
-        };
-    };
-}
-
 test void shouldCreateCompileCommandWithAllParametersSpecified() {
     assertEquals {
         expected = ["compile", "--cwd=.", "--encoding=UTF-8", "--source=source-a", "--source=source-b",
@@ -234,7 +222,7 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
             "--out=~/.ceylon/repo", "--rep=dependencies", "--sysrep=system-repository",
             "--cacherep=cache-rep", "--user=ceylon-user", "--pass=ceylon-user-password", "--offline",
             "--no-default-repositories", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo",
-            "--verbose=loader,ast,code,cmr,benchmark", "--source=foo", "--source=bar", "module1",
+            "--verbose=loader,ast,code,cmr,benchmark", "module1",
             "module2", "file1.ceylon", "file2.ceylon"];
         actual = compileCommand {
             CompileArguments {
@@ -255,7 +243,6 @@ test void shouldCreateCompileCommandWithAllParametersSpecified() {
                 noDefaultRepositories = true;
                 systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
                 verboseModes = [loader, ast, code, cmr, benchmark];
-                arguments = ["--source=foo", "--source=bar"];
             };
         };
     };

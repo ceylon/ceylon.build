@@ -60,7 +60,6 @@ shared void runModule(
             systemProperties = systemProperties;
             verboseModes = verboseModes;
             currentWorkingDirectory = currentWorkingDirectory;
-            arguments = context.arguments;
         };
     };
     execute(context.writer, "running", ceylon, command);
@@ -82,7 +81,6 @@ shared [String+] runCommand(RunArguments args) {
     command.add(appendCompileOnRun(args.compileOnRun));
     command.addAll(appendSystemProperties(args.systemProperties));
     command.add(appendVerboseModes(args.verboseModes));
-    command.addAll(appendArguments(args.arguments));
     command.add(appendModule(args.moduleName, args.version));
     command.addAll(appendModuleArguments(args.moduleArguments));
     return cleanCommand(command);

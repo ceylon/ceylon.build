@@ -16,8 +16,7 @@ shared class CompileArguments(
     noDefaultRepositories = false,
     systemProperties = [],
     verboseModes = [],
-    currentWorkingDirectory = null,
-    arguments = []) {
+    currentWorkingDirectory = null) {
     
     "name of modules to compile"
     shared {String*} modules;
@@ -92,7 +91,4 @@ shared class CompileArguments(
      (default: the directory where the tool is run from)
      (corresponding command line parameter: `--cwd=<dir>`)"
     shared String? currentWorkingDirectory;
-    
-    "custom arguments to be added to commandline"
-    shared {String*} arguments;
 }

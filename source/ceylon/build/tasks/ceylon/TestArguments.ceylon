@@ -10,8 +10,7 @@ shared class TestArguments(
     compileOnRun = null,
     systemProperties = [],
     verboseModes = [],
-    currentWorkingDirectory = null,
-    arguments = []) {
+    currentWorkingDirectory = null) {
     
     "name/version of modules to test"
     see(`function moduleVersion`)
@@ -60,7 +59,4 @@ shared class TestArguments(
      (default: the directory where the tool is run from)
      (corresponding command line parameter: `--cwd=<dir>`)"
     shared String? currentWorkingDirectory;
-    
-    "custom arguments to be added to commandline"
-    shared {String*} arguments;
 }

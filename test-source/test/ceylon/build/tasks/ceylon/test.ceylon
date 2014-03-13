@@ -212,25 +212,13 @@ test void shouldCreateTestCommandWithCurrentWorkingDirectory() {
     };
 }
 
-test void shouldCreateTestCommandWithArguments() {
-    assertEquals {
-        expected = ["test", "--foo", "bar=toto", "mymodule"];
-        actual = testCommand {
-            TestArguments {
-                modules = [moduleVersion("mymodule")];
-                arguments = ["--foo", "bar=toto"];
-            };
-        };
-    };
-}
-
 test void shouldCreateTestCommandWithAllParametersSpecified() {
     assertEquals {
         expected = ["test", "--cwd=.", "--no-default-repositories", "--offline", "--rep=dependencies1",
             "--rep=dependencies2", "--sysrep=system-repository", "--cacherep=cache-rep", "--compile=never",
             "--test='package com.acme.foo.bar'", "--test='class com.acme.foo.bar::Baz'",
             "--test='function com.acme.foo.bar::baz'", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo",
-            "--verbose=all,loader", "--foo", "bar=toto", "mymodule/1.0.0"];
+            "--verbose=all,loader", "mymodule/1.0.0"];
         actual = testCommand {
             TestArguments {
                 modules = [moduleVersion("mymodule", "1.0.0")];
@@ -244,7 +232,6 @@ test void shouldCreateTestCommandWithAllParametersSpecified() {
                 systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
                 verboseModes = [all, loader];
                 currentWorkingDirectory = ".";
-                arguments = ["--foo", "bar=toto"];
              };
         };
     };

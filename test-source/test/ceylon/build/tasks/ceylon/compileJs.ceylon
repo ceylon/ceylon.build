@@ -275,18 +275,6 @@ test void shouldCreateCompileJsCommandWithCurrentWorkingDirectory() {
     };
 }
 
-test void shouldCreateCompileJsCommandWithArguments() {
-    assertEquals {
-        expected = ["compile-js", "arg1", "arg2=value", "mymodule"];
-        actual = compileJsCommand {
-            CompileJsArguments {
-                modules = ["mymodule"];
-                arguments = ["arg1", "arg2=value"];
-            };
-        };
-    };
-}
-
 test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
     assertEquals {
         expected = ["compile-js", "--cwd=.", "--encoding=UTF-8", "--source=source-a", "--source=source-b",
@@ -294,7 +282,7 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
         "--cacherep=cache-rep", "--user=ceylon-user", "--pass=ceylon-user-password", "--offline",
         "--compact", "--lexical-scope-style", "--no-comments", "--no-indent", "--no-module", "--optimize",
         "--profile", "--skip-src-archive", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--verbose",
-        "--source=foo", "--source=bar", "module1", "module2", "file1.js", "file2.js"];
+        "module1", "module2", "file1.js", "file2.js"];
         actual = compileJsCommand {
             CompileJsArguments {
                 modules = ["module1", "module2"];
@@ -319,7 +307,6 @@ test void shouldCreateCompileJsCommandWithAllParametersSpecified() {
                 systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
                 verboseModes = all;
                 currentWorkingDirectory = ".";
-                arguments = ["--source=foo", "--source=bar"];
             };
         };
     };

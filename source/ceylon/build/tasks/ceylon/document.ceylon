@@ -3,7 +3,7 @@ import ceylon.build.task { context }
 "Documents a Ceylon module using `ceylon doc` tool."
 shared void document(
         "list of modules to document"
-        String|{String+}  modules,
+        String|{String*}  modules,
         "encoding used for reading source files
          (default: platform-specific)
          (corresponding command line parameter: `--encoding=<encoding>`)"
@@ -41,6 +41,8 @@ shared void document(
         "Enables offline mode that will prevent the module loader from connecting to remote repositories.
          (corresponding command line parameter: `--offline`)"
         Boolean offline = false,
+        // TODO add support for --nomtimecheck
+        // TODO need to improve link type to support pattern => url
         "The URL of a module repository containing documentation for external dependencies.
 
          Parameter url must be one of supported protocols (http://, https:// or file://).
@@ -90,7 +92,7 @@ shared void document(
 ) {
     value command = docCommand {
         DocArguments {
-            modules = multipleStringsIterable(modules);
+            modules = stringIterable(modules);
             encoding = encoding;
             sourceDirectories = stringIterable(sourceDirectories);
             documentationDirectory = documentationDirectory;
@@ -112,7 +114,6 @@ shared void document(
             systemProperties = systemProperties;
             verboseModes = verboseModes;
             currentWorkingDirectory = currentWorkingDirectory;
-            arguments = context.arguments;
         };
     };
     execute(context.writer, "documenting", ceylon, command);
@@ -145,7 +146,6 @@ shared [String+] docCommand(DocArguments args) {
     command.add(appendFooter(args.footer));
     command.addAll(appendSystemProperties(args.systemProperties));
     command.add(appendVerboseModes(args.verboseModes));
-    command.addAll(appendArguments(args.arguments));
     command.addAll(appendCompilationUnits(args.modules));
     return cleanCommand(command);
 }

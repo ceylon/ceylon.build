@@ -275,18 +275,6 @@ test void shouldCreatedocCommandWithCurrentWorkingDirectory() {
     };
 }
 
-test void shouldCreatedocCommandWithArguments() {
-    assertEquals {
-        expected = ["doc", "arg1", "arg2=value", "mymodule"];
-        actual = docCommand {
-            DocArguments {
-                modules = ["mymodule"];
-                arguments = ["arg1", "arg2=value"];
-            };
-        };
-    };
-}
-
 test void shouldCreateDocCommandWithAllParametersSpecified() {
     assertEquals {
         expected = ["doc", "--cwd=.", "--encoding=UTF-8", "--source=source-a", "--source=source-b",
@@ -295,7 +283,7 @@ test void shouldCreateDocCommandWithAllParametersSpecified() {
         "--pass=ceylon-user-password", "--offline", "--link=http://doc.mymodule.org", "--non-shared",
         "--source-code", "--ignore-broken-link", "--ignore-missing-doc", "--ignore-missing-throws",
         "--header=custom header", "--footer=custom footer", "--define=ENV_VAR1=42",
-        "--define=ENV_VAR2=foo", "--verbose=all,loader", "--source=foo", "--source=bar", "mymodule1", "mymodule2"];
+        "--define=ENV_VAR2=foo", "--verbose=all,loader", "mymodule1", "mymodule2"];
         actual = docCommand {
             DocArguments {
                 modules = ["mymodule1", "mymodule2"];
@@ -320,7 +308,6 @@ test void shouldCreateDocCommandWithAllParametersSpecified() {
                 systemProperties = ["ENV_VAR1" -> "42", "ENV_VAR2" -> "foo"];
                 verboseModes = [all, loader];
                 currentWorkingDirectory = ".";
-                arguments = ["--source=foo", "--source=bar"];
             };
         };
     };

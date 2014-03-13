@@ -1,5 +1,4 @@
 import ceylon.test { test, assertEquals }
-import ceylon.build.tasks.ceylon { ceylonJvmModule }
 
 // TODO rewrite those tests
 //test void shouldHaveOnlyDocGoal() {

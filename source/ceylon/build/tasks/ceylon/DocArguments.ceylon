@@ -21,11 +21,10 @@ shared class DocArguments(
     footer = null,
     systemProperties = [],
     verboseModes = [],
-    currentWorkingDirectory = null,
-    arguments = []) {
+    currentWorkingDirectory = null) {
     
     "name of modules to doc"
-    shared {String+} modules;
+    shared {String*} modules;
     
     "encoding used for reading source files
      (default: platform-specific)
@@ -128,7 +127,4 @@ shared class DocArguments(
     "Produce verbose output.
      (corresponding command line parameter: `--verbose=<flags>`)"
     shared {DocVerboseMode*}|AllVerboseModes verboseModes;
-    
-    "custom arguments to be added to commandline"
-    shared {String*} arguments;
 }

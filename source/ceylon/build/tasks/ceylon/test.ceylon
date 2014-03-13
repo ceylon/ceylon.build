@@ -55,7 +55,6 @@ shared void test(
             systemProperties = systemProperties;
             verboseModes = verboseModes;
             currentWorkingDirectory = currentWorkingDirectory;
-            arguments = context.arguments;
         };
     };
     execute(context.writer, "testing", ceylon, command);
@@ -77,7 +76,6 @@ shared [String+] testCommand(TestArguments args) {
     command.addAll(appendTests(args.tests));
     command.addAll(appendSystemProperties(args.systemProperties));
     command.add(appendVerboseModes(args.verboseModes));
-    command.addAll(appendArguments(args.arguments));
     command.addAll(appendCompilationUnits(args.modules));
     return cleanCommand(command);
 }

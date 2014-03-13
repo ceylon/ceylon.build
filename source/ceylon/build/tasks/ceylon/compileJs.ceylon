@@ -103,7 +103,6 @@ shared void compileJs(
             systemProperties = systemProperties;
             verboseModes = verboseModes;
             currentWorkingDirectory = currentWorkingDirectory;
-            arguments = context.arguments;
         };
     };
     execute(context.writer, "compiling", ceylon, command);
@@ -135,7 +134,6 @@ shared [String+] compileJsCommand(CompileJsArguments args) {
     command.add(appendSkipSourceArchive(args.skipSourceArchive));
     command.addAll(appendSystemProperties(args.systemProperties));
     command.add(appendVerboseModes(args.verboseModes));
-    command.addAll(appendArguments(args.arguments));
     command.addAll(appendCompilationUnits(args.modules, args.files));
     return cleanCommand(command);
 }

@@ -14,8 +14,7 @@ shared class RunJsArguments(
     debug = null,
     verboseModes = [],
     pathToNodeJs = null,
-    currentWorkingDirectory = null,
-    arguments = []) {
+    currentWorkingDirectory = null) {
     
     "name of module to run"
     shared String moduleName;
@@ -77,7 +76,4 @@ shared class RunJsArguments(
      (default: the directory where the tool is run from)
      (corresponding command line parameter: `--cwd=<dir>`)"
     shared String? currentWorkingDirectory;
-    
-    "custom arguments to be added to commandline"
-    shared {String*} arguments;
 }

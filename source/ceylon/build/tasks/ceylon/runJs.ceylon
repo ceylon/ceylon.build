@@ -68,7 +68,6 @@ shared void runJsModule(
             verboseModes = verboseModes;
             pathToNodeJs = pathToNodeJs;
             currentWorkingDirectory = currentWorkingDirectory;
-            arguments = context.arguments;
         };
     };
     execute(context.writer, "running", ceylon, command);
@@ -92,7 +91,6 @@ shared [String+] runJsCommand(RunJsArguments args) {
     command.add(appendDebug(args.debug));
     command.add(appendVerboseModes(args.verboseModes));
     command.add(appendPathToNodeJs(args.pathToNodeJs));
-    command.addAll(appendArguments(args.arguments));
     command.add(appendModule(args.moduleName, args.version));
     command.addAll(appendModuleArguments(args.moduleArguments));
     return cleanCommand(command);

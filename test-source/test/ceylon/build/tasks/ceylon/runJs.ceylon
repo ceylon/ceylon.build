@@ -228,25 +228,13 @@ test void shouldCreateRunJsCommandWithCurrentWorkingDirectory() {
     };
 }
 
-test void shouldCreateRunJsCommandWithArguments() {
-    assertEquals {
-        expected = ["run-js", "--foo", "bar=toto", "mymodule"];
-        actual = runJsCommand {
-            RunJsArguments {
-                moduleName = "mymodule";
-                arguments = ["--foo", "bar=toto"];
-            };
-        };
-    };
-}
 
 test void shouldCreateRunJsCommandWithAllParametersSpecified() {
     assertEquals {
         expected = ["run-js", "--cwd=.", "--offline", "--no-default-repositories", "--rep=dependencies1",
             "--rep=dependencies2", "--sysrep=system-repository", "--cacherep=cache-rep", "--run=main",
             "--compile=check", "--define=ENV_VAR1=42", "--define=ENV_VAR2=foo", "--debug=debug",
-            "--verbose=all,loader", "--node-exe=/usr/bin/nodejs", "--foo", "bar=toto", "mymodule/0.1",
-            "--", "arg1", "arg2=value"];
+            "--verbose=all,loader", "--node-exe=/usr/bin/nodejs", "mymodule/0.1", "--", "arg1", "arg2=value"];
         actual = runJsCommand {
             RunJsArguments {
                 moduleName = "mymodule";
@@ -264,7 +252,6 @@ test void shouldCreateRunJsCommandWithAllParametersSpecified() {
                 verboseModes = [all, loader];
                 pathToNodeJs = "/usr/bin/nodejs";
                 currentWorkingDirectory = ".";
-                arguments = ["--foo", "bar=toto"];
             };
         };
     };
