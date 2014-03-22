@@ -18,7 +18,7 @@ shared Goal|InvalidGoalDeclaration goalDefinition(FunctionOrValueDeclaration dec
     if (checkSignature(declaration, container)) {
         value callable = extractCallable(declaration, container);
         value internal = declaration.annotations<SharedAnnotation>().size == 0;
-        value dependencies = [ ];//for (dependency in annotation.dependencies) goalName(goalAnnotation(declaration), dependency) ];
+        value dependencies = [ for (dependency in annotation.dependencies) goalName(goalAnnotation(dependency), dependency) ];
         return Goal(name, GoalProperties(internal, callable, dependencies));
     }
     return InvalidGoalDeclaration(declaration);
