@@ -25,7 +25,7 @@ shared Goal|InvalidGoalDeclaration goalDefinition(FunctionOrValueDeclaration dec
 }
 
 "Returns `GoalAnnotation` associated to this declaration"
-throws(`class AssertionException`, "When no `GoalAnnotation` is found on this declaration")
+throws(`class AssertionError`, "When no `GoalAnnotation` is found on this declaration")
 GoalAnnotation goalAnnotation(FunctionOrValueDeclaration declaration) {
     value annotations = declaration.annotations<GoalAnnotation>();
     assert (nonempty annotations, annotations.size == 1);
