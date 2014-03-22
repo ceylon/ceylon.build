@@ -21,6 +21,8 @@ Module mockModule({Package*} packages = []) {
         shared actual String qualifiedName => notImplemented;
         
         shared actual String version => notImplemented;
+        
+        shared actual Resource? resourceByPath(String path) => notImplemented;
     }
     return mod;
 }

@@ -22,6 +22,6 @@ shared class GoalDefinitions({<String->GoalProperties>*} definitions) {
         if (exists propeties = map.get(goal)) {
             return propeties;
         }
-        throw AssertionException("No goal defined with name ``goal``");
+        throw AssertionError("No goal defined with name ``goal``");
     }
 }

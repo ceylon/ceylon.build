@@ -20,7 +20,7 @@ void assertArgumentsAreFiltered([String*] inputArguments, [String*] expectedGoal
     Anything() registerArguments(String taskName, MutableMap<String, [String*]> argumentsMap) {
         return void() {
             if (argumentsMap.defines(taskName)) {
-                throw AssertionException("``taskName`` have already arguments");
+                throw AssertionError("``taskName`` have already arguments");
             }
             argumentsMap.put(taskName, context.arguments);
         };
