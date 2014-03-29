@@ -2,7 +2,7 @@ import ceylon.language.meta { type }
 import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDeclaration, FunctionOrValueDeclaration }
 import ceylon.language.meta.model { Value, Function }
 import ceylon.build.engine { GoalProperties, Goal }
-import ceylon.build.task { GoalAnnotation, NoOp }
+import ceylon.build.task { GoalAnnotation, NoOp, DependsOnAnnotation }
 
 shared [FunctionOrValueDeclaration*] findPackageMembersAnnotatedWithGoals(Module mod) {
     value annotatedGoals = SequenceBuilder<FunctionOrValueDeclaration>();
@@ -18,7 +18,11 @@ shared Goal|InvalidGoalDeclaration goalDefinition(FunctionOrValueDeclaration dec
     if (checkSignature(declaration, container)) {
         value callable = extractCallable(declaration, container);
         value internal = declaration.annotations<SharedAnnotation>().size == 0;
-        value dependencies = [ for (dependency in annotation.dependencies) goalName(goalAnnotation(dependency), dependency) ];
+        value dependencies = [
+            for (dependsOnAnnotation in declaration.annotations<DependsOnAnnotation>())
+                for (dependency in dependsOnAnnotation.dependencies)
+                    goalName(goalAnnotation(dependency), dependency)
+        ];
         return Goal(name, GoalProperties(internal, callable, dependencies));
     }
     return InvalidGoalDeclaration(declaration);

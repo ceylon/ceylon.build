@@ -5,15 +5,12 @@ shared abstract class NoOp() of noop {}
 shared object noop extends NoOp() {}
 
 "The annotation for [[goal]]"
-shared final annotation class GoalAnnotation(name, dependencies)
+shared final annotation class GoalAnnotation(name)
         satisfies OptionalAnnotation<GoalAnnotation, FunctionOrValueDeclaration> {
     
     "Goal name. If no name is provided, annotated
      element's name will be used as name."
     shared String name;
-    
-    "Dependencies to other goals."
-    shared [FunctionOrValueDeclaration*] dependencies;
     
     string => name;
 }
@@ -24,11 +21,21 @@ shared annotation GoalAnnotation goal(
     
     "Goal name. If no name is provided, annotated
      element's name will be used as name."
-    String name = "",
+    String name = "")
+        => GoalAnnotation(name);
+
+shared final annotation class DependsOnAnnotation(dependencies)
+        satisfies SequencedAnnotation<DependsOnAnnotation, FunctionOrValueDeclaration> {
     
     "Dependencies to other goals."
-    [FunctionOrValueDeclaration*] dependencies = [])
-        => GoalAnnotation(name, dependencies);
+    shared FunctionOrValueDeclaration* dependencies;
+}
+
+shared annotation DependsOnAnnotation dependsOn(
+    
+    "Dependencies to other goals."
+    FunctionOrValueDeclaration* dependencies)
+        => DependsOnAnnotation(*dependencies);
 
 
 "The annotation for [[include]]"
