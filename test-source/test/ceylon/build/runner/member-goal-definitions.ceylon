@@ -1,6 +1,6 @@
 import ceylon.test { test, assertEquals }
 import ceylon.build.task { goal, noop, NoOp }
-import ceylon.build.runner { goalDefinition, goalsDefinition, InvalidGoalDeclaration }
+import ceylon.build.runner { goalDefinition, goalDeclarationsFromIncludes }
 import ceylon.collection { HashSet }
 
 class Container() {
@@ -36,7 +36,7 @@ class Container() {
 test void shouldBuildGoalDefinitionFromMethod() {
     value container = Container();
     checkGoalDefinition {
-        goal = goalDefinition(`function Container.goalMethod`, container);
+        goal = goalDefinition(`function Container.goalMethod`, emptyPhases, container);
         expectedDefinition = ExpectedDefinition("goalMethod");
         expectedAccumulatorContent = ["goalMethod"];
     };
@@ -46,7 +46,7 @@ test void shouldBuildGoalDefinitionFromMethod() {
 test void shouldBuildGoalDefinitionFromMethodWithNameSpecified() {
     value container = Container();
     checkGoalDefinition {
-        goal = goalDefinition(`function Container.goalWithNameSpecifiedMethod`, container);
+        goal = goalDefinition(`function Container.goalWithNameSpecifiedMethod`, emptyPhases, container);
         expectedDefinition = ExpectedDefinition("goal-with-name-specified-method");
         expectedAccumulatorContent = ["goalWithNameSpecifiedMethod"];
     };
@@ -55,7 +55,7 @@ test void shouldBuildGoalDefinitionFromMethodWithNameSpecified() {
 test void shouldBuildGoalDefinitionFromMethodWithReturnType() {
     value container = Container();
     checkGoalDefinition {
-        goal = goalDefinition(`function Container.goalMethodWithReturnType`, container);
+        goal = goalDefinition(`function Container.goalMethodWithReturnType`, emptyPhases, container);
         expectedDefinition = ExpectedDefinition {
             name = "goalMethodWithReturnType";
         };
@@ -66,7 +66,7 @@ test void shouldBuildGoalDefinitionFromMethodWithReturnType() {
 test void shouldBuildGoalDefinitionFromNoOpAttribute() {
     value container = Container();
     checkGoalDefinition {
-        goal = goalDefinition(`value Container.noopGoalAttribute`, container);
+        goal = goalDefinition(`value Container.noopGoalAttribute`, emptyPhases, container);
         expectedDefinition = ExpectedDefinition {
             name = "noopGoalAttribute";
             task = false;
@@ -77,28 +77,27 @@ test void shouldBuildGoalDefinitionFromNoOpAttribute() {
 
 test void shouldFailToBuildInvalidGoalDefinitionMethod() {
     value container = Container();
-    checkInvalidGoalDefinition(goalDefinition(`function Container.invalidGoalMethod`, container));
+    checkInvalidGoalDefinition(goalDefinition(`function Container.invalidGoalMethod`, emptyPhases, container));
 }
 
 test void shouldFailToBuildInvalidGoalDefinitionAttribute() {
     value container = Container();
-    checkInvalidGoalDefinition(goalDefinition(`value Container.invalidGoalAttribute`, container));
+    checkInvalidGoalDefinition(goalDefinition(`value Container.invalidGoalAttribute`, emptyPhases, container));
 }
 
 Container containerValue = Container();
 
-test void shouldFindAndBuildIncludedGoals() {
-    value definitions = goalsDefinition(`value containerValue`);
+test void shouldFindIncludedGoals() {
+    value definitions = goalDeclarationsFromIncludes([`value containerValue`]);
     assertEquals {
-        actual = HashSet { elements = expectedDefinitionList(definitions); };
+        actual = HashSet { elements = definitions; };
         expected = HashSet {
-            ExpectedDefinition("goalMethod"),
-            ExpectedDefinition("goal-with-name-specified-method"),
-            ExpectedDefinition("goalMethodWithReturnType"),
-            InvalidGoalDeclaration(`function Container.invalidGoalMethod`),
-            InvalidGoalDeclaration(`value Container.invalidGoalAttribute`),
-            ExpectedDefinition("noopGoalAttribute", false)
+            `function Container.goalMethod` -> containerValue,
+            `function Container.goalWithNameSpecifiedMethod` -> containerValue,
+            `function Container.goalMethodWithReturnType` -> containerValue,
+            `function Container.invalidGoalMethod` -> containerValue,
+            `value Container.invalidGoalAttribute` -> containerValue,
+            `value Container.noopGoalAttribute` -> containerValue
         };
     };
 }
-

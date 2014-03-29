@@ -1,7 +1,10 @@
 import ceylon.build.engine { Goal }
 import ceylon.test { fail, assertEquals, assertFalse, afterTest, beforeTest, assertTrue }
 import ceylon.build.runner { InvalidGoalDeclaration }
-import ceylon.collection { MutableList, ArrayList }
+import ceylon.collection { MutableList, ArrayList, HashMap }
+import ceylon.language.meta.declaration { FunctionOrValueDeclaration }
+
+Map<FunctionOrValueDeclaration, [FunctionOrValueDeclaration*]> emptyPhases = HashMap();
 
 variable MutableList<String> accumulator = ArrayList<String>(2);
 
@@ -36,24 +39,6 @@ final class ExpectedDefinition(name, task = true, dependencies = [], internal = 
     }
     
     string => "ExpectedDefinition[name:``name``, task:``task``, internal:``internal``, dependencies:``dependencies``]";
-}
-
-{<ExpectedDefinition|InvalidGoalDeclaration>*} expectedDefinitionList({<Goal|InvalidGoalDeclaration>*} definitions)
-        => { for (definition in definitions) convert(definition) };
-
-ExpectedDefinition|InvalidGoalDeclaration convert(Goal|InvalidGoalDeclaration definition) {
-    switch (definition)
-    case (is Goal) {
-        value properties = definition.properties;
-        return ExpectedDefinition {
-            name = definition.name;
-            task = properties.task exists;
-            internal = properties.internal;
-            dependencies = properties.dependencies;
-        };
-    } case (is InvalidGoalDeclaration)  {
-        return definition;
-    }
 }
 
 void checkGoalDefinition(

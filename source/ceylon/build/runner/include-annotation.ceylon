@@ -1,7 +1,6 @@
-import ceylon.build.engine { Goal }
-import ceylon.language.meta { type }
 import ceylon.language.meta.declaration { FunctionOrValueDeclaration, ClassDeclaration, ValueDeclaration, Module }
 import ceylon.build.task { GoalAnnotation, IncludeAnnotation }
+import ceylon.language.meta { type }
 
 shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
     value annotatedIncludes = SequenceBuilder<ValueDeclaration>();
@@ -12,15 +11,16 @@ shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
     return annotatedIncludes.sequence;
 }
 
-shared {<Goal|InvalidGoalDeclaration>*} goalsDefinition(ValueDeclaration declaration) {
-    value instance = declaration.apply<Object>().get();
-    value instanceTypeDeclaration = type(instance).declaration;
-    value goals = SequenceBuilder<Goal|InvalidGoalDeclaration>();
-    value declarations = findClassMembersAnnotatedWithGoal(instanceTypeDeclaration);
-    for (goalDeclaration in declarations) {
-        goals.append(goalDefinition(goalDeclaration, instance));
+shared [<FunctionOrValueDeclaration->Object>*] goalDeclarationsFromIncludes(
+    [ValueDeclaration*] annotatedIncludes) {
+    value sb = SequenceBuilder<FunctionOrValueDeclaration -> Object>();
+    for (include in annotatedIncludes) {
+        value instance = include.apply<Object>().get();
+        for (declaration in findClassMembersAnnotatedWithGoal(type(instance).declaration)) {
+            sb.append(declaration -> instance);
+        }
     }
-    return goals.sequence;
+    return sb.sequence;
 }
 
 [FunctionOrValueDeclaration*] findClassMembersAnnotatedWithGoal(ClassDeclaration instanceTypeDeclaration) {
