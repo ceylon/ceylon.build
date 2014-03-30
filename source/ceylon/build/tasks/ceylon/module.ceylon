@@ -94,13 +94,15 @@
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module ceylon.build.tasks.ceylon "1.0.0" {
     shared import ceylon.build.task "1.0.0";
+    shared import ceylon.file "1.0.0";
+    
     import ceylon.build.tasks.commandline "1.0.0";
     import ceylon.build.tasks.file "1.0.0";
-    shared import ceylon.file "1.0.0";
     import ceylon.collection "1.0.0";
-    import ceylon.interop.java "1.0.0";
-    shared import com.redhat.ceylon.compiler.java "1.0.0";
-    shared import com.redhat.ceylon.compiler.js "1.0.0";
-    shared import ceylon.runtime "1.0.0";
+    
+    import com.redhat.ceylon.compiler.java "1.0.0";
+    import org.jboss.modules "1.1.3.GA";
+    
     import java.base "7";
+    import ceylon.interop.java "1.0.0";
 }

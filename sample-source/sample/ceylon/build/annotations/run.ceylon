@@ -1,4 +1,4 @@
-import ceylon.build.task { goal, include, context, GoalAnnotation }
+import ceylon.build.task { goal, dependsOn, include, context, GoalAnnotation }
 import ceylon.build.tasks.misc { echo }
 import ceylon.language.meta.declaration { Declaration }
 
@@ -21,7 +21,8 @@ goal shared void bye() {
     echo("bye");
 }
 
-goal { dependencies = [`function bar`]; }
+goal
+dependsOn(`function bar`)
 shared void foo() {
     echo("foo");
 }
@@ -52,7 +53,8 @@ void tasksImports() {
     echo("hello");
 }
 
-goal { dependencies = [`function CeylonModule.compile`]; }
+goal
+dependsOn(`function CeylonModule.compile`)
 void deploy() {
     print("deploying");
 }

@@ -2,9 +2,9 @@ import ceylon.language.meta { type }
 import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDeclaration, FunctionOrValueDeclaration }
 import ceylon.language.meta.model { Value, Function }
 import ceylon.build.engine { GoalProperties, Goal }
-import ceylon.build.task { GoalAnnotation, NoOp }
+import ceylon.build.task { GoalAnnotation, NoOp, DependsOnAnnotation }
 
-shared [FunctionOrValueDeclaration*] findPackageMembersAnnotatedWithGoals(Module mod) {
+shared [FunctionOrValueDeclaration*] findTopLevelAnnotatedGoals(Module mod) {
     value annotatedGoals = SequenceBuilder<FunctionOrValueDeclaration>();
     for (pkg in mod.members) {
         annotatedGoals.appendAll(pkg.annotatedMembers<FunctionOrValueDeclaration, GoalAnnotation>());
@@ -12,13 +12,16 @@ shared [FunctionOrValueDeclaration*] findPackageMembersAnnotatedWithGoals(Module
     return annotatedGoals.sequence;
 }
 
-shared Goal|InvalidGoalDeclaration goalDefinition(FunctionOrValueDeclaration declaration, Object? container = null) {
+shared Goal|InvalidGoalDeclaration goalDefinition(
+    FunctionOrValueDeclaration declaration,
+    Map<FunctionOrValueDeclaration, [FunctionOrValueDeclaration*]> phases,
+    Object? container = null) {
     value annotation = goalAnnotation(declaration);
     value name = goalName(annotation, declaration);
     if (checkSignature(declaration, container)) {
         value callable = extractCallable(declaration, container);
         value internal = declaration.annotations<SharedAnnotation>().size == 0;
-        value dependencies = [ for (dependency in annotation.dependencies) goalName(goalAnnotation(dependency), dependency) ];
+        value dependencies = buildDependencies(declaration, phases);
         return Goal(name, GoalProperties(internal, callable, dependencies));
     }
     return InvalidGoalDeclaration(declaration);
@@ -81,4 +84,16 @@ Boolean isNoOp(ValueDeclaration declaration, Anything containerInstance)
     => valueModelFromDeclaration(declaration, containerInstance).type.subtypeOf(`NoOp`);
 
 Anything() functionModelToFunction(Function<Anything,[]> func) => () => func.apply();
+
+[String*] buildDependencies(
+    FunctionOrValueDeclaration declaration,
+    Map<FunctionOrValueDeclaration,FunctionOrValueDeclaration[]> phases) => concatenate( {
+        for (dependsOnAnnotation in declaration.annotations<DependsOnAnnotation>())
+        for (dependency in dependsOnAnnotation.dependencies)
+        goalName(goalAnnotation(dependency), dependency)
+    }, {
+        for (dependency in phases.get(declaration) else [])
+        goalName(goalAnnotation(dependency), dependency)
+    }
+);
 

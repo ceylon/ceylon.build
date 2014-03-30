@@ -1,3 +1,5 @@
+import ceylon.build.task { GoalException }
+import ceylon.file { current, Path }
 import ceylon.process {
     Process, createProcess,
     Input, currentInput,
@@ -5,7 +7,6 @@ import ceylon.process {
     Error, currentError,
     currentEnvironment
 }
-import ceylon.file { current, Path }
 
 "Returns a `Task` that will run the given command in a new a new process using [[executeCommand]].
  Returns true if process exit code is `0`, false otherwise."
@@ -90,7 +91,7 @@ shared Integer? executeCommand(
  If `exitCode` is not `0`, a failure outcome will be returned with information about executed command."
 shared void reportOutcome(Integer exitCode, String command, [String*] arguments, Path path = current) {
     if (exitCode != 0) {
-        throw Exception(
+        throw GoalException(
                 "command:            ``command````arguments.empty then "" else " "````" ".join(arguments)``\n" +
                 "working directory:  ``path``\n" +
                 "exits with code:    ``exitCode``");

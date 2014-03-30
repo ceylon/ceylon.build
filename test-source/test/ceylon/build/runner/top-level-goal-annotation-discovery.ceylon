@@ -1,11 +1,11 @@
 import ceylon.language.meta.declaration { Module }
 import ceylon.test { test, assertEquals }
-import ceylon.build.runner { findPackageMembersAnnotatedWithGoals }
+import ceylon.build.runner { findTopLevelAnnotatedGoals }
 import ceylon.build.task { goal }
 
 test void shouldNotFindGoalAnnotatedFunctionsOrValuesIfNoPackage() {
     Module mod = mockModule();
-    value results = findPackageMembersAnnotatedWithGoals(mod);
+    value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
@@ -14,7 +14,7 @@ test void shouldNotFindGoalAnnotatedFunctionsOrValuesInEmptyPackages() {
         mockPackage(),
         mockPackage()
     };
-    value results = findPackageMembersAnnotatedWithGoals(mod);
+    value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
@@ -30,7 +30,7 @@ test void shouldNotFindGoalAnnotatedFunctionsOrValuesIfNoFunctionsOrValuesAnnota
             mockFunctionDeclaration(by("no one"))
         }
     };
-    value results = findPackageMembersAnnotatedWithGoals(mod);
+    value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
@@ -55,6 +55,6 @@ test void shouldFindGoalAnnotatedFunctionsAndValues() {
             goal6
         }
     };
-    value results = findPackageMembersAnnotatedWithGoals(mod);
+    value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, [goal1, goal2, goal4, goal3, goal5, goal6]);
 }

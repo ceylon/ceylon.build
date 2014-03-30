@@ -29,7 +29,7 @@ shared goal Anything invalidGoalValue = noop;
 
 test void shouldBuildGoalDefinitionFromFunction() {
     checkGoalDefinition {
-        goal = goalDefinition(`function goalFunction`);
+        goal = goalDefinition(`function goalFunction`, emptyPhases);
         expectedDefinition = ExpectedDefinition("goalFunction");
         expectedAccumulatorContent = ["goalFunction"];
     };
@@ -37,7 +37,7 @@ test void shouldBuildGoalDefinitionFromFunction() {
 
 test void shouldBuildGoalDefinitionFromFunctionWithReturnType() {
     checkGoalDefinition {
-        goal = goalDefinition(`function goalFunctionWithReturnType`);
+        goal = goalDefinition(`function goalFunctionWithReturnType`, emptyPhases);
         expectedDefinition = ExpectedDefinition("goalFunctionWithReturnType");
         expectedAccumulatorContent = ["goalFunctionWithReturnType"];
     };
@@ -45,7 +45,7 @@ test void shouldBuildGoalDefinitionFromFunctionWithReturnType() {
 
 test void shouldBuildGoalDefinitionFromFunctionWithNameSpecified() {
     checkGoalDefinition {
-        goal = goalDefinition(`function goalWithNameSpecifiedFunction`);
+        goal = goalDefinition(`function goalWithNameSpecifiedFunction`, emptyPhases);
         expectedDefinition = ExpectedDefinition("goal-with-name-specified-function");
         expectedAccumulatorContent = ["goalWithNameSpecifiedFunction"];
     };
@@ -53,7 +53,7 @@ test void shouldBuildGoalDefinitionFromFunctionWithNameSpecified() {
 
 test void shouldBuildGoalDefinitionFromInternalFunction() {
     checkGoalDefinition {
-        goal = goalDefinition(`function internalGoalFunction`);
+        goal = goalDefinition(`function internalGoalFunction`, emptyPhases);
         expectedDefinition = ExpectedDefinition {
             name = "internalGoalFunction";
             internal = true;
@@ -64,7 +64,7 @@ test void shouldBuildGoalDefinitionFromInternalFunction() {
 
 test void shouldBuildGoalDefinitionFromNoOpValue() {
     checkGoalDefinition {
-        goal = goalDefinition(`value noopGoalValue`);
+        goal = goalDefinition(`value noopGoalValue`, emptyPhases);
         expectedDefinition = ExpectedDefinition {
             name = "noopGoalValue";
             task = false;
@@ -74,9 +74,9 @@ test void shouldBuildGoalDefinitionFromNoOpValue() {
 }
 
 test void shouldFailToBuildInvalidGoalDefinitionFunction() {
-    checkInvalidGoalDefinition(goalDefinition(`function invalidGoalFunction`));
+    checkInvalidGoalDefinition(goalDefinition(`function invalidGoalFunction`, emptyPhases));
 }
 
 test void shouldFailToBuildInvalidGoalDefinitionValue() {
-    checkInvalidGoalDefinition(goalDefinition(`value invalidGoalValue`));
+    checkInvalidGoalDefinition(goalDefinition(`value invalidGoalValue`, emptyPhases));
 }

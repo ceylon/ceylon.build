@@ -1,6 +1,11 @@
 import ceylon.build.task { Writer }
 import ceylon.build.tasks.commandline { executeCommand, reportOutcome }
-import com.redhat.ceylon.common.tools { CeylonTool { start } }
+import ceylon.collection { HashMap }
+import com.redhat.ceylon.common.tools { CeylonTool, CeylonToolLoader }
+import org.jboss.modules {
+    JBossModule = Module { ceylonModuleLoader = callerModuleLoader },
+    ModuleIdentifier { createModuleIdentifier = create }
+}
 
 "Executes ceylon command using given ceylon executable or `CeylonTool` if none is given"
 void execute(Writer writer, String title, String? ceylon, [String+] arguments) {
@@ -22,5 +27,31 @@ Integer executeInNewProcess(Writer writer, String title, String ceylon, [String+
 
 "Executes ceylon command using `CeylonTool`"
 Integer executeWithCurrentCeylonRuntime([String+] arguments) {
-    return start(*arguments);
+    CeylonTool tool = CeylonTool();
+    assert (exists mod = commandToModule.get(arguments.first));
+    tool.setToolLoader(loadJavaModule(mod.name, mod.version));
+    return tool.bootstrap(*arguments);
+}
+
+class Module(shared String name, shared String? version = null) {}
+Module jvmCompiler = Module("com.redhat.ceylon.compiler.java", "1.0.0");
+Module jsCompiler = Module("com.redhat.ceylon.compiler.js", "1.0.0");
+Module ceylonRuntime = Module("ceylon.runtime", "1.0.0");
+Map<String, Module> commandToModule = HashMap {
+    entries = {
+        "compile" -> jvmCompiler,
+        "compile-js" -> jsCompiler,
+        "doc" -> jvmCompiler,
+        "run" -> ceylonRuntime,
+        "run-js" -> jsCompiler,
+        "test" -> ceylonRuntime,
+        "test-js" -> jsCompiler
+    };
+};
+
+CeylonToolLoader loadJavaModule(String name, String? version) {
+    value identifier = createModuleIdentifier(name, version);
+    value jbossModule = ceylonModuleLoader.loadModule(identifier);
+    value classLoader = jbossModule.classLoader;
+    return CeylonToolLoader(classLoader);
 }
