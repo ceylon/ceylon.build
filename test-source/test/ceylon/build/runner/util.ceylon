@@ -1,8 +1,25 @@
-import ceylon.build.engine { Goal }
-import ceylon.test { fail, assertEquals, assertFalse, afterTest, beforeTest, assertTrue }
-import ceylon.build.runner { InvalidGoalDeclaration }
-import ceylon.collection { MutableList, ArrayList, HashMap }
-import ceylon.language.meta.declaration { FunctionOrValueDeclaration }
+import ceylon.build.engine {
+    Goal
+}
+import ceylon.build.runner {
+    InvalidGoalDeclaration
+}
+import ceylon.collection {
+    MutableList,
+    ArrayList,
+    HashMap
+}
+import ceylon.language.meta.declaration {
+    FunctionOrValueDeclaration
+}
+import ceylon.test {
+    fail,
+    assertEquals,
+    assertFalse,
+    afterTest,
+    beforeTest,
+    assertTrue
+}
 
 Map<FunctionOrValueDeclaration, [FunctionOrValueDeclaration*]> emptyPhases = HashMap();
 
@@ -44,7 +61,7 @@ final class ExpectedDefinition(name, task = true, dependencies = [], internal = 
 void checkGoalDefinition(
     Goal|InvalidGoalDeclaration goal,
     ExpectedDefinition expectedDefinition,
-    [String*] expectedAccumulatorContent) {
+    [String*] expectedAccumulatorContent = []) {
     assert(is Goal goal);
     assertEquals(goal.name, expectedDefinition.name);
     assertEquals(goal.properties.internal, expectedDefinition.internal);
