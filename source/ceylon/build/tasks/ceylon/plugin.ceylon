@@ -1,4 +1,4 @@
-import ceylon.build.task { goal, noop, NoOp }
+import ceylon.build.task { goal, dependsOn, attachTo, noop, NoOp }
 import ceylon.file { parsePath }
 import ceylon.build.tasks.file { copyFiles, delete }
 import ceylon.build.tasks.ceylon { ceylonExecutable }
@@ -41,7 +41,17 @@ shared interface CeylonBasePlugin {
         };
     }
     
+    goal("compile")
+    shared default NoOp compile => noop;
+    
+    goal("compile-tests")
+    shared default NoOp compileTests => noop;
+    
+    goal("test")
+    shared default NoOp test => noop;
+    
     goal
+    dependsOn(`value compile`)
     shared default void publish() {
         for (mod in model.main.modules) {
             value output = parsePath(mainOutputFolderOrDefault());
@@ -53,13 +63,18 @@ shared interface CeylonBasePlugin {
             };
         }
     }
+    
+    goal
+    dependsOn(`value test`, `function publish`)
+    shared default NoOp build => noop;
 }
 
 shared interface CeylonJvmPlugin satisfies CeylonBasePlugin {
     
     goal("compile-jvm")
+    attachTo(`value compile`)
     shared default void compileJvm() {
-        compile {
+        package.compile {
             modules = model.main.backend(jvm).map(name);
             encoding = model.encoding;
             sourceDirectories = model.sourceSets.main.sources;
@@ -77,12 +92,11 @@ shared interface CeylonJvmPlugin satisfies CeylonBasePlugin {
         };
     }
     
-    goal {
-        name = "compile-jvm-tests";
-        dependencies = [`function compileJvm`];
-    }
+    goal("compile-jvm-tests")
+    dependsOn(`function compileJvm`)
+    attachTo(`value compileTests`)
     shared default void compileJvmTests() {
-        compile {
+        package.compile {
             modules = model.test.backend(jvm).map(name);
             encoding = model.encoding;
             sourceDirectories = model.sourceSets.test.sources;
@@ -100,12 +114,11 @@ shared interface CeylonJvmPlugin satisfies CeylonBasePlugin {
         };
     }
     
-    goal {
-        name = "test-jvm";
-        dependencies = [`function compileJvmTests`];
-    }
+    goal("test-jvm")
+    dependsOn(`function compileJvmTests`)
+    attachTo(`value test`)
     shared default void testJvm() {
-        test {
+        package.test {
             modules = model.test.backend(jvm).map(version);
             repositories = testRepositories(model);
             systemRepository = model.repositories.system;
@@ -124,6 +137,7 @@ shared interface CeylonJvmPlugin satisfies CeylonBasePlugin {
 shared interface CeylonJsPlugin satisfies CeylonBasePlugin {
     
     goal("compile-js")
+    attachTo(`value compile`)
     shared default void compileJs() {
         package.compileJs {
             modules = model.main.backend(js).map(name);
@@ -148,10 +162,9 @@ shared interface CeylonJsPlugin satisfies CeylonBasePlugin {
         };
     }
     
-    goal {
-        name = "compile-js-tests";
-        dependencies = [`function compileJs`];
-    }
+    goal("compile-js-tests")
+    dependsOn(`function compileJs`)
+    attachTo(`value compileTests`)
     shared default void compileJsTests() {
         package.compileJs {
             modules = model.test.backend(js).map(name);
@@ -176,10 +189,9 @@ shared interface CeylonJsPlugin satisfies CeylonBasePlugin {
         };
     }
     
-    goal {
-        name = "test-js";
-        dependencies = [`function compileJsTests`];
-    }
+    goal("test-js")
+    dependsOn(`function compileJsTests`)
+    attachTo(`value test`)
     shared default void testJs() {
         for (mod in model.test.backend(jvm)) {
             package.runJsModule {
@@ -193,21 +205,4 @@ shared interface CeylonJsPlugin satisfies CeylonBasePlugin {
 
 shared interface CeylonPlugin satisfies CeylonJvmPlugin & CeylonJsPlugin {
     
-    goal {
-        name = "compile";
-        dependencies = [`function compileJvm`, `function compileJs`];
-    }
-    shared default NoOp compile => noop;
-    
-    goal {
-        name = "compile-tests";
-        dependencies = [`function compileJvmTests`, `function compileJsTests`];
-    }
-    
-    shared default NoOp compileTests => noop;
-    goal {
-        name = "test";
-        dependencies = [`function testJvm`, `function testJs`];
-    }
-    shared default NoOp test => noop;
 }
