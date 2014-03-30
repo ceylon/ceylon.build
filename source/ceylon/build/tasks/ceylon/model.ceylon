@@ -332,7 +332,7 @@ shared String version(Module m) => moduleVersion(m.name, m.version);
 
 shared [String*] testRepositories(CeylonModel model) {
     return concatenate(
-        [model.repositories.output.main, model.repositories.output.test].coalesced,
+        [model.repositories.output.main else "modules", model.repositories.output.test].coalesced,
         model.repositories.dependencies
     );
 }
