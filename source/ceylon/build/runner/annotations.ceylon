@@ -1,7 +1,17 @@
-import ceylon.language.meta.declaration { Module, FunctionOrValueDeclaration }
-import ceylon.build.engine { GoalDefinitionsBuilder, Goal }
-import ceylon.collection { HashMap }
-import ceylon.build.task { AttachToAnnotation }
+import ceylon.build.engine {
+    GoalDefinitionsBuilder,
+    Goal
+}
+import ceylon.build.task {
+    AttachToAnnotation
+}
+import ceylon.collection {
+    HashMap
+}
+import ceylon.language.meta.declaration {
+    Module,
+    FunctionOrValueDeclaration
+}
 
 GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
     value invalidDeclarations = SequenceBuilder<InvalidGoalDeclaration>();
@@ -32,8 +42,8 @@ object toplevel {}
     return concatenate(topLevelGoalDeclarations, declarationsFromIncludes);
 }
 
-Map<FunctionOrValueDeclaration, [FunctionOrValueDeclaration*]> phasesDependencies(
-    [FunctionOrValueDeclaration*] declarations
+shared Map<FunctionOrValueDeclaration, [FunctionOrValueDeclaration*]> phasesDependencies(
+    {FunctionOrValueDeclaration*} declarations
 ) {
     value phases = HashMap<FunctionOrValueDeclaration, SequenceBuilder<FunctionOrValueDeclaration>>();
     for (declaration in declarations) {
