@@ -8,6 +8,7 @@ import ceylon.language {
 
    A [[goal]] is a function that can be launched by the engine.
    It has a name and dependencies.
+   
    - name is used in command line to request [[goal]] execution.
    - dependencies are [[goal]]s that will be executed before this [[goal]].
    
@@ -203,9 +204,18 @@ import ceylon.language {
    };
    ```
    
-   Execution of `test` will result in execution of [[goal]]s `compileJvm`, `compileJs`,
+   Execution of `test` will now result in execution of [[goal]]s `compileJvm`, `compileJs`,
    `compileJvmTests`, `compileJsTests`, `testJvm` and `testJs`
    
+   Note that attaching a [[goal]] to another one with [[attachTo]] will not provide a
+   direct dependency to destination dependencies.
+   
+   This means that in this example:
+   
+   - execution of `compileJvm` will result in execution of `compileJvm`.
+   `compileJs` will not be included in the execution list.
+   - execution of `compileJvmTests` will result in execution of `compileJvmTests`.
+    To also execute `compileJvm`, a depedency from `compileJvmTests` to `compileJvm` is also needed.
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module ceylon.build.task "1.0.0" {}
