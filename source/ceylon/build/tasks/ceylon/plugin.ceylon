@@ -45,9 +45,11 @@ shared interface CeylonBasePlugin {
     shared default NoOp compile => noop;
     
     goal("compile-tests")
+    dependsOn(`value compile`)
     shared default NoOp compileTests => noop;
     
     goal("test")
+    dependsOn(`value compileTests`)
     shared default NoOp test => noop;
     
     goal
