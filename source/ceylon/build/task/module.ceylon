@@ -1,216 +1,221 @@
-"""This module defines the base elements of `ceylon.build` for declaring goals and tasks.
+import ceylon.language {
+    license
+}
+"""This module defines the base elements of `ceylon.build` for declaring [[goal]]s.
    
    # Goal
-   `ceylon.build.engine` is designed to work with goals.
+   `ceylon.build.engine` is designed to work with [[goal]]s.
 
-   A [[Goal]] represents an action that can be launched by the engine.
-   It has a name and a tasks list.
-   - `Goal.name` is used in command line to ask for a goal execution.
-   - `Goal.tasks` is a list of operations that will be executed in order when the goal name is specified.
-   - `Goal.dependencies` is a list of goals that must be executed before current goal's tasks.
+   A [[goal]] is a function that can be launched by the engine.
+   It has a name and dependencies.
+   
+   - name is used in command line to request [[goal]] execution.
+   - dependencies are [[goal]]s that will be executed before this [[goal]].
    
    ## Simple goal definition
-   Here is an example of how to define a simple `Goal`:
-   ```ceylon
-   Goal hello = Goal {
-       name = "hello";
-       function(Context context) {
-           context.writer.info("Hello World!");
-           return done;
-       }
-   };
-   ```
-   ## Task definition
-   A [[Task]] is an operation that will be executed when the goal name is specified.
    
-   It takes a [[Context]] in input and returns an [[Outcome]] object telling if task execution succeed or failed.
+   Here is an example of how to define a simple [[goal]]:
    
-   Here is an example of a simple task that will display `"Hello World!"` message:
    ```ceylon
-   Outcome helloTask(Context context) {
+   goal
+   shared void hello() {
        context.writer.info("Hello World!");
-       return done;
    }
    ```
    
-   A task can also return a success / failure message
+   By default, the name of the [[goal]] will be the name of the function.
+   But this can be manually specified in the [[goal]] annotation:
+   
    ```ceylon
-   Outcome myTask(Context context) {
-       try {
-           processMyXXXTask();
-           return Success("operation xxx done");
-       } catch (Exception exception) {
-           return Failure("failed to do xxx", exception);
-       }
+   goal("say-hello")
+   shared void hello() {
+       context.writer.info("Hello World!");
    }
    ```
    
-   ## Goal with multiple tasks
-   A goal can have several tasks.
+   ## Failure
    
+   It is possible that a [[goal]] operation will fail.
+   
+   This can be reported to the engine by throwing a [[GoalException]]
    ```ceylon
-   Goal myGoal = Goal {
-       name = "myGoal";
-       function(Context context) {
-           context.writer.info("starting");
-           return done;
-       },
-       function(Context context) {
-           context.writer.info("running");
-           return done;
-       },
-       function(Context context) {
-           context.writer.info("stopping");
-           return done;
+   goal
+   shared void deploy() {
+       Path source = ...
+       Path destination = ...
+       if (is Nil source.resource) {
+           throw GoalException("artifact ``source`` does not exist");
        }
-   };
+       copy(source, destination);
+   }
    ```
-   They will all be executed in order when goal execution is requested.
-   If one of the tasks fails, execution will stop and failure will be reported.
+   Other kind of exceptions can also be thrown but stacktrace will then be printed in engine output.
+   This means that throwing [[GoalException]] should be preferred to other kinds of exceptions if
+   you can provide a meaningful and understandble explanation of why the [[goal]] failed.
    
    ## Dependencies
-   A goal can also define dependencies to other goals.
-   Dependencies will be executed (even if not explicitly requested) before all other goals in the execution
+   
+   A [[goal]] can also define dependencies to other [[goal]]s.
+   Dependencies will be executed (even if not explicitly requested) before all other [[goal]]s in the execution
    list that depend on those.
    
-   
    ```ceylon
-   Goal compile = Goal {
-       name = "compile";
-       function(Context context) {
-           context.writer.info("compiling!");
-           return done;
-       }
-   };
-   Goal run = Goal {
-       name = "run";
-       dependencies = [compile];
-       function(Context context) {
-           context.writer.info("running!");
-           return done;
-       }
-   };
+   goal
+   shared void compile() {
+       context.writer.info("compiling!");
+   }
+   goal
+   dependsOn(`function compile`)
+   shared void run() {
+       context.writer.info("running!");
+   }
    ```
-   With the above code, requesting execution of `run` goal will result in execution of goals `compile`
+   
+   With the above code, requesting execution of `run` [[goal]] will result in execution of [[goal]]s `compile`
    followed by `run`.
    
-   ## Goals without tasks
-   It is possible to define a goal that don't have any tasks like below:
+   ## Goals without behaviors
+   
+   It is possible to define a [[goal]] that don't have any tasks like below:
+   
    ```ceylon
-   Goal testGoal = Goal {
-       name = "test";
-   };
+   goal
+   shared void test() {}
    ```
-   Such a goal is useless, because it will not trigger any tasks execution.
    
-   However, if dependencies are added it becomes a great way to group goals.
+   Such a [[goal]] is useless, because it will not trigger any tasks execution.
    
-   Requesting the execution of a such goal will cause the execution (as for any goals) of all of its dependencies.
+   However, if dependencies are added it becomes a great way to group [[goal]]s.
+   
+   Requesting the execution of a such [[goal]] will cause the execution (as for any [[goal]]s) of all of its dependencies.
    The execution of those dependencies will be done in the order of declaration as long as
-   dependencies between goals of the current execution list are satisfied.
-   If they are not, goals will be re-ordered to satisfy dependencies.
+   dependencies between [[goal]]s of the current execution list are satisfied.
+   If they are not, [[goal]]s will be re-ordered to satisfy dependencies.
    
    Here is an example:
    ```ceylon
-   Goal compileGoal = Goal {
-       name = "compile";
-       compile {
-           modules = "my.module";
-       }
+   goal
+   shared void compile() {
+       context.writer.info("compiling");
    };
-   Goal compileTestsGoal = Goal {
-       name = "compile-tests";
-       compileTests {
-           modules = "test.my.module";
-       }
-   };
-   Goal runTestsGoal = Goal {
-       name = "run-tests";
-       runModule {
-           moduleName = "test.my.module";
-           version = "1.0.0";
-       }
-   };
-   Goal testGoal = Goal {
-       name = "test";
-       dependencies = [compileTestsGoal, runTestsGoal];
-   };
-   ```
-   Execution of `testGoal` will result in execution of goals `compileTestsGoal` followed by `runTestsGoal`.
    
-   As a goals without tasks is like any other goal from a dependency point of view, it can be used as a
-   dependency which enables interesting constructions like below:
+   goal
+   shared void compileTests() {
+       context.writer.info("compiling tests");
+   };
+   
+   goal
+   shared void runTests() {
+       context.writer.info("running tests");
+   };
+   
+   goal
+   dependsOn(`function compile`, `function compileTests`, `function runTests`)
+   shared void test() {};
+   ```
+   
+   Execution of `test` will result in execution of [[goal]]s `compile`, `compileTests`, `runTests` and then `test`.
+   
+   But to avoid to pollute execution list with the `test` [[goal]] that will not do anything,
+   we can rewrite the previous example as below:
+   
    ```ceylon
-   Goal fullBuild = Goal {
-       name = "full-build";
-       dependencies = [compileGoal, test];
+   goal
+   shared void compile() {
+       context.writer.info("compiling");
    };
+   
+   goal
+   shared void compileTests() {
+       context.writer.info("compiling tests");
+   };
+   
+   goal
+   shared void runTests() {
+       context.writer.info("running tests");
+   };
+   
+   goal
+   dependsOn(`function compile`, `function compileTests`, `function runTests`)
+   shared NoOp test = noop;
    ```
-   Execution of `fullBuild` will trigger execution of `compileGoal`, `compileTestsGoal` and then `runTestsGoal`.
+   Execution of `test` will result in execution of [[goal]]s `compile`, `compileTests` and `runTests` but not `test` as
+   the engine now understands that test is a [[noop]] [[goal]] and that it shouldn't be executed.
    
-   # GoalSet
-   A [[GoalSet]] is a set of goals that can be imported in a build configuration.
+   Note that [[NoOp]] [[goal]]s can be used as dependencies as any other [[goal]]s.
    
-   For example, if a `ceylonModule` goal set provides goals to compile, compile tests, run tests
-   and document a ceylon module and you have differents ceylon modules in your build, then,
-   you are likely to want to rename `"compile"`, `"tests-compile"`, `"test"` and `"doc"` to something
-   like `"compile.mymodule1"`, `"tests-compile.mymodule1"`, ...
+   ## Indirect dependencies
+   As we just saw, [[dependsOn]] annotation allow you to define that a [[goal]] A has a dependency on a [[goal]] B.
    
-   Here is an example of goal set definition from `ceylon.build.tasks.ceylon` module   
+   [[attachTo]] annotation allow you to do the opposite by defining that a [[goal]] A is a dependency of [[goal]] B.
+   
+   This allows you to define [[goal]]s that can act as phases in your project.
+   For example, you could define phases `compile`, `compileTests`, `test` as below:
    ```ceylon
-   "Returns a `GoalSet` providing compile, tests-compile, test and doc goals for a ceylon module."
-   shared GoalSet ceylonModule(
-           "module name"
-           String moduleName,
-           "test module name"
-           String testModuleName = "test.``moduleName``",
-           "test module version"
-           String testModuleVersion = "1.0.0",
-           "rename function that will be applied to each goal name."
-           String(String) rename = keepCurrentName()) {
-       return GoalSet {
-           Goal {
-               name = rename("compile");
-               compile {
-                   modules = moduleName;
-               }
-           },
-           Goal {
-               name = rename("tests-compile");
-               compile {
-                   modules = testModuleName;
-                   sourceDirectories = testSourceDirectory;
-               }
-           },
-           Goal {
-               name = rename("test");
-               runModule {
-                   moduleName = testModuleName;
-                   version = testModuleVersion;
-               }
-           },
-           Goal {
-               name = rename("doc");
-               document {
-                   modules = moduleName;
-               }
-           }
-       };
-   }
+   goal
+   shared NoOp compile = noop;
+   
+   goal
+   dependsOn(`function compile`)
+   shared NoOp compileTests = noop;
+   
+   goal
+   dependsOn(`function compileTests`)
+   shared NoOp test = noop;
    ```
-   It can be used as following:
+   
+   and then declare jvm and js related [[goal]]s that will be attached to those phases:
+   
    ```ceylon
-   GoalSet ceylonModuleA = ceylonModule {
-       moduleName = "moduleA";
-       rename = suffix(".a");
+   goal
+   attachTo(`function compile`)
+   shared void compileJvm() {
+       context.writer.info("compiling for JVM");
    };
-   GoalSet ceylonModuleB = ceylonModule {
-       moduleName = "moduleB";
-       rename = suffix(".b");
+   
+   goal
+   attachTo(`function compile`)
+   shared void compileJs() {
+       context.writer.info("compiling for JS");
+   };
+   
+   goal
+   attachTo(`function compileTests`)
+   shared void compileJvmTests() {
+       context.writer.info("compiling tests for JVM");
+   };
+   
+   goal
+   attachTo(`function compileTests`)
+   shared void compileJsTests() {
+       context.writer.info("compiling tests for JS");
+   };
+   
+   goal
+   attachTo(`function test`)
+   shared void testJvm() {
+       context.writer.info("running JVM tests");
+   };
+   
+   goal
+   attachTo(`function test`)
+   shared void testJs() {
+       context.writer.info("running JS tests");
    };
    ```
-   This will import goals `"compile.a"`, `"tests-compile.a"`, `"test.a"`, `"doc.a"`,
-   `"compile.b"`, `"tests-compile.b"`, `"test.b"`, `"doc.b"` in the build configuration.
+   
+   Execution of `test` will now result in execution of [[goal]]s `compileJvm`, `compileJs`,
+   `compileJvmTests`, `compileJsTests`, `testJvm` and `testJs`
+   
+   Note that attaching a [[goal]] to another one with [[attachTo]] will not provide a
+   direct dependency to destination dependencies.
+   
+   This means that in this example:
+   
+   - execution of `compileJvm` will result in execution of `compileJvm`.
+   `compileJs` will not be included in the execution list.
+   - execution of `compileJvmTests` will result in execution of `compileJvmTests`.
+    To also execute `compileJvm`, a depedency from `compileJvmTests` to `compileJvm` is also needed.
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module ceylon.build.task "1.0.0" {}

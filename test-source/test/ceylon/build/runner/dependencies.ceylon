@@ -1,13 +1,23 @@
+import ceylon.build.engine {
+    Goal
+}
 import ceylon.build.runner {
-    goalDefinition
+    goalDefinition,
+    InvalidGoalDeclaration
 }
 import ceylon.build.task {
     goal,
-    dependsOn
+    dependsOn,
+    attachTo
+}
+import ceylon.collection {
+    HashMap
 }
 import ceylon.test {
-    test
+    test,
+    assertEquals
 }
+import test.ceylon.build.runner { emptyPhases }
 
 goal
 shared void standAloneGoal() {}
@@ -25,49 +35,74 @@ shared void goalWithOneNamedDependency() {}
 
 goal
 dependsOn(`function standAloneGoal`)
-dependsOn(`function goalWithOneDependency`)
+dependsOn(`function standAloneNamedGoal`)
 shared void goalWithMultiplesDependency() {}
 
 goal
-dependsOn(`function standAloneGoal`, `function goalWithOneDependency`)
+dependsOn(`function standAloneGoal`, `function standAloneNamedGoal`)
 shared void goalWithMultiplesDependencyInOneAnnotation() {}
 
-test void shouldBuildGoalWithOneDependency() {
-    checkGoalDefinition {
-        goal = goalDefinition(`function goalWithOneDependency`, emptyPhases);
-        expectedDefinition = ExpectedDefinition {
-            name = "goalWithOneDependency";
-            dependencies = ["standAloneGoal"];
-        };
-    };
+test void shouldHaveOneDependency() {
+    shouldHaveDependencies(goalDefinition(`function goalWithOneDependency`, emptyPhases), ["standAloneGoal"]);
+    shouldHaveDependencies(goalDefinition(`function standAloneGoal`, emptyPhases), []);
 }
 
-test void shouldBuildGoalWithOneNamedDependency() {
-    checkGoalDefinition {
-        goal = goalDefinition(`function goalWithOneNamedDependency`, emptyPhases);
-        expectedDefinition = ExpectedDefinition {
-            name = "goalWithOneNamedDependency";
-            dependencies = ["named-goal"];
-        };
-    };
+test void shouldHaveOneNamedDependency() {
+    shouldHaveDependencies(goalDefinition(`function goalWithOneNamedDependency`, emptyPhases), ["named-goal"]);
+    shouldHaveDependencies(goalDefinition(`function standAloneNamedGoal`, emptyPhases), []);
 }
 
-test void shouldBuildGoalWithMultiplesDependencies() {
-    checkGoalDefinition {
-        goal = goalDefinition(`function goalWithMultiplesDependency`, emptyPhases);
-        expectedDefinition = ExpectedDefinition {
-            name = "goalWithMultiplesDependency";
-            dependencies = ["standAloneGoal", "goalWithOneDependency"];
-        };
-    };
+test void shouldHaveMultiplesDependenciesFromMultipleAnnotations() {
+    shouldHaveDependencies(goalDefinition(`function goalWithMultiplesDependency`, emptyPhases),
+        ["standAloneGoal", "named-goal"]);
+    shouldHaveDependencies(goalDefinition(`function standAloneGoal`, emptyPhases), []);
+    shouldHaveDependencies(goalDefinition(`function standAloneNamedGoal`, emptyPhases), []);
 }
 
-test void shouldBuildGoalWithMultiplesDependenciesInOneAnnotation() {
-    checkGoalDefinition {
-        goal = goalDefinition(`function goalWithMultiplesDependencyInOneAnnotation`, emptyPhases);
-        expectedDefinition = ExpectedDefinition {
-            name = "goalWithMultiplesDependencyInOneAnnotation";
-            dependencies = ["standAloneGoal", "goalWithOneDependency"];
+test void shouldHaveMultiplesDependenciesFromOneAnnotation() {
+    shouldHaveDependencies(goalDefinition(`function goalWithMultiplesDependencyInOneAnnotation`, emptyPhases),
+        ["standAloneGoal", "named-goal"]);
+    shouldHaveDependencies(goalDefinition(`function standAloneGoal`, emptyPhases), []);
+    shouldHaveDependencies(goalDefinition(`function standAloneNamedGoal`, emptyPhases), []);
+}
+
+goal
+attachTo(`function standAloneNamedGoal2`)
+shared void standAloneGoal2() {}
+
+goal("named-goal2")
+shared void standAloneNamedGoal2() {}
+
+goal
+attachTo(`function goalWithOneDependency2`)
+shared void standAloneNamedGoal3() {}
+
+goal
+dependsOn(`function standAloneNamedGoal2`)
+shared void goalWithOneDependency2() {}
+
+
+test void shouldAttachGoalToPhase() {
+    value phases = HashMap { entries = {
+            `function standAloneGoal2` -> [`function standAloneNamedGoal2`]
         };
     };
+    shouldHaveDependencies(goalDefinition(`function standAloneGoal2`, phases), ["named-goal2"]);
+    shouldHaveDependencies(goalDefinition(`function standAloneNamedGoal2`, phases), []);
+}
+
+test void shouldConcatenateDependenciesAndAttachTo() {
+    value phases = HashMap { entries = {
+            `function goalWithOneDependency2` -> [`function standAloneNamedGoal3`]
+        };
+    };
+    shouldHaveDependencies(goalDefinition(`function goalWithOneDependency2`, phases),
+        ["named-goal2", "standAloneNamedGoal3"]);
+    shouldHaveDependencies(goalDefinition(`function standAloneNamedGoal2`, phases), []);
+    shouldHaveDependencies(goalDefinition(`function standAloneNamedGoal3`, phases), []);
+}
+
+void shouldHaveDependencies(Goal|InvalidGoalDeclaration goal, [String*] dependencies) {
+    assert(is Goal goal);
+    assertEquals(goal.properties.dependencies, dependencies);
 }

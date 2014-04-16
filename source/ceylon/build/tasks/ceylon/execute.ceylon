@@ -50,9 +50,9 @@ Integer executeWithCurrentCeylonRuntime([String+] arguments) {
 }
 
 class CeylonToolModule(shared String name, shared String? version = null) {}
-CeylonToolModule jvmCompiler = CeylonToolModule("com.redhat.ceylon.compiler.java", "1.0.0");
-CeylonToolModule jsCompiler = CeylonToolModule("com.redhat.ceylon.compiler.js", "1.0.0");
-CeylonToolModule ceylonRuntime = CeylonToolModule("ceylon.runtime", "1.0.0");
+CeylonToolModule jvmCompiler = CeylonToolModule("com.redhat.ceylon.compiler.java", language.version);
+CeylonToolModule jsCompiler = CeylonToolModule("com.redhat.ceylon.compiler.js", language.version);
+CeylonToolModule ceylonRuntime = CeylonToolModule("ceylon.runtime", language.version);
 Map<String, CeylonToolModule> commandToModule = HashMap {
     entries = {
         "compile" -> jvmCompiler,
