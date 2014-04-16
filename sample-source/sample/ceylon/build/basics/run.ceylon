@@ -1,14 +1,14 @@
 import ceylon.build.task { goal }
-import ceylon.build.tasks.ceylon { compileModule = compile, document }
+import ceylon.build.tasks.ceylon { ceylon }
 
 shared goal void compile() {
-    compileModule {
+    ceylon.compile {
         modules = "mymodule";
     };
 }
 
 shared goal void doc() {
-    document {
+    ceylon.document {
         modules = "mymodule";
     };
 }

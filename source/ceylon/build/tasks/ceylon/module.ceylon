@@ -33,7 +33,7 @@
    ```
    #### Compile tests
    Tasks to compile tests are provided.
-   They are shortcuts for respectively [[compile]] and [[compileJs]] functions with
+   They are shortcuts for respectively [[ceylon.compile]] and [[ceylon.compileJs]] functions with
    `sourceDirectories` argument set to `["test-source"]`
     
    Task to compile tests to jvm backend:

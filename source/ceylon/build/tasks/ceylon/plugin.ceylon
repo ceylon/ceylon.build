@@ -20,7 +20,7 @@ shared interface CeylonBasePlugin {
     
     goal
     shared default void doc() {
-        package.document {
+        ceylon.document {
             modules = model.main.names;
             encoding = model.encoding;
             repositories = model.repositories.dependencies;
@@ -76,7 +76,7 @@ shared interface CeylonJvmPlugin satisfies CeylonBasePlugin {
     goal("compile-jvm")
     attachTo(`value compile`)
     shared default void compileJvm() {
-        package.compile {
+        ceylon.compile {
             modules = model.main.backend(jvm).map(name);
             encoding = model.encoding;
             sourceDirectories = model.sourceSets.main.sources;
@@ -98,7 +98,7 @@ shared interface CeylonJvmPlugin satisfies CeylonBasePlugin {
     dependsOn(`function compileJvm`)
     attachTo(`value compileTests`)
     shared default void compileJvmTests() {
-        package.compile {
+        ceylon.compile {
             modules = model.test.backend(jvm).map(name);
             encoding = model.encoding;
             sourceDirectories = model.sourceSets.test.sources;
@@ -120,7 +120,7 @@ shared interface CeylonJvmPlugin satisfies CeylonBasePlugin {
     dependsOn(`function compileJvmTests`)
     attachTo(`value test`)
     shared default void testJvm() {
-        package.test {
+        ceylon.test {
             modules = model.test.backend(jvm).map(version);
             repositories = testRepositories(model);
             systemRepository = model.repositories.system;
@@ -141,7 +141,7 @@ shared interface CeylonJsPlugin satisfies CeylonBasePlugin {
     goal("compile-js")
     attachTo(`value compile`)
     shared default void compileJs() {
-        package.compileJs {
+        ceylon.compileJs {
             modules = model.main.backend(js).map(name);
             encoding = model.encoding;
             sourceDirectories = model.sourceSets.main.sources;
@@ -168,7 +168,7 @@ shared interface CeylonJsPlugin satisfies CeylonBasePlugin {
     dependsOn(`function compileJs`)
     attachTo(`value compileTests`)
     shared default void compileJsTests() {
-        package.compileJs {
+        ceylon.compileJs {
             modules = model.test.backend(js).map(name);
             encoding = model.encoding;
             sourceDirectories = model.sourceSets.test.sources;
@@ -196,7 +196,7 @@ shared interface CeylonJsPlugin satisfies CeylonBasePlugin {
     attachTo(`value test`)
     shared default void testJs() {
         for (mod in model.test.backend(jvm)) {
-            package.runJsModule {
+            ceylon.runJs {
                 moduleName = mod.name;
                 version = mod.version;
                 ceylon = model.ceylon else ceylonExecutable;
