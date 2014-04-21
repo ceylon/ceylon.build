@@ -1,6 +1,7 @@
 import ceylon.language {
     license
 }
+
 """This module defines the base elements of `ceylon.build` for declaring [[goal]]s.
    
    # Goal
@@ -216,6 +217,128 @@ import ceylon.language {
    `compileJs` will not be included in the execution list.
    - execution of `compileJvmTests` will result in execution of `compileJvmTests`.
     To also execute `compileJvm`, a depedency from `compileJvmTests` to `compileJvm` is also needed.
+   
+   # Plugins
+   
+   A `ceylon.build` plugin is a type that defines [[goal]]s members.
+   It can be seen as a collection of [[goal]]s that can be imported together in the current build.
+   Those [[goal]]s have the same features as toplevel [[goal]]s.
+   
+   ## Plugin creation
+   
+   A plugin can be a simple class
+   ```ceylon
+   shared class HelloPlugin(String name) {
+       goal("say-hello")
+       shared default void hello() => context.writer.info("hello ``name``");
+       
+       goal("say-goodbye")
+       shared default void bye() => context.writer.info("goodbye ``name``");
+   }
+   ```
+   a simple interface
+   ```ceylon
+   shared interface HelloPlugin {
+       
+       shared formal String name;
+       
+       goal("say-hello")
+       shared default void hello() => context.writer.info("hello ``name``");
+       
+       goal("say-goodbye")
+       shared default void bye() => context.writer.info("goodbye ``name``");
+   }
+   ```
+   Or any combination of class, interface that can be instanciated.
+   Actually, it's just a type.
+   
+   For example, all types below are a valid plugins
+   ```ceylon
+   shared interface I1 {
+       goal
+       shared void m1() {}
+   }
+   shared interface I2 satisfies I1 {
+       goal
+       shared void m2() {}
+   }
+   shared interface I3 {
+       goal
+       shared void m3() {}
+   }
+   shared class C4() satisfies I2 {
+       goal
+       shared void m4() {}
+   }
+   shared class C5() extends C4() satisfies I3 {
+       goal
+       shared void m5() {}
+   }
+   ```
+   And as expected, available [[goal]]s on type `C5` are:
+   - `m5` directly from `C5`
+   - `m4` by inheritance from `C4`
+   - `m3` by satisfied interface from `I3`
+   - `m2` by inheritance from `C4` satisfying `I2`
+   - `m1` by inheritance from `C4` satisfying `I2` satisfying `I1`
+   In a general manner, all members annotated with [[goal]] in the type hierachy
+   (superclasses or satisfies interfaces) will be imported in the build.
+   
+   ## Plugin usage
+   
+   To use a such plugin, you have to annotate a toplevel member with [[include]] annotation
+   that instanciates the plugin.
+   
+   Two syntaxes can be used:
+   
+   ### Standard attribute syntax
+   
+   ```ceylon
+   include
+   shared CustomPlugin customPlugin = CustomPlugin();
+   ```
+   
+   ### Object definition syntax
+   
+   ```ceylon
+   include
+   shared object customPlugin extends CustomPlugin() {}
+   ```
+   Second syntax allows for inplace refinement of `CustomPlugin` [[goal]]s.
+   
+   ### Refinement
+   
+   Sometimes, you want to modify one of the imported [[goal]]s from an [[include]] directive.
+   This is as easy a method refinement.
+   It can be done inplace (using object syntax) or by introducing a subclass.
+   
+   #### Changing imported goal name
+   
+   Let's assume that the `HelloPlugin` plugin is defined as below
+   ```ceylon
+   shared class HelloPlugin(String name) {
+       goal("say-hello")
+       shared default void hello() => context.writer.info("hello ``name``");
+       
+       goal("say-goodbye")
+       shared default void bye() => context.writer.info("goodbye ``name``");
+   }
+   ```
+   To change `hello` goal name from `say-hello` to just `hello`
+   ```ceylon
+   include
+   shared object greetings extends HelloPlugin("world") {
+       goal("hello")
+       shared actual void hello() => super.hello();
+   }
+   ```
+   #### Modifying goal behavior
+   __TODO__
+   #### Add dependencies
+   __TODO__
+   #### Attach to a super phase
+   __TODO__
+   
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module ceylon.build.task "1.0.0" {}
