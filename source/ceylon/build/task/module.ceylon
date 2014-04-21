@@ -312,19 +312,23 @@ import ceylon.language {
    This is as easy a method refinement.
    It can be done inplace (using object syntax) or by introducing a subclass.
    
-   #### Changing imported goal name
+   Following `HelloPlugin` plugin will be used for below examples:
    
-   Let's assume that the `HelloPlugin` plugin is defined as below
    ```ceylon
    shared class HelloPlugin(String name) {
        goal("say-hello")
        shared default void hello() => context.writer.info("hello ``name``");
        
        goal("say-goodbye")
+       dependsOn(`function hello`)
        shared default void bye() => context.writer.info("goodbye ``name``");
    }
    ```
-   To change `hello` goal name from `say-hello` to just `hello`
+   
+   #### Changing imported goal name
+   
+   To change `hello` [[goal]] name from `say-hello` to just `hello`:
+   
    ```ceylon
    include
    shared object greetings extends HelloPlugin("world") {
@@ -332,12 +336,49 @@ import ceylon.language {
        shared actual void hello() => super.hello();
    }
    ```
+   
    #### Modifying goal behavior
-   __TODO__
+   
+   To change `hello` [[goal]] behavior:
+   
+   ```ceylon
+   include
+   shared object greetings extends HelloPlugin("world") {
+       goal("say-hello") // TODO, this shouldn't be necessary once Inherited annotations will be implemented
+       shared actual void hello() => print("hello ``name``");
+   }
+   ```
+   
    #### Add dependencies
-   __TODO__
+   
+   To add a dependency to `bye` [[goal]]:
+   
+   ```ceylon
+   goal
+   shared void hug() => context.writer.info("hug");
+   
+   include
+   shared object greetings extends HelloPlugin("world") {
+       goal("say-goodbye") // TODO, this shouldn't be necessary once Inherited annotations will be implemented
+       dependsOn(`function hug`)
+       shared actual void bye() => super.bye();
+   }
+   ```
+   [[goal]] `bye` now have a dependency on `hello` and `hug` [[goal]]s.
+   
    #### Attach to a super phase
-   __TODO__
+   
+   To add attach a [[goal]] to `bye` [[goal]]:
+   
+   ```ceylon
+   goal
+   attachTo(`function greetings.bye`)
+   shared void hug() => context.writer.info("hug");
+   
+   include
+   shared object greetings extends HelloPlugin("world") {}
+   ```
+   [[goal]] `bye` now have a dependency on `hello` and `hug` [[goal]]s.
    
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
