@@ -1,5 +1,16 @@
-import ceylon.build.task { Context, context, clearTaskContext, Writer, setContextForTask }
-import ceylon.test { assertEquals, test, assertThatException, beforeTest }
+import ceylon.build.task {
+    Context,
+    context,
+    clearTaskContext,
+    Writer,
+    setContextForTask
+}
+import ceylon.test {
+    assertEquals,
+    test,
+    assertThatException,
+    beforeTest
+}
 
 beforeTest void resetContext() {
     clearTaskContext();
@@ -8,7 +19,7 @@ beforeTest void resetContext() {
 test void shouldNotBeAbleToAccessContext() {
     assertThatException(contextWrapper)
             .hasType(`Exception`)
-            .hasMessage("Context accessed from outside a task");
+            .hasMessage("Context accessed from outside a goal");
 }
 
 test void shouldBeAbleToAccessContext() {
@@ -28,7 +39,7 @@ test void shouldHaveADifferentContextAfterClearAndSet() {
         clearTaskContext();
         assertThatException(contextWrapper)
                 .hasType(`Exception`)
-                .hasMessage("Context accessed from outside a task");
+                .hasMessage("Context accessed from outside a goal");
     }
 }
 
