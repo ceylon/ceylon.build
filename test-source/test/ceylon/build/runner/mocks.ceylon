@@ -1,6 +1,28 @@
-import ceylon.language { AnnotationType = Annotation }
-import ceylon.language.meta.declaration { Import, FunctionDeclaration, NestableDeclaration, ValueDeclaration, ClassOrInterfaceDeclaration, Package, Module, AliasDeclaration, OpenType, FunctionOrValueDeclaration, TypeParameter, SetterDeclaration }
-import ceylon.language.meta.model { Method, Type, Function, Value, Attribute }
+import ceylon.language {
+    AnnotationType=Annotation
+}
+import ceylon.language.meta.declaration {
+    Import,
+    FunctionDeclaration,
+    NestableDeclaration,
+    ValueDeclaration,
+    ClassOrInterfaceDeclaration,
+    Package,
+    Module,
+    AliasDeclaration,
+    OpenType,
+    FunctionOrValueDeclaration,
+    TypeParameter,
+    SetterDeclaration,
+    ClassDeclaration
+}
+import ceylon.language.meta.model {
+    Method,
+    Type,
+    Function,
+    Value,
+    Attribute
+}
 
 Module mockModule({Package*} packages = []) {
     object mod satisfies Module {
@@ -141,6 +163,10 @@ ValueDeclaration mockValueDeclaration(Annotation* associatedAnnotations) {
     object valueDeclaration satisfies ValueDeclaration {
 
         shared actual Boolean actual => notImplemented;
+        
+        shared actual Boolean isObject => notImplemented;
+        
+        shared actual ClassDeclaration? objectDeclaration => notImplemented;
         
         shared actual Annotation[] annotations<Annotation>()
                 given Annotation satisfies AnnotationType =>
