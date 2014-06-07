@@ -31,7 +31,7 @@ ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions d
             results.add(result);
             if (!result.success) {
                 status = errorOnTaskExecution;
-                results.addAll(notRunGoalsExecutionResult(goals.skipping(results.size), arguments));
+                results.addAll(notRunGoalsExecutionResult(goals.skip(results.size), arguments));
                 break;
             }
         } else {
