@@ -165,9 +165,9 @@ ValueDeclaration mockValueDeclaration(Annotation* associatedAnnotations) {
 
         shared actual Boolean actual => notImplemented;
         
-        shared actual Boolean isObject => notImplemented;
+        shared actual Boolean objectValue => notImplemented;
         
-        shared actual ClassDeclaration? objectDeclaration => notImplemented;
+        shared actual ClassDeclaration? objectClass => notImplemented;
         
         shared actual Annotation[] annotations<Annotation>()
                 given Annotation satisfies AnnotationType =>
