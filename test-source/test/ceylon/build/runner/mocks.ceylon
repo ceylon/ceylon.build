@@ -23,6 +23,7 @@ import ceylon.language.meta.model {
     Value,
     Attribute
 }
+import ceylon.collection { ArrayList }
 
 Module mockModule({Package*} packages = []) {
     object mod satisfies Module {
@@ -63,11 +64,11 @@ Package mockPackage({NestableDeclaration*} declarations = []) {
         
         shared actual Kind[] annotatedMembers<Kind, Annotation>()
                 given Kind satisfies NestableDeclaration {
-            value members = SequenceBuilder<Kind>();
+            value members = ArrayList<Kind>();
             for (declaration in declarations) {
                 [AnnotationType*] annotations = declaration.annotations<AnnotationType>();
                 if (is Kind declaration, hasAnnotation<Annotation>(annotations)) {
-                    members.append(declaration);
+                    members.add(declaration);
                 }
             }
             return members.sequence;

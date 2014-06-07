@@ -4,11 +4,12 @@ import ceylon.build.task {
     setContextForTask,
     clearTaskContext
 }
+import ceylon.collection { ArrayList }
 
 String argumentPrefix = "-D";
 
 ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions definitions, Writer writer) {
-    value results = SequenceBuilder<GoalExecutionResult>();
+    value results = ArrayList<GoalExecutionResult>();
     if (goals.empty) {
         if (definitions.availableGoals.empty) {
             writer.error("# no available goals");
@@ -27,10 +28,10 @@ ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions d
             value goalArguments = filterArgumentsForGoal(goal, arguments);
             writer.info("# running ``goal``(``", ".join(goalArguments)``)");
             value result = executeGoal(goal, definitions, goalArguments, writer);
-            results.append(result);
+            results.add(result);
             if (!result.success) {
                 status = errorOnTaskExecution;
-                results.appendAll(notRunGoalsExecutionResult(goals.skipping(results.size), arguments));
+                results.addAll(notRunGoalsExecutionResult(goals.skipping(results.size), arguments));
                 break;
             }
         } else {

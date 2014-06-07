@@ -6,7 +6,7 @@ import ceylon.build.task {
     AttachToAnnotation
 }
 import ceylon.collection {
-    HashMap
+    HashMap, ArrayList
 }
 import ceylon.language.meta.declaration {
     Module,
@@ -14,7 +14,7 @@ import ceylon.language.meta.declaration {
 }
 
 GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
-    value invalidDeclarations = SequenceBuilder<InvalidGoalDeclaration>();
+    value invalidDeclarations = ArrayList<InvalidGoalDeclaration>();
     value goals = GoalDefinitionsBuilder();
     value declarations = findDeclarations(mod);
     value phases = phasesDependencies([ for (declaration -> instance in declarations) declaration ]);
@@ -24,7 +24,7 @@ GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
         case (is Goal) {
             goals.add(goal);
         } case (is InvalidGoalDeclaration) {
-            invalidDeclarations.append(goal);
+            invalidDeclarations.add(goal);
         }
     }
     if (nonempty seq = invalidDeclarations.sequence) {

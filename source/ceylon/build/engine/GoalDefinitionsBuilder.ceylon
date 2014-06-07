@@ -1,4 +1,4 @@
-import ceylon.collection { HashMap }
+import ceylon.collection { HashMap, ArrayList }
 import java.util.regex { Pattern { compilePattern = compile } }
 import ceylon.interop.java { javaString }
 
@@ -8,11 +8,11 @@ shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
     
     Pattern validTaskName = compilePattern(validTaskNamePattern);
     
-    value definitions = SequenceBuilder<Goal>();
-    definitions.appendAll(goals);
+    value definitions = ArrayList<Goal>();
+    definitions.addAll(goals);
     
     shared void add(Goal definition) {
-        definitions.append(definition);
+        definitions.add(definition);
     }
     
     shared DefinitionsValidationResult validate() {
