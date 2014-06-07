@@ -1,15 +1,15 @@
-import ceylon.collection { LinkedList, HashSet }
+import ceylon.collection { LinkedList, HashSet, ArrayList }
 
 alias DependencyGraph => {<String->{String*}>*};
 
 "Returns the list of dependencies names, without duplicates in the order in which they are defined.
  Not that this "
 {String*} dependencies(GoalProperties properties) {
-    value dependencies = SequenceBuilder<String>();
+    value dependencies = ArrayList<String>();
     value alreadyAddedDependencies = HashSet<String>();
     for (dependency in properties.dependencies) {
         if (!alreadyAddedDependencies.contains(dependency)) {
-            dependencies.append(dependency);
+            dependencies.add(dependency);
             alreadyAddedDependencies.add(dependency);
         }
     }
