@@ -63,7 +63,8 @@ Package mockPackage({NestableDeclaration*} declarations = []) {
         }
         
         shared actual Kind[] annotatedMembers<Kind, Annotation>()
-                given Kind satisfies NestableDeclaration {
+                given Kind satisfies NestableDeclaration
+                given Annotation satisfies AnnotationType {
             value members = ArrayList<Kind>();
             for (declaration in declarations) {
                 [AnnotationType*] annotations = declaration.annotations<AnnotationType>();
