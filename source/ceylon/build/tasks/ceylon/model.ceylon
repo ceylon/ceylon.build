@@ -2,7 +2,7 @@ import ceylon.build.task { GoalException }
 import ceylon.file { parsePath, Directory, File, Path }
 import ceylon.interop.java { javaString }
 import java.util.regex { Pattern { compilePattern = compile } }
-import ceylon.collection { HashSet }
+import ceylon.collection { HashSet, ArrayList }
 
 shared class CeylonModel(
     sourceSets = SourceSets(),
@@ -341,12 +341,12 @@ shared [String*] testRepositories(CeylonModel model) {
         => sourceSet.sources.empty then ["source"] else sourceSet.sources;
 
 shared Modules discoverModules(SourceSet sourceSet, Set<Backend>(String) backends = allBackends) {
-    value modules = SequenceBuilder<Module>();
+    value modules = ArrayList<Module>();
     value sources = defaultSourceDirectory(sourceSet);
     for (source in sources) {
         value path = parsePath(source);
         if (is Directory resource = path.resource) {
-            modules.appendAll(checkDirectory(resource, backends));
+            modules.addAll(checkDirectory(resource, backends));
         } else {
             throw GoalException("source folder ``path.absolutePath`` is not a directory");
         }
@@ -355,13 +355,13 @@ shared Modules discoverModules(SourceSet sourceSet, Set<Backend>(String) backend
 }
 
 [Module*] checkDirectory(Directory directory, Set<Backend>(String) backends) {
-    value modules = SequenceBuilder<Module>();
+    value modules = ArrayList<Module>();
     value files = directory.files("module.ceylon");
     if (nonempty seq = files.sequence) {
-        modules.append(parseModuleDescriptor(seq.first, backends));
+        modules.add(parseModuleDescriptor(seq.first, backends));
     } else {
         for (childDirectory in directory.childDirectories()) {
-            modules.appendAll(checkDirectory(childDirectory, backends));
+            modules.addAll(checkDirectory(childDirectory, backends));
         }
     }
     return modules.sequence;

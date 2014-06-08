@@ -3,11 +3,12 @@ import ceylon.language.meta.declaration { Module, FunctionDeclaration, ValueDecl
 import ceylon.language.meta.model { Value, Function }
 import ceylon.build.engine { GoalProperties, Goal }
 import ceylon.build.task { GoalAnnotation, NoOp, DependsOnAnnotation }
+import ceylon.collection { ArrayList }
 
 shared [FunctionOrValueDeclaration*] findTopLevelAnnotatedGoals(Module mod) {
-    value annotatedGoals = SequenceBuilder<FunctionOrValueDeclaration>();
+    value annotatedGoals = ArrayList<FunctionOrValueDeclaration>();
     for (pkg in mod.members) {
-        annotatedGoals.appendAll(pkg.annotatedMembers<FunctionOrValueDeclaration, GoalAnnotation>());
+        annotatedGoals.addAll(pkg.annotatedMembers<FunctionOrValueDeclaration, GoalAnnotation>());
     }
     return annotatedGoals.sequence;
 }

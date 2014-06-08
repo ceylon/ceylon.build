@@ -6,7 +6,7 @@ import ceylon.build.task {
     AttachToAnnotation
 }
 import ceylon.collection {
-    HashMap
+    HashMap, ArrayList
 }
 import ceylon.language.meta.declaration {
     Module,
@@ -14,7 +14,7 @@ import ceylon.language.meta.declaration {
 }
 
 GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
-    value invalidDeclarations = SequenceBuilder<InvalidGoalDeclaration>();
+    value invalidDeclarations = ArrayList<InvalidGoalDeclaration>();
     value goals = GoalDefinitionsBuilder();
     value declarations = findDeclarations(mod);
     value phases = phasesDependencies([ for (declaration -> instance in declarations) declaration ]);
@@ -24,7 +24,7 @@ GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
         case (is Goal) {
             goals.add(goal);
         } case (is InvalidGoalDeclaration) {
-            invalidDeclarations.append(goal);
+            invalidDeclarations.add(goal);
         }
     }
     if (nonempty seq = invalidDeclarations.sequence) {
@@ -45,19 +45,19 @@ object toplevel {}
 shared Map<FunctionOrValueDeclaration, [FunctionOrValueDeclaration*]> phasesDependencies(
     {FunctionOrValueDeclaration*} declarations
 ) {
-    value phases = HashMap<FunctionOrValueDeclaration, SequenceBuilder<FunctionOrValueDeclaration>>();
+    value phases = HashMap<FunctionOrValueDeclaration, ArrayList<FunctionOrValueDeclaration>>();
     for (declaration in declarations) {
         for (annotation in declaration.annotations<AttachToAnnotation>()) {
-            SequenceBuilder<FunctionOrValueDeclaration> sb;
-            if (exists sbFromMap = phases.get(annotation.phase)) {
-                sb = sbFromMap;
+            ArrayList<FunctionOrValueDeclaration> list;
+            if (exists listFromMap = phases.get(annotation.phase)) {
+                list = listFromMap;
             } else {
-                sb = SequenceBuilder<FunctionOrValueDeclaration>();
-                phases.put(annotation.phase, sb);
+                list = ArrayList<FunctionOrValueDeclaration>();
+                phases.put(annotation.phase, list);
             }
-            sb.append(declaration);
+            list.add(declaration);
         }
     }
     return phases.mapItems(
-        (FunctionOrValueDeclaration key, SequenceBuilder<FunctionOrValueDeclaration> item) => item.sequence);
+        (FunctionOrValueDeclaration key, ArrayList<FunctionOrValueDeclaration> item) => item.sequence);
 }
