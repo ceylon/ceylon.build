@@ -6,7 +6,8 @@ import ceylon.build.task {
     AttachToAnnotation
 }
 import ceylon.collection {
-    HashMap, ArrayList
+    HashMap,
+    ArrayList
 }
 import ceylon.language.meta.declaration {
     Module,
@@ -27,7 +28,7 @@ GoalDefinitionsBuilder|[InvalidGoalDeclaration+] readAnnotations(Module mod) {
             invalidDeclarations.add(goal);
         }
     }
-    if (nonempty seq = invalidDeclarations.sequence) {
+    if (nonempty seq = invalidDeclarations.sequence()) {
         return seq;
     }
     return goals;
@@ -59,5 +60,5 @@ shared Map<FunctionOrValueDeclaration, [FunctionOrValueDeclaration*]> phasesDepe
         }
     }
     return phases.mapItems(
-        (FunctionOrValueDeclaration key, ArrayList<FunctionOrValueDeclaration> item) => item.sequence);
+        (FunctionOrValueDeclaration key, ArrayList<FunctionOrValueDeclaration> item) => item.sequence());
 }

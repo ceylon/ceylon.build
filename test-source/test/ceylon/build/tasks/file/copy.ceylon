@@ -47,7 +47,7 @@ test void shouldCopyDirectoryToDirectory() {
     value destinationResource = destination.resource;
     "Destination file should exist"
     assert(is Directory destinationResource);
-    value children = { for (resource in destinationResource.children()) shortname(resource.path) }.sequence;
+    value children = { for (resource in destinationResource.children()) shortname(resource.path) }.sequence();
     "Destination directory should file-a and file-b"
     assert(children == ["file-a", "file-b"]);
 }
@@ -62,7 +62,7 @@ test void shouldCopyDirectoryToNonExistingDirectory() {
     value destinationResource = destination.resource;
     "Destination file should exist"
     assert(is Directory destinationResource);
-    value children = { for (resource in destinationResource.children()) shortname(resource.path) }.sequence;
+    value children = { for (resource in destinationResource.children()) shortname(resource.path) }.sequence();
     "Destination directory should file-a and file-b"
     assert(children == ["file-a", "file-b"]);
 }
@@ -93,7 +93,7 @@ test void shouldCopyTree() {
         }
     }
     destination.visit(visitor);
-    value resources = res.sequence;
+    value resources = res.sequence();
     "Destination directory should contain copied files and directories"
     assert(resources == [
         "",

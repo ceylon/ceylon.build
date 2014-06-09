@@ -1,6 +1,16 @@
-import ceylon.collection { HashMap, ArrayList }
-import java.util.regex { Pattern { compilePattern = compile } }
-import ceylon.interop.java { javaString }
+import ceylon.collection {
+    HashMap,
+    ArrayList
+}
+import ceylon.interop.java {
+    javaString
+}
+
+import java.util.regex {
+    Pattern {
+        compilePattern=compile
+    }
+}
 
 shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
     
@@ -27,7 +37,7 @@ shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
     
     Map<String, {GoalProperties+}> definitionsMap() {
         value definitionsMap = HashMap<String, ArrayList<GoalProperties>>();
-        for (definition in definitions.sequence) {
+        for (definition in definitions.sequence()) {
             value name = definition.name;
             if (exists list = definitionsMap.get(name)) {
                 list.add(definition.properties);
@@ -39,7 +49,7 @@ shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
         }
         value result = HashMap<String, {GoalProperties+}>();
         for (entry in definitionsMap) {
-            value sequence = entry.item.sequence;
+            value sequence = entry.item.sequence();
             assert(nonempty sequence);
             result.put(entry.key, sequence);
         }

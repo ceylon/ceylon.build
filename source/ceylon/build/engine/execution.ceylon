@@ -4,7 +4,9 @@ import ceylon.build.task {
     setContextForTask,
     clearTaskContext
 }
-import ceylon.collection { ArrayList }
+import ceylon.collection {
+    ArrayList
+}
 
 String argumentPrefix = "-D";
 
@@ -37,7 +39,7 @@ ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions d
         } else {
             status = success;
         }
-        return ExecutionResult(results.sequence, status);
+        return ExecutionResult(results.sequence(), status);
     }
 }
 

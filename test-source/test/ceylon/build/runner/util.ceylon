@@ -75,7 +75,7 @@ void checkGoalDefinition(
     } else {
         assertFalse(goal.properties.task exists);
     }
-    assertEquals(accumulator.sequence, expectedAccumulatorContent);
+    assertEquals(accumulator.sequence(), expectedAccumulatorContent);
 }
 
 void checkInvalidGoalDefinition(Goal|InvalidGoalDeclaration invalid) {

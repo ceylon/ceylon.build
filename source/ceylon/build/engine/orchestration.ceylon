@@ -7,7 +7,7 @@ import ceylon.collection { HashSet, MutableSet, ArrayList }
     for (goal in goalsRequested) {
         goalsToExecute.addAll(linearize(goal, definitions));
     }
-    return reduce(goalsToExecute.sequence, definitions);
+    return reduce(goalsToExecute.sequence(), definitions);
 }
 
 {String*} findGoalsToExecute(GoalDefinitions definitions, [String*] arguments, Writer writer) {
@@ -22,7 +22,7 @@ import ceylon.collection { HashSet, MutableSet, ArrayList }
             }
         }
     }
-    return goalsToExecute.sequence;
+    return goalsToExecute.sequence();
 }
 
 {String*} linearize(String goal, GoalDefinitions definitions) {
@@ -32,7 +32,7 @@ import ceylon.collection { HashSet, MutableSet, ArrayList }
         goals.addAll(linearize(dependency, definitions));
     }
     goals.add(goal);
-    return goals.sequence;
+    return goals.sequence();
 }
 
 {String*} reduce({String*} goals, GoalDefinitions definitions) {
@@ -46,5 +46,5 @@ import ceylon.collection { HashSet, MutableSet, ArrayList }
             reducedGoalsNames.add(goal);
         }
     }
-    return reducedGoals.sequence;
+    return reducedGoals.sequence();
 }

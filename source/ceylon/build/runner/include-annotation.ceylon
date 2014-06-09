@@ -9,7 +9,7 @@ shared [ValueDeclaration*] findAnnotatedIncludes(Module mod) {
         value includesFromPackage = pkg.annotatedMembers<ValueDeclaration, IncludeAnnotation>();
         annotatedIncludes.addAll(includesFromPackage);
     }
-    return annotatedIncludes.sequence;
+    return annotatedIncludes.sequence();
 }
 
 shared [<FunctionOrValueDeclaration->Object>*] goalDeclarationsFromIncludes(
@@ -21,7 +21,7 @@ shared [<FunctionOrValueDeclaration->Object>*] goalDeclarationsFromIncludes(
             sb.add(declaration -> instance);
         }
     }
-    return sb.sequence;
+    return sb.sequence();
 }
 
 [FunctionOrValueDeclaration*] findClassMembersAnnotatedWithGoal(ClassDeclaration instanceTypeDeclaration) {

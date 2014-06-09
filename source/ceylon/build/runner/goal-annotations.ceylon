@@ -10,7 +10,7 @@ shared [FunctionOrValueDeclaration*] findTopLevelAnnotatedGoals(Module mod) {
     for (pkg in mod.members) {
         annotatedGoals.addAll(pkg.annotatedMembers<FunctionOrValueDeclaration, GoalAnnotation>());
     }
-    return annotatedGoals.sequence;
+    return annotatedGoals.sequence();
 }
 
 shared Goal|InvalidGoalDeclaration goalDefinition(

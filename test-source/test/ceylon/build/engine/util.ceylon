@@ -13,15 +13,15 @@ class MockWriter() satisfies Writer {
     
     MutableList<String> internalInfoMessages = LinkedList<String>();
     
-    shared [String*] infoMessages => internalInfoMessages.sequence;
+    shared [String*] infoMessages => internalInfoMessages.sequence();
     
     MutableList<String> internalErrorMessages = LinkedList<String>();
     
-    shared [String*] errorMessages => internalErrorMessages.sequence;
+    shared [String*] errorMessages => internalErrorMessages.sequence();
     
     MutableList<Exception> internalWrittenExceptions = LinkedList<Exception>();
     
-    shared [Exception*] writtenExceptions => internalWrittenExceptions.sequence;
+    shared [Exception*] writtenExceptions => internalWrittenExceptions.sequence();
     
     shared actual void info(String message) => internalInfoMessages.add(message);
     

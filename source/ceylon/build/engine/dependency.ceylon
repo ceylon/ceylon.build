@@ -13,7 +13,7 @@ alias DependencyGraph => {<String->{String*}>*};
             alreadyAddedDependencies.add(dependency);
         }
     }
-    return dependencies.sequence;
+    return dependencies.sequence();
 }
 
 class Dependency(goal, {String*} goals = []) {
@@ -22,7 +22,7 @@ class Dependency(goal, {String*} goals = []) {
     
     value _dependencies = LinkedList<String>(goals);
     
-    shared {String*} dependencies => _dependencies.sequence;
+    shared {String*} dependencies => _dependencies.sequence();
     
     shared Boolean hasNoDependencies => _dependencies.empty;
     

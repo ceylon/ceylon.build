@@ -37,7 +37,7 @@ Module mockModule({Package*} packages = []) {
         
         shared actual Package? findPackage(String name) => notImplemented;
         
-        shared actual Package[] members = packages.sequence;
+        shared actual Package[] members = packages.sequence();
         
         shared actual String name => notImplemented;
         
@@ -72,7 +72,7 @@ Package mockPackage({NestableDeclaration*} declarations = []) {
                     members.add(declaration);
                 }
             }
-            return members.sequence;
+            return members.sequence();
         }
         
         shared actual Annotation[] annotations<Annotation>()

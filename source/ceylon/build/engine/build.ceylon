@@ -39,7 +39,7 @@ EngineResult processGoals(GoalDefinitionsBuilder|GoalDefinitions goals, [String*
     } case (is GoalDefinitions) {
         definitions = goals;
     }
-    value goalsToRun = buildGoalExecutionList(definitions, arguments, writer).sequence;
+    value goalsToRun = buildGoalExecutionList(definitions, arguments, writer).sequence();
     value result = runGoals(goalsToRun, arguments, definitions, writer);
     return EngineResult(definitions, result.executionResults, result.status);
 }
