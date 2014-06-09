@@ -1,10 +1,21 @@
-import ceylon.collection { HashMap }
 import ceylon.build.engine {
     GoalDefinitionsBuilder,
     runEngine,
-    reportInvalidDefinitions, Status, success, noGoalToRun, errorOnTaskExecution, duplicateGoalsFound, invalidGoalFound, dependencyCycleFound
+    reportInvalidDefinitions,
+    Status,
+    success,
+    noGoalToRun,
+    errorOnTaskExecution,
+    duplicateGoalsFound,
+    invalidGoalFound,
+    dependencyCycleFound
 }
-import ceylon.build.task { Writer }
+import ceylon.build.task {
+    Writer
+}
+import ceylon.collection {
+    HashMap
+}
 
 "Returns `true` if `--console` option is found in `arguments`."
 Boolean interactive([String*] arguments) {
@@ -29,7 +40,7 @@ Status console(GoalDefinitionsBuilder goals, Writer writer) {
             }
             assert(exists rawLine);
             String line = rawLine.trimmed;
-            value result = runEngine(definitions, writer, line.split().sequence);
+            value result = runEngine(definitions, writer, line.split().sequence());
             print(statusToMessage(result.status));
         }
     }

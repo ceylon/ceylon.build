@@ -1,6 +1,16 @@
-import ceylon.collection { HashMap }
-import java.util.regex { Pattern { compilePattern = compile } }
-import ceylon.interop.java { javaString }
+import ceylon.collection {
+    HashMap,
+    ArrayList
+}
+import ceylon.interop.java {
+    javaString
+}
+
+import java.util.regex {
+    Pattern {
+        compilePattern=compile
+    }
+}
 
 shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
     
@@ -8,11 +18,11 @@ shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
     
     Pattern validTaskName = compilePattern(validTaskNamePattern);
     
-    value definitions = SequenceBuilder<Goal>();
-    definitions.appendAll(goals);
+    value definitions = ArrayList<Goal>();
+    definitions.addAll(goals);
     
     shared void add(Goal definition) {
-        definitions.append(definition);
+        definitions.add(definition);
     }
     
     shared DefinitionsValidationResult validate() {
@@ -26,19 +36,24 @@ shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
     }
     
     Map<String, {GoalProperties+}> definitionsMap() {
-        value definitionsMap = HashMap<String, SequenceAppender<GoalProperties>>();
-        for (definition in definitions.sequence) {
+        value definitionsMap = HashMap<String, ArrayList<GoalProperties>>();
+        for (definition in definitions.sequence()) {
             value name = definition.name;
-            if (exists seqBuilder = definitionsMap.get(name)) {
-                seqBuilder.append(definition.properties);
+            if (exists list = definitionsMap.get(name)) {
+                list.add(definition.properties);
             } else {
-                value seqBuilder = SequenceAppender<GoalProperties>([definition.properties]);
-                definitionsMap.put(name, seqBuilder);
+                value list = ArrayList<GoalProperties>();
+                list.add(definition.properties);
+                definitionsMap.put(name, list);
             }
         }
-        return HashMap {
-            entries = { for (entry in definitionsMap) entry.key->entry.item.sequence };
-        };
+        value result = HashMap<String, {GoalProperties+}>();
+        for (entry in definitionsMap) {
+            value sequence = entry.item.sequence();
+            assert(nonempty sequence);
+            result.put(entry.key, sequence);
+        }
+        return result;
     }
     
     Boolean invalidGoalName(String name) {

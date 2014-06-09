@@ -18,7 +18,7 @@ shared String moduleVersion(String name, String? version = defaultModuleVersion)
 [String+] testResourceDirectory = ["test-resource"];
 
 void checkCompilationUnits({String*} modules, {String*} files) {
-    value compilationUnits = concatenate(modules, files).sequence;
+    value compilationUnits = concatenate(modules, files).sequence();
     "Modules and/or files to compile must be provided"
     assert (nonempty compilationUnits);
 }
@@ -52,7 +52,7 @@ MutableList<String?> initCommand(String tool) => ArrayList<String?> { initialCap
 
 "Removes null elements from command and convert it to a non-empty sequence."
 [String+] cleanCommand({String?*} command) {
-    value sequence = command.coalesced.sequence;
+    value sequence = command.coalesced.sequence();
     assert(nonempty sequence);
     return sequence;
 }
