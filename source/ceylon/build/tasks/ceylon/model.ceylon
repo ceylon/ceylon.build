@@ -1,8 +1,25 @@
-import ceylon.build.task { GoalException }
-import ceylon.file { parsePath, Directory, File, Path }
-import ceylon.interop.java { javaString }
-import java.util.regex { Pattern { compilePattern = compile } }
-import ceylon.collection { HashSet }
+import ceylon.build.task {
+    GoalException
+}
+import ceylon.collection {
+    HashSet,
+    ArrayList
+}
+import ceylon.file {
+    parsePath,
+    Directory,
+    File,
+    Path
+}
+import ceylon.interop.java {
+    javaString
+}
+
+import java.util.regex {
+    Pattern {
+        compilePattern=compile
+    }
+}
 
 shared class CeylonModel(
     sourceSets = SourceSets(),
