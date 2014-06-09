@@ -351,7 +351,7 @@ shared Modules discoverModules(SourceSet sourceSet, Set<Backend>(String) backend
             throw GoalException("source folder ``path.absolutePath`` is not a directory");
         }
     }
-    return Modules(modules.sequence);
+    return Modules(modules.sequence());
 }
 
 [Module*] checkDirectory(Directory directory, Set<Backend>(String) backends) {
@@ -364,7 +364,7 @@ shared Modules discoverModules(SourceSet sourceSet, Set<Backend>(String) backend
             modules.addAll(checkDirectory(childDirectory, backends));
         }
     }
-    return modules.sequence;
+    return modules.sequence();
 }
 
 String moduleRegex = "module\\s+([a-zA-Z0-9]+(?:\\.[a-zA-Z0-9]+)*)\\s+\"([^\"]+)\"\\s*(?:\\{.*)?$";
