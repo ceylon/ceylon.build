@@ -100,8 +100,8 @@ module ceylon.build.tasks.ceylon "1.1.0" {
     import ceylon.build.tasks.file "1.1.0";
     import ceylon.collection "1.1.0";
     import com.redhat.ceylon.compiler.java "1.1.0";
-    import org.jboss.modules "1.1.3.GA";
-    
+    import org.jboss.modules "1.3.3.Final";
+
     import java.base "7";
     import ceylon.interop.java "1.1.0";
 }
