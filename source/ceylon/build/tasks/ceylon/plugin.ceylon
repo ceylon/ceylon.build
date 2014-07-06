@@ -199,6 +199,7 @@ shared interface CeylonJsPlugin satisfies CeylonBasePlugin {
             ceylon.runJs {
                 moduleName = mod.name;
                 version = mod.version;
+                repositories = testRepositories(model);
                 ceylon = model.ceylon else ceylonExecutable;
             };
         }
