@@ -620,7 +620,7 @@ shared object ceylon {
                 moduleName = moduleName;
                 version = version;
                 moduleArguments = moduleArguments;
-                noDefaultRepositories = true;
+                noDefaultRepositories = noDefaultRepositories;
                 offline = offline;
                 repositories = stringIterable(repositories);
                 systemRepository = systemRepository;
