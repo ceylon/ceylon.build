@@ -1,21 +1,49 @@
-import ceylon.test { test, assertEquals, assertNotEquals  }
-import ceylon.build.engine { exitCodes }
-import ceylon.build.task { Goal }
+import ceylon.test { test }
+import ceylon.build.engine { Goal, duplicateGoalsFound, invalidGoalFound, GoalDefinitionsBuilder, runEngine, success }
 
-test void testDuplicateGoals() {
-    checkDuplicateGoals([createTestGoal("a"), createTestGoal("b"), createTestGoal("c")], []);
-    checkDuplicateGoals([createTestGoal("a"), createTestGoal("b"), createTestGoal("c"), createTestGoal("b")], ["b"]);
-    checkDuplicateGoals([createTestGoal("a"), createTestGoal("b"), createTestGoal("b"), createTestGoal("a")], ["a", "b"]);
+test void shouldNotFindDuplicateGoals() {
+    checkDuplicateGoals {
+        goals = [createTestGoal("a"), createTestGoal("b"), createTestGoal("c")];
+        duplicates = [];
+    };
 }
 
-void checkDuplicateGoals({Goal+} goals, [String*] duplicates) {
+test void shouldFindOneDuplicateGoals() {
+    checkDuplicateGoals {
+        goals = [createTestGoal("a"), createTestGoal("b"), createTestGoal("c"), createTestGoal("b")];
+        duplicates = ["b"];
+    };
+}
+
+test void shouldFindMultiplesDuplicateGoals() {
+    checkDuplicateGoals {
+        goals = [createTestGoal("a"), createTestGoal("b"), createTestGoal("b"), createTestGoal("a")];
+        duplicates = ["a", "b"];
+    };
+}
+
+void checkDuplicateGoals([Goal+] goals, [String*] duplicates) {
     value writer = MockWriter();
-    value result = callEngine(goals, [goals.first.name], writer);
+    value goalsToRun = names(goals);
     if (nonempty duplicates) {
-        assertEquals(result.exitCode, exitCodes.duplicateGoalsFound);
-        assertEquals(writer.errorMessages.sequence[0], "# duplicate goal names found: ``duplicates``");
+        checkExecutionResult {
+            result = runEngine {
+                goals = GoalDefinitionsBuilder(goals);
+                arguments = goalsToRun;
+                writer = writer;
+            };
+            status = duplicateGoalsFound;
+            available = [];
+            toRun = [];
+            successful = [];
+            failed = [];
+            notRun = [];
+            writer = writer;
+            infoMessages = [ceylonBuildStartMessage];
+            errorMessages = ["# duplicate goal names found: ``duplicates``"];
+        };
     } else {
-        assertNotEquals(result.exitCode, exitCodes.duplicateGoalsFound);
+        checkSuccess(goals, goalsToRun, writer);
     }
 }
 
@@ -55,21 +83,53 @@ test void testValidateGoalsName() {
 }
 
 void checkGoalName(String name, Boolean valid) {
-    checkInvalidGoalsNames([Goal(name)], valid then [] else [name]);
+    checkInvalidGoalsNames([createTestGoal(name)], valid then [] else [name]);
 }
 
-void checkInvalidGoalsNames({Goal+} goals, [String*] invalidGoals) {
+void checkInvalidGoalsNames([Goal+] goals, [String*] invalidGoals) {
+    value goalsToRun = names(goals);
     value writer = MockWriter();
-    value result = callEngine(goals, [goals.first.name], writer);
     if (nonempty invalidGoals) {
-        assertEquals(result.exitCode, exitCodes.invalidGoalFound);
-        assertEquals(result.availableGoals, goals);
-        assertEquals(execution(result), []);
-        assertEquals(success(result), []);
-        assertEquals(failed(result), []);
-        assertEquals(notRun(result), []);
-        assertEquals(writer.errorMessages.sequence[0], "# invalid goals found ``invalidGoals``");
+        checkExecutionResult {
+            result = runEngine {
+                goals = GoalDefinitionsBuilder(goals);
+                arguments = goalsToRun;
+                writer = writer;
+            };
+            status = invalidGoalFound;
+            available = [];
+            toRun = [];
+            successful = [];
+            failed = [];
+            notRun = [];
+            writer = writer;
+            infoMessages = [ceylonBuildStartMessage];
+            errorMessages = [
+                "# invalid goals found ``invalidGoals``",
+                "# goal name should match following format: `[a-z][a-zA-Z0-9-.]*`"
+            ];
+        };
     } else {
-        assertNotEquals(result.exitCode, exitCodes.invalidGoalFound);
+        checkSuccess(goals, goalsToRun, writer);
     }
 }
+
+void checkSuccess([Goal+] goals, String[] goalsToRun, MockWriter writer) => checkExecutionResult {
+    result = runEngine {
+        goals = GoalDefinitionsBuilder(goals);
+        arguments = goalsToRun;
+        writer = writer;
+    };
+    status = success;
+    available = sort(goalsToRun);
+    toRun = goalsToRun;
+    successful = goalsToRun;
+    failed = [];
+    notRun = [];
+    writer = writer;
+    infoMessages = concatenate(
+        [ceylonBuildStartMessage, "# running goals: ``goalsToRun`` in order"],
+        [ for (goal in goalsToRun) "# running ``goal``()"]
+    );
+    errorMessages = [];
+};

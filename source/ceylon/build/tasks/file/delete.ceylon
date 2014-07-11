@@ -1,19 +1,5 @@
 import ceylon.file { Path, File, Directory, Visitor }
-import ceylon.build.task { Task, Context, done }
-
-"""Returns a `Task` to delete files and directories inside `path` (`path` included) using [[deletePath]]"""
-shared Task delete(
-        "Path to recursively delete"
-        Path path,
-        "Delete `FileFilter` has to return `true` to delete files, `false` to keep them"
-        FileFilter filter = allFiles
-        ) {
-    return function(Context context) {
-        context.writer.info("deleting ``path``");
-        deletePath(path, filter);
-        return done;
-    };
-}
+import ceylon.build.task { context }
 
 """Delete files and directories inside `path` (`path` included)
    
@@ -21,12 +7,13 @@ shared Task delete(
    
    If some files in a directory don't match `filter`, those files won't be deleted.
    As a consequence, parent directory will not be deleted too"""
-shared void deletePath(
+shared void delete(
         "Path to recursively delete"
         Path path,
         "Delete `FileFilter` has to return `true` to delete files, `false` to keep them"
         FileFilter filter = allFiles
         ) {
+    context.writer.info("deleting ``path``");
     path.visit(DeleteVisitor(path, filter));
 }
 

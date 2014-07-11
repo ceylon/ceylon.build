@@ -1,7 +1,7 @@
-import ceylon.build.task { Task, Context }
+import ceylon.build.task { context }
 
 "Runs a Ceylon module using `ceylon run` tool."
-shared Task runModule(
+shared void runModule(
         "name of module to run"
         String moduleName,
         "version of module to run"
@@ -45,27 +45,25 @@ shared Task runModule(
          (corresponding command line parameter: `--cwd=<dir>`)"
         String? currentWorkingDirectory = null
 ) {
-    return function(Context context) {
-        value command = runCommand {
-            RunArguments {
-                moduleName = moduleName;
-                version = version;
-                moduleArguments = moduleArguments;
-                noDefaultRepositories = noDefaultRepositories;
-                offline = offline;
-                repositories = stringIterable(repositories);
-                systemRepository = systemRepository;
-                cacheRepository = cacheRepository;
-                functionNameToRun = functionNameToRun;
-                compileOnRun = compileOnRun;
-                systemProperties = systemProperties;
-                verboseModes = verboseModes;
-                currentWorkingDirectory = currentWorkingDirectory;
-                arguments = context.arguments;
-            };
+    value command = runCommand {
+        RunArguments {
+            moduleName = moduleName;
+            version = version;
+            moduleArguments = moduleArguments;
+            noDefaultRepositories = noDefaultRepositories;
+            offline = offline;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            functionNameToRun = functionNameToRun;
+            compileOnRun = compileOnRun;
+            systemProperties = systemProperties;
+            verboseModes = verboseModes;
+            currentWorkingDirectory = currentWorkingDirectory;
+            arguments = context.arguments;
         };
-        return execute(context.writer, "running", ceylon, command);
     };
+    execute(context.writer, "running", ceylon, command);
 }
 
 "Builds a ceylon run command as a `[String+]` and returns it.

@@ -1,7 +1,7 @@
-import ceylon.build.task { Context, Task }
+import ceylon.build.task { context }
 
 "Compiles a Ceylon module to javascript using `ceylon compile-js` tool."
-shared Task compileJs(
+shared void compileJs(
     "name of modules to compile"
     String|{String*} modules,
     "name of files to compile"
@@ -79,36 +79,34 @@ shared Task compileJs(
     value modulesList = stringIterable(modules);
     value filesList = stringIterable(files);
     checkCompilationUnits(modulesList, filesList);
-    return function(Context context) {
-        value command = compileJsCommand {
-            CompileJsArguments {
-                modules = modulesList;
-                files = filesList;
-                encoding = encoding;
-                sourceDirectories = stringIterable(sourceDirectories);
-                outputRepository = outputRepository;
-                repositories = stringIterable(repositories);
-                systemRepository = systemRepository;
-                cacheRepository = cacheRepository;
-                user = user;
-                password = password;
-                offline = offline;
-                compact = compact;
-                lexicalScopeStyle = lexicalScopeStyle;
-                noComments = noComments;
-                noIndent = noIndent;
-                noModule = noModule;
-                optimize = optimize;
-                profile = profile;
-                skipSourceArchive = skipSourceArchive;
-                systemProperties = systemProperties;
-                verboseModes = verboseModes;
-                currentWorkingDirectory = currentWorkingDirectory;
-                arguments = context.arguments;
-            };
+    value command = compileJsCommand {
+        CompileJsArguments {
+            modules = modulesList;
+            files = filesList;
+            encoding = encoding;
+            sourceDirectories = stringIterable(sourceDirectories);
+            outputRepository = outputRepository;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            user = user;
+            password = password;
+            offline = offline;
+            compact = compact;
+            lexicalScopeStyle = lexicalScopeStyle;
+            noComments = noComments;
+            noIndent = noIndent;
+            noModule = noModule;
+            optimize = optimize;
+            profile = profile;
+            skipSourceArchive = skipSourceArchive;
+            systemProperties = systemProperties;
+            verboseModes = verboseModes;
+            currentWorkingDirectory = currentWorkingDirectory;
+            arguments = context.arguments;
         };
-        return execute(context.writer, "compiling", ceylon, command);
     };
+    execute(context.writer, "compiling", ceylon, command);
 }
 
 "Builds a ceylon compile-js command as a `[String+]` and returns it.

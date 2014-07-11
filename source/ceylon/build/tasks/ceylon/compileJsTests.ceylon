@@ -1,9 +1,8 @@
-import ceylon.build.task { Task }
 
 """Compiles a Ceylon test module to javascript using `ceylon compile-js` tool.
    
    `--source` command line parameter is set to `"test-source"`"""
-shared Task compileJsTests(
+shared void compileJsTests(
         "name of modules to compile"
         String|{String*} modules,
         "name of files to compile"
@@ -75,7 +74,7 @@ shared Task compileJsTests(
          (corresponding command line parameter: `--cwd=<dir>`)"
         String? currentWorkingDirectory = null
 ) {
-    return compileJs {
+    compileJs {
         modules = modules;
         files = files;
         encoding = encoding;

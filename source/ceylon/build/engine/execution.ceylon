@@ -1,80 +1,91 @@
-import ceylon.build.task { Goal, Task, Context, Writer, Outcome, Success, Failure }
-import ceylon.collection { LinkedList }
+import ceylon.build.task {
+    Writer,
+    GoalException,
+    setContextForTask,
+    clearTaskContext
+}
+import ceylon.collection {
+    ArrayList
+}
 
 String argumentPrefix = "-D";
 
-ExecutionResult runGoals({Goal*} goals, [String*] arguments, {Goal*} availableGoals, Writer writer) {
-    value results = LinkedList<GoalExecutionResult>();
+ExecutionResult runGoals([String*] goals, [String*] arguments, GoalDefinitions definitions, Writer writer) {
+    value results = ArrayList<GoalExecutionResult>();
     if (goals.empty) {
-        writer.error("# no goal to run, available goals are: ``goalsNames(availableGoals)``");
-        return ExecutionResult([], exitCodes.noGoalToRun);
+        if (definitions.availableGoals.empty) {
+            writer.error("# no available goals");
+            if (!definitions.internalGoals.empty) {
+                writer.error("# following internal goals exist: ``displayGoalsList(definitions.internalGoals)``");
+                writer.error("# did you forgot to make them shared?");
+            }
+        } else {
+            writer.error("# no goal to run, available goals are: ``displayGoalsList(definitions.availableGoals)``");
+        }
+        return ExecutionResult([], noGoalToRun);
     } else {
-        Integer exitCode;
+        Status status;
         writer.info("# running goals: ``goals`` in order");
         for (goal in goals) {
             value goalArguments = filterArgumentsForGoal(goal, arguments);
-            writer.info("# running ``goal.name``(``", ".join(goalArguments)``)");
-            value result = executeTasks(goal, goalArguments, writer);
+            writer.info("# running ``goal``(``", ".join(goalArguments)``)");
+            value result = executeGoal(goal, definitions, goalArguments, writer);
             results.add(result);
             if (!result.success) {
-                exitCode = exitCodes.errorOnTaskExecution;
-                results.addAll(notRunGoalsExecutionResult(goals.skipping(results.size), arguments));
+                status = errorOnTaskExecution;
+                results.addAll(notRunGoalsExecutionResult(goals.skip(results.size), arguments));
                 break;
             }
         } else {
-            exitCode = exitCodes.success;
+            status = success;
         }
-        return ExecutionResult(results.sequence, exitCode);
+        return ExecutionResult(results.sequence(), status);
     }
 }
 
-String goalsNames({Goal*} goals) => "[``", ".join({for (goal in goals) goal.name})``]";
+String displayGoalsList([String*] goals) => "[``", ".join(goals)``]";
 
-[String*] filterArgumentsForGoal(Goal goal, [String*] arguments) {
-    String prefix = "``argumentPrefix````goal.name``:";
+[String*] filterArgumentsForGoal(String goal, [String*] arguments) {
+    String prefix = "``argumentPrefix````goal``:";
     return [for (argument in arguments) if (argument.startsWith(prefix)) argument.spanFrom(prefix.size)];
 }
 
-GoalExecutionResult executeTasks(Goal goal, [String*] arguments, Writer writer) {
-    value outcomes = LinkedList<Outcome>();
-    for (Task task in goal.tasks) {
-        value outcome = executeTask(task, arguments, writer);
-        outcomes.add(outcome);
-        reportOutcome(outcome, goal, writer);
-        outcomes.add(outcome);
-        if (is Failure outcome) {
-            break;
-        }
-    }
-    return GoalExecutionResult(goal, arguments, outcomes.sequence);
+GoalExecutionResult executeGoal(String goal, GoalDefinitions definitions, String[] arguments, Writer writer) {
+    value properties = definitions.properties(goal);
+    "Goal with noop leaked into execution list"
+    assert (exists task = properties.task);
+    value outcome = executeTask(task, arguments, writer);
+    reportOutcome(outcome, goal, writer);
+    return GoalExecutionResult(goal, arguments, outcome);
 }
 
-Outcome executeTask(Task task, [String*] goalArguments, Writer writer) {
+Outcome executeTask(Anything() task, [String*] arguments, Writer writer) {
+    variable Outcome outcome;
+    setContextForTask(arguments, writer);
     try {
-        return task(Context(goalArguments, writer));
+        task();
+        outcome = ok;
     } catch (Exception exception) {
-        return Failure("", exception);
+        outcome = Failure(exception);
     }
+    clearTaskContext();
+    return outcome;
 }
 
-void reportOutcome(Outcome outcome, Goal goal, Writer writer) {
-    if (is Success outcome) {
-        if (!outcome.message.empty) {
-            writer.info("``outcome.message``");
-        }
-    } else if (is Failure outcome) {
+void reportOutcome(Outcome outcome, String goal, Writer writer) {
+    if (is Failure outcome) {
         writer.error("# goal ``goal`` failure, stopping");
-        value message = outcome.message;
-        if (!message.empty) {
-            writer.error(message);
-        }
         value exception = outcome.exception;
-        if (exists exception) {
+        if (is GoalException exception) {
+            writer.error(exception.message);
+        } else {
             writer.exception(exception);
         }
     }
 }
 
-GoalExecutionResult[] notRunGoalsExecutionResult({Goal*} notRunGoals, String[] arguments) {
-    return [ for (notRun in notRunGoals) GoalExecutionResult(notRun, filterArgumentsForGoal(notRun, arguments), [])];
+GoalExecutionResult[] notRunGoalsExecutionResult({String*} notRunGoals, String[] arguments) {
+    return [ for (notRun in notRunGoals)
+        GoalExecutionResult(notRun, filterArgumentsForGoal(notRun, arguments), null)
+    ];
 }

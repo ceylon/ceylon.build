@@ -1,11 +1,11 @@
 
 "Execution result"
-class ExecutionResult(executionResults,  exitCode) {
+class ExecutionResult(executionResults, status) {
     
     "Goals execution results (ordered according to goal execution)"
     shared [GoalExecutionResult*] executionResults;
     
     "Exit code"
-    see(`value exitCodes`)
-    shared Integer exitCode;
+    see(`interface Status`)
+    shared Status status;
 }

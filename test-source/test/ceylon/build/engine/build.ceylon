@@ -1,172 +1,328 @@
-import ceylon.build.engine { runEngine, exitCodes, EngineResult }
-import ceylon.build.task { Goal, Context, Failure, done, Writer }
+import ceylon.build.engine { runEngine, EngineResult, noGoalToRun, errorOnTaskExecution, success, GoalDefinitionsBuilder, Goal, GoalProperties }
+import ceylon.build.task { Writer, GoalException }
 import ceylon.test { test, assertEquals }
 import ceylon.collection { MutableList, LinkedList }
+
+String failingGoal1 = "failingGoal1";
+String failingGoal2 = "failingGoal2";
+String failingGoal3 = "failingGoal3";
+String failingGoal4 = "failingGoal4";
+String goalWithoutTask = "goalWithoutTask";
+String goalWithATask = "goalWithATask";
+String internalGoal = "internalGoal";
+String goalWithDependencies = "goalWithDependencies";
+String goalWithOnlyDependencies = "goalWithOnlyDependencies";
+String goalWithOnlyDependenciesOnGoalsWithoutTask = "goalWithOnlyDependenciesOnGoalsWithoutTask";
+
+[String+] availableGoals = [
+    failingGoal1,
+    failingGoal2,
+    failingGoal3,
+    failingGoal4,
+    goalWithoutTask,
+    goalWithATask,
+    internalGoal,
+    goalWithDependencies,
+    goalWithOnlyDependencies,
+    goalWithOnlyDependenciesOnGoalsWithoutTask
+];
+
+String ceylonBuildStartMessage = "## ceylon.build";
+String noGoalToRunMessage = "# no goal to run, available goals are: ``sort(availableGoals)``";
 
 test void shouldExitWhenNoGoalToRun() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
     value goalsToRun = [];
-    value result = execute(goalsToRun, writer, executedTasks);
-    assertEquals(result.exitCode, exitCodes.noGoalToRun);
-    assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(execution(result), goalsToRun);
-    assertEquals(success(result), []);
-    assertEquals(failed(result), []);
-    assertEquals(notRun(result), []);
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = noGoalToRun;
+        available = sort(availableGoals);
+        toRun = [];
+        successful = [];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage];
+        errorMessages = [noGoalToRunMessage];
+    };
     assertEquals(executedTasks, []);
 }
 
 test void shouldExitWhenNoGoalWithTasksToRun() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
-    value goalsToRun = ["goalWithoutTasks"];
-    value result = execute(goalsToRun, writer, executedTasks);
-    assertEquals(result.exitCode, exitCodes.noGoalToRun);
-    assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(execution(result), []);
-    assertEquals(success(result), []);
-    assertEquals(failed(result), []);
-    assertEquals(notRun(result), []);
+    value goalsToRun = [goalWithoutTask];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = noGoalToRun;
+        available = sort(availableGoals);
+        toRun = [];
+        successful = [];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage];
+        errorMessages = [noGoalToRunMessage];
+    };
     assertEquals(executedTasks, []);
 }
 
-test void shouldExecuteGoalTask() {
+test void shouldExecuteGoal() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
-    value goalsToRun = ["goalWithOneTask"];
-    value result = execute(goalsToRun, writer, executedTasks);
-    assertEquals(result.exitCode, exitCodes.success);
-    assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(execution(result), goalsToRun);
-    assertEquals(success(result), goalsToRun);
-    assertEquals(failed(result), []);
-    assertEquals(notRun(result), []);
-    assertEquals(executedTasks, ["goalWithOneTask"]);
+    value goalsToRun = [goalWithATask];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = success;
+        available = sort(availableGoals);
+        toRun = goalsToRun;
+        successful = goalsToRun;
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``goalWithATask``] in order",
+            "# running ``goalWithATask``()"];
+        errorMessages = [];
+    };
+    assertEquals(executedTasks, goalsToRun);
 }
 
-test void shouldExecuteGoalTasks() {
+test void shouldExecuteInternalGoal() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
-    value goalsToRun = ["goalWithMultipleTasks"];
-    value result = execute(goalsToRun, writer, executedTasks);
-    assertEquals(result.exitCode, exitCodes.success);
-    assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(execution(result), goalsToRun);
-    assertEquals(success(result), goalsToRun);
-    assertEquals(failed(result), []);
-    assertEquals(notRun(result), []);
-    assertEquals(executedTasks, ["goalWithMultipleTasks-1", "goalWithMultipleTasks-2", "goalWithMultipleTasks-3"]);
+    value goalsToRun = [internalGoal];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = success;
+        available = sort(availableGoals);
+        toRun = goalsToRun;
+        successful = goalsToRun;
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``internalGoal``] in order",
+            "# running ``internalGoal``()"];
+        errorMessages = [];
+    };
+    assertEquals(executedTasks, goalsToRun);
 }
 
-test void shouldExecuteGoalTasksUntilTaskFailure() {
+test void shouldExecuteDependencies() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
-    value goalsToRun = ["goalWithMultipleTasksFailingInTheMiddle"];
-    value result = execute(goalsToRun, writer, executedTasks);
-    assertEquals(result.exitCode, exitCodes.errorOnTaskExecution);
-    assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(execution(result), goalsToRun);
-    assertEquals(success(result), []);
-    assertEquals(failed(result), goalsToRun);
-    assertEquals(notRun(result), []);
-    assertEquals(
-        executedTasks,
-        ["goalWithMultipleTasksFailingInTheMiddle-1", "goalWithMultipleTasksFailingInTheMiddle-2"]
-    );
+    value goalsToRun = [goalWithDependencies];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = success;
+        available = sort(availableGoals);
+        toRun = [goalWithATask, goalWithDependencies];
+        successful = [goalWithATask, goalWithDependencies];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``goalWithATask``, ``goalWithDependencies``] in order",
+            "# running ``goalWithATask``()",
+            "# running ``goalWithDependencies``()"];
+        errorMessages = [];
+    };
+    assertEquals(executedTasks, [goalWithATask, goalWithDependencies]);
 }
 
-test void shouldExecuteDependenciesTasks() {
+test void shouldExecuteGoalWithOnlyDependencies() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
-    value goalsToRun = ["goalWithOnlyDependencies"];
-    value result = execute(goalsToRun, writer, executedTasks);
-    assertEquals(result.exitCode, exitCodes.success);
-    assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(execution(result), ["goalWithOneTask", "goalWithMultipleTasks"]);
-    assertEquals(success(result), ["goalWithOneTask", "goalWithMultipleTasks"]);
-    assertEquals(failed(result), []);
-    assertEquals(notRun(result), []);
-    assertEquals(
-        executedTasks,
-        ["goalWithOneTask", "goalWithMultipleTasks-1", "goalWithMultipleTasks-2", "goalWithMultipleTasks-3"]
-    );
+    value goalsToRun = [goalWithOnlyDependencies];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = success;
+        available = sort(availableGoals);
+        toRun = [goalWithATask];
+        successful = [goalWithATask];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+        "# running goals: [``goalWithATask``] in order",
+        "# running ``goalWithATask``()"];
+        errorMessages = [];
+    };
+    assertEquals(executedTasks, [goalWithATask]);
 }
 
 test void shouldExitWhenNoGoalWithTasksToRunEvenOnDependencies() {
     value executedTasks = LinkedList<String>();
     value writer = MockWriter();
-    value goalsToRun = ["goalWithOnlyDependenciesOnGoalsWithoutTasks"];
-    value result = execute(goalsToRun, writer, executedTasks);
-    assertEquals(result.exitCode, exitCodes.noGoalToRun);
-    assertEquals(names(result.availableGoals), availableGoals);
-    assertEquals(execution(result), []);
-    assertEquals(success(result), []);
-    assertEquals(failed(result), []);
-    assertEquals(notRun(result), []);
+    value goalsToRun = [goalWithOnlyDependenciesOnGoalsWithoutTask];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = noGoalToRun;
+        available = sort(availableGoals);
+        toRun = [];
+        successful = [];
+        failed = [];
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage];
+        errorMessages = [noGoalToRunMessage];
+    };
     assertEquals(executedTasks, []);
 }
 
+test void shouldExecuteFailingGoal() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = [failingGoal2];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = errorOnTaskExecution;
+        available = sort(availableGoals);
+        toRun = goalsToRun;
+        successful = [];
+        failed = goalsToRun;
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``failingGoal2``] in order",
+            "# running ``failingGoal2``()"];
+        errorMessages = ["# goal ``failingGoal2`` failure, stopping", "boom"];
+    };
+    assertEquals(writer.writtenExceptions.size, 1);
+    assertEquals(executedTasks, []);
+}
+
+test void shouldExecuteFailingGoalWithoutWritingException() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = [failingGoal4];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = errorOnTaskExecution;
+        available = sort(availableGoals);
+        toRun = goalsToRun;
+        successful = [];
+        failed = goalsToRun;
+        notRun = [];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``failingGoal4``] in order",
+            "# running ``failingGoal4``()"];
+        errorMessages = ["# goal ``failingGoal4`` failure, stopping", "Something went wrong"];
+    };
+    assertEquals(writer.writtenExceptions.size, 0);
+    assertEquals(executedTasks, []);
+}
+
+test void shouldExecuteGoalsUntilFailure() {
+    value executedTasks = LinkedList<String>();
+    value writer = MockWriter();
+    value goalsToRun = [failingGoal3];
+    checkExecutionResult {
+        result = execute(goalsToRun, writer, executedTasks);
+        status = errorOnTaskExecution;
+        available = sort(availableGoals);
+        toRun = [failingGoal1, failingGoal2, failingGoal3];
+        successful = [failingGoal1];
+        failed = [failingGoal2];
+        notRun = [failingGoal3];
+        writer = writer;
+        infoMessages = [ceylonBuildStartMessage,
+            "# running goals: [``failingGoal1``, ``failingGoal2``, ``failingGoal3``] in order",
+            "# running ``failingGoal1``()", "# running ``failingGoal2``()"];
+        errorMessages = ["# goal ``failingGoal2`` failure, stopping", "boom"];
+    };
+    assertEquals(executedTasks, [failingGoal1]);
+}
+
 EngineResult execute([String*] arguments, Writer writer, MutableList<String> executedTasks) {
-    function createTask(String taskName) {
-        return function(Context context) {
-            executedTasks.add(taskName);
-            return done;
-        };
-    }
-    
-    Goal goalWithoutTasks = Goal {
-        name = "goalWithoutTasks";
-    };
-    
-    Goal goalWithOneTask = Goal {
-        name = "goalWithOneTask";
-        createTask("goalWithOneTask")
-    };
-    
-    Goal goalWithMultipleTasks = Goal {
-        name = "goalWithMultipleTasks";
-        createTask("goalWithMultipleTasks-1"),
-        createTask("goalWithMultipleTasks-2"),
-        createTask("goalWithMultipleTasks-3")
-    };
-    
-    Goal goalWithMultipleTasksFailingInTheMiddle = Goal {
-        name = "goalWithMultipleTasksFailingInTheMiddle";
-        createTask("goalWithMultipleTasksFailingInTheMiddle-1"),
-        function(Context context) {
-            executedTasks.add("goalWithMultipleTasksFailingInTheMiddle-2");
-            return Failure("fail to execute task 'run'");
+    value builder = GoalDefinitionsBuilder {
+        Goal {
+            name = goalWithoutTask;
+            properties = GoalProperties {
+                internal = false;
+                task = null;
+                dependencies = [];
+            };
         },
-        createTask("goalWithMultipleTasksFailingInTheMiddle-3")
-    };
-    
-    Goal goalWithOnlyDependencies = Goal {
-        name = "goalWithOnlyDependencies";
-        dependencies = [goalWithoutTasks, goalWithOneTask, goalWithMultipleTasks];
-    };
-    
-    Goal goalWithOnlyDependenciesOnGoalsWithoutTasks = Goal {
-        name = "goalWithOnlyDependenciesOnGoalsWithoutTasks";
-        dependencies = [goalWithoutTasks];
+        Goal {
+            name = goalWithATask;
+            properties = GoalProperties {
+                internal = false;
+                task() => executedTasks.add(goalWithATask);
+                dependencies = [];
+            };
+        },
+        Goal {
+            name = internalGoal;
+            properties = GoalProperties {
+                internal = false;
+                task() => executedTasks.add(internalGoal);
+                dependencies = [];
+            };
+        },
+        Goal {
+            name = goalWithDependencies;
+            properties = GoalProperties {
+                internal = false;
+                task() => executedTasks.add(goalWithDependencies);
+                dependencies = [goalWithATask];
+            };
+        },
+        Goal {
+            name = goalWithOnlyDependencies;
+            properties = GoalProperties {
+                internal = false;
+                task = null;
+                dependencies = [goalWithoutTask,goalWithATask];
+            };
+        },
+        Goal {
+            name = goalWithOnlyDependenciesOnGoalsWithoutTask;
+            properties = GoalProperties {
+                internal = false;
+                task = null;
+                dependencies = [goalWithoutTask];
+            };
+        },
+        Goal {
+            name = failingGoal1;
+            properties = GoalProperties {
+                internal = false;
+                task() => executedTasks.add(failingGoal1);
+                dependencies = [];
+            };
+        },
+        Goal {
+            name = failingGoal2;
+            properties = GoalProperties {
+                internal = false;
+                task = void() { throw Exception("boom"); };
+                dependencies = [];
+            };
+        },
+        Goal {
+            name = failingGoal3;
+            properties = GoalProperties {
+                internal = false;
+                task() => executedTasks.add(failingGoal3);
+                dependencies = [failingGoal1,failingGoal2];
+            };
+        },
+        Goal {
+            name = failingGoal4;
+            properties = GoalProperties {
+                internal = false;
+                task = void() { throw GoalException("Something went wrong"); };
+                dependencies = [];
+            };
+        }
     };
     return runEngine {
-        project = "My Build Project";
-        goals = [
-        goalWithoutTasks, goalWithOneTask, goalWithMultipleTasks,
-        goalWithMultipleTasksFailingInTheMiddle, goalWithOnlyDependencies,
-        goalWithOnlyDependenciesOnGoalsWithoutTasks
-        ];
+        goals = builder;
         arguments = arguments;
         writer = writer;
     };
 }
-
-[String+] availableGoals = [
-    "goalWithoutTasks",
-    "goalWithOneTask",
-    "goalWithMultipleTasks",
-    "goalWithMultipleTasksFailingInTheMiddle",
-    "goalWithOnlyDependencies",
-    "goalWithOnlyDependenciesOnGoalsWithoutTasks"
-];

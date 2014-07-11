@@ -1,50 +1,50 @@
-import ceylon.build.task { Goal, Writer }
-import ceylon.collection { LinkedList, MutableList, HashSet, MutableSet }
+import ceylon.build.task { Writer }
+import ceylon.collection { HashSet, MutableSet, ArrayList }
 
-{Goal*} buildGoalExecutionList({Goal+} definitions, [String*] arguments, Writer writer) {
+{String*} buildGoalExecutionList(GoalDefinitions definitions, [String*] arguments, Writer writer) {
     value goalsRequested = findGoalsToExecute(definitions, arguments, writer);
-    MutableList<Goal> goalsToExecute = LinkedList<Goal>();
+    value goalsToExecute = ArrayList<String>();
     for (goal in goalsRequested) {
-        goalsToExecute.addAll(linearize(goal));
+        goalsToExecute.addAll(linearize(goal, definitions));
     }
-    return reduce(goalsToExecute);
+    return reduce(goalsToExecute.sequence(), definitions);
 }
 
-{Goal*} findGoalsToExecute({Goal+} definitions, [String*] arguments, Writer writer) {
-    MutableList<Goal> goalsToExecute = LinkedList<Goal>();
+{String*} findGoalsToExecute(GoalDefinitions definitions, [String*] arguments, Writer writer) {
+    value goalsToExecute = ArrayList<String>();
     for (argument in arguments) {
         if (!argument.startsWith(argumentPrefix)) {
-            for (definition in definitions) {
-                if (definition.name.equals(argument)) {
-                    goalsToExecute.add(definition);
-                    break;
-                }
+            if (definitions.defines(argument)) {
+                goalsToExecute.add(argument);
             } else {
                 writer.error("# goal '``argument``' not found, stopping");
                 return {};
             }
         }
     }
-    return goalsToExecute;
+    return goalsToExecute.sequence();
 }
 
-{Goal*} linearize(Goal goal) {
-    MutableList<Goal> goals = LinkedList<Goal>();
-    for (Goal dependency in goal.dependencies) {
-        goals.addAll(linearize(dependency));
+{String*} linearize(String goal, GoalDefinitions definitions) {
+    value goals = ArrayList<String>();
+    value properties = definitions.properties(goal);
+    for (dependency in properties.dependencies) {
+        goals.addAll(linearize(dependency, definitions));
     }
     goals.add(goal);
-    return goals;
+    return goals.sequence();
 }
 
-{Goal*} reduce({Goal*} goals) {
+{String*} reduce({String*} goals, GoalDefinitions definitions) {
     MutableSet<String> reducedGoalsNames = HashSet<String>();
-    MutableList<Goal> reducedGoals = LinkedList<Goal>();
-    for (Goal goal in goals) {
-        if (!reducedGoalsNames.contains(goal.name) && !goal.tasks.empty) {
+    value reducedGoals = ArrayList<String>();
+    for (goal in goals) {
+        value properties = definitions.properties(goal);
+        value task = properties.task;
+        if (exists task, !reducedGoalsNames.contains(goal)) {
             reducedGoals.add(goal);
-            reducedGoalsNames.add(goal.name);
+            reducedGoalsNames.add(goal);
         }
     }
-    return reducedGoals;
+    return reducedGoals.sequence();
 }

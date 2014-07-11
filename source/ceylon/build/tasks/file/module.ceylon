@@ -3,8 +3,8 @@
    ### Delete
    
    This module provides two functions to delete files and directories.
-   - [[deletePath]]: function to delete files / directories that can be used in your own tasks
-   - [[delete]]: function creating a wrapper `Task` for [[deletePath]] function
+   - [[delete]]: function to delete files / directories that can be used in your own tasks
+   - [[delete]]: function creating a wrapper `Task` for [[delete]] function
    
    Here is an example of a task which will delete `"modules"` directory.
    ```ceylon
@@ -53,7 +53,7 @@
    ```
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
-module ceylon.build.tasks.file "1.0.0" {
-    shared import ceylon.build.task "1.0.0";
-    shared import ceylon.file "1.0.0";
+module ceylon.build.tasks.file "1.1.0" {
+    shared import ceylon.build.task "1.1.0";
+    shared import ceylon.file "1.1.0";
 }

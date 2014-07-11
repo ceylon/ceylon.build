@@ -1,7 +1,7 @@
-import ceylon.build.task { Task, Context }
+import ceylon.build.task { context }
 
 "Compiles a Ceylon module using `ceylon compile` tool."
-shared Task compile(
+shared void compile(
         "name of modules to compile"
         String|{String*} modules,
         "name of files to compile"
@@ -65,31 +65,29 @@ shared Task compile(
     value modulesList = stringIterable(modules);
     value filesList = stringIterable(files);
     checkCompilationUnits(modulesList, filesList);
-    return function(Context context) {
-        value command = compileCommand {
-            CompileArguments {
-                modules = modulesList;
-                files = filesList;
-                encoding = encoding;
-                sourceDirectories = stringIterable(sourceDirectories);
-                resourceDirectories = stringIterable(resourceDirectories);
-                javacOptions = javacOptions;
-                outputRepository = outputRepository;
-                repositories = stringIterable(repositories);
-                systemRepository = systemRepository;
-                cacheRepository = cacheRepository;
-                user =user;
-                password = password;
-                offline = offline;
-                noDefaultRepositories = noDefaultRepositories;
-                systemProperties = systemProperties;
-                verboseModes = verboseModes;
-                currentWorkingDirectory = currentWorkingDirectory;
-                arguments = context.arguments;
-            };
+    value command = compileCommand {
+        CompileArguments {
+            modules = modulesList;
+            files = filesList;
+            encoding = encoding;
+            sourceDirectories = stringIterable(sourceDirectories);
+            resourceDirectories = stringIterable(resourceDirectories);
+            javacOptions = javacOptions;
+            outputRepository = outputRepository;
+            repositories = stringIterable(repositories);
+            systemRepository = systemRepository;
+            cacheRepository = cacheRepository;
+            user =user;
+            password = password;
+            offline = offline;
+            noDefaultRepositories = noDefaultRepositories;
+            systemProperties = systemProperties;
+            verboseModes = verboseModes;
+            currentWorkingDirectory = currentWorkingDirectory;
+            arguments = context.arguments;
         };
-        return execute(context.writer, "compiling", ceylon, command);
     };
+    execute(context.writer, "compiling", ceylon, command);
 }
 
 "Builds a ceylon compile command as a `[String+]` and returns it.
