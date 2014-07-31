@@ -1,4 +1,6 @@
-import ceylon.build.tasks.ant.internal { AntSupport, AntProjectImplementation }
+import ceylon.build.tasks.ant.internal {
+    AntSupport
+}
 
 """
    Basically it's a mapping from Ant's XML description language to Ceylon.
@@ -26,19 +28,19 @@ import ceylon.build.tasks.ant.internal { AntSupport, AntProjectImplementation }
    ] ).execute();
    ```
    
-   Take care to include the last `.execute()` directive, otherwise the operation will not get executed, or use the function `ant()` instead for Ant-tasks.
+   Take care to include the last [[execute]] directive, otherwise the operation will not get executed, or use the function [[antExecute]] instead for Ant-tasks.
 """
-see(`function ant`)
+see(`function antExecute`)
 shared class Ant(
-        antName,
-        {<String->String>*}? attributes = null,
-        {<Ant>*}? elements = null,
-        String? text = null) {
-    
-    """
-       Name of ant type (element name).
-    """
-    shared String antName;
+    "Name of Ant type (element name)."
+    shared String antName,
+    "Attributes for this type/task."
+    {<String->String>*}? attributes = null,
+    "Containing Ant elements."
+    {<Ant>*}? elements = null,
+    "Text node."
+    String? text = null
+) {
     
     void build(AntSupport antSupport) {
         if(exists attributes) {
@@ -59,7 +61,7 @@ shared class Ant(
     }
     
     AntSupport buildAntSupport(AntProjectImplementation antProjectImplementation) {
-        AntSupport antSupport = AntSupport(antName, antProjectImplementation.projectSupport);
+        AntSupport antSupport = antProjectImplementation.projectSupport.createAntSupport(antName);
         build(antSupport);
         return antSupport;
     }
@@ -72,36 +74,18 @@ shared class Ant(
         AntSupport antSupport = buildAntSupport(antProjectImplementation);
         antSupport.execute();
     }
-    
+    """
+       Returns a readable string of the Ant representation as XML plus effective base directory.
+    """
     shared actual String string {
         AntProjectImplementation antProjectImplementation = provideAntProjectImplementation();
         AntSupport antSupport = buildAntSupport(antProjectImplementation);
-        String string = "
-                         Directory: ``antProjectImplementation.effectiveBaseDirectory()``
-                         Ant's XML: ``antSupport.string``
-                         ";
+        String string =
+                "
+                 Directory: ``antProjectImplementation.effectiveBaseDirectory()``
+                 Ant's XML: ``antSupport.string``
+                ";
         return string;
     }
     
-}
-
-"""
-   Convenience method to build `execute()` an `Ant` class when it's an Ant-task.
-   
-   ```
-   value buildDirectory = "target/build-test-file-tasks-directory";
-   ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
-       Ant("fileset", { "dir" -> "``buildDirectory``" }, [
-           Ant("include", { "name" -> "example.txt" } )
-       ] )
-   ] );
-   ```
-"""
-see(`class Ant`)
-shared void ant(
-        String antName,
-        {<String->String>*}? attributes = null,
-        {<Ant>*}? elements = null,
-        String? text = null) {
-    Ant(antName, attributes, elements, text).execute();
 }

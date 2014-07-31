@@ -1,95 +1,77 @@
 package ceylon.build.tasks.ant.internal;
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.tools.ant.IntrospectionHelper;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-import org.apache.tools.ant.types.DataType;
-
-import ceylon.collection.LinkedList;
+import java.util.List;
 
 public class AntDefinitionSupport {
     
-    private Project project;
-    private String antName;
-    private Class<Object> elementType;
-    private Class<Object> effectiveElementType;
-    private IntrospectionHelper introspectionHelper;
-    private boolean definitelyType;
+    private Gateway gateway;
+    private Object sealedAntDefinition;
     
-    public AntDefinitionSupport(Project project, String antName, Class<Object> elementType, Class<Object> effectiveElementType, IntrospectionHelper introspectionHelper, boolean definitelyType) {
-        this.project = project;
-        this.antName = antName;
-        this.elementType = elementType;
-        this.effectiveElementType = effectiveElementType;
-        this.introspectionHelper = introspectionHelper;
-        this.definitelyType = definitelyType;
+    AntDefinitionSupport(Gateway gateway, Object sealedAntDefinition) {
+        this.gateway = gateway;
+        this.sealedAntDefinition = sealedAntDefinition;
     }
     
-    public void fillAttributeList(LinkedList<AntAttributeDefinitionSupport> result) {
-        Map<String, Class<?>> attributeMap = introspectionHelper.getAttributeMap();
-        for(Entry<String, Class<?>> attribute : attributeMap.entrySet()) {
-            String attributeName = attribute.getKey();
-            Class<?> attributeClass = attribute.getValue();
-            AntAttributeDefinitionSupport antAttributeDefinition = new AntAttributeDefinitionSupport(attributeName, attributeClass);
-            result.add(antAttributeDefinition);
+    public void fillAttributeList(ceylon.collection.LinkedList<AntAttributeDefinitionSupport> result) {
+        @SuppressWarnings("unchecked")
+        List<String[]> attributeDefinitions = (List<String[]>) gateway.invoke(sealedAntDefinition, "getAttributeDefinitions");
+        for(String[] attributeDefinition : attributeDefinitions) {
+            String attributeName = attributeDefinition[0];
+            String className = attributeDefinition[1];
+            AntAttributeDefinitionSupport antAttributeDefinitionSupport = new AntAttributeDefinitionSupport(attributeName, className);
+            result.add(antAttributeDefinitionSupport);
         }
     }
     
-    public void fillNestedAntDefinitionList(LinkedList<AntDefinitionSupport> result) {
-        Map<String, Class<?>> nestedElementMap = introspectionHelper.getNestedElementMap();
-        for(Entry<String, Class<?>> nestedElementEntry : nestedElementMap.entrySet()) {
-            String nestedElementName = nestedElementEntry.getKey().toLowerCase(Locale.ENGLISH);
-            @SuppressWarnings("unchecked")
-            Class<Object> nestedElementType = (Class<Object>) nestedElementEntry.getValue();
-            IntrospectionHelper nestedIntrospectionHelper = IntrospectionHelper.getHelper(project, nestedElementType);
-            AntDefinitionSupport antDefinitionSupport = new AntDefinitionSupport(project, nestedElementName, nestedElementType, nestedElementType, nestedIntrospectionHelper, true);
-            result.add(antDefinitionSupport);
+    public void fillNestedAntDefinitionList(ceylon.collection.LinkedList<AntDefinitionSupport> result) {
+        @SuppressWarnings("unchecked")
+        List<Object> nestedSealedAntDefinitions = (List<Object>) gateway.invoke(sealedAntDefinition, "getNestedAntDefinitions");
+        for(Object nestedSealedAntDefinition : nestedSealedAntDefinitions) {
+            AntDefinitionSupport antAttributeDefinitionSupport = new AntDefinitionSupport(gateway, nestedSealedAntDefinition);
+            result.add(antAttributeDefinitionSupport);
         }
     }
     
     public String getAntName() {
+        String antName = (String) gateway.invoke(sealedAntDefinition, "getAntName");
         return antName;
     }
     
-    public Project getProject() {
-        return project;
-    }
-    
-    public IntrospectionHelper getIntrospectionHelper() {
-        return introspectionHelper;
-    }
-    
     public Class<Object> getElementType() {
+        @SuppressWarnings("unchecked")
+        Class<Object> elementType = (Class<Object>) gateway.invoke(sealedAntDefinition, "getElementType");
         return elementType;
     }
     
     public Class<Object> getEffectiveElementType() {
+        @SuppressWarnings("unchecked")
+        Class<Object> effectiveElementType = (Class<Object>) gateway.invoke(sealedAntDefinition, "getEffectiveElementType");
         return effectiveElementType;
     }
     
     public boolean isTask() {
-        return !definitelyType && Task.class.isAssignableFrom(elementType);
+        Boolean isTask = (Boolean) gateway.invoke(sealedAntDefinition, "isTask");
+        return isTask;
     }
     
     public boolean isDataType() {
-        return DataType.class.isAssignableFrom(elementType);
+        Boolean isDataType = (Boolean) gateway.invoke(sealedAntDefinition, "isDataType");
+        return isDataType;
     }
     
     public boolean isTextSupported() {
-        return introspectionHelper.supportsCharacters();
+        Boolean isTextSupported = (Boolean) gateway.invoke(sealedAntDefinition, "isTextSupported");
+        return isTextSupported;
     }
     
-    // needs to be implemented explicitly, because "dynamic" is a Ceylon keyword
     public boolean acceptsArbitraryNestedElementsOrAttributes() {
-        return introspectionHelper.isDynamic();
+        Boolean acceptsArbitraryNestedElementsOrAttributes = (Boolean) gateway.invoke(sealedAntDefinition, "acceptsArbitraryNestedElementsOrAttributes");
+        return acceptsArbitraryNestedElementsOrAttributes;
     }
     
     public boolean isContainer() {
-        return introspectionHelper.isContainer();
+        Boolean isContainer = (Boolean) gateway.invoke(sealedAntDefinition, "isContainer");
+        return isContainer;
     }
     
 }

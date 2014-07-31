@@ -1,4 +1,11 @@
-import ceylon.build.tasks.ant.internal { AntProjectImplementation }
+import ceylon.build.tasks.ant.internal {
+    ProjectSupport,
+    AntDefinitionSupport
+}
+import ceylon.collection {
+    HashMap,
+    LinkedList
+}
 
 """
    Represents Ant's Project class, with the ability to access properties and Ant type definitions.
@@ -26,53 +33,71 @@ shared interface AntProject {
     shared formal String effectiveBaseDirectory(String? newBaseDirectory = null);
     
     """
-       Adds a module to the class loader, so Ant can use the classes.
-       Needed if you want to use Ant types and tasks in external modules.
-       Before actually using these types and tasks you have to initialize Ant with `typedef` or `taskdef`.
-       
-       Example:
-       ```
-       AntProject antProject = activeAntProject();
-       antProject.addModule("org.apache.ant.ant-commons-net", "1.9.4");
-       ant("taskdef", { "name" -> "ftp", "classname" -> "org.apache.tools.ant.taskdefs.optional.net.FTP" } );
-       ```
-    """
-    shared formal void addModule(String moduleName, String moduleVersion = "");
-    
-    """
        Root of Ant type introspection.
        Gives all top level Ant defintions.
        Ant introspection works from top down, as the implementing classes of Ant types change depending on their location in the XML hierarchy.
     """
     shared formal List<AntDefinition> allTopLevelAntDefinitions();
     
+    """
+       Loads classes from a given module so that they are accessible from Ant.
+       Before using loaded classes as types/tasks, you have to register them with Ant.
+       For registering either use `<typedef>`/`<taskdef>` or any of [[registerAntLibrary]], [[registerAntType]], [[registerAntTask]].
+    """
+    shared formal void loadModuleClasses(String moduleName, String moduleVersion = "");
+    
+    """
+       Loads classes from a given URL so that they are accessible from Ant.
+       Before using loaded classes as types/tasks, you have to register them with Ant.
+       For registering either use `<typedef>`/`<taskdef>` or any of [[registerAntLibrary]], [[registerAntType]], [[registerAntTask]].
+    """
+    shared formal void loadUrlClasses(String url);
+    
 }
 
-variable AntProjectImplementation? activeAntProjectImplementation = null;
-
-AntProjectImplementation provideAntProjectImplementation() {
-    AntProjectImplementation? antProjectImplementation = activeAntProjectImplementation;
-    if(exists antProjectImplementation) {
-        return antProjectImplementation;
-    } else {
-        AntProjectImplementation newAntProjectImplementation = AntProjectImplementation(null);
-        activeAntProjectImplementation = newAntProjectImplementation;
-        return newAntProjectImplementation;
+class AntProjectImplementation(projectSupport) satisfies AntProject {
+    
+    shared ProjectSupport projectSupport;
+    
+    shared actual Map<String,String> allProperties() {
+        HashMap<String,String> result = HashMap<String,String>();
+        projectSupport.fillAllPropertiesMap(result);
+        return result;
     }
-}
-
-"""
-   Returns the active Ant project or provides a new one if not initialized.
-"""
-shared AntProject activeAntProject() {
-    return provideAntProjectImplementation();
-}
-
-"""
-   Creates a new Ant project and sets it as the active project. With optional base directory.
-"""
-shared AntProject renewAntProject(String? baseDirectory) {
-    AntProjectImplementation newAntProjectImplementation = AntProjectImplementation(baseDirectory);
-    activeAntProjectImplementation = newAntProjectImplementation;
-    return newAntProjectImplementation;
+    
+    shared actual String? getProperty(String propertyName) {
+        return projectSupport.getProperty(propertyName);
+    }
+    
+    shared actual void setProperty(String propertyName, String? propertyValue) {
+        projectSupport.setProperty(propertyName, propertyValue);
+    }
+    
+    shared actual String effectiveBaseDirectory(String? newBaseDirectory) {
+        if(exists newBaseDirectory) {
+            projectSupport.baseDirectory = newBaseDirectory;
+        }
+        return projectSupport.baseDirectory;
+    }
+    
+    shared actual List<AntDefinition> allTopLevelAntDefinitions() {
+        LinkedList<AntDefinitionSupport> topLevelAntDefinitionSupportList = LinkedList<AntDefinitionSupport>();
+        projectSupport.fillTopLevelAntDefinitionSupportList(topLevelAntDefinitionSupportList);
+        LinkedList<AntDefinition> allTopLevelAntDefinitions = LinkedList<AntDefinition>();
+        for (topLevelAntDefinitionSupport in topLevelAntDefinitionSupportList) {
+            AntDefinition topLevelAntDefinition = AntDefinitionImplementation(topLevelAntDefinitionSupport);
+            allTopLevelAntDefinitions.add(topLevelAntDefinition);
+        }
+        AntDefinition[] sortedTopLevelAntDefinitions = allTopLevelAntDefinitions.sort(byIncreasing((AntDefinition a) => a));
+        return sortedTopLevelAntDefinitions;
+    }
+    
+    shared actual void loadModuleClasses(String moduleName, String moduleVersion) {
+        projectSupport.loadModuleClasses(moduleName, moduleVersion);
+    }
+    
+    shared actual void loadUrlClasses(String url) {
+        projectSupport.loadUrlClasses(url);
+    }
+    
 }

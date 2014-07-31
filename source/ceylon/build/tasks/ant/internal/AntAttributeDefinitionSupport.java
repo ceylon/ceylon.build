@@ -3,11 +3,11 @@ package ceylon.build.tasks.ant.internal;
 public class AntAttributeDefinitionSupport {
     
     private String attributeName;
-    private Class<?> attributeClass;
+    private String className;
     
-    public AntAttributeDefinitionSupport(String attributeName, Class<?> attributeClass) {
+    AntAttributeDefinitionSupport(String attributeName, String className) {
         this.attributeName = attributeName;
-        this.attributeClass = attributeClass;
+        this.className = className;
     }
     
     public String getName() {
@@ -15,7 +15,7 @@ public class AntAttributeDefinitionSupport {
     }
     
     public String getClassName() {
-        return attributeClass.getName();
+        return className;
     }
     
 }

@@ -1,9 +1,26 @@
-import ceylon.build.tasks.ant { ant, activeAntProject, Ant, AntProject, AntDefinition, AntAttributeDefinition }
-import ceylon.test { assertEquals, assertTrue, assertFalse, test }
-import ceylon.file { File, Directory, Nil }
+import ceylon.build.tasks.ant {
+    antExecute,
+    activeAntProject,
+    Ant,
+    AntProject,
+    AntDefinition,
+    AntAttributeDefinition,
+    registerAntLibrary
+}
+import ceylon.file {
+    File,
+    Directory,
+    Nil
+}
+import ceylon.test {
+    assertEquals,
+    assertTrue,
+    assertFalse,
+    test
+}
 
 test void testEcho() {
-    ant("echo", { "message" -> "G'day mate! " }, {}, "Cheerio!" );
+    antExecute("echo", { "message" -> "G'day mate! " }, {}, "Cheerio!" );
 }
 
 test void testFileTasks() {
@@ -11,21 +28,21 @@ test void testFileTasks() {
     Ant fileset = Ant("fileset", { "dir" -> "``buildDirectory``" }, [
         Ant("include", { "name" -> "example.txt" } )
     ] );
-    ant("mkdir", { "dir" -> "``buildDirectory``" } );
+    antExecute("mkdir", { "dir" -> "``buildDirectory``" } );
     verifyResource("``buildDirectory``", `Directory`, "Cannot create directory");
-    ant("echo", { "message" -> "File created.", "file" -> "``buildDirectory``/example.txt" } );
+    antExecute("echo", { "message" -> "File created.", "file" -> "``buildDirectory``/example.txt" } );
     verifyResource("``buildDirectory``/example.txt", `File`, "Cannot create file");
-    ant("mkdir", { "dir" -> "``buildDirectory``/sub-directory" } );
+    antExecute("mkdir", { "dir" -> "``buildDirectory``/sub-directory" } );
     verifyResource("``buildDirectory``/sub-directory", `Directory`, "Cannot create directory");
-    ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
+    antExecute("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
         fileset
     ] );
     verifyResource("``buildDirectory``/sub-directory/example.txt", `File`, "Cannot copy to file");
-    ant("delete", { }, [
+    antExecute("delete", { }, [
         fileset
     ] );
     verifyResource("``buildDirectory``/example.txt", `Nil`, "Cannot delete file");
-    ant("delete", { "dir" -> "``buildDirectory``", "verbose" -> "true" } );
+    antExecute("delete", { "dir" -> "``buildDirectory``", "verbose" -> "true" } );
     verifyResource("``buildDirectory``", `Nil`, "Cannot delete directory");
 }
 
@@ -113,7 +130,7 @@ test void testImplementationWrapped() {
     assert(exists waitforAntDefinition);
     assertTrue(waitforAntDefinition.implementationWrapped, "Task waitfor should be implementationWrapped in Ant 1.9.4");
     antProject.setProperty("testImplementationWrapped", null);
-    ant("waitfor", { "maxwait" -> "100", "checkevery" -> "10", "timeoutproperty" -> "testImplementationWrapped" } , [
+    antExecute("waitfor", { "maxwait" -> "100", "checkevery" -> "10", "timeoutproperty" -> "testImplementationWrapped" } , [
         Ant("equals", { "arg1" -> "A", "arg2" -> "B" })
     ] );
     String? timeoutproperty = antProject.getProperty("testImplementationWrapped");
@@ -125,17 +142,17 @@ test void testImplementationWrapped() {
 """
    Test whether the use of antlib of an external module works.
 """
-test void testExternalTask() {
+test void testRegisterAntLibrary() {
     AntProject antProject = activeAntProject();
     List<AntDefinition> allTopLevelAntDefinitions1 = antProject.allTopLevelAntDefinitions();
-    antProject.addModule("ant-contrib.ant-contrib", "1.0b3");
-    ant("taskdef", { "resource" -> "net/sf/antcontrib/antlib.xml", "onerror" -> "fail" } );
+    antProject.loadModuleClasses("ant-contrib.ant-contrib", "1.0b3");
+    registerAntLibrary("net/sf/antcontrib/antlib.xml");
     List<AntDefinition> allTopLevelAntDefinitions2 = antProject.allTopLevelAntDefinitions();
     printAdditionalAntDefinitions(allTopLevelAntDefinitions1, allTopLevelAntDefinitions2);
     assertTrue(allTopLevelAntDefinitions1.size < allTopLevelAntDefinitions2.size);
-    antProject.setProperty("testExternalTask", "one");
-    ant("var", { "name" -> "testExternalTask", "value" -> "two" } );
-    String? var = antProject.getProperty("testExternalTask");
+    antProject.setProperty("testRegisterAntLibrary", "one");
+    antExecute("var", { "name" -> "testRegisterAntLibrary", "value" -> "two" } );
+    String? var = antProject.getProperty("testRegisterAntLibrary");
     assert(exists var);
     assertTrue(var == "two");
 }

@@ -93,7 +93,7 @@ Anything() functionModelToFunction(Function<Anything,[]> func) => () => func.app
         for (dependency in dependsOnAnnotation.dependencies)
         goalName(goalAnnotation(dependency), dependency)
     }, {
-        for (dependency in phases.get(declaration) else [])
+        for (dependency in (phases.get(declaration) else []))
         goalName(goalAnnotation(dependency), dependency)
     }
 );

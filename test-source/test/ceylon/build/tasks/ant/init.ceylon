@@ -1,8 +1,24 @@
-import ceylon.test { beforeTest, afterTest }
-import ceylon.build.tasks.file { delete, createDirectory }
-import ceylon.file { parsePath, Path, Nil }
-import ceylon.build.task { Writer, setContextForTask, clearTaskContext }
-import ceylon.build.tasks.ant { renewAntProject }
+import ceylon.build.task {
+    Writer,
+    setContextForTask,
+    clearTaskContext
+}
+import ceylon.build.tasks.ant {
+    initializeAnt
+}
+import ceylon.build.tasks.file {
+    delete,
+    createDirectory
+}
+import ceylon.file {
+    parsePath,
+    Path,
+    Nil
+}
+import ceylon.test {
+    beforeTest,
+    afterTest
+}
 
 Path baseWorkingPath = parsePath("tmp/test/ceylon/build/tasks/ant");
 
@@ -18,7 +34,7 @@ beforeTest void cleanTestDirectory() {
     assert(is Nil baseWorkingResource);
     createDirectory(baseWorkingResource);
     // set base directory for Ant
-    renewAntProject(baseWorkingPath.string);
+    initializeAnt(baseWorkingPath.string);
 }
 
 afterTest void resetContext() {

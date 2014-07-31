@@ -1,7 +1,18 @@
-import ceylon.file { Nil, Path, Directory, parsePath, File }
-import ceylon.build.tasks.ant { activeAntProject, AntProject, AntDefinition }
-import ceylon.language.meta.model { Interface }
-import ceylon.test { test, assertTrue }
+import ceylon.build.tasks.ant {
+    activeAntProject,
+    AntProject,
+    AntDefinition
+}
+import ceylon.file {
+    Nil,
+    Path,
+    Directory,
+    parsePath,
+    File
+}
+import ceylon.language.meta.model {
+    Interface
+}
 
 File|Directory|Nil retrieveActualResource(String relativeResourceName) {
     AntProject antProject = activeAntProject();
