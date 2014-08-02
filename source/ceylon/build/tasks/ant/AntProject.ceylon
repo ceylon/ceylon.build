@@ -1,10 +1,15 @@
 import ceylon.build.tasks.ant.internal {
-    ProjectSupport,
-    AntDefinitionSupport
+    Gateway
 }
 import ceylon.collection {
-    HashMap,
-    LinkedList
+    ArrayList
+}
+
+import java.lang {
+    JString=String
+}
+import java.util {
+    JList=List
 }
 
 """
@@ -55,49 +60,61 @@ shared interface AntProject {
     
 }
 
-class AntProjectImplementation(projectSupport) satisfies AntProject {
+class AntProjectImplementation(gateway) satisfies AntProject {
     
-    shared ProjectSupport projectSupport;
+    shared Gateway gateway;
+    shared Object sealedProject = gateway.instatiate("SealedProject");
     
     shared actual Map<String,String> allProperties() {
-        HashMap<String,String> result = HashMap<String,String>();
-        projectSupport.fillAllPropertiesMap(result);
-        return result;
+        Anything allProperties = gateway.invoke(sealedProject, "getAllProperties");
+        return toStringMap(allProperties);
     }
     
     shared actual String? getProperty(String propertyName) {
-        return projectSupport.getProperty(propertyName);
+        Anything property = gateway.invoke(sealedProject, "getProperty", JString(propertyName));
+        return toStringOrNull(property);
     }
     
     shared actual void setProperty(String propertyName, String? propertyValue) {
-        projectSupport.setProperty(propertyName, propertyValue);
+        switch (propertyValue)
+        case (is Null) {
+            gateway.invoke(sealedProject, "unsetProperty", JString(propertyName));
+        }
+        case (is String) {
+            gateway.invoke(sealedProject, "setProperty", JString(propertyName), JString(propertyValue));
+        }
     }
     
     shared actual String effectiveBaseDirectory(String? newBaseDirectory) {
         if(exists newBaseDirectory) {
-            projectSupport.baseDirectory = newBaseDirectory;
+            gateway.invoke(sealedProject, "setBaseDirectory", JString(newBaseDirectory));
         }
-        return projectSupport.baseDirectory;
+        Anything baseDirectory = gateway.invoke(sealedProject, "getBaseDirectory");
+        return toString(baseDirectory);
     }
     
     shared actual List<AntDefinition> allTopLevelAntDefinitions() {
-        LinkedList<AntDefinitionSupport> topLevelAntDefinitionSupportList = LinkedList<AntDefinitionSupport>();
-        projectSupport.fillTopLevelAntDefinitionSupportList(topLevelAntDefinitionSupportList);
-        LinkedList<AntDefinition> allTopLevelAntDefinitions = LinkedList<AntDefinition>();
-        for (topLevelAntDefinitionSupport in topLevelAntDefinitionSupportList) {
-            AntDefinition topLevelAntDefinition = AntDefinitionImplementation(topLevelAntDefinitionSupport);
+        Anything sealedAntDefinitions = gateway.invoke(sealedProject, "getTopLevelSealedAntDefinitions");
+        "Java List expected."
+        assert(is JList<out Anything> sealedAntDefinitions);
+        ArrayList<AntDefinition> allTopLevelAntDefinitions = ArrayList<AntDefinition>();
+        value jIterator = sealedAntDefinitions.iterator();
+        while (jIterator.hasNext()){
+            Anything sealedAntDefinition = jIterator.next();
+            assert(is Object sealedAntDefinition);
+            AntDefinition topLevelAntDefinition = AntDefinitionImplementation(gateway, sealedAntDefinition);
             allTopLevelAntDefinitions.add(topLevelAntDefinition);
         }
-        AntDefinition[] sortedTopLevelAntDefinitions = allTopLevelAntDefinitions.sort(byIncreasing((AntDefinition a) => a));
+        List<AntDefinition> sortedTopLevelAntDefinitions = allTopLevelAntDefinitions.sort(byIncreasing((AntDefinition a) => a));
         return sortedTopLevelAntDefinitions;
     }
     
     shared actual void loadModuleClasses(String moduleName, String moduleVersion) {
-        projectSupport.loadModuleClasses(moduleName, moduleVersion);
+        gateway.loadModuleClasses(moduleName, moduleVersion);
     }
     
     shared actual void loadUrlClasses(String url) {
-        projectSupport.loadUrlClasses(url);
+        gateway.loadUrlClasses(url);
     }
     
 }

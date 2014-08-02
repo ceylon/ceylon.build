@@ -1,5 +1,8 @@
 import ceylon.build.tasks.ant.internal {
-    AntSupport
+    Gateway
+}
+import java.lang {
+    JString = String
 }
 
 """
@@ -42,28 +45,22 @@ shared class Ant(
     String? text = null
 ) {
     
-    void build(AntSupport antSupport) {
+    void build(Gateway gateway, Object sealedAnt) {
         if(exists attributes) {
             for (attributeName -> attributeValue in attributes) {
-                antSupport.attribute(attributeName, attributeValue);
+                gateway.invoke(sealedAnt, "attribute", JString(attributeName), JString(attributeValue));
             }
         }
         if(exists elements) {
             for (element in elements) {
-                AntSupport elementAntHelper = antSupport.createNestedElement(element.antName);
-                element.build(elementAntHelper);
-                antSupport.element(elementAntHelper);
+                Object nestedSealedAnt = gateway.invoke(sealedAnt, "createNestedElement", JString(element.antName));
+                element.build(gateway, nestedSealedAnt);
+                gateway.invoke(sealedAnt, "element", nestedSealedAnt);
             }
         }
         if(exists text) {
-            antSupport.setText(text);
+            gateway.invoke(sealedAnt, "setText", JString(text));
         }
-    }
-    
-    AntSupport buildAntSupport(AntProjectImplementation antProjectImplementation) {
-        AntSupport antSupport = antProjectImplementation.projectSupport.createAntSupport(antName);
-        build(antSupport);
-        return antSupport;
     }
     
     """
@@ -71,21 +68,23 @@ shared class Ant(
     """
     shared void execute() {
         AntProjectImplementation antProjectImplementation = provideAntProjectImplementation();
-        AntSupport antSupport = buildAntSupport(antProjectImplementation);
-        antSupport.execute();
+        Gateway gateway = antProjectImplementation.gateway;
+        Object sealedProject = antProjectImplementation.sealedProject;
+        Object sealedAnt = gateway.instatiate("SealedAnt", JString(antName), sealedProject);
+        build(gateway, sealedAnt);
+        gateway.invoke(sealedAnt, "execute");
     }
-    """
-       Returns a readable string of the Ant representation as XML plus effective base directory.
-    """
-    shared actual String string {
-        AntProjectImplementation antProjectImplementation = provideAntProjectImplementation();
-        AntSupport antSupport = buildAntSupport(antProjectImplementation);
-        String string =
-                "
-                 Directory: ``antProjectImplementation.effectiveBaseDirectory()``
-                 Ant's XML: ``antSupport.string``
-                ";
-        return string;
-    }
+    
+    //"""
+    //   Returns a readable string of the Ant representation as XML plus effective base directory.
+    //"""
+    //shared actual String string {
+    //    String string =
+    //            "
+    //             Directory: ``antProjectImplementation.effectiveBaseDirectory()``
+    //             Ant's XML: ``antSupport.string``
+    //            ";
+    //    return string;
+    //}
     
 }

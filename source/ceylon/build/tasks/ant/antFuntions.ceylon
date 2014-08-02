@@ -3,8 +3,7 @@ import ceylon.build.tasks.ant {
     AntProject
 }
 import ceylon.build.tasks.ant.internal {
-    Gateway,
-    ProjectSupport
+    Gateway
 }
 
 """
@@ -16,10 +15,9 @@ import ceylon.build.tasks.ant.internal {
    AntProject antProject =  initializeAnt(moduleClassLoaderAccess, baseDirectory);
    ```
 """
-shared AntProject initializeAnt(String? baseDirectory = null, {String+}? moduleDescriptors = null) {
-    Gateway gateway = Gateway(baseDirectory, moduleDescriptors);
-    ProjectSupport projectSupport = gateway.createProjectSupport(baseDirectory);
-    AntProjectImplementation antProjectImplementation = AntProjectImplementation(projectSupport);
+shared AntProject initializeAnt() {
+    Gateway gateway = Gateway();
+    AntProjectImplementation antProjectImplementation = AntProjectImplementation(gateway);
     activeAntProjectImplementation = antProjectImplementation;
     return antProjectImplementation;
 }

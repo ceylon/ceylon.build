@@ -86,11 +86,8 @@ public class SealedProject {
         return logger;
     }
     
-    public SealedProject(String baseDirectory) {
+    public SealedProject() {
         this.project = createProject();
-        if(baseDirectory != null) {
-            this.project.setBaseDir(new File(baseDirectory));
-        }
     }
     
     Project getProject() {
@@ -120,6 +117,10 @@ public class SealedProject {
     
     public void setProperty(String propertyName, String propertyValue) {
         project.setProperty(propertyName, propertyValue);
+    }
+    
+    public void unsetProperty(String propertyName) {
+        project.setProperty(propertyName, null);
     }
     
     public String getBaseDirectory() {

@@ -1,9 +1,14 @@
 import ceylon.build.tasks.ant.internal {
-    AntAttributeDefinitionSupport,
-    AntDefinitionSupport
+    Gateway
 }
 import ceylon.collection {
-    LinkedList
+    ArrayList
+}
+import java.util {
+    JList=List
+}
+import java.lang {
+    ObjectArray
 }
 
 """
@@ -82,64 +87,82 @@ shared interface AntDefinition satisfies Comparable<AntDefinition> {
     
 }
 
-class AntDefinitionImplementation(AntDefinitionSupport antDefinitionSupport) satisfies AntDefinition {
+class AntDefinitionImplementation(Gateway gateway, Object sealedAntDefinition) satisfies AntDefinition {
     
-    shared actual String antName = antDefinitionSupport.antName;
-    shared actual String elementTypeClassName = antDefinitionSupport.elementType.name;
-    shared actual String effectiveElementTypeClassName = antDefinitionSupport.effectiveElementType.name;
-    shared actual Boolean implementationWrapped = antDefinitionSupport.elementType.name != antDefinitionSupport.effectiveElementType.name;
+    shared actual String antName = toString(gateway.invoke(sealedAntDefinition, "getAntName"));
+    shared actual String elementTypeClassName = toString(gateway.invoke(sealedAntDefinition, "getElementType"));
+    shared actual String effectiveElementTypeClassName = toString(gateway.invoke(sealedAntDefinition, "getEffectiveElementType"));
+    shared actual Boolean implementationWrapped = elementTypeClassName != effectiveElementTypeClassName;
     
     shared actual List<AntAttributeDefinition> attributes() {
-        LinkedList<AntAttributeDefinitionSupport> antAttributeDefinitionSupportList = LinkedList<AntAttributeDefinitionSupport>();
-        antDefinitionSupport.fillAttributeList(antAttributeDefinitionSupportList);
-        {AntAttributeDefinition*} antAttributeDefinitions = antAttributeDefinitionSupportList.map<AntAttributeDefinition>(
-            (AntAttributeDefinitionSupport a) => AntAttributeDefinitionImplementation(a.name, a.className)
-        );
+        Anything attributeDefinitions = gateway.invoke(sealedAntDefinition, "getAttributeDefinitions");
+        "Java List of Java String Array expected."
+        assert(is JList<out Anything> attributeDefinitions);
+        ArrayList<AntAttributeDefinition> antAttributeDefinitions = ArrayList<AntAttributeDefinition>();
+        value jIterator = attributeDefinitions.iterator();
+        while (jIterator.hasNext()){
+            Anything attributeDefinition = jIterator.next();
+            "Java Array of Strings expected."
+            assert(is ObjectArray<Anything> attributeDefinition);
+            String name = toString(attributeDefinition.get(0));
+            String className = toString(attributeDefinition.get(1));
+            AntAttributeDefinitionImplementation antAttributeDefinitionImplementation = AntAttributeDefinitionImplementation(name, className);
+            antAttributeDefinitions.add(antAttributeDefinitionImplementation);
+        }
         AntAttributeDefinition[] result = antAttributeDefinitions.sort(byIncreasing((AntAttributeDefinition a) => a.name));
         return result;
     }
     
     shared actual List<AntDefinition> nestedAntDefinitions() {
-        LinkedList<AntDefinitionSupport> nestedAntDefinitionSupportList = LinkedList<AntDefinitionSupport>();
-        antDefinitionSupport.fillNestedAntDefinitionList(nestedAntDefinitionSupportList);
-        LinkedList<AntDefinition> nestedAntDefinitionList = LinkedList<AntDefinition>();
-        for (nestedAntDefinitionSupport in nestedAntDefinitionSupportList) {
-            AntDefinition nestedAntDefinition = AntDefinitionImplementation(nestedAntDefinitionSupport);
+        Anything nestedSealedAntDefinitions = gateway.invoke(sealedAntDefinition, "getNestedAntDefinitions");
+        "Java List expected."
+        assert(is JList<out Anything> nestedSealedAntDefinitions);
+        ArrayList<AntDefinition> nestedAntDefinitionList = ArrayList<AntDefinition>();
+        value jIterator = nestedSealedAntDefinitions.iterator();
+        while (jIterator.hasNext()){
+            Anything nestedSealedAntDefinition = jIterator.next();
+            assert(is Object nestedSealedAntDefinition);
+            AntDefinition nestedAntDefinition = AntDefinitionImplementation(gateway, nestedSealedAntDefinition);
             nestedAntDefinitionList.add(nestedAntDefinition);
         }
-        AntDefinition[] result = nestedAntDefinitionList.sort(byIncreasing((AntDefinition a) => a));
+        List<AntDefinition> result = nestedAntDefinitionList.sort(byIncreasing((AntDefinition a) => a));
         return result;
     }
     
     shared actual Boolean isTask() {
-        return antDefinitionSupport.task;
+        return toBoolean(gateway.invoke(sealedAntDefinition, "isTask"));
     }
     
     shared actual Boolean isDataType() {
-        return antDefinitionSupport.dataType;
+        return toBoolean(gateway.invoke(sealedAntDefinition, "isDataType"));
     }
     
     shared actual Boolean isTextSupported() {
-        return antDefinitionSupport.textSupported;
+        return toBoolean(gateway.invoke(sealedAntDefinition, "isTextSupported"));
     }
     
     shared actual Boolean acceptsArbitraryNestedElementsOrAttributes() {
-        return antDefinitionSupport.acceptsArbitraryNestedElementsOrAttributes();
+        return toBoolean(gateway.invoke(sealedAntDefinition, "acceptsArbitraryNestedElementsOrAttributes"));
     }
     
     shared actual Boolean isContainer() {
-        return antDefinitionSupport.container;
+        return toBoolean(gateway.invoke(sealedAntDefinition, "isContainer"));
     }
     
     shared actual Boolean equals(Object otherObject) {
         if(is AntDefinition otherObject) {
-            return ((isTask() == otherObject.isTask()) && antName == otherObject.antName) && (elementTypeClassName == otherObject.elementTypeClassName);
+            return (
+                (isTask() == otherObject.isTask()) &&
+                (antName == otherObject.antName) && 
+                (elementTypeClassName == otherObject.elementTypeClassName) &&
+                (effectiveElementTypeClassName == otherObject.effectiveElementTypeClassName)
+            );
         }
         return false;
     }
     
     shared actual Integer hash {
-        return antName.hash + elementTypeClassName.hash;
+        return antName.hash + elementTypeClassName.hash + effectiveElementTypeClassName.hash;
     }
     
     shared actual Comparison compare(AntDefinition other) {
@@ -153,11 +176,16 @@ class AntDefinitionImplementation(AntDefinitionSupport antDefinitionSupport) sat
         if(nameComparision != equal) {
             return nameComparision;
         }
-        return elementTypeClassName <=> other.elementTypeClassName;
+        Comparison elementTypeClassNameComparision = elementTypeClassName <=> other.elementTypeClassName;
+        if(elementTypeClassNameComparision != equal) {
+            return elementTypeClassNameComparision;
+        }
+        return effectiveElementTypeClassName <=> other.effectiveElementTypeClassName;
     }
     
     shared actual String string {
-        return "``isTask() then "AntTask" else "AntType"``: ``antName``#``elementTypeClassName``";
+        String effective = (elementTypeClassName == effectiveElementTypeClassName) then "" else "#``effectiveElementTypeClassName``";
+        return "``isTask() then "AntTask" else "AntType"``: ``antName``#``elementTypeClassName````effective``";
     }
     
 }

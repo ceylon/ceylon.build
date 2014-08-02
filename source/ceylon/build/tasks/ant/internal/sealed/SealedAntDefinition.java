@@ -68,12 +68,12 @@ public class SealedAntDefinition {
         return introspectionHelper;
     }
     
-    public Class<Object> getElementType() {
-        return elementType;
+    public String getElementType() {
+        return elementType.getName();
     }
     
-    public Class<Object> getEffectiveElementType() {
-        return effectiveElementType;
+    public String getEffectiveElementType() {
+        return effectiveElementType.getName();
     }
     
     public boolean isTask() {
