@@ -1,6 +1,4 @@
 import ceylon.build.tasks.ant {
-    activeAntProject,
-    AntProject,
     AntDefinition
 }
 import ceylon.file {
@@ -14,16 +12,14 @@ import ceylon.language.meta.model {
     Interface
 }
 
-File|Directory|Nil retrieveActualResource(String relativeResourceName) {
-    AntProject antProject = activeAntProject();
-    String effectiveBaseDirectory = antProject.effectiveBaseDirectory();
+File|Directory|Nil retrieveActualResource(String effectiveBaseDirectory, String relativeResourceName) {
     Path exampleFilePath = parsePath(effectiveBaseDirectory + "/" + relativeResourceName);
     File|Directory|Nil actualResource = exampleFilePath.resource.linkedResource;
     return actualResource;
 }
 
-void verifyResource(String relativeResourceName, Interface<File|Directory|Nil> expectedResourceType, String failMessage) {
-    File|Directory|Nil actualResource = retrieveActualResource(relativeResourceName);
+void verifyResource(String effectiveBaseDirectory, String relativeResourceName, Interface<File|Directory|Nil> expectedResourceType, String failMessage) {
+    File|Directory|Nil actualResource = retrieveActualResource(effectiveBaseDirectory, relativeResourceName);
     if(expectedResourceType.typeOf(actualResource)) {
         print("``relativeResourceName`` is ``expectedResourceType``");
     } else {
@@ -45,15 +41,8 @@ AntDefinition? filterAntDefinition({AntDefinition*} antDefinitions, String antNa
     }
 }
 
-void printAntDefinitions({AntDefinition*}? antDefinitions = null) {
-    {AntDefinition*} printedAntDefinitions;
-    if (exists antDefinitions) {
-        printedAntDefinitions = antDefinitions;
-    } else {
-        AntProject antProject = activeAntProject();
-        printedAntDefinitions = antProject.allTopLevelAntDefinitions();
-    }
-    for(antDefinition in printedAntDefinitions) {
+void printAntDefinitions({AntDefinition*} antDefinitions) {
+    for(antDefinition in antDefinitions) {
         value antName = antDefinition.antName.padTrailing(22);
         value wrapped = antDefinition.implementationWrapped then "#" else " ";
         value className = antDefinition.effectiveElementTypeClassName;

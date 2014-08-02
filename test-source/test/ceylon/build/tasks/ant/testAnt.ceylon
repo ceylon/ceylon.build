@@ -1,6 +1,4 @@
 import ceylon.build.tasks.ant {
-    antExecute,
-    activeAntProject,
     Ant,
     AntProject,
     AntDefinition,
@@ -20,41 +18,58 @@ import ceylon.test {
 }
 
 test void testEcho() {
-    antExecute("echo", { "message" -> "G'day mate! " }, {}, "Cheerio!" );
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
+    antProject.execute(
+        Ant("echo", { "message" -> "G'day mate! " }, {}, "Cheerio!" )
+    );
 }
 
 test void testFileTasks() {
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
+    String effectiveBaseDirectory = antProject.effectiveBaseDirectory();
     String buildDirectory = "target/build-test-file-tasks-directory";
     Ant fileset = Ant("fileset", { "dir" -> "``buildDirectory``" }, [
         Ant("include", { "name" -> "example.txt" } )
     ] );
-    antExecute("mkdir", { "dir" -> "``buildDirectory``" } );
-    verifyResource("``buildDirectory``", `Directory`, "Cannot create directory");
-    antExecute("echo", { "message" -> "File created.", "file" -> "``buildDirectory``/example.txt" } );
-    verifyResource("``buildDirectory``/example.txt", `File`, "Cannot create file");
-    antExecute("mkdir", { "dir" -> "``buildDirectory``/sub-directory" } );
-    verifyResource("``buildDirectory``/sub-directory", `Directory`, "Cannot create directory");
-    antExecute("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
-        fileset
-    ] );
-    verifyResource("``buildDirectory``/sub-directory/example.txt", `File`, "Cannot copy to file");
-    antExecute("delete", { }, [
-        fileset
-    ] );
-    verifyResource("``buildDirectory``/example.txt", `Nil`, "Cannot delete file");
-    antExecute("delete", { "dir" -> "``buildDirectory``", "verbose" -> "true" } );
-    verifyResource("``buildDirectory``", `Nil`, "Cannot delete directory");
+    antProject.execute(
+        Ant("mkdir", { "dir" -> "``buildDirectory``" } )
+    );
+    verifyResource(effectiveBaseDirectory, "``buildDirectory``", `Directory`, "Cannot create directory");
+    antProject.execute(
+        Ant("echo", { "message" -> "File created.", "file" -> "``buildDirectory``/example.txt" } )
+    );
+    verifyResource(effectiveBaseDirectory, "``buildDirectory``/example.txt", `File`, "Cannot create file");
+    antProject.execute(
+        Ant("mkdir", { "dir" -> "``buildDirectory``/sub-directory" } )
+    );
+    verifyResource(effectiveBaseDirectory, "``buildDirectory``/sub-directory", `Directory`, "Cannot create directory");
+    antProject.execute(
+        Ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
+            fileset
+        ] )
+    );
+    verifyResource(effectiveBaseDirectory, "``buildDirectory``/sub-directory/example.txt", `File`, "Cannot copy to file");
+    antProject.execute(
+        Ant("delete", { }, [
+            fileset
+        ] )
+    );
+    verifyResource(effectiveBaseDirectory, "``buildDirectory``/example.txt", `Nil`, "Cannot delete file");
+    antProject.execute(
+        Ant("delete", { "dir" -> "``buildDirectory``", "verbose" -> "true" } )
+    );
+    verifyResource(effectiveBaseDirectory, "``buildDirectory``", `Nil`, "Cannot delete directory");
 }
 
 test void testAntDefinitions() {
-    AntProject antProject = activeAntProject();
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
     List<AntDefinition> allTopLevelAntDefinitions = antProject.allTopLevelAntDefinitions();
     assertTrue(allTopLevelAntDefinitions.size > 0);
-    printAntDefinitions();
+    printAntDefinitions(allTopLevelAntDefinitions);
 }
 
 test void testAntDefinition() {
-    AntProject antProject = activeAntProject();
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
     AntDefinition? copyAntDefinition = filterAntDefinition(antProject.allTopLevelAntDefinitions(), "copy");
     assert(exists copyAntDefinition);
     {String*} copyAttributeNames = copyAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name);
@@ -70,7 +85,7 @@ test void testAntDefinition() {
 }
 
 test void testProperties() {
-    AntProject antProject = activeAntProject();
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
     Map<String,String> allProperties = antProject.allProperties();
     assertTrue(allProperties.size > 0);
     // now print out all properties
@@ -87,7 +102,7 @@ test void testProperties() {
 test void testProperty() {
     String propertyName = "test.ceylon.build.tasks.ant.test-property";
     String propertyConstant = "test-property-set";
-    AntProject antProject = activeAntProject();
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
     antProject.setProperty(propertyName, null);
     String? propertyValue1 = antProject.getProperty(propertyName);
     assertEquals(propertyValue1, null);
@@ -100,7 +115,7 @@ test void testProperty() {
    Checks the difference between top level <include> task and <include> datatype within <fileset>
 """
 test void testIncludeAsTaskAndType() {
-    AntProject antProject = activeAntProject();
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
     AntDefinition? includeAntDefinition = filterAntDefinition(antProject.allTopLevelAntDefinitions(), "include");
     assert(exists includeAntDefinition);
     print("<include: ``includeAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
@@ -125,14 +140,16 @@ test void testIncludeAsTaskAndType() {
    Test whether a task with wrapped implementation can be executed.
 """
 test void testImplementationWrapped() {
-    AntProject antProject = activeAntProject();
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
     AntDefinition? waitforAntDefinition = filterAntDefinition(antProject.allTopLevelAntDefinitions(), "waitfor");
     assert(exists waitforAntDefinition);
     assertTrue(waitforAntDefinition.implementationWrapped, "Task waitfor should be implementationWrapped in Ant 1.9.4");
     antProject.setProperty("testImplementationWrapped", null);
-    antExecute("waitfor", { "maxwait" -> "100", "checkevery" -> "10", "timeoutproperty" -> "testImplementationWrapped" } , [
-        Ant("equals", { "arg1" -> "A", "arg2" -> "B" })
-    ] );
+    antProject.execute(
+        Ant("waitfor", { "maxwait" -> "100", "checkevery" -> "10", "timeoutproperty" -> "testImplementationWrapped" } , [
+            Ant("equals", { "arg1" -> "A", "arg2" -> "B" })
+        ] )
+    );
     String? timeoutproperty = antProject.getProperty("testImplementationWrapped");
     "Check timeoutproperty"
     assert(exists timeoutproperty);
@@ -143,15 +160,17 @@ test void testImplementationWrapped() {
    Test whether the use of antlib of an external module works.
 """
 test void testRegisterAntLibrary() {
-    AntProject antProject = activeAntProject();
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
     List<AntDefinition> allTopLevelAntDefinitions1 = antProject.allTopLevelAntDefinitions();
     antProject.loadModuleClasses("ant-contrib.ant-contrib", "1.0b3");
-    registerAntLibrary("net/sf/antcontrib/antlib.xml");
+    registerAntLibrary(antProject, "net/sf/antcontrib/antlib.xml");
     List<AntDefinition> allTopLevelAntDefinitions2 = antProject.allTopLevelAntDefinitions();
     printAdditionalAntDefinitions(allTopLevelAntDefinitions1, allTopLevelAntDefinitions2);
     assertTrue(allTopLevelAntDefinitions1.size < allTopLevelAntDefinitions2.size);
     antProject.setProperty("testRegisterAntLibrary", "one");
-    antExecute("var", { "name" -> "testRegisterAntLibrary", "value" -> "two" } );
+    antProject.execute(
+        Ant("var", { "name" -> "testRegisterAntLibrary", "value" -> "two" } )
+    );
     String? var = antProject.getProperty("testRegisterAntLibrary");
     assert(exists var);
     assertTrue(var == "two");

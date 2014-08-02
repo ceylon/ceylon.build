@@ -38,6 +38,11 @@ shared interface AntProject {
     shared formal String effectiveBaseDirectory(String? newBaseDirectory = null);
     
     """
+       Executes the built up Ant directives.
+    """
+    shared formal void execute(Ant ant);
+    
+    """
        Root of Ant type introspection.
        Gives all top level Ant defintions.
        Ant introspection works from top down, as the implementing classes of Ant types change depending on their location in the XML hierarchy.
@@ -91,6 +96,33 @@ class AntProjectImplementation(gateway) satisfies AntProject {
         }
         Anything baseDirectory = gateway.invoke(sealedProject, "getBaseDirectory");
         return toString(baseDirectory);
+    }
+    
+    void build(Gateway gateway, Ant ant, Object sealedAnt) {
+        value attributes = ant.attributes;
+        if(exists attributes) {
+            for (attributeName -> attributeValue in attributes) {
+                gateway.invoke(sealedAnt, "attribute", JString(attributeName), JString(attributeValue));
+            }
+        }
+        value elements = ant.elements;
+        if(exists elements) {
+            for (element in elements) {
+                Object nestedSealedAnt = gateway.invoke(sealedAnt, "createNestedElement", JString(element.antName));
+                build(gateway, element, nestedSealedAnt);
+                gateway.invoke(sealedAnt, "element", nestedSealedAnt);
+            }
+        }
+        value text = ant.text;
+        if(exists text) {
+            gateway.invoke(sealedAnt, "setText", JString(text));
+        }
+    }
+    
+    shared actual void execute(Ant ant) {
+        Object sealedAnt = gateway.instatiate("SealedAnt", JString(ant.antName), sealedProject);
+        build(gateway, ant, sealedAnt);
+        gateway.invoke(sealedAnt, "execute");
     }
     
     shared actual List<AntDefinition> allTopLevelAntDefinitions() {

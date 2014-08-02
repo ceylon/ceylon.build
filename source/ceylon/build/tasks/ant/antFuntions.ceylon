@@ -15,25 +15,8 @@ import ceylon.build.tasks.ant.internal {
    AntProject antProject =  initializeAnt(moduleClassLoaderAccess, baseDirectory);
    ```
 """
-shared AntProject initializeAnt() {
+shared AntProject createAntProject() {
     Gateway gateway = Gateway();
     AntProjectImplementation antProjectImplementation = AntProjectImplementation(gateway);
-    activeAntProjectImplementation = antProjectImplementation;
-    return antProjectImplementation;
-}
-
-"""
-   Returns the active Ant project.
-"""
-shared AntProject activeAntProject() {
-    return provideAntProjectImplementation();
-}
-
-variable AntProjectImplementation? activeAntProjectImplementation = null;
-
-AntProjectImplementation provideAntProjectImplementation() {
-    AntProjectImplementation? antProjectImplementation = activeAntProjectImplementation;
-    "Before using Ant call initializeAnt(String? baseDirectory = null, {<String>*}? moduleDescriptors = null)"
-    assert(exists antProjectImplementation);
     return antProjectImplementation;
 }

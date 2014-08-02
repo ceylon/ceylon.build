@@ -3,32 +3,11 @@ import ceylon.collection {
 }
 
 """
-   Convenience method to build and `execute()` an [[Ant]] class when it's an Ant-task.
-   
-   ```
-   value buildDirectory = "target/build-test-file-tasks-directory";
-   antExecute("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
-       Ant("fileset", { "dir" -> "``buildDirectory``" }, [
-           Ant("include", { "name" -> "example.txt" } )
-       ] )
-   ] );
-   ```
-"""
-see(`class Ant`)
-shared void antExecute(
-    String antName,
-    {<String->String>*}? attributes = null,
-    {<Ant>*}? elements = null,
-    String? text = null
-) {
-    Ant(antName, attributes, elements, text).execute();
-}
-
-"""
    Registers an `antlib` library with Ant for using types/tasks imported by [[AntProject.loadModuleClasses]] or [[AntProject.loadUrlClasses]].
    Internally just calls task `<typedef>` with a `resource` parameter.
 """
 shared void registerAntLibrary(
+    AntProject antProject,
     String location,
     Boolean? xmlFormat = null
 ) {
@@ -36,7 +15,9 @@ shared void registerAntLibrary(
     if (exists xmlFormat) {
         attributes = { "format" -> (xmlFormat then "xml" else "properties"), *attributes};
     }
-    antExecute("typedef", attributes );
+    antProject.execute(
+        Ant("typedef", attributes )
+    );
 }
 
 """
@@ -44,6 +25,7 @@ shared void registerAntLibrary(
    Wrapper for a `<typedef>` task.
 """
 shared void registerAntType(
+    AntProject antProject,
     String name,
     String className,
     String? adapterClassName = null,
@@ -56,7 +38,9 @@ shared void registerAntType(
     if (exists adaptToClassName) {
         attributes = { "adaptto" -> adaptToClassName, *attributes};
     }
-    antExecute("typedef", attributes);
+    antProject.execute(
+        Ant("typedef", attributes)
+    );
 }
 
 """
@@ -64,6 +48,7 @@ shared void registerAntType(
    Wrapper for a `<taskdef>` task.
 """
 shared void registerAntTask(
+    AntProject antProject,
     String name,
     String className,
     String? adapterClassName = null,
@@ -76,7 +61,9 @@ shared void registerAntTask(
     if (exists adaptToClassName) {
         attributes = { "adaptto" -> adaptToClassName, *attributes};
     }
-    antExecute("taskdef", attributes);
+    antProject.execute(
+        Ant("taskdef", attributes)
+    );
 }
 
 """
@@ -84,6 +71,8 @@ shared void registerAntTask(
    Wrapper for an `<ant>` task.
 """
 shared void executeExternalAntFile(
+    "Current Ant project."
+    AntProject antProject,
     "Name of the XML Ant file, defaults to `build.xml`."
     String? antFileName = null,
     "Base directory of new Ant project, unless [[useNativeBaseDirectory]] is set to true."
@@ -148,5 +137,7 @@ shared void executeExternalAntFile(
             elements.add(referenceElement);
         }
     }
-    antExecute("ant", attributes, elements);
+    antProject.execute(
+        Ant("ant", attributes, elements)
+    );
 }
