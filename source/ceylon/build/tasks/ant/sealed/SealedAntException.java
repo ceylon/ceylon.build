@@ -1,4 +1,4 @@
-package ceylon.build.tasks.ant.internal.sealed;
+package ceylon.build.tasks.ant.sealed;
 
 public class SealedAntException extends RuntimeException {
     

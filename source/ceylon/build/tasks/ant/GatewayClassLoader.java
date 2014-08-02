@@ -1,4 +1,4 @@
-package ceylon.build.tasks.ant.internal;
+package ceylon.build.tasks.ant;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,6 +1,4 @@
-import ceylon.build.tasks.ant.internal {
-    Gateway
-}
+
 import ceylon.collection {
     ArrayList
 }

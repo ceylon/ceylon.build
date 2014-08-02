@@ -1,4 +1,4 @@
-package ceylon.build.tasks.ant.internal.sealed;
+package ceylon.build.tasks.ant.sealed;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
