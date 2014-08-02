@@ -15,72 +15,31 @@ import java.util {
 """
    Represents Ant's Project class, with the ability to access properties and Ant type definitions.
 """
-shared interface AntProject {
+shared class AntProject() {
+    
+    Gateway gateway = Gateway();
+    Object sealedProject = gateway.instatiate("SealedProject");
     
     """
        Gives all available Ant properties in this project.
     """
-    shared formal Map<String,String> allProperties();
-    
-    """
-       Gives a specific Ant property.
-    """
-    shared formal String? getProperty(String propertyName);
-    
-    """
-       Sets an Ant property.
-    """
-    shared formal void setProperty(String propertyName, String? propertyValue);
-    
-    """
-       Sets a new base directory for the current Ant project.
-    """
-    shared formal String effectiveBaseDirectory(String? newBaseDirectory = null);
-    
-    """
-       Executes the built up Ant directives.
-    """
-    shared formal void execute(Ant ant);
-    
-    """
-       Root of Ant type introspection.
-       Gives all top level Ant defintions.
-       Ant introspection works from top down, as the implementing classes of Ant types change depending on their location in the XML hierarchy.
-    """
-    shared formal List<AntDefinition> allTopLevelAntDefinitions();
-    
-    """
-       Loads classes from a given module so that they are accessible from Ant.
-       Before using loaded classes as types/tasks, you have to register them with Ant.
-       For registering either use `<typedef>`/`<taskdef>` or any of [[registerAntLibrary]], [[registerAntType]], [[registerAntTask]].
-    """
-    shared formal void loadModuleClasses(String moduleName, String moduleVersion = "");
-    
-    """
-       Loads classes from a given URL so that they are accessible from Ant.
-       Before using loaded classes as types/tasks, you have to register them with Ant.
-       For registering either use `<typedef>`/`<taskdef>` or any of [[registerAntLibrary]], [[registerAntType]], [[registerAntTask]].
-    """
-    shared formal void loadUrlClasses(String url);
-    
-}
-
-class AntProjectImplementation(gateway) satisfies AntProject {
-    
-    shared Gateway gateway;
-    shared Object sealedProject = gateway.instatiate("SealedProject");
-    
-    shared actual Map<String,String> allProperties() {
+    shared Map<String,String> allProperties() {
         Anything allProperties = gateway.invoke(sealedProject, "getAllProperties");
         return toStringMap(allProperties);
     }
     
-    shared actual String? getProperty(String propertyName) {
+    """
+       Gives a specific Ant property.
+    """
+    shared String? getProperty(String propertyName) {
         Anything property = gateway.invoke(sealedProject, "getProperty", JString(propertyName));
         return toStringOrNull(property);
     }
     
-    shared actual void setProperty(String propertyName, String? propertyValue) {
+    """
+       Sets an Ant property.
+    """
+    shared void setProperty(String propertyName, String? propertyValue) {
         switch (propertyValue)
         case (is Null) {
             gateway.invoke(sealedProject, "unsetProperty", JString(propertyName));
@@ -90,7 +49,10 @@ class AntProjectImplementation(gateway) satisfies AntProject {
         }
     }
     
-    shared actual String effectiveBaseDirectory(String? newBaseDirectory) {
+    """
+       Retrieves or sets a new base directory for the current Ant project.
+    """
+    shared String effectiveBaseDirectory(String? newBaseDirectory = null) {
         if(exists newBaseDirectory) {
             gateway.invoke(sealedProject, "setBaseDirectory", JString(newBaseDirectory));
         }
@@ -119,13 +81,21 @@ class AntProjectImplementation(gateway) satisfies AntProject {
         }
     }
     
-    shared actual void execute(Ant ant) {
+    """
+       Executes the built up Ant directives.
+    """
+    shared void execute(Ant ant) {
         Object sealedAnt = gateway.instatiate("SealedAnt", JString(ant.antName), sealedProject);
         build(gateway, ant, sealedAnt);
         gateway.invoke(sealedAnt, "execute");
     }
     
-    shared actual List<AntDefinition> allTopLevelAntDefinitions() {
+    """
+       Root of Ant type introspection.
+       Gives all top level Ant defintions.
+       Ant introspection works from top down, as the implementing classes of Ant types change depending on their location in the XML hierarchy.
+    """
+    shared List<AntDefinition> allTopLevelAntDefinitions() {
         Anything sealedAntDefinitions = gateway.invoke(sealedProject, "getTopLevelSealedAntDefinitions");
         "Java List expected."
         assert(is JList<out Anything> sealedAntDefinitions);
@@ -141,11 +111,21 @@ class AntProjectImplementation(gateway) satisfies AntProject {
         return sortedTopLevelAntDefinitions;
     }
     
-    shared actual void loadModuleClasses(String moduleName, String moduleVersion) {
+    """
+       Loads classes from a given module so that they are accessible from Ant.
+       Before using loaded classes as types/tasks, you have to register them with Ant.
+       For registering either use `<typedef>`/`<taskdef>` or any of [[registerAntLibrary]], [[registerAntType]], [[registerAntTask]].
+    """
+    shared void loadModuleClasses(String moduleName, String moduleVersion) {
         gateway.loadModuleClasses(moduleName, moduleVersion);
     }
     
-    shared actual void loadUrlClasses(String url) {
+    """
+       Loads classes from a given URL so that they are accessible from Ant.
+       Before using loaded classes as types/tasks, you have to register them with Ant.
+       For registering either use `<typedef>`/`<taskdef>` or any of [[registerAntLibrary]], [[registerAntType]], [[registerAntTask]].
+    """
+    shared void loadUrlClasses(String url) {
         gateway.loadUrlClasses(url);
     }
     

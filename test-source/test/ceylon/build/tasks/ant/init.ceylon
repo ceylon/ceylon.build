@@ -4,8 +4,7 @@ import ceylon.build.task {
     clearTaskContext
 }
 import ceylon.build.tasks.ant {
-    AntProject,
-    createAntProject
+    AntProject
 }
 import ceylon.build.tasks.file {
     delete,
@@ -41,7 +40,7 @@ afterTest void resetContext() {
 }
 
 AntProject createAntProjectWithBaseDirectorySet() {
-    AntProject antProject = createAntProject();
+    AntProject antProject = AntProject();
     antProject.effectiveBaseDirectory(baseWorkingPath.string);
     return antProject;
 }
