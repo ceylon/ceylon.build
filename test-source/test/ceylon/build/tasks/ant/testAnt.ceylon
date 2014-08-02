@@ -3,7 +3,10 @@ import ceylon.build.tasks.ant {
     AntProject,
     AntDefinition,
     AntAttributeDefinition,
-    registerAntLibrary
+    registerAntLibrary,
+    AntBuildException,
+    AntBackendException,
+    AntUsageException
 }
 import ceylon.file {
     File,
@@ -59,6 +62,48 @@ test void testFileTasks() {
         Ant("delete", { "dir" -> "``buildDirectory``", "verbose" -> "true" } )
     );
     verifyResource(effectiveBaseDirectory, "``buildDirectory``", `Nil`, "Cannot delete directory");
+}
+
+test void testAntException() {
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
+    try {
+        antProject.execute(
+            Ant("--error--", { } )
+        );
+        throw Exception("AntUsageException was expected.");
+    } catch (AntUsageException e) {
+        // Okay, expected
+        //print(e);
+    }
+    try {
+        antProject.execute(
+            Ant("echo", { "--error--"->"" } )
+        );
+        throw Exception("AntUsageException was expected.");
+    } catch (AntUsageException e) {
+        // Okay, expected
+        //print(e);
+    }
+    try {
+        antProject.execute(
+            Ant("copy", { }, [
+                Ant("copy")
+            ] )
+        );
+        throw Exception("AntUsageException was expected.");
+    } catch (AntUsageException e) {
+        // Okay, expected
+        //print(e);
+    }
+    try {
+        antProject.execute(
+            Ant("mkdir", { } )
+        );
+        throw Exception("AntBuildException was expected.");
+    } catch (AntBuildException e) {
+         // Okay, expected
+         //print(e);
+    }
 }
 
 test void testAntDefinitions() {

@@ -20,7 +20,6 @@ public class SealedAntDefinition {
     private IntrospectionHelper introspectionHelper;
     private boolean definitelyType;
     
-    // Package private constructor to ensure correct class loader.
     SealedAntDefinition(Project project, String antName, Class<Object> elementType, Class<Object> effectiveElementType, IntrospectionHelper introspectionHelper, boolean definitelyType) {
         this.project = project;
         this.antName = antName;

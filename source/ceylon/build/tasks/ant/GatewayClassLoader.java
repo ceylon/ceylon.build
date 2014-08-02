@@ -40,20 +40,16 @@ class GatewayClassLoader extends ClassLoader {
         // System.out.println(string);
     }
     
-    void loadModuleClasses(String moduleName, String moduleVersion) throws RuntimeException {
-        try {
-            ModuleIdentifier moduleIdentifier = ModuleIdentifier.create(moduleName, moduleVersion);
-            Module jBossModule = Module.getCallerModuleLoader().loadModule(moduleIdentifier);
-            ModuleClassLoader moduleClassLoader = jBossModule.getClassLoader();
-            String name = moduleName + "/" + moduleVersion;
-            ClassLoaderTuple classLoaderTuple = new ClassLoaderTuple(name, moduleClassLoader);
-            classLoaderTuples.add(classLoaderTuple);
-        } catch (ModuleLoadException e) {
-            throw new RuntimeException("Cannot load module: " + moduleName + "/" + moduleVersion, e);
-        }
+    void loadModuleClasses(String moduleName, String moduleVersion) throws ModuleLoadException {
+        ModuleIdentifier moduleIdentifier = ModuleIdentifier.create(moduleName, moduleVersion);
+        Module jBossModule = Module.getCallerModuleLoader().loadModule(moduleIdentifier);
+        ModuleClassLoader moduleClassLoader = jBossModule.getClassLoader();
+        String name = moduleName + "/" + moduleVersion;
+        ClassLoaderTuple classLoaderTuple = new ClassLoaderTuple(name, moduleClassLoader);
+        classLoaderTuples.add(classLoaderTuple);
     }
     
-    void loadUrlClasses(URL url) throws RuntimeException {
+    void loadUrlClasses(URL url) {
         URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { url } );
         String name = url.toString();
         ClassLoaderTuple classLoaderTuple = new ClassLoaderTuple(name, urlClassLoader);

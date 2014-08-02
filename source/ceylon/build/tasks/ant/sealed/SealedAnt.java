@@ -33,11 +33,11 @@ public class SealedAnt {
         ComponentHelper componentHelper = ComponentHelper.getComponentHelper(project);
         AntTypeDefinition antTypeDefinition = componentHelper.getDefinition(antName);
         if (antTypeDefinition == null) {
-            throw new SealedAntException("Ant type <" + antName + "> is unknown.");
+            throw new SealedAntUsageException("Ant type <" + antName + "> is unknown.");
         }
         instantiateObject = antTypeDefinition.create(project);
         if (instantiateObject == null) {
-            throw new SealedAntException("Ant type <" + antName + "> has no known class instance.");
+            throw new SealedAntBackendException("Ant type <" + antName + "> has no known class instance.");
         }
         if (instantiateObject instanceof TypeAdapter) {
             TypeAdapter typeAdapter = ((TypeAdapter) instantiateObject);
@@ -65,32 +65,39 @@ public class SealedAnt {
     }
     
     public void attribute(String name, String value) {
-        introspectionHelper.setAttribute(getProject(), effectiveObject, name, value);
+        try {
+            introspectionHelper.setAttribute(getProject(), effectiveObject, name, value);
+        } catch (RuntimeException e) {
+            throw new SealedAntUsageException("Cannot add attribute " + name + " to Ant type <" + antName + ">.", e);
+        }
         appliedAttributeMap.put(name, value);
     }
     
-    public void element(SealedAnt element) {
-        introspectionHelper.storeElement(getProject(), effectiveObject, element.effectiveObject, element.antName);
+    public void storeNestedElement(SealedAnt element) {
+        try {
+            introspectionHelper.storeElement(getProject(), effectiveObject, element.effectiveObject, element.antName);
+        } catch (RuntimeException e) {
+            throw new SealedAntUsageException("Cannot store nested element <" + element.antName + "> in Ant type <" + antName + ">.", e);
+        }
         appliedElements.add(element);
     }
     
     public void setText(String text) {
-        introspectionHelper.addText(getProject(), effectiveObject, text);
+        try {
+            introspectionHelper.addText(getProject(), effectiveObject, text);
+        } catch (RuntimeException e) {
+            throw new SealedAntUsageException("Cannot text of Ant type <" + antName + ">.", e);
+        }
         appliedText = text;
     }
     
-    public Map<String, Class<?>> getAttributeMap() {
-        Map<String, Class<?>> attributeMap = introspectionHelper.getAttributeMap();
-        return attributeMap;
-    }
-    
-    public Map<String, Class<?>> getElementMap () {
-        Map<String, Class<?>> nestedElementMap = introspectionHelper.getNestedElementMap();
-        return nestedElementMap;
-    }
-    
     public SealedAnt createNestedElement(String nestedElementName) {
-        Creator creator = introspectionHelper.getElementCreator(getProject(), "", effectiveObject, nestedElementName, null);
+        Creator creator;
+        try {
+            creator = introspectionHelper.getElementCreator(getProject(), "", effectiveObject, nestedElementName, null);
+        } catch (RuntimeException e) {
+            throw new SealedAntUsageException("Cannot create nested element <" + nestedElementName + "> in Ant type <" + antName + ">.", e);
+        }
         Object object = creator.create();
         SealedAnt sealedAnt = new SealedAnt(nestedElementName, sealedProject, object);
         return sealedAnt;
@@ -134,7 +141,7 @@ public class SealedAnt {
             Task task = (Task) instantiateObject;
             task.execute();
         } else {
-            throw new SealedAntException("Ant type " + antName + " is not an executable task.");
+            throw new SealedAntUsageException("Ant type " + antName + " is not an executable task.");
         }
     }
     

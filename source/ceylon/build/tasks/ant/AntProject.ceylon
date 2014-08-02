@@ -70,7 +70,7 @@ shared class AntProject() {
             for (element in elements) {
                 Object nestedSealedAnt = gateway.invoke(sealedAnt, "createNestedElement", JString(element.antName));
                 build(gateway, element, nestedSealedAnt);
-                gateway.invoke(sealedAnt, "element", nestedSealedAnt);
+                gateway.invoke(sealedAnt, "storeNestedElement", nestedSealedAnt);
             }
         }
         value text = ant.text;

@@ -1,6 +1,9 @@
 package ceylon.build.tasks.ant;
 
-public class AntException extends ceylon.language.Exception {
+/**
+ * Base class for Ant exceptions.
+ */
+public abstract class AntException extends ceylon.language.Exception {
     
     private static final long serialVersionUID = 913552923474200198L;
     
