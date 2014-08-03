@@ -21,11 +21,11 @@ import ceylon.collection {
    
    ```
    // create AntProject, only needed once
-   AntProject antProject = createAntProject();
+   AntProject antProject = AntProject();
    // define arbitrary value
-   value buildDirectory = "target/build";
+   String buildDirectory = "target/build";
    // define Ant structure
-   value ant = Ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
+   Ant ant = Ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
        Ant("fileset", { "dir" -> "``buildDirectory``" }, [
            Ant("include", { "name" -> "example.txt" } )
        ] )
@@ -49,7 +49,7 @@ shared class Ant(antName, attributes = null, elements = null, text = null) {
     """
        Containing Ant elements.
     """
-    shared [Ant*]? elements;
+    shared Ant[]? elements;
     
     """
        Text node.

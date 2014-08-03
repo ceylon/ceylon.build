@@ -31,16 +31,21 @@
    The above Ant snippet becomes with the value `buildDirectory` the following Ceylon code:
    
    ```
-   value buildDirectory = "target/build";
-   ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
+   // create AntProject, only needed once
+   AntProject antProject = AntProject();
+   // define arbitrary value
+   String buildDirectory = "target/build";
+   // define Ant structure
+   Ant ant = Ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
        Ant("fileset", { "dir" -> "``buildDirectory``" }, [
            Ant("include", { "name" -> "example.txt" } )
        ] )
    ] );
+   // execute
+   antProject.execute(ant);
    ```
    
    So types like `<fileset>` are built using the `Ant` class.
-   For executing a tasks, use the `ant()` functions, which actually builds an `Ant` object and then calls `execute()` on it.
    
    
    
@@ -53,8 +58,8 @@
    Example:
    
    ```
-   AntProject antProject = activeAntProject();
-   antProject.addModule("org.apache.ant.ant-commons-net", "1.9.4");
+   AntProject antProject = AntProject();
+   antProject.loadModuleClases("org.apache.ant.ant-commons-net", "1.9.4");
    ant("taskdef", { "name" -> "ftp", "classname" -> "org.apache.tools.ant.taskdefs.optional.net.FTP" } );
    ```
    
@@ -67,12 +72,15 @@
    Example:
    
    ```
-   AntProject antProject = currentAntProject();
-   AntDefinition? copyAntDefinition = antProject.allTopLevelAntDefinitions().filter { (AntDefinition a) => (a.antName == "copy"); }.first;
+   AntProject antProject = AntProject();
+   AntDefinition[] allProjectDefinitions = antProject.allTopLevelAntDefinitions();
+   AntDefinition? copyAntDefinition = allProjectDefinitions.find((AntDefinition a) => a.antName == "copy");
    assert(exists copyAntDefinition);
-   AntDefinition? filesetAntDefinition = copyAntDefinition.nestedAntDefinitions().filter { (AntDefinition a) => (a.antName == "fileset"); }.first;
+   AntDefinition[] nestedCopyDefinitions = copyAntDefinition.nestedAntDefinitions();
+   AntDefinition? filesetAntDefinition = nestedCopyDefinitions.find((AntDefinition a) => a.antName == "fileset");
    assert(exists filesetAntDefinition);
-   AntDefinition? includeAntDefinition = includeAntDefinition.nestedAntDefinitions().filter { (AntDefinition a) => (a.antName == "include"); }.first;
+   AntDefinition[] nestedFilesetDefinitions = filesetAntDefinition.nestedAntDefinitions();
+   AntDefinition? includeAntDefinition = nestedFilesetDefinitions.find((AntDefinition a) => a.antName == "include");
    assert(exists includeAntDefinition);
    ```
    
@@ -81,6 +89,8 @@
    ## Caveats
    
    XML/Ant namespaces are not supported.
+   
+   Due to the implementation of Ant and its numerous external types/tasks you may encounter [[AntBackendException]]s that should be handled correctly.
 """
 by ("Henning Burdack")
 license ("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")

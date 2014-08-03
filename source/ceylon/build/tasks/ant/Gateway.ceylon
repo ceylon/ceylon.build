@@ -1,10 +1,6 @@
-import ceylon.language.meta {
-    type
+import java.lang {
+    ObjectArray
 }
-import ceylon.language.meta.model {
-    ClassModel
-}
-
 import java.lang.reflect {
     InvocationTargetException
 }
@@ -15,10 +11,6 @@ import java.net {
 
 import org.jboss.modules {
     ModuleLoadException
-}
-import java.lang {
-
-    ObjectArray
 }
 
 class Gateway() {

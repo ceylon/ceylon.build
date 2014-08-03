@@ -1,4 +1,3 @@
-
 import ceylon.collection {
     ArrayList
 }
@@ -11,7 +10,7 @@ import java.util {
 }
 
 """
-   Represents Ant's Project class, with the ability to access properties and Ant type definitions.
+   Represents Ant's Project class, with the ability to access properties, Ant type definitions, and executing Ant tasks.
 """
 shared class AntProject() {
     
@@ -21,7 +20,7 @@ shared class AntProject() {
     """
        Gives all available Ant properties in this project.
     """
-    shared Map<String,String> allProperties() {
+    shared {<String->String>*} allProperties() {
         Anything allProperties = gateway.invoke(sealedProject, "getAllProperties");
         return toStringMap(allProperties);
     }
@@ -95,7 +94,7 @@ shared class AntProject() {
        Gives all top level Ant defintions.
        Ant introspection works from top down, as the implementing classes of Ant types change depending on their location in the XML hierarchy.
     """
-    shared List<AntDefinition> allTopLevelAntDefinitions() {
+    shared AntDefinition[] allTopLevelAntDefinitions() {
         Anything sealedAntDefinitions = gateway.invoke(sealedProject, "getTopLevelSealedAntDefinitions");
         "Java List expected."
         assert(is JList<out Anything> sealedAntDefinitions);
@@ -107,8 +106,7 @@ shared class AntProject() {
             AntDefinition topLevelAntDefinition = AntDefinitionImplementation(gateway, sealedAntDefinition);
             allTopLevelAntDefinitions.add(topLevelAntDefinition);
         }
-        List<AntDefinition> sortedTopLevelAntDefinitions = allTopLevelAntDefinitions.sort(byIncreasing((AntDefinition a) => a));
-        return sortedTopLevelAntDefinitions;
+        return allTopLevelAntDefinitions.sequence();
     }
     
     """

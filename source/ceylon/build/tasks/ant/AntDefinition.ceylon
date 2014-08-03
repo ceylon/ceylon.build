@@ -10,18 +10,21 @@ import java.lang {
 }
 
 """
-   Ant type and task defintion returned by introspection (element defintion).
+   Ant type and task definition returned by introspection (element defintion).
    Ant introspection works from top down, as the implementing classes of Ant types change depending on their location in the XML hierarchy.
    
    Example:
    
    ```
-   AntProject antProject = currentAntProject();
-   AntDefinition? copyAntDefinition = antProject.topLevelAntDefinition("copy");
+   AntProject antProject = AntProject();
+   AntDefinition[] allProjectDefinitions = antProject.allTopLevelAntDefinitions();
+   AntDefinition? copyAntDefinition = allProjectDefinitions.find((AntDefinition a) => a.antName == "copy");
    assert(exists copyAntDefinition);
-   AntDefinition? filesetAntDefinition = copyAntDefinition.nestedElementDefinition("fileset");
+   AntDefinition[] nestedCopyDefinitions = copyAntDefinition.nestedAntDefinitions();
+   AntDefinition? filesetAntDefinition = nestedCopyDefinitions.find((AntDefinition a) => a.antName == "fileset");
    assert(exists filesetAntDefinition);
-   AntDefinition? includeAntDefinition = filesetAntDefinition.nestedElementDefinition("include");
+   AntDefinition[] nestedFilesetDefinitions = filesetAntDefinition.nestedAntDefinitions();
+   AntDefinition? includeAntDefinition = nestedFilesetDefinitions.find((AntDefinition a) => a.antName == "include");
    assert(exists includeAntDefinition);
    ```
 """
@@ -51,12 +54,12 @@ shared interface AntDefinition satisfies Comparable<AntDefinition> {
     """
        List of available attributes.
     """
-    shared formal List<AntAttributeDefinition> attributes();
+    shared formal AntAttributeDefinition[] attributes();
     
     """
        List of nested ant definitions (elements).
     """
-    shared formal List<AntDefinition> nestedAntDefinitions();
+    shared formal AntDefinition[] nestedAntDefinitions();
     
     """
        Indicates whether the introspected Ant defintion is a regular Ant task that can be executed.
@@ -92,7 +95,7 @@ class AntDefinitionImplementation(Gateway gateway, Object sealedAntDefinition) s
     shared actual String effectiveElementTypeClassName = toString(gateway.invoke(sealedAntDefinition, "getEffectiveElementType"));
     shared actual Boolean implementationWrapped = elementTypeClassName != effectiveElementTypeClassName;
     
-    shared actual List<AntAttributeDefinition> attributes() {
+    shared actual AntAttributeDefinition[] attributes() {
         Anything attributeDefinitions = gateway.invoke(sealedAntDefinition, "getAttributeDefinitions");
         "Java List of Java String Array expected."
         assert(is JList<out Anything> attributeDefinitions);
@@ -107,11 +110,10 @@ class AntDefinitionImplementation(Gateway gateway, Object sealedAntDefinition) s
             AntAttributeDefinitionImplementation antAttributeDefinitionImplementation = AntAttributeDefinitionImplementation(name, className);
             antAttributeDefinitions.add(antAttributeDefinitionImplementation);
         }
-        AntAttributeDefinition[] result = antAttributeDefinitions.sort(byIncreasing((AntAttributeDefinition a) => a.name));
-        return result;
+        return antAttributeDefinitions.sequence();
     }
     
-    shared actual List<AntDefinition> nestedAntDefinitions() {
+    shared actual AntDefinition[] nestedAntDefinitions() {
         Anything nestedSealedAntDefinitions = gateway.invoke(sealedAntDefinition, "getNestedAntDefinitions");
         "Java List expected."
         assert(is JList<out Anything> nestedSealedAntDefinitions);
@@ -123,8 +125,7 @@ class AntDefinitionImplementation(Gateway gateway, Object sealedAntDefinition) s
             AntDefinition nestedAntDefinition = AntDefinitionImplementation(gateway, nestedSealedAntDefinition);
             nestedAntDefinitionList.add(nestedAntDefinition);
         }
-        List<AntDefinition> result = nestedAntDefinitionList.sort(byIncreasing((AntDefinition a) => a));
-        return result;
+        return nestedAntDefinitionList.sequence();
     }
     
     shared actual Boolean isTask() {

@@ -5,7 +5,7 @@ package ceylon.build.tasks.ant;
  * Gets rewrapped in a Ceylon Exception.
  * This is because Java cannot see Ceylon classes in the same module.
  */
-public class AntWrapperJavaException extends Exception {
+class AntWrapperJavaException extends Exception {
     
     private static final long serialVersionUID = 913552923474200198L;
     

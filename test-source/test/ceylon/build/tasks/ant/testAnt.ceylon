@@ -130,16 +130,12 @@ test void testAntDefinition() {
 
 test void testProperties() {
     AntProject antProject = createAntProjectWithBaseDirectorySet();
-    Map<String,String> allProperties = antProject.allProperties();
+    {<String->String>*} allProperties = antProject.allProperties();
     assertTrue(allProperties.size > 0);
     // now print out all properties
-    Collection<String> propertyNames = allProperties.keys;
-    String[] propertyNamesSorted = propertyNames.sort(byIncreasing((String s) => s));
-    for(propertyName in propertyNamesSorted) {
-        String? propertyValue = allProperties.get(propertyName);
-        if(exists propertyValue) {
-            print("``propertyName``=``propertyValue``");
-        }
+    <String->String>[] allPropertiesSorted = allProperties.sort(byIncreasing((<String->String> s) => s.key));
+    for(property in allPropertiesSorted) {
+        print("``property.key``=``property.item``");
     }
 }
 

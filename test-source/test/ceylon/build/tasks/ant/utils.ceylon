@@ -28,7 +28,7 @@ void verifyResource(String effectiveBaseDirectory, String relativeResourceName, 
 }
 
 AntDefinition? filterAntDefinition({AntDefinition*} antDefinitions, String antName) {
-    {AntDefinition*} filteredAntDefinitions = antDefinitions.filter { function selecting(AntDefinition antDefintion) => (antDefintion.antName == antName); };
+    {AntDefinition*} filteredAntDefinitions = antDefinitions.filter { (AntDefinition antDefintion) => (antDefintion.antName == antName); };
     switch (filteredAntDefinitions.size)
     case (0) {
         return null;
@@ -42,7 +42,8 @@ AntDefinition? filterAntDefinition({AntDefinition*} antDefinitions, String antNa
 }
 
 void printAntDefinitions({AntDefinition*} antDefinitions) {
-    for(antDefinition in antDefinitions) {
+    AntDefinition[] sortedAntDefinitions = antDefinitions.sort((AntDefinition x, AntDefinition y) => x <=> y);
+    for(antDefinition in sortedAntDefinitions) {
         value antName = antDefinition.antName.padTrailing(22);
         value wrapped = antDefinition.implementationWrapped then "#" else " ";
         value className = antDefinition.effectiveElementTypeClassName;
