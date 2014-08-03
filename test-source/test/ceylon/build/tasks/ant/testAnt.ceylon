@@ -5,12 +5,16 @@ import ceylon.build.tasks.ant {
     AntAttributeDefinition,
     registerAntLibrary,
     AntBuildException,
-    AntUsageException
+    AntUsageException,
+    executeExternalAntFile
 }
 import ceylon.file {
     File,
     Directory,
-    Nil
+    Nil,
+    parsePath,
+    Path,
+    Resource
 }
 import ceylon.test {
     assertEquals,
@@ -24,6 +28,12 @@ test void testEcho() {
     antProject.execute(
         Ant("echo", { "message" -> "G'day mate! " }, [], "Cheerio!" )
     );
+    antProject.execute(
+        Ant("echo", { "message" -> "G'day mate! ", "file" -> "echo.txt" }, [], "Cheerio!" )
+    );
+    Resource echoTxtResource = parsePath(baseWorkingPath.string + "/echo.txt").resource;
+    "Task <echo> did not create echo.txt"
+    assert(is File echoTxtResource);
 }
 
 test void testFileTasks() {
@@ -214,4 +224,28 @@ test void testRegisterAntLibrary() {
     String? var = antProject.getProperty("testRegisterAntLibrary");
     assert(exists var);
     assertTrue(var == "two");
+}
+
+test void testExecuteExternalAntFile() {
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
+    Path buildXmlPath = parsePath("test-source/test/ceylon/build/tasks/ant/data/build.xml").absolutePath;
+    executeExternalAntFile(antProject, buildXmlPath.string, baseWorkingPath.absolutePath.string, "main sub");
+    Resource mainTxtResource = parsePath(baseWorkingPath.string + "/main.txt").resource;
+    "External ant file did not create main.txt"
+    assert(is File mainTxtResource);
+    Resource subTxtResource = parsePath(baseWorkingPath.string + "/sub.txt").resource;
+    "External ant file did not create sub.txt"
+    assert(is File subTxtResource);
+}
+
+test void testAntString() {
+    Ant ant = Ant("waitfor", { "maxwait" -> "100", "checkevery" -> "10", "timeoutproperty" -> "testAntString" } , [
+        Ant("equals", { "arg1" -> "A", "arg2" -> "B" })
+    ] );
+    String string = ant.string;
+    print(string);
+    assertTrue(string.contains("waitfor"));
+    assertTrue(string.contains("maxwait"));
+    assertTrue(string.contains("equals"));
+    assertTrue(string.contains("arg1"));
 }

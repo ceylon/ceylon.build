@@ -74,9 +74,9 @@ shared class Ant(antName, attributes = null, elements = null, text = null) {
             }
         }
         if (elements exists || text exists) {
-            stringBuilder.appendCharacter('>');
+            stringBuilder.append(">\n");
         } else {
-            stringBuilder.append("/>");
+            stringBuilder.append("/>\n");
         }
         if (exists elements) {
             for (element in elements) {
@@ -87,9 +87,8 @@ shared class Ant(antName, attributes = null, elements = null, text = null) {
             stringBuilder.appendCharacter('\n').append(text).appendCharacter('\n');
         }
         if (elements exists || text exists) {
-            stringBuilder.append("</").append(antName).appendCharacter('>');
+            stringBuilder.append("</").append(antName).append(">\n");
         }
-        stringBuilder.appendCharacter('\n');
     }
     
 }

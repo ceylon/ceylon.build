@@ -1,0 +1,13 @@
+<project>
+    
+    <target name="main">
+        <echo message="External Ant file with target main called." />
+        <echo message="External Ant file with target main called." file="main.txt" />
+    </target>
+    
+    <target name="sub">
+        <echo message="External Ant file with target sub called." />
+        <echo message="External Ant file with target sub called." file="sub.txt" />
+    </target>
+    
+</project>

@@ -45,7 +45,7 @@ void printAntDefinitions({AntDefinition*} antDefinitions) {
     AntDefinition[] sortedAntDefinitions = antDefinitions.sort((AntDefinition x, AntDefinition y) => x <=> y);
     for(antDefinition in sortedAntDefinitions) {
         value antName = antDefinition.antName.padTrailing(22);
-        value wrapped = antDefinition.implementationWrapped then "#" else " ";
+        value wrapped = antDefinition.implementationWrapped then "WRAP" else "    ";
         value className = antDefinition.effectiveElementTypeClassName;
         print("``antName`` ``wrapped`` ``className``");
     }

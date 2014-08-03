@@ -11,13 +11,15 @@ shared void registerAntLibrary(
     String location,
     Boolean? xmlFormat = null
 ) {
-    variable {<String->String>+} attributes = { "resource" -> location, "onerror" -> "fail" };
+    ArrayList<String->String> attributes = ArrayList<String->String>();
+    attributes.add("resource" -> location);
+    attributes.add("onerror" -> "fail");
     if (exists xmlFormat) {
-        attributes = { "format" -> (xmlFormat then "xml" else "properties"), *attributes};
+        attributes.add("format" -> (xmlFormat then "xml" else "properties"));
     }
-    antProject.execute(
-        Ant("typedef", attributes )
-    );
+    Ant ant = Ant("typedef", attributes);
+    print(ant.string);
+    antProject.execute(ant);
 }
 
 """
@@ -31,16 +33,19 @@ shared void registerAntType(
     String? adapterClassName = null,
     String? adaptToClassName = null
 ) {
-    variable {<String->String>+} attributes = { "name" -> name, "classname" -> className, "onerror" -> "fail" };
+    ArrayList<String->String> attributes = ArrayList<String->String>();
+    attributes.add("name" -> name);
+    attributes.add("classname" -> className);
+    attributes.add("onerror" -> "fail");
     if (exists adapterClassName) {
-        attributes = { "adapter" -> adapterClassName, *attributes};
+        attributes.add("adapter" -> adapterClassName);
     }
     if (exists adaptToClassName) {
-        attributes = { "adaptto" -> adaptToClassName, *attributes};
+        attributes.add("adaptto" -> adaptToClassName);
     }
-    antProject.execute(
-        Ant("typedef", attributes)
-    );
+    Ant ant = Ant("typedef", attributes);
+    print(ant.string);
+    antProject.execute(ant);
 }
 
 """
@@ -54,16 +59,19 @@ shared void registerAntTask(
     String? adapterClassName = null,
     String? adaptToClassName = null
 ) {
-    variable {<String->String>+} attributes = { "name" -> name, "classname" -> className, "onerror" -> "fail" };
+    ArrayList<String->String> attributes = ArrayList<String->String>();
+    attributes.add("name" -> name);
+    attributes.add("classname" -> className);
+    attributes.add("onerror" -> "fail");
     if (exists adapterClassName) {
-        attributes = { "adapter" -> adapterClassName, *attributes};
+        attributes.add("adapter" -> adapterClassName);
     }
     if (exists adaptToClassName) {
-        attributes = { "adaptto" -> adaptToClassName, *attributes};
+        attributes.add("adaptto" -> adaptToClassName);
     }
-    antProject.execute(
-        Ant("taskdef", attributes)
-    );
+    Ant ant = Ant("taskdef", attributes);
+    print(ant.string);
+    antProject.execute(ant);
 }
 
 """
@@ -92,23 +100,22 @@ shared void executeExternalAntFile(
     "References to inherit in the new Ant project. When using a tuple, the second tuple element is the new reference name."
     {<String|[String, String]>+}? references = null
 ) {
-    variable {<String->String>+} attributes = {
-        "inheritAll" -> (inheritProperties then "true" else "false"),
-        "inheritRefs" -> (inheritReferences then "true" else "false"),
-        "useNativeBasedir" -> (useNativeBaseDirectory then "true" else "false")
-    };
+    ArrayList<String->String> attributes = ArrayList<String->String>();
+    attributes.add("inheritAll" -> (inheritProperties then "true" else "false"));
+    attributes.add("inheritRefs" -> (inheritReferences then "true" else "false"));
+    attributes.add("useNativeBasedir" -> (useNativeBaseDirectory then "true" else "false"));
     if (exists antFileName) {
-        attributes = { "antfile" -> antFileName, *attributes};
+        attributes.add("antfile" -> antFileName);
     }
     if (exists baseDirectory) {
-        attributes = { "dir" -> baseDirectory, *attributes};
+        attributes.add("dir" -> baseDirectory);
     }
     if (exists outputFile) {
-        attributes = { "output" -> outputFile, *attributes};
+        attributes.add("output" -> outputFile);
     }
-    variable ArrayList<Ant> elements = ArrayList<Ant>();
+    ArrayList<Ant> elements = ArrayList<Ant>();
     if (exists targets) {
-        variable {String*} splittedTargets = targets.split(' '.equals, true, true);
+        {String*} splittedTargets = targets.split(' '.equals, true, true);
         for (target in splittedTargets) {
             Ant targetElement = Ant("target", { "name"->target } );
             elements.add(targetElement);
@@ -137,7 +144,7 @@ shared void executeExternalAntFile(
             elements.add(referenceElement);
         }
     }
-    antProject.execute(
-        Ant("ant", attributes, elements.sequence())
-    );
+    Ant ant = Ant("ant", attributes, elements.sequence());
+    print(ant.string);
+    antProject.execute(ant);
 }

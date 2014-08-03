@@ -55,7 +55,6 @@ class Gateway() {
             Throwable? throwable = exception.cause;
             if (exists throwable) {
                 String throwableClassName = className(throwable);
-                print("ClassName: ``throwableClassName``");
                 if (sealedAntBuildExceptionName == throwableClassName) {
                     return AntBuildException(throwable.message, throwable);
                 } else if (sealedAntUsageExceptionName == throwableClassName) {
