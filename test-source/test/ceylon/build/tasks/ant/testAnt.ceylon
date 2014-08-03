@@ -5,7 +5,6 @@ import ceylon.build.tasks.ant {
     AntAttributeDefinition,
     registerAntLibrary,
     AntBuildException,
-    AntBackendException,
     AntUsageException
 }
 import ceylon.file {
@@ -23,7 +22,7 @@ import ceylon.test {
 test void testEcho() {
     AntProject antProject = createAntProjectWithBaseDirectorySet();
     antProject.execute(
-        Ant("echo", { "message" -> "G'day mate! " }, {}, "Cheerio!" )
+        Ant("echo", { "message" -> "G'day mate! " }, [], "Cheerio!" )
     );
 }
 

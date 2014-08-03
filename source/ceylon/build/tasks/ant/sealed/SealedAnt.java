@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tools.ant.AntTypeDefinition;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.IntrospectionHelper.Creator;
@@ -33,11 +34,11 @@ public class SealedAnt {
         ComponentHelper componentHelper = ComponentHelper.getComponentHelper(project);
         AntTypeDefinition antTypeDefinition = componentHelper.getDefinition(antName);
         if (antTypeDefinition == null) {
-            throw new SealedAntUsageException("Ant type <" + antName + "> is unknown.");
+            throw new SealedAntUsageException("Ant type <" + antName + "> is unknown.", null);
         }
         instantiateObject = antTypeDefinition.create(project);
         if (instantiateObject == null) {
-            throw new SealedAntBackendException("Ant type <" + antName + "> has no known class instance.");
+            throw new SealedAntBackendException("Ant type <" + antName + "> has no known class instance.", null);
         }
         if (instantiateObject instanceof TypeAdapter) {
             TypeAdapter typeAdapter = ((TypeAdapter) instantiateObject);
@@ -139,9 +140,13 @@ public class SealedAnt {
     public void execute() {
         if(isTask()) {
             Task task = (Task) instantiateObject;
-            task.execute();
+            try {
+                task.execute();
+            } catch (BuildException buildException) {
+                throw new SealedAntBuildException(buildException.getMessage(), buildException);
+            }
         } else {
-            throw new SealedAntUsageException("Ant type " + antName + " is not an executable task.");
+            throw new SealedAntUsageException("Ant type " + antName + " is not an executable task.", null);
         }
     }
     

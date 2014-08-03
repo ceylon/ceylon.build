@@ -138,6 +138,6 @@ shared void executeExternalAntFile(
         }
     }
     antProject.execute(
-        Ant("ant", attributes, elements)
+        Ant("ant", attributes, elements.sequence())
     );
 }

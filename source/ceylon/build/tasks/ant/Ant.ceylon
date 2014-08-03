@@ -49,7 +49,7 @@ shared class Ant(antName, attributes = null, elements = null, text = null) {
     """
        Containing Ant elements.
     """
-    shared {<Ant>*}? elements;
+    shared Ant[]? elements;
     
     """
        Text node.

@@ -68,7 +68,9 @@ shared class AntProject() {
         value elements = ant.elements;
         if(exists elements) {
             for (element in elements) {
-                Object nestedSealedAnt = gateway.invoke(sealedAnt, "createNestedElement", JString(element.antName));
+                Anything nestedSealedAnt = gateway.invoke(sealedAnt, "createNestedElement", JString(element.antName));
+                "Could not create nested element."
+                assert(exists nestedSealedAnt);
                 build(gateway, element, nestedSealedAnt);
                 gateway.invoke(sealedAnt, "storeNestedElement", nestedSealedAnt);
             }
