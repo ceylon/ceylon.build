@@ -26,13 +26,27 @@ import ceylon.test {
 test void testEcho() {
     AntProject antProject = createAntProjectWithBaseDirectorySet();
     antProject.execute(
-        Ant("echo", { "message" -> "G'day mate! " }, [], "Cheerio!" )
-    );
-    antProject.execute(
-        Ant("echo", { "message" -> "G'day mate! ", "file" -> "echo.txt" }, [], "Cheerio!" )
+        Ant("echo", { "message" -> "G'day mate! " }, [], "Cheerio!" ),
+        Ant("echo", { "message" -> "File created.", "file" -> "echo.txt" } )
     );
     Resource echoTxtResource = parsePath(baseWorkingPath.string + "/echo.txt").resource;
-    "Task <echo> did not create echo.txt"
+    "Expecting task <echo> to create echo.txt"
+    assert(is File echoTxtResource);
+}
+
+test void testEchoExcuteXml() {
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
+    antProject.setProperty("who", "World");
+    antProject.executeXml(
+        Ant("echo", { "message" -> "Hello " }, [], "${who}" ),
+        "<echo>Yo man!</echo>",
+        Ant("echo", { "message" -> "G'day mate! " }, [], "Cheerio!" )
+    );
+    antProject.executeXml(
+        Ant("echo", { "message" -> "File created.", "file" -> "echo.txt" } )
+    );
+    Resource echoTxtResource = parsePath(baseWorkingPath.string + "/echo.txt").resource;
+    "Expecting task <echo> to create echo.txt"
     assert(is File echoTxtResource);
 }
 
@@ -71,6 +85,23 @@ test void testFileTasks() {
         Ant("delete", { "dir" -> "``buildDirectory``", "verbose" -> "true" } )
     );
     verifyResource(effectiveBaseDirectory, "``buildDirectory``", `Nil`, "Cannot delete directory");
+}
+
+test void testTargetDisallowed() {
+    AntProject antProject = createAntProjectWithBaseDirectorySet();
+    try {
+        antProject.executeXml(
+            """
+               <target name="impossible">
+                   <echo message="Not possible"/>
+               </target>
+               """
+        );
+        throw Exception("AntBuildException was expected.");
+    } catch (AntBuildException e) {
+        // Okay, expected
+        //print(e);
+    }
 }
 
 test void testAntException() {

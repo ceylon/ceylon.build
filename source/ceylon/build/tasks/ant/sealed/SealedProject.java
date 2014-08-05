@@ -3,6 +3,7 @@ package ceylon.build.tasks.ant.sealed;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -13,10 +14,11 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 import java.util.Map.Entry;
+import java.util.Vector;
 
 import org.apache.tools.ant.AntTypeDefinition;
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.ComponentHelper;
 import org.apache.tools.ant.DefaultLogger;
@@ -25,6 +27,8 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.ProjectHelperRepository;
 import org.apache.tools.ant.TypeAdapter;
+import org.apache.tools.ant.UnknownElement;
+import org.apache.tools.ant.helper.ProjectHelper2;
 import org.apache.tools.ant.types.resources.StringResource;
 
 public class SealedProject {
@@ -39,8 +43,12 @@ public class SealedProject {
         protected byte[] content;
         public BytesURLConnection(URL url) {
             super(url);
-            String string = url.toString().substring("bytes:".length());
-            this.content = string.getBytes();
+            String string = url.toString().substring("utf8bytes:".length());
+            try {
+                this.content = string.getBytes("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                throw new SealedAntBackendException("UTF-8 should exist", e);
+            }
         }
         public void connect() {
         }
@@ -62,7 +70,7 @@ public class SealedProject {
             project.fireBuildStarted();
             // do what ProjectHelper.configureProject(project, new File("build.xml")); does with the minimal build file
             StringResource stringResource = new StringResource(project, MINIMAL_BUILD_FILE);
-            URL url = new URL(null, "bytes:" + MINIMAL_BUILD_FILE, new BytesURLStreamHandler());
+            URL url = new URL(null, "utf8bytes:" + MINIMAL_BUILD_FILE, new BytesURLStreamHandler());
             ProjectHelper projectHelper = ProjectHelperRepository.getInstance().getProjectHelperForBuildFile(stringResource);
             project.addReference(ProjectHelper.PROJECTHELPER_REFERENCE, projectHelper);
             projectHelper.parse(project, url);
@@ -101,9 +109,9 @@ public class SealedProject {
     public Map<String, String> getAllProperties() {
         Map<String, String> allProperties = new HashMap<String, String>();
         Hashtable<String, Object> properties = project.getProperties();
-        for(String propertyName : properties.keySet()) {
+        for (String propertyName : properties.keySet()) {
             Object propertyObject = properties.get(propertyName);
-            if(propertyObject != null) {
+            if (propertyObject != null) {
                 String propertyValue = propertyObject.toString();
                 allProperties.put(propertyName, propertyValue);
             }
@@ -135,7 +143,7 @@ public class SealedProject {
         List<SealedAntDefinition> topLevelSealedAntDefinitions = new ArrayList<SealedAntDefinition>();
         ComponentHelper componentHelper = ComponentHelper.getComponentHelper(project);
         Hashtable<String, AntTypeDefinition> antTypeTable = componentHelper.getAntTypeTable();
-        for(Entry<String, AntTypeDefinition> antTypeEntry : antTypeTable.entrySet()) {
+        for (Entry<String, AntTypeDefinition> antTypeEntry : antTypeTable.entrySet()) {
             try {
                 String antName = antTypeEntry.getKey().toLowerCase(Locale.ENGLISH);
                 AntTypeDefinition antTypeDefinition = componentHelper.getDefinition(antName);
@@ -156,6 +164,24 @@ public class SealedProject {
             }
         }
         return topLevelSealedAntDefinitions;
+    }
+    
+    public void executeXml(String xml) {
+        ProjectHelper2 projectHelper2 = new ProjectHelper2();
+        // ProjectHelper2.ElementHandler elementHandler = new ProjectHelper2.ElementHandler();
+        URL url;
+        try {
+            url = new URL(null, "utf8bytes:<sequential>" + xml + "</sequential>", new BytesURLStreamHandler());
+        } catch (MalformedURLException e) {
+            throw new SealedAntBackendException("URL for utf8bytes: should work.", e);
+        }
+        try {
+            UnknownElement unknownElement = projectHelper2.parseUnknownElement(project, url);
+            unknownElement.maybeConfigure();
+            unknownElement.execute();
+        } catch (BuildException buildException) {
+            throw new SealedAntBuildException(buildException.getMessage(), buildException);
+        }
     }
     
 }

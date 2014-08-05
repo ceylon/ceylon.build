@@ -62,32 +62,35 @@ shared class Ant(antName, attributes = null, elements = null, text = null) {
     """
     shared actual String string {
         StringBuilder stringBuilder = StringBuilder();
-        buildXmlRepresentation(stringBuilder, "");
+        String newline = operatingSystem.newline;
+        buildXmlRepresentation(stringBuilder, "", newline);
+        stringBuilder.append(newline);
         return stringBuilder.string;
     }
     
-    void buildXmlRepresentation(StringBuilder stringBuilder, String prefixSpaces) {
-        stringBuilder.append(prefixSpaces).appendCharacter('<').append(antName);
+    void buildXmlRepresentation(StringBuilder stringBuilder, String prefixSpaces, String newline) {
+        stringBuilder.append(prefixSpaces).append("<").append(antName);
         if (exists attributes) {
             for (attribute in attributes) {
-                stringBuilder.appendCharacter(' ').append(attribute.key).append("=\"").append(attribute.item).appendCharacter('\"');
+                stringBuilder.append(" ").append(attribute.key).append("=\"").append(attribute.item).append("\"");
             }
         }
         if (elements exists || text exists) {
-            stringBuilder.append(">\n");
+            stringBuilder.append(">");
+            if (nonempty elements) {
+                stringBuilder.append(newline);
+                for (element in elements) {
+                    element.buildXmlRepresentation(stringBuilder, "``prefixSpaces``    ", newline);
+                }
+            }
+            if (exists text) {
+                stringBuilder.append(text);
+            } else {
+                stringBuilder.append(newline);
+            }
+            stringBuilder.append(prefixSpaces).append("</").append(antName).append(">");
         } else {
-            stringBuilder.append("/>\n");
-        }
-        if (exists elements) {
-            for (element in elements) {
-                element.buildXmlRepresentation(stringBuilder, "``prefixSpaces``    ");
-            }
-        }
-        if (exists text) {
-            stringBuilder.appendCharacter('\n').append(text).appendCharacter('\n');
-        }
-        if (elements exists || text exists) {
-            stringBuilder.append("</").append(antName).append(">\n");
+            stringBuilder.append("/>");
         }
     }
     

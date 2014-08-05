@@ -1,5 +1,6 @@
 import ceylon.collection {
-    ArrayList
+    ArrayList,
+    StringBuilder
 }
 
 import java.lang {
@@ -83,10 +84,30 @@ shared class AntProject() {
     """
        Executes the built up Ant directives.
     """
-    shared void execute(Ant ant) {
-        Object sealedAnt = gateway.instatiate("SealedAnt", JString(ant.antName), sealedProject);
-        build(gateway, ant, sealedAnt);
-        gateway.invoke(sealedAnt, "execute");
+    shared void execute(Ant* ants) {
+        for (ant in ants) {
+            Object sealedAnt = gateway.instatiate("SealedAnt", JString(ant.antName), sealedProject);
+            build(gateway, ant, sealedAnt);
+            //print(ant.string);
+            gateway.invoke(sealedAnt, "execute");
+        }
+    }
+    
+    """
+       Executes Ant XML. Only types and tasks are allowed, no targets.
+    """
+    shared void executeXml(<Ant|String>* antXmls) {
+        StringBuilder stringBuilder = StringBuilder();
+        for(antXml in antXmls) {
+            String xml = antXml.string;
+            stringBuilder.append(xml);
+            if (!xml.endsWith("\n") && !xml.endsWith("\n\r")) {
+                stringBuilder.append(operatingSystem.newline);
+            }
+        }
+        String string = stringBuilder.string;
+        //print(string);
+        gateway.invoke(sealedProject, "executeXml", JString(string));
     }
     
     """
