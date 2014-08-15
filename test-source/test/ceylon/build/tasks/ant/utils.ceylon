@@ -21,7 +21,7 @@ File|Directory|Nil retrieveActualResource(String effectiveBaseDirectory, String 
 void verifyResource(String effectiveBaseDirectory, String relativeResourceName, Interface<File|Directory|Nil> expectedResourceType, String failMessage) {
     File|Directory|Nil actualResource = retrieveActualResource(effectiveBaseDirectory, relativeResourceName);
     if(expectedResourceType.typeOf(actualResource)) {
-        print("``relativeResourceName`` is ``expectedResourceType``");
+        //print("``relativeResourceName`` is ``expectedResourceType``");
     } else {
         throw Exception("``failMessage``: ``relativeResourceName`` is not ``expectedResourceType``");
     }

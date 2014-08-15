@@ -18,7 +18,7 @@ shared void registerAntLibrary(
         attributes.add("format" -> (xmlFormat then "xml" else "properties"));
     }
     Ant ant = Ant("typedef", attributes);
-    print(ant.string);
+    //print(ant.string);
     antProject.execute(ant);
 }
 
@@ -44,7 +44,7 @@ shared void registerAntType(
         attributes.add("adaptto" -> adaptToClassName);
     }
     Ant ant = Ant("typedef", attributes);
-    print(ant.string);
+    //print(ant.string);
     antProject.execute(ant);
 }
 
@@ -70,7 +70,7 @@ shared void registerAntTask(
         attributes.add("adaptto" -> adaptToClassName);
     }
     Ant ant = Ant("taskdef", attributes);
-    print(ant.string);
+    //print(ant.string);
     antProject.execute(ant);
 }
 
@@ -145,6 +145,6 @@ shared void executeExternalAntFile(
         }
     }
     Ant ant = Ant("ant", attributes, elements.sequence());
-    print(ant.string);
+    //print(ant.string);
     antProject.execute(ant);
 }

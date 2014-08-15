@@ -23,10 +23,9 @@ import ceylon.test {
     test
 }
 
-test void testEcho() {
+test void testAntProjectExecute() {
     AntProject antProject = createAntProjectWithBaseDirectorySet();
     antProject.execute(
-        Ant("echo", { "message" -> "G'day mate! " }, [], "Cheerio!" ),
         Ant("echo", { "message" -> "File created.", "file" -> "echo.txt" } )
     );
     Resource echoTxtResource = parsePath(baseWorkingPath.string + "/echo.txt").resource;
@@ -34,20 +33,19 @@ test void testEcho() {
     assert(is File echoTxtResource);
 }
 
-test void testEchoExcuteXml() {
+test void testAntProjectExecuteXml() {
     AntProject antProject = createAntProjectWithBaseDirectorySet();
     antProject.setProperty("who", "World");
     antProject.executeXml(
-        Ant("echo", { "message" -> "Hello " }, [], "${who}" ),
-        "<echo>Yo man!</echo>",
-        Ant("echo", { "message" -> "G'day mate! " }, [], "Cheerio!" )
+        Ant("echo", {  "file" -> "echo1.txt", "message" -> "Hello " }, [], "${who}" ),
+        """<echo file="echo2.txt">Yo man!</echo>"""
     );
-    antProject.executeXml(
-        Ant("echo", { "message" -> "File created.", "file" -> "echo.txt" } )
-    );
-    Resource echoTxtResource = parsePath(baseWorkingPath.string + "/echo.txt").resource;
-    "Expecting task <echo> to create echo.txt"
-    assert(is File echoTxtResource);
+    Resource echo1TxtResource = parsePath(baseWorkingPath.string + "/echo1.txt").resource;
+    "Expecting task <echo> to create echo1.txt"
+    assert(is File echo1TxtResource);
+    Resource echo2TxtResource = parsePath(baseWorkingPath.string + "/echo2.txt").resource;
+    "Expecting task <echo> to create echo2.txt"
+    assert(is File echo2TxtResource);
 }
 
 test void testFileTasks() {
@@ -150,7 +148,7 @@ test void testAntDefinitions() {
     AntProject antProject = createAntProjectWithBaseDirectorySet();
     List<AntDefinition> allTopLevelAntDefinitions = antProject.allTopLevelAntDefinitions();
     assertTrue(allTopLevelAntDefinitions.size > 0);
-    printAntDefinitions(allTopLevelAntDefinitions);
+    //printAntDefinitions(allTopLevelAntDefinitions);
 }
 
 test void testAntDefinition() {
@@ -174,10 +172,10 @@ test void testProperties() {
     {<String->String>*} allProperties = antProject.allProperties();
     assertTrue(allProperties.size > 0);
     // now print out all properties
-    <String->String>[] allPropertiesSorted = allProperties.sort(byIncreasing((<String->String> s) => s.key));
-    for(property in allPropertiesSorted) {
-        print("``property.key``=``property.item``");
-    }
+    //<String->String>[] allPropertiesSorted = allProperties.sort(byIncreasing((<String->String> s) => s.key));
+    //for(property in allPropertiesSorted) {
+    //    print("``property.key``=``property.item``");
+    //}
 }
 
 test void testProperty() {
@@ -199,16 +197,16 @@ test void testIncludeAsTaskAndType() {
     AntProject antProject = createAntProjectWithBaseDirectorySet();
     AntDefinition? includeAntDefinition = filterAntDefinition(antProject.allTopLevelAntDefinitions(), "include");
     assert(exists includeAntDefinition);
-    print("<include: ``includeAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
+    //print("<include: ``includeAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
     AntDefinition? copyAntDefinition = filterAntDefinition(antProject.allTopLevelAntDefinitions(), "copy");
     assert(exists copyAntDefinition);
-    print("<copy: ``copyAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
+    //print("<copy: ``copyAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
     AntDefinition? copyFilesetAntDefinition = filterAntDefinition(copyAntDefinition.nestedAntDefinitions(), "fileset");
     assert(exists copyFilesetAntDefinition);
-    print("<copy-fileset: ``copyFilesetAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
+    //print("<copy-fileset: ``copyFilesetAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
     AntDefinition? copyFilesetIncludeAntDefinition = filterAntDefinition(copyFilesetAntDefinition.nestedAntDefinitions(), "include");
     assert(exists copyFilesetIncludeAntDefinition);
-    print("<copy-fileset-include: ``copyFilesetIncludeAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
+    //print("<copy-fileset-include: ``copyFilesetIncludeAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name)``>");
     assertTrue(includeAntDefinition.isTask());
     assertTrue(includeAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name).contains("taskname"));
     assertFalse(includeAntDefinition.attributes().map<String>((AntAttributeDefinition a) => a.name).contains("name"));
@@ -246,7 +244,7 @@ test void testRegisterAntLibrary() {
     antProject.loadModuleClasses("ant-contrib.ant-contrib", "1.0b3");
     registerAntLibrary(antProject, "net/sf/antcontrib/antlib.xml");
     List<AntDefinition> allTopLevelAntDefinitions2 = antProject.allTopLevelAntDefinitions();
-    printAdditionalAntDefinitions(allTopLevelAntDefinitions1, allTopLevelAntDefinitions2);
+    //printAdditionalAntDefinitions(allTopLevelAntDefinitions1, allTopLevelAntDefinitions2);
     assertTrue(allTopLevelAntDefinitions1.size < allTopLevelAntDefinitions2.size);
     antProject.setProperty("testRegisterAntLibrary", "one");
     antProject.execute(
@@ -274,7 +272,7 @@ test void testAntString() {
         Ant("equals", { "arg1" -> "A", "arg2" -> "B" })
     ] );
     String string = ant.string;
-    print(string);
+    //print(string);
     assertTrue(string.contains("waitfor"));
     assertTrue(string.contains("maxwait"));
     assertTrue(string.contains("equals"));
