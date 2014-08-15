@@ -4,3 +4,8 @@ encoding=UTF-8
 
 [repositories]
 remote=aether
+
+[compiler]
+source=source
+source=test-source
+source=sample-source

@@ -168,7 +168,6 @@ public class SealedProject {
     
     public void executeXml(String xml) {
         ProjectHelper2 projectHelper2 = new ProjectHelper2();
-        // ProjectHelper2.ElementHandler elementHandler = new ProjectHelper2.ElementHandler();
         URL url;
         try {
             url = new URL(null, "utf8bytes:<sequential>" + xml + "</sequential>", new BytesURLStreamHandler());
