@@ -34,6 +34,15 @@ import ceylon.language {
    }
    ```
    
+   ## Internal Goal
+   
+   All goals are accessible by their name through command line. However,
+   you might want not to display some internal goals to the end-user.
+   
+   This can be controlled by the visibility of the annotated goal.
+   If it is annotated with `shared`, then it will be displayed to the end user.
+   If it isn't, it won't be shown in goals list but can still be launched if requested.
+   
    ## Failure
    
    It is possible that a [[goal]] operation will fail.
@@ -52,7 +61,7 @@ import ceylon.language {
    ```
    Other kind of exceptions can also be thrown but stacktrace will then be printed in engine output.
    This means that throwing [[GoalException]] should be preferred to other kinds of exceptions if
-   you can provide a meaningful and understandble explanation of why the [[goal]] failed.
+   you can provide a meaningful and understandable explanation of why the [[goal]] failed.
    
    ## Dependencies
    
