@@ -84,8 +84,8 @@
 """
 by ("Henning Burdack")
 license ("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
-module ceylon.build.tasks.ant "1.1.0"{
-    shared import ceylon.collection "1.1.0";
+module ceylon.build.tasks.ant "1.1.1"{
+    shared import ceylon.collection "1.1.1";
     import java.base "7";
     import org.apache.ant.ant "1.9.4";
     import org.jboss.modules "1.3.3.Final"; // needed for manual modules loading

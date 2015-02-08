@@ -391,4 +391,4 @@ import ceylon.language {
    
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
-module ceylon.build.task "1.1.0" {}
+module ceylon.build.task "1.1.1" {}
