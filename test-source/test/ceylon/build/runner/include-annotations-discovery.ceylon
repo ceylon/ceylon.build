@@ -1,52 +1,30 @@
 import ceylon.language.meta.declaration { Module }
 import ceylon.test { test, assertEquals }
 import ceylon.build.runner { findTopLevelAnnotatedGoals, findAnnotatedIncludes }
-import ceylon.build.task { include }
+import mock.ceylon.build.runner.mock4 { include1, include2 }
+import mock.ceylon.build.runner.mock4.subpackage { include3 }
 
 test void shouldNotFindIncludeAnnotatedValuesIfNoPackage() {
-    Module mod = mockModule();
+    Module mod = `module mock.ceylon.build.runner.mock1`;
     value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
 test void shouldNotFindIncludeAnnotatedValuesInEmptyPackages() {
-    Module mod = mockModule {
-        mockPackage(),
-        mockPackage()
-    };
+    Module mod = `module mock.ceylon.build.runner.mock2`;
     value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
 test void shouldNotFindIncludeAnnotatedValuesIfNoValuesAnnotatedWithIt() {
-    Module mod = mockModule {
-        mockPackage {
-            mockValueDeclaration(shared(), doc("no doc")),
-            mockValueDeclaration()
-        },
-        mockPackage {
-            mockValueDeclaration(by("no one"))
-        }
-    };
+    Module mod = `module mock.ceylon.build.runner.mock3`;
     value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
 test void shouldFindIncludeAnnotatedValues() {
-    value include1 = mockValueDeclaration(include(), doc("this is a include"));
-    value include2 = mockValueDeclaration(include());
-    value include3 = mockValueDeclaration(include());
-    Module mod = mockModule {
-        mockPackage {
-            mockValueDeclaration(shared(), doc("no doc")),
-            include1,
-            include2
-        },
-        mockPackage {
-            mockValueDeclaration(by("no one")),
-            include3
-        }
-    };
-    value results = findAnnotatedIncludes(mod);
-    assertEquals(results, [include1, include2, include3]);
+    Module mod = `module mock.ceylon.build.runner.mock4`;
+    value results = [].chain(findAnnotatedIncludes(mod));
+    value expected = [`value include1`, `value include2`, `value include3`];
+    assertEquals(results, expected);
 }
