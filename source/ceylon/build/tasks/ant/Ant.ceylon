@@ -1,7 +1,3 @@
-import ceylon.collection {
-    StringBuilder
-}
-
 """
    Basically it's a mapping from Ant's XML description language to Ceylon.
    Elements and attributes are `String`s as Ant itself has a dynamic nature.

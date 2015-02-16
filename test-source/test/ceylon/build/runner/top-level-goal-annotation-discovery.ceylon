@@ -1,60 +1,30 @@
 import ceylon.language.meta.declaration { Module }
 import ceylon.test { test, assertEquals }
 import ceylon.build.runner { findTopLevelAnnotatedGoals }
-import ceylon.build.task { goal }
+import mock.ceylon.build.runner.mock6 { goal1, goal2, goal4 }
+import mock.ceylon.build.runner.mock6.subpackage { goal3, goal5, goal6 }
 
 test void shouldNotFindGoalAnnotatedFunctionsOrValuesIfNoPackage() {
-    Module mod = mockModule();
+    Module mod = `module mock.ceylon.build.runner.mock1`;
     value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
 test void shouldNotFindGoalAnnotatedFunctionsOrValuesInEmptyPackages() {
-    Module mod = mockModule {
-        mockPackage(),
-        mockPackage()
-    };
+    Module mod = `module mock.ceylon.build.runner.mock2`;
     value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
 test void shouldNotFindGoalAnnotatedFunctionsOrValuesIfNoFunctionsOrValuesAnnotatedWithIt() {
-    Module mod = mockModule {
-        mockPackage {
-            mockFunctionDeclaration(shared(), doc("no doc")),
-            mockFunctionDeclaration(),
-            mockValueDeclaration(shared(), doc("no doc")),
-            mockValueDeclaration()
-        },
-        mockPackage {
-            mockFunctionDeclaration(by("no one"))
-        }
-    };
+    Module mod = `module mock.ceylon.build.runner.mock5`;
     value results = findTopLevelAnnotatedGoals(mod);
     assertEquals(results, []);
 }
 
 test void shouldFindGoalAnnotatedFunctionsAndValues() {
-    value goal1 = mockFunctionDeclaration(goal(), doc("this is a goal"));
-    value goal2 = mockFunctionDeclaration(goal("hello"));
-    value goal3 = mockFunctionDeclaration(goal("bye"));
-    value goal4 = mockValueDeclaration(goal(), doc("this is a goal"));
-    value goal5 = mockValueDeclaration(goal("hello"));
-    value goal6 = mockValueDeclaration(goal("bye"));
-    Module mod = mockModule {
-        mockPackage {
-            mockFunctionDeclaration(shared(), doc("no doc")),
-            goal1,
-            goal2,
-            goal4
-        },
-        mockPackage {
-            mockFunctionDeclaration(by("no one")),
-            goal3,
-            goal5,
-            goal6
-        }
-    };
-    value results = findTopLevelAnnotatedGoals(mod);
-    assertEquals(results, [goal1, goal2, goal4, goal3, goal5, goal6]);
+    Module mod = `module mock.ceylon.build.runner.mock6`;
+    value results = [].chain(findTopLevelAnnotatedGoals(mod));
+    value expected = [`function goal1`, `function goal2`, `value goal4`, `function goal3`, `value goal5`, `value goal6`];
+    assertEquals(results, expected);
 }

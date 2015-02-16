@@ -92,10 +92,10 @@
    ```
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
-module ceylon.build.tasks.ceylon "1.1.0" {
-    shared import ceylon.build.task "1.1.0";
-    import ceylon.build.tasks.commandline "1.1.0";
-    import ceylon.collection "1.1.0";
-    import com.redhat.ceylon.compiler.java "1.1.0";
+module ceylon.build.tasks.ceylon "1.1.1" {
+    shared import ceylon.build.task "1.1.1";
+    import ceylon.build.tasks.commandline "1.1.1";
+    import ceylon.collection "1.1.1";
+    import com.redhat.ceylon.compiler.java "1.1.1";
     import org.jboss.modules "1.3.3.Final";
 }
