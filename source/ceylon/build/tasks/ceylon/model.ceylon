@@ -9,7 +9,8 @@ import ceylon.file {
     parsePath,
     Directory,
     File,
-    Path
+    Path,
+    ExistingResource
 }
 import ceylon.interop.java {
     javaString
@@ -362,9 +363,10 @@ shared Modules discoverModules(SourceSet sourceSet, Set<Backend>(String) backend
     value sources = defaultSourceDirectory(sourceSet);
     for (source in sources) {
         value path = parsePath(source);
-        if (is Directory resource = path.resource) {
+        value resource = path.resource;
+        if (is Directory resource) {
             modules.addAll(checkDirectory(resource, backends));
-        } else {
+        } else if (is ExistingResource resource){
             throw GoalException("source folder ``path.absolutePath`` is not a directory");
         }
     }
