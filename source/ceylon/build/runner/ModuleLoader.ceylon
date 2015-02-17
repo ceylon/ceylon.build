@@ -1,10 +1,12 @@
 import ceylon.language.meta.declaration { Module }
 import ceylon.language.meta { modules }
-import ceylon.modules.jboss.runtime { CeylonModuleLoader }
 import org.jboss.modules {
-    M = Module {
-         ceylonModuleLoader=callerModuleLoader
-    }
+	M = Module {
+		ceylonModuleLoader=callerModuleLoader
+	},
+	ModuleIdentifier {
+		createModuleIdentifier=create
+	}
 }
  
 Module? loadModule(String moduleArgument) {
@@ -22,6 +24,14 @@ Module? loadModule(String moduleArgument) {
 }
 
 void loadModuleInClassPath(String modName, String modVersion) {
-    assert(is CeylonModuleLoader loader = ceylonModuleLoader);
-    loader.loadModuleSynchronous(modName, modVersion);
+	value modIdentifier = createModuleIdentifier(modName, modVersion);
+	value mod = ceylonModuleLoader.loadModule(modIdentifier);
+	value modClassLoader = mod.classLoader;
+	value classToLoad = "``modName``.$module_";
+	modClassLoader.loadClass(classToLoad);
+}
+
+"Exposes internal method [[loadModule]] for testing purposes."
+shared Module? testAccessLoadModule(String moduleArgument) {
+	return loadModule(moduleArgument);
 }
