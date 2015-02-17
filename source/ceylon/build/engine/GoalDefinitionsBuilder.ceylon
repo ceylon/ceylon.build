@@ -68,7 +68,7 @@ shared final class GoalDefinitionsBuilder({Goal*} goals = []) {
             => [ for (entry in definitions) if (entry.item.size > 1) entry.key ];
     
     [String*] undefinedGoals(Map<String,{GoalProperties+}> original) =>
-            [ for (properties in original.values)
+            [ for (properties in original.items)
                 for (property in properties)
                     for (dependency in property.dependencies)
                         if (!original.defines(dependency))

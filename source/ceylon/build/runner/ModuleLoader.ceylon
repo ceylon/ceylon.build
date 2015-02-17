@@ -1,10 +1,12 @@
 import ceylon.language.meta.declaration { Module }
 import ceylon.language.meta { modules }
+import ceylon.modules.jboss.runtime { CeylonModuleLoader }
 import org.jboss.modules {
-    JBossModule = Module { ceylonModuleLoader = callerModuleLoader },
-    ModuleIdentifier { createModuleIdentifier = create }
+    M = Module {
+         ceylonModuleLoader=callerModuleLoader
+    }
 }
-
+ 
 Module? loadModule(String moduleArgument) {
     String moduleName;
     String moduleVersion;
@@ -20,9 +22,6 @@ Module? loadModule(String moduleArgument) {
 }
 
 void loadModuleInClassPath(String modName, String modVersion) {
-    value modIdentifier = createModuleIdentifier(modName, modVersion);
-    value mod = ceylonModuleLoader.loadModule(modIdentifier);
-    value modClassLoader = mod.classLoader;
-    value classToLoad = "``modName``.module_";
-    modClassLoader.loadClass(classToLoad);
+    assert(is CeylonModuleLoader loader = ceylonModuleLoader);
+    loader.loadModuleSynchronous(modName, modVersion);
 }
