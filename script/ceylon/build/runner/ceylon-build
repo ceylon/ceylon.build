@@ -27,11 +27,11 @@ OPTIONS
     the directory where the tool is run from)
 
 
---define=<key>=<value>, -D <key>=<value>
+--define=<key>=<value>
     Set a system property
 
 
---encoding=<encoding>, -E <encoding>
+--encoding=<encoding>
     Sets the encoding used for reading source files(default: platform-
     specific).
 
