@@ -1,11 +1,13 @@
-package ceylon.build.tasks.ant.internal;
+package ceylon.build.tasks.ant;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.jboss.modules.Module;
@@ -13,7 +15,7 @@ import org.jboss.modules.ModuleClassLoader;
 import org.jboss.modules.ModuleIdentifier;
 import org.jboss.modules.ModuleLoadException;
 
-class MultiModuleClassLoader extends ClassLoader {
+class GatewayClassLoader extends ClassLoader {
     
     private static class ClassLoaderTuple {
         String name;
@@ -27,16 +29,18 @@ class MultiModuleClassLoader extends ClassLoader {
         }
     }
     
-    private ClassLoaderTuple parentClassLoaderTuple;
     private Vector<ClassLoaderTuple> classLoaderTuples = new Vector<>();
+    private HashMap<String, Class<?>> loadedClassesMap = new HashMap<String, Class<?>>();
     
-    public MultiModuleClassLoader(ClassLoader parentClassloader) {
+    GatewayClassLoader() {
         super(null);
-        parentClassLoaderTuple = new ClassLoaderTuple("*parent*", parentClassloader);
-        classLoaderTuples.add(parentClassLoaderTuple);
     }
     
-    public void addModule(String moduleName, String moduleVersion) throws ModuleLoadException, ClassNotFoundException {
+    private void log(String string) {
+        // System.out.println(string);
+    }
+    
+    void loadModuleClasses(String moduleName, String moduleVersion) throws ModuleLoadException {
         ModuleIdentifier moduleIdentifier = ModuleIdentifier.create(moduleName, moduleVersion);
         Module jBossModule = Module.getCallerModuleLoader().loadModule(moduleIdentifier);
         ModuleClassLoader moduleClassLoader = jBossModule.getClassLoader();
@@ -45,9 +49,16 @@ class MultiModuleClassLoader extends ClassLoader {
         classLoaderTuples.add(classLoaderTuple);
     }
     
+    void loadUrlClasses(URL url) {
+        URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { url } );
+        String name = url.toString();
+        ClassLoaderTuple classLoaderTuple = new ClassLoaderTuple(name, urlClassLoader);
+        classLoaderTuples.add(classLoaderTuple);
+    }
+    
     @Override
     public URL getResource(String resourceName) {
-        log("MultiModuleClassLoader getResource(): " + resourceName);
+        log("GatewayClassLoader getResource(): " + resourceName);
         URL result = null;
         for (ClassLoaderTuple classLoaderTuple : classLoaderTuples) {
             ClassLoader classLoader = classLoaderTuple.classLoader; 
@@ -61,7 +72,7 @@ class MultiModuleClassLoader extends ClassLoader {
     
     @Override
     public Enumeration<URL> getResources(String resourceName) throws IOException {
-        log("MultiModuleClassLoader getResources(): " + resourceName);
+        log("GatewayClassLoader getResources(): " + resourceName);
         Vector<URL> result = new Vector<URL>(); 
         for (ClassLoaderTuple classLoaderTuple : classLoaderTuples) {
             ClassLoader classLoader = classLoaderTuple.classLoader; 
@@ -78,7 +89,7 @@ class MultiModuleClassLoader extends ClassLoader {
     
     @Override
     public InputStream getResourceAsStream(String resourceName) {
-        log("MultiModuleClassLoader getResourceAsStream(): " + resourceName);
+        log("GatewayClassLoader getResourceAsStream(): " + resourceName);
         InputStream result = null;
         for (ClassLoaderTuple classLoaderTuple : classLoaderTuples) {
             ClassLoader classLoader = classLoaderTuple.classLoader; 
@@ -90,13 +101,12 @@ class MultiModuleClassLoader extends ClassLoader {
         return result;
     }
     
-    @Override
-    public Class<?> loadClass(String className) throws ClassNotFoundException {
-        log("MultiModuleClassLoader loadClass(): " + className);
+    private synchronized Class<?> loadClassInternal(String className) throws ClassNotFoundException {
+        log("GatewayClassLoader loadClass(): " + className);
         try {
-            ClassLoader classLoader = parentClassLoaderTuple.classLoader;
+            ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             Class<?> loadClass = classLoader.loadClass(className);
-            log("Found in parent classloader.");
+            log("Found in system classloader.");
             return loadClass;
         } catch (ClassNotFoundException classNotFoundException) {
             // continue
@@ -126,8 +136,32 @@ class MultiModuleClassLoader extends ClassLoader {
         throw new ClassNotFoundException("Could not load class " + className + " from modules " + classLoaderTuples);
     }
     
-    private void log(String string) {
-        // System.out.println(string);
+    @Override
+    public Class<?> loadClass(String className) throws ClassNotFoundException {
+        Class<?> clazz = loadedClassesMap.get(className);
+        if (clazz == null) {
+            synchronized (loadedClassesMap) {
+                clazz = loadClassInternal(className);
+                loadedClassesMap.put(className, clazz);
+            }
+        }
+        return clazz;
+    }
+    
+    @Override
+    public String toString() {
+        boolean alreadyAppended = false;
+        StringBuilder result = new StringBuilder("GatewayClassLoader: [ ");
+        for (ClassLoaderTuple classLoaderTuple : classLoaderTuples) {
+            if (alreadyAppended) {
+                result.append(", ");
+            }
+            ClassLoader classLoader = classLoaderTuple.classLoader;
+            result.append(classLoader.toString());
+            alreadyAppended = true;
+        }
+        result.append(" ]");
+        return result.toString();
     }
     
 }

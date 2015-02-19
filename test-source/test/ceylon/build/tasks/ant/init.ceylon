@@ -1,8 +1,24 @@
-import ceylon.test { beforeTest, afterTest }
-import ceylon.build.tasks.file { delete, createDirectory }
-import ceylon.file { parsePath, Path, Nil }
-import ceylon.build.task { Writer, setContextForTask, clearTaskContext }
-import ceylon.build.tasks.ant { renewAntProject }
+import ceylon.build.task {
+    Writer,
+    setContextForTask,
+    clearTaskContext
+}
+import ceylon.build.tasks.ant {
+    AntProject
+}
+import ceylon.build.tasks.file {
+    delete,
+    createDirectory
+}
+import ceylon.file {
+    parsePath,
+    Path,
+    Nil
+}
+import ceylon.test {
+    beforeTest,
+    afterTest
+}
 
 Path baseWorkingPath = parsePath("tmp/test/ceylon/build/tasks/ant");
 
@@ -17,10 +33,14 @@ beforeTest void cleanTestDirectory() {
     "Test directory already exists"
     assert(is Nil baseWorkingResource);
     createDirectory(baseWorkingResource);
-    // set base directory for Ant
-    renewAntProject(baseWorkingPath.string);
 }
 
 afterTest void resetContext() {
     clearTaskContext();
+}
+
+AntProject createAntProjectWithBaseDirectorySet() {
+    AntProject antProject = AntProject();
+    antProject.effectiveBaseDirectory(baseWorkingPath.string);
+    return antProject;
 }

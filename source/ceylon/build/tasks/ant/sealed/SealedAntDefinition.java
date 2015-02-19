@@ -1,5 +1,7 @@
-package ceylon.build.tasks.ant.internal;
+package ceylon.build.tasks.ant.sealed;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -9,9 +11,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.DataType;
 
-import ceylon.collection.LinkedList;
-
-public class AntDefinitionSupport {
+public class SealedAntDefinition {
     
     private Project project;
     private String antName;
@@ -20,7 +20,7 @@ public class AntDefinitionSupport {
     private IntrospectionHelper introspectionHelper;
     private boolean definitelyType;
     
-    public AntDefinitionSupport(Project project, String antName, Class<Object> elementType, Class<Object> effectiveElementType, IntrospectionHelper introspectionHelper, boolean definitelyType) {
+    SealedAntDefinition(Project project, String antName, Class<Object> elementType, Class<Object> effectiveElementType, IntrospectionHelper introspectionHelper, boolean definitelyType) {
         this.project = project;
         this.antName = antName;
         this.elementType = elementType;
@@ -29,26 +29,30 @@ public class AntDefinitionSupport {
         this.definitelyType = definitelyType;
     }
     
-    public void fillAttributeList(LinkedList<AntAttributeDefinitionSupport> result) {
+    public List<String[]> getAttributeDefinitions() {
+        List<String[]> attributeDefinitions = new ArrayList<String[]>();
         Map<String, Class<?>> attributeMap = introspectionHelper.getAttributeMap();
         for(Entry<String, Class<?>> attribute : attributeMap.entrySet()) {
             String attributeName = attribute.getKey();
             Class<?> attributeClass = attribute.getValue();
-            AntAttributeDefinitionSupport antAttributeDefinition = new AntAttributeDefinitionSupport(attributeName, attributeClass);
-            result.add(antAttributeDefinition);
+            String[] attributeDefinition = new String[] { attributeName, attributeClass.getName() };
+            attributeDefinitions.add(attributeDefinition);
         }
+        return attributeDefinitions;
     }
     
-    public void fillNestedAntDefinitionList(LinkedList<AntDefinitionSupport> result) {
+    public List<SealedAntDefinition> getNestedAntDefinitions() {
+        List<SealedAntDefinition> nestedAntDefinitions = new ArrayList<SealedAntDefinition>();
         Map<String, Class<?>> nestedElementMap = introspectionHelper.getNestedElementMap();
         for(Entry<String, Class<?>> nestedElementEntry : nestedElementMap.entrySet()) {
             String nestedElementName = nestedElementEntry.getKey().toLowerCase(Locale.ENGLISH);
             @SuppressWarnings("unchecked")
             Class<Object> nestedElementType = (Class<Object>) nestedElementEntry.getValue();
             IntrospectionHelper nestedIntrospectionHelper = IntrospectionHelper.getHelper(project, nestedElementType);
-            AntDefinitionSupport antDefinitionSupport = new AntDefinitionSupport(project, nestedElementName, nestedElementType, nestedElementType, nestedIntrospectionHelper, true);
-            result.add(antDefinitionSupport);
+            SealedAntDefinition sealedAntDefinition = new SealedAntDefinition(project, nestedElementName, nestedElementType, nestedElementType, nestedIntrospectionHelper, true);
+            nestedAntDefinitions.add(sealedAntDefinition);
         }
+        return nestedAntDefinitions;
     }
     
     public String getAntName() {
@@ -63,12 +67,12 @@ public class AntDefinitionSupport {
         return introspectionHelper;
     }
     
-    public Class<Object> getElementType() {
-        return elementType;
+    public String getElementType() {
+        return elementType.getName();
     }
     
-    public Class<Object> getEffectiveElementType() {
-        return effectiveElementType;
+    public String getEffectiveElementType() {
+        return effectiveElementType.getName();
     }
     
     public boolean isTask() {

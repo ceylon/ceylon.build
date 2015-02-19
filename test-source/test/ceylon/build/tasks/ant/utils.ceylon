@@ -1,27 +1,34 @@
-import ceylon.file { Nil, Path, Directory, parsePath, File }
-import ceylon.build.tasks.ant { activeAntProject, AntProject, AntDefinition }
-import ceylon.language.meta.model { Interface }
-import ceylon.test { test, assertTrue }
+import ceylon.build.tasks.ant {
+    AntDefinition
+}
+import ceylon.file {
+    Nil,
+    Path,
+    Directory,
+    parsePath,
+    File
+}
+import ceylon.language.meta.model {
+    Interface
+}
 
-File|Directory|Nil retrieveActualResource(String relativeResourceName) {
-    AntProject antProject = activeAntProject();
-    String effectiveBaseDirectory = antProject.effectiveBaseDirectory();
+File|Directory|Nil retrieveActualResource(String effectiveBaseDirectory, String relativeResourceName) {
     Path exampleFilePath = parsePath(effectiveBaseDirectory + "/" + relativeResourceName);
     File|Directory|Nil actualResource = exampleFilePath.resource.linkedResource;
     return actualResource;
 }
 
-void verifyResource(String relativeResourceName, Interface<File|Directory|Nil> expectedResourceType, String failMessage) {
-    File|Directory|Nil actualResource = retrieveActualResource(relativeResourceName);
+void verifyResource(String effectiveBaseDirectory, String relativeResourceName, Interface<File|Directory|Nil> expectedResourceType, String failMessage) {
+    File|Directory|Nil actualResource = retrieveActualResource(effectiveBaseDirectory, relativeResourceName);
     if(expectedResourceType.typeOf(actualResource)) {
-        print("``relativeResourceName`` is ``expectedResourceType``");
+        //print("``relativeResourceName`` is ``expectedResourceType``");
     } else {
         throw Exception("``failMessage``: ``relativeResourceName`` is not ``expectedResourceType``");
     }
 }
 
 AntDefinition? filterAntDefinition({AntDefinition*} antDefinitions, String antName) {
-    {AntDefinition*} filteredAntDefinitions = antDefinitions.filter { function selecting(AntDefinition antDefintion) => (antDefintion.antName == antName); };
+    {AntDefinition*} filteredAntDefinitions = antDefinitions.filter { (AntDefinition antDefintion) => (antDefintion.antName == antName); };
     switch (filteredAntDefinitions.size)
     case (0) {
         return null;
@@ -34,17 +41,11 @@ AntDefinition? filterAntDefinition({AntDefinition*} antDefinitions, String antNa
     }
 }
 
-void printAntDefinitions({AntDefinition*}? antDefinitions = null) {
-    {AntDefinition*} printedAntDefinitions;
-    if (exists antDefinitions) {
-        printedAntDefinitions = antDefinitions;
-    } else {
-        AntProject antProject = activeAntProject();
-        printedAntDefinitions = antProject.allTopLevelAntDefinitions();
-    }
-    for(antDefinition in printedAntDefinitions) {
+void printAntDefinitions({AntDefinition*} antDefinitions) {
+    AntDefinition[] sortedAntDefinitions = antDefinitions.sort((AntDefinition x, AntDefinition y) => x <=> y);
+    for(antDefinition in sortedAntDefinitions) {
         value antName = antDefinition.antName.padTrailing(22);
-        value wrapped = antDefinition.implementationWrapped then "#" else " ";
+        value wrapped = antDefinition.implementationWrapped then "WRAP" else "    ";
         value className = antDefinition.effectiveElementTypeClassName;
         print("``antName`` ``wrapped`` ``className``");
     }

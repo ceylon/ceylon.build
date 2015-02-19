@@ -1,5 +1,3 @@
-import ceylon.build.tasks.ant.internal { AntSupport, AntProjectImplementation }
-
 """
    Basically it's a mapping from Ant's XML description language to Ceylon.
    Elements and attributes are `String`s as Ant itself has a dynamic nature.
@@ -18,90 +16,78 @@ import ceylon.build.tasks.ant.internal { AntSupport, AntProjectImplementation }
    The above Ant snippet becomes with the value `buildDirectory` the following Ceylon code:
    
    ```
-   value buildDirectory = "target/build";
-   Ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
-       Ant("fileset", { "dir" -> "``buildDirectory``" }, [
-           Ant("include", { "name" -> "example.txt" } )
-       ] )
-   ] ).execute();
-   ```
-   
-   Take care to include the last `.execute()` directive, otherwise the operation will not get executed, or use the function `ant()` instead for Ant-tasks.
-"""
-see(`function ant`)
-shared class Ant(
-        antName,
-        {<String->String>*}? attributes = null,
-        {<Ant>*}? elements = null,
-        String? text = null) {
-    
-    """
-       Name of ant type (element name).
-    """
-    shared String antName;
-    
-    void build(AntSupport antSupport) {
-        if(exists attributes) {
-            for (attributeName -> attributeValue in attributes) {
-                antSupport.attribute(attributeName, attributeValue);
-            }
-        }
-        if(exists elements) {
-            for (element in elements) {
-                AntSupport elementAntHelper = antSupport.createNestedElement(element.antName);
-                element.build(elementAntHelper);
-                antSupport.element(elementAntHelper);
-            }
-        }
-        if(exists text) {
-            antSupport.setText(text);
-        }
-    }
-    
-    AntSupport buildAntSupport(AntProjectImplementation antProjectImplementation) {
-        AntSupport antSupport = AntSupport(antName, antProjectImplementation.projectSupport);
-        build(antSupport);
-        return antSupport;
-    }
-    
-    """
-       Executes the built up Ant directives.
-    """
-    shared void execute() {
-        AntProjectImplementation antProjectImplementation = provideAntProjectImplementation();
-        AntSupport antSupport = buildAntSupport(antProjectImplementation);
-        antSupport.execute();
-    }
-    
-    shared actual String string {
-        AntProjectImplementation antProjectImplementation = provideAntProjectImplementation();
-        AntSupport antSupport = buildAntSupport(antProjectImplementation);
-        String string = "
-                         Directory: ``antProjectImplementation.effectiveBaseDirectory()``
-                         Ant's XML: ``antSupport.string``
-                         ";
-        return string;
-    }
-    
-}
-
-"""
-   Convenience method to build `execute()` an `Ant` class when it's an Ant-task.
-   
-   ```
-   value buildDirectory = "target/build-test-file-tasks-directory";
-   ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
+   // create AntProject, only needed once
+   AntProject antProject = AntProject();
+   // define arbitrary value
+   String buildDirectory = "target/build";
+   // define Ant structure
+   Ant ant = Ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
        Ant("fileset", { "dir" -> "``buildDirectory``" }, [
            Ant("include", { "name" -> "example.txt" } )
        ] )
    ] );
+   // execute
+   antProject.execute(ant);
    ```
 """
-see(`class Ant`)
-shared void ant(
-        String antName,
-        {<String->String>*}? attributes = null,
-        {<Ant>*}? elements = null,
-        String? text = null) {
-    Ant(antName, attributes, elements, text).execute();
+shared class Ant(antName, attributes = null, elements = null, text = null) {
+    
+    """
+       Name of Ant type (element name).
+    """
+    shared String antName;
+    
+    """
+       Attributes for this type/task.
+    """
+    shared {<String->String>*}? attributes;
+    
+    """
+       Containing Ant elements.
+    """
+    shared Ant[]? elements;
+    
+    """
+       Text node.
+    """
+    shared String? text;
+    
+    """
+       Returns a readable string of the Ant representation as XML.
+       Doesn't do XML escaping.
+    """
+    shared actual String string {
+        StringBuilder stringBuilder = StringBuilder();
+        String newline = operatingSystem.newline;
+        buildXmlRepresentation(stringBuilder, "", newline);
+        stringBuilder.append(newline);
+        return stringBuilder.string;
+    }
+    
+    void buildXmlRepresentation(StringBuilder stringBuilder, String prefixSpaces, String newline) {
+        stringBuilder.append(prefixSpaces).append("<").append(antName);
+        if (exists attributes) {
+            for (attribute in attributes) {
+                stringBuilder.append(" ").append(attribute.key).append("=\"").append(attribute.item).append("\"");
+            }
+        }
+        if (elements exists || text exists) {
+            stringBuilder.append(">");
+            if (nonempty elements) {
+                stringBuilder.append(newline);
+                for (element in elements) {
+                    element.buildXmlRepresentation(stringBuilder, "``prefixSpaces``    ", newline);
+                }
+            }
+            if (exists text) {
+                stringBuilder.append(text);
+            } else {
+                stringBuilder.append(newline);
+            }
+            stringBuilder.append(prefixSpaces).append("</").append(antName).append(">");
+        } else {
+            stringBuilder.append("/>");
+        }
+    }
+    
 }

@@ -31,32 +31,50 @@
    The above Ant snippet becomes with the value `buildDirectory` the following Ceylon code:
    
    ```
-   value buildDirectory = "target/build";
-   ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
+   // create AntProject, only needed once
+   AntProject antProject = AntProject();
+   // define arbitrary value
+   String buildDirectory = "target/build";
+   // define Ant structure
+   Ant ant = Ant("copy", { "todir" -> "``buildDirectory``/sub-directory" }, [
        Ant("fileset", { "dir" -> "``buildDirectory``" }, [
            Ant("include", { "name" -> "example.txt" } )
        ] )
    ] );
+   // execute
+   antProject.execute(ant);
    ```
    
-   So types like `<fileset>` are built using the `Ant` class.
-   For executing a tasks, use the `ant()` functions, which actually builds an `Ant` object and then calls `execute()` on it.
+   So types like `<fileset>` are built using the [[Ant]] class.
+   
+   You can also execute XML directly, or convert an [[Ant]] object to `String`, and then use [[AntProject.executeXml]].
+   You cannot define Ant targts with `executeXml()` as it only accepts types and tasks.
+   
+   ```
+   Ant ant = Ant("echo", { "message" -> "Hi!" } );
+   antProject.executeXml(ant.string);
+   ```
    
    
    
    ## External modules
    
    Ant allows users to add their own types and tasks by adding them to Java's classpath.
-   As the module system doesn't allow using classes from modules not imported directly, you need to use `AntProject::addModule()` to add a module to the class loader of `ceylon.build.tasks.ant`, so Ant can use the classes.
-   Before actually using these types and tasks you have to initialize Ant with `<typedef>` or `<taskdef>`.
+   As the module system doesn't allow using classes from modules not imported directly, you need an extra step to load the required classes so Ant is able to use them.
+   This is done by [[AntProject.loadModuleClasses]] for loading a module, or by [[AntProject.loadUrlClasses]] for loading a JAR.
+   These operations then add the classes to the class loader of `ceylon.build.tasks.ant`.
+   Before actually using any these types and tasks you have to initialize Ant with `<typedef>` or `<taskdef>`.
    
    Example:
    
    ```
-   AntProject antProject = activeAntProject();
-   antProject.addModule("org.apache.ant.ant-commons-net", "1.9.4");
-   ant("taskdef", { "name" -> "ftp", "classname" -> "org.apache.tools.ant.taskdefs.optional.net.FTP" } );
+   AntProject antProject = AntProject();
+   antProject.loadModuleClasses("org.apache.ant.ant-commons-net", "1.9.4");
+   Ant ant = Ant("taskdef", { "name" -> "ftp", "classname" -> "org.apache.tools.ant.taskdefs.optional.net.FTP" } );
+   antProject.execute(ant);
    ```
+   
+   Instead of constructing a `<typedef>` or `<taskdef>` yourself, you can use the convenience functions [[registerAntLibrary]], [[registerAntType]], or [[registerAntTask]].
    
    
    
@@ -67,12 +85,15 @@
    Example:
    
    ```
-   AntProject antProject = currentAntProject();
-   AntDefinition? copyAntDefinition = antProject.allTopLevelAntDefinitions().filter { (AntDefinition a) => (a.antName == "copy"); }.first;
+   AntProject antProject = AntProject();
+   AntDefinition[] allProjectDefinitions = antProject.allTopLevelAntDefinitions();
+   AntDefinition? copyAntDefinition = allProjectDefinitions.find((AntDefinition a) => a.antName == "copy");
    assert(exists copyAntDefinition);
-   AntDefinition? filesetAntDefinition = copyAntDefinition.nestedAntDefinitions().filter { (AntDefinition a) => (a.antName == "fileset"); }.first;
+   AntDefinition[] nestedCopyDefinitions = copyAntDefinition.nestedAntDefinitions();
+   AntDefinition? filesetAntDefinition = nestedCopyDefinitions.find((AntDefinition a) => a.antName == "fileset");
    assert(exists filesetAntDefinition);
-   AntDefinition? includeAntDefinition = includeAntDefinition.nestedAntDefinitions().filter { (AntDefinition a) => (a.antName == "include"); }.first;
+   AntDefinition[] nestedFilesetDefinitions = filesetAntDefinition.nestedAntDefinitions();
+   AntDefinition? includeAntDefinition = nestedFilesetDefinitions.find((AntDefinition a) => a.antName == "include");
    assert(exists includeAntDefinition);
    ```
    
@@ -81,6 +102,10 @@
    ## Caveats
    
    XML/Ant namespaces are not supported.
+   But you can use [[AntProject.executeXml]] if you really need them.
+   
+   Due to the implementation of Ant and its numerous external types/tasks you may encounter [[AntBackendException]]s that should be handled correctly.
+   [[AntProject.executeXml]] might help here again.
 """
 by ("Henning Burdack")
 license ("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
