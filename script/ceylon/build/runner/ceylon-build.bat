@@ -1,22 +1,28 @@
 @echo off
 setlocal EnableDelayedExpansion
 
-set "USAGE=[<compiler-option...>] <module>/<version> <goal>..."
+set "USAGE=[<compiler-option>...] [<module>/<version>] <goal>..."
 set "DESCRIPTION=Runs your ceylon.build script"
 set LONG_USAGE=This command compiles and runs your build project, ^
 written for ceylon.build^
 
 ^
 
-For running your build, you need to provide the module and ^
-version of your build script. Furthermore you need to ^
-provide the goals to run.^
+For running your build, you either need to provide the ^
+module and version of your build script, or have the module ^
+name and version as default 'build/1'. Furthermore you ^
+need to provide the goals to run.^
 
 ^
 
 Default source directory for the build script is ^
 './build-source'. You can also use the compiler options ^
 described below for compiling the build module.^
+
+^
+
+Output directory of compiled build-module is currently fixed ^
+to 'modules'.^
 
 ^
 
@@ -32,6 +38,7 @@ default: '~/.ceylon/cache')^
 ^
 
 --cwd=dir^
+
 Specifies the current working directory for this tool. (default: ^
 the directory where the tool is run from)^
 
@@ -45,7 +52,7 @@ Set a system property^
 
 --encoding=encoding^
 
-Sets the encoding used for reading source files(default: platform-^
+Sets the encoding used for reading source files (default: platform-^
 specific).^
 
 ^
@@ -53,6 +60,14 @@ specific).^
 --javac=option^
 
 Passes an option to the underlying java compiler.^
+
+^
+
+--maven-overrides=url^
+
+Specifies the xml file to use to load Maven artifact overrides. See ^
+http://ceylon-lang.org/documentation/current/reference/repository/^
+maven/ for information. Experimental.^
 
 ^
 
@@ -93,10 +108,22 @@ An alias for '--src' (default: './build-ource')^
 
 --src=dirs^
 
-Path to directory containing source files. Can be specified ^
+Path to directory containing build source files. Can be specified ^
 multiple times; you can also specify several paths separated by ^
 your operating system's 'PATH' separator. (default: ^
 './build-source')^
+
+^
+
+--suppress-warning[=warnings]^
+
+Suppress the reporting of the given warnings. If no 'warnings' are ^
+given then suppresss the reporting of all warnings, otherwise just ^
+suppresss those which are present. Allowed flags include: '^
+filenameNonAscii', 'filenameClaselessCollision', 'deprecation', '^
+compilerAnnotation', 'doclink', 'expressionTypeNothing', '^
+unusedDeclaration', 'unusedImport', 'ceylonNamespace', '^
+javaNamespace', 'suppressedAlready', 'suppressesNothing'.^
 
 ^
 
@@ -105,9 +132,24 @@ your operating system's 'PATH' separator. (default: ^
 Specifies the system repository containing essential modules. (^
 default: '$CEYLON_HOME/repo')^
 
+^
+
+--timeout=seconds^
+
+Sets the timeout for connections to remote repositories, use 0 for ^
+no timeout (default: 20)^
+
+^
+
+--verbose[=flags]^
+
+Produce verbose output. If no 'flags' are given then be verbose ^
+about everything, otherwise just be verbose about the flags which ^
+are present. Allowed flags include: 'all', 'loader', 'ast', 'code', ^
+'cmr', 'benchmark'.^
 
 
-rem two empty lines required
+rem Two empty lines above required for batch file processor
 
 call %CEYLON_HOME%\bin\ceylon-sh-setup %*
 

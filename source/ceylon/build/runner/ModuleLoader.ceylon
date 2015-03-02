@@ -6,16 +6,12 @@ import org.jboss.modules {
 }
 
 Module? loadModule(String moduleName, String moduleVersion) {
-    loadModuleInClassPath(moduleName, moduleVersion);
+    value moduleIdentifier = createModuleIdentifier(moduleName, moduleVersion);
+    value mod = ceylonModuleLoader.loadModule(moduleIdentifier);
+    value moduleClassLoader = mod.classLoader;
+    value classToLoad = "``moduleName``.$module_";
+    moduleClassLoader.loadClass(classToLoad);
     return modules.find(moduleName, moduleVersion);
-}
-
-void loadModuleInClassPath(String modName, String modVersion) {
-    value modIdentifier = createModuleIdentifier(modName, modVersion);
-    value mod = ceylonModuleLoader.loadModule(modIdentifier);
-    value modClassLoader = mod.classLoader;
-    value classToLoad = "``modName``.$module_";
-    modClassLoader.loadClass(classToLoad);
 }
 
 "Exposes internal method [[loadModule]] for testing purposes."

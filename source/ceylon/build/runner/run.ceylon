@@ -16,12 +16,8 @@ import ceylon.collection { HashMap }
 shared void run() {
     value writer = consoleWriter;
     CommandLineOptions options = commandLineOptions();
-    if (options.buildModule is Null) {
-        process.writeErrorLine("Module to compile and execute required");
-        process.exit(1);
-    }
-    CompileInfo compileInfo = compileModule(options, writer);
-    Module? mod = loadModule(compileInfo.buildModuleName, compileInfo.buildModuleVersion);
+    compileModule(options);
+    Module? mod = loadModule(options.moduleName, options.moduleVersion);
     if (exists mod) {
         value goals = readAnnotations(mod);
         Integer exitCode;
@@ -34,7 +30,7 @@ shared void run() {
         }
         process.exit(exitCode);
     } else {
-        process.writeErrorLine("Module '``compileInfo.buildModuleName``/``compileInfo.buildModuleVersion``' not found");
+        process.writeErrorLine("Module '``options.moduleName``/``options.moduleVersion``' not found");
         process.exit(1);
     }
 }
