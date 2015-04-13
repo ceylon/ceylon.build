@@ -5,29 +5,16 @@ import org.jboss.modules {
     ModuleIdentifier { createModuleIdentifier = create }
 }
 
-Module? loadModule(String moduleArgument) {
-    String moduleName;
-    String moduleVersion;
-    if (exists i = moduleArgument.firstInclusion("/")) {
-        moduleName = moduleArgument[0..i-1];
-        moduleVersion = moduleArgument[i+1...];
-    } else {
-        moduleName = moduleArgument;
-        moduleVersion = "";
-    }
-    loadModuleInClassPath(moduleName, moduleVersion);
+Module? loadModule(String moduleName, String moduleVersion) {
+    value moduleIdentifier = createModuleIdentifier(moduleName, moduleVersion);
+    value mod = ceylonModuleLoader.loadModule(moduleIdentifier);
+    value moduleClassLoader = mod.classLoader;
+    value classToLoad = "``moduleName``.$module_";
+    moduleClassLoader.loadClass(classToLoad);
     return modules.find(moduleName, moduleVersion);
 }
 
-void loadModuleInClassPath(String modName, String modVersion) {
-    value modIdentifier = createModuleIdentifier(modName, modVersion);
-    value mod = ceylonModuleLoader.loadModule(modIdentifier);
-    value modClassLoader = mod.classLoader;
-    value classToLoad = "``modName``.$module_";
-    modClassLoader.loadClass(classToLoad);
-}
-
 "Exposes internal method [[loadModule]] for testing purposes."
-shared Module? testAccessLoadModule(String moduleArgument) {
-    return loadModule(moduleArgument);
+shared Module? testAccessLoadModule(String moduleName, String moduleVersion) {
+    return loadModule(moduleName, moduleVersion);
 }

@@ -8,7 +8,7 @@ import ceylon.build.runner {
 test void shouldLoadRunnerModule() {
     value moduleName = `module ceylon.build.runner`.name;
     value moduleVersion = `module ceylon.build.runner`.version;
-    value loadedModule = testAccessLoadModule("``moduleName``/``moduleVersion``");
+    value loadedModule = testAccessLoadModule(moduleName, moduleVersion);
     "Expected module to exists"
     assert(exists loadedModule);
     assert(loadedModule.name == moduleName);

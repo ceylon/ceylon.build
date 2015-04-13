@@ -15,30 +15,29 @@ import ceylon.collection { HashMap }
 
 shared void run() {
     value writer = consoleWriter;
-    value arguments = process.arguments;
-    "module should be provided"
-    assert(exists name = arguments[0]);
-    Module? mod = loadModule(name);
+    CommandLineOptions options = commandLineOptions();
+    compileModule(options);
+    Module? mod = loadModule(options.moduleName, options.moduleVersion);
     if (exists mod) {
         value goals = readAnnotations(mod);
         Integer exitCode;
         switch (goals)
-        case (is GoalDefinitionsBuilder){
-            exitCode = start(goals, writer, arguments);
+        case (is GoalDefinitionsBuilder) {
+            exitCode = start(goals, writer, [*options.goals]);
         } case (is [InvalidGoalDeclaration+]) {
             reportInvalidDeclarations(goals, writer);
             exitCode = 1;
         }
         process.exit(exitCode);
     } else {
-        process.writeErrorLine("Module '``name``' not found");
+        process.writeErrorLine("Module '``options.moduleName``/``options.moduleVersion``' not found");
         process.exit(1);
     }
 }
 
 Integer start(GoalDefinitionsBuilder goals, Writer writer, [String*] arguments) {
     Status status;
-    value ceylonBuildArguments = arguments[1...];
+    value ceylonBuildArguments = arguments;
     if (interactive(ceylonBuildArguments)) {
         status = console(goals, writer);
     } else {

@@ -42,7 +42,7 @@ class Gateway() {
         }
     }
     
-    loadModuleClasses("ceylon.build.tasks.ant", "1.1.1");
+    loadModuleClasses("ceylon.build.tasks.ant", `module`.version);
     loadModuleClasses("org.apache.ant.ant", "1.9.4");
     
     AntException buildAntException(Exception exception) {
