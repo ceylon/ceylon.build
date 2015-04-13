@@ -1,8 +1,26 @@
-import ceylon.language.meta.declaration { Module }
-import ceylon.test { test, assertEquals }
-import ceylon.build.runner { findTopLevelAnnotatedGoals, findAnnotatedIncludes }
-import mock.ceylon.build.runner.mock4 { include1, include2 }
-import mock.ceylon.build.runner.mock4.subpackage { include3 }
+import ceylon.build.runner {
+	findTopLevelAnnotatedGoals,
+	findAnnotatedIncludes
+}
+import ceylon.collection {
+	HashSet
+}
+import ceylon.language.meta.declaration {
+	Module,
+	ValueDeclaration
+}
+import ceylon.test {
+	test,
+	assertEquals
+}
+
+import mock.ceylon.build.runner.mock4 {
+	include1,
+	include2
+}
+import mock.ceylon.build.runner.mock4.subpackage {
+	include3
+}
 
 test void shouldNotFindIncludeAnnotatedValuesIfNoPackage() {
     Module mod = `module mock.ceylon.build.runner.mock1`;
@@ -26,5 +44,9 @@ test void shouldFindIncludeAnnotatedValues() {
     Module mod = `module mock.ceylon.build.runner.mock4`;
     value results = [].chain(findAnnotatedIncludes(mod));
     value expected = [`value include1`, `value include2`, `value include3`];
-    assertEquals(results, expected);
+    containSameElements(results, expected);
+}
+
+void containSameElements({ValueDeclaration*} actual, {ValueDeclaration*} expected) {
+    assertEquals(HashSet { elements = actual; } , HashSet { elements = expected; });
 }

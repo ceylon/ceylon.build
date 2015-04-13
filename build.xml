@@ -1,0 +1,191 @@
+<project name="Ceylon Build" basedir="." default="test">
+
+    <property file="build.properties" />
+    <property name="ceylon.verbosity" value="false"/>
+    <property name="ceylon.executable" value="${dist.bin.dir}/ceylon"/>
+    <property name="out.repo" location="modules"/>
+    
+    <taskdef resource="net/sf/antcontrib/antcontrib.properties">
+        <classpath>
+            <pathelement location="${dist.root.dir}/lib/ant-contrib-1.0b3.jar"/>
+        </classpath>
+    </taskdef>
+
+    <taskdef resource="taskdef.properties">
+        <classpath>
+            <pathelement path="${dist.root.dir}/osgi/lib/org.osgi.impl.bundle.repoindex.ant-2.1.2.jar" />
+        </classpath>
+    </taskdef>
+
+    
+    <!-- Local repository -->
+    <property name="ceylon.repo.dir" location="${user.home}/.ceylon/repo" />
+    
+    <path id="ant-tasks">
+        <pathelement location="${ceylon.ant.lib}"/>
+    </path>
+    
+    <typedef resource="com/redhat/ceylon/ant/antlib.xml" classpathref="ant-tasks"/>
+    
+    <reposet id="reposet.compile.source">
+        <repo url="${out.repo}"/>
+    </reposet>
+
+    <reposet id="reposet.compile.test">
+        <repo url="${out.repo}"/>
+    </reposet>
+    
+    <reposet id="reposet.run.test">
+        <reposet refid="reposet.compile.test"/>
+        <repo url="${out.repo}"/>
+    </reposet>
+    
+    <moduleset id="modules.source">
+        <module name="ceylon.build.engine"/>
+        <module name="ceylon.build.runner"/>
+        <module name="ceylon.build.task"/>
+        <module name="ceylon.build.tasks.ant"/>
+	    <module name="ceylon.build.tasks.ceylon"/>
+	    <module name="ceylon.build.tasks.commandline"/>
+	    <module name="ceylon.build.tasks.file"/>
+	    <module name="ceylon.build.tasks.misc"/>
+    </moduleset>
+
+    <moduleset id="modules.test">
+        <module name="test.ceylon.build.engine"/>
+        <module name="test.ceylon.build.runner"/>
+        <module name="test.ceylon.build.task"/>
+        <module name="test.ceylon.build.tasks.ant"/>
+        <module name="test.ceylon.build.tasks.ceylon"/>
+        <module name="test.ceylon.build.tasks.file"/>
+    </moduleset>
+	
+    <moduleset id="modules.mock">
+        <module name="mock.*"/>
+    </moduleset>
+	
+    <moduleset id="modules.script">
+        <module name="ceylon.build.runner"/>
+    </moduleset>
+    
+    <target name="clean"
+        description="Deletes the test-modules and modules directories">
+        <delete dir="${out.repo}"/>
+        <delete dir="${osgi.dist}"/>
+    </target>
+    
+    <target name="compile"
+            description="Compiles the Ceylon Build modules without re-generating sources">
+        <ceylon-compile executable="${ceylon.executable}"
+            verbose="${ceylon.verbosity}"
+            encoding="UTF-8"
+            pack200="true"
+            out="${out.repo}">
+            <moduleset refid="modules.source"/>
+        </ceylon-compile>
+    </target>
+    
+    <path id="test-sources-path">
+        <pathelement location="test-source"/>
+    </path>
+    
+    <property name="test-sources" refid="test-sources-path"/>
+    
+    <target name="compile-test"
+        description="Compiles the test module" >
+        <ceylon-compile executable="${ceylon.executable}"
+            src="${test-sources}"
+            out="${out.repo}"
+            verbose="${ceylon.verbosity}"
+            encoding="UTF-8">
+            <reposet refid="reposet.compile.test"/> 
+            <moduleset refid="modules.test"/>
+            <moduleset refid="modules.mock"/>
+        </ceylon-compile>
+    </target>
+
+    <target name="test" depends="compile,compile-test"
+        description="Runs the compiled test module">
+        <ceylon-test>
+            <reposet refid="reposet.run.test"/>
+            <moduleset refid="modules.test"/>
+        </ceylon-test>
+    </target>
+
+    <target name="doc" 
+            description="Documents the Build module">
+        
+        <ceylon-doc executable="${ceylon.executable}"
+            includesourcecode="true"
+            nomtimecheck="true"
+            encoding="UTF-8">
+            <moduleset refid="modules.source"/>
+            <linkset>
+                <link pattern="ceylon" url="http://modules.ceylon-lang.org/1/"/>
+            </linkset>
+        </ceylon-doc>
+        
+    </target>
+
+    <target name="publish" depends="compile,scripts"
+            description="Copies the Build modules to the user's repository">
+        <copy todir="${ceylon.repo.dir}" overwrite="true">
+            <fileset dir="${out.repo}">
+                <include name="ceylon/build/**"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="publish-herd">
+        <fail message="Please specify a target Herd upload repo url with -Dherd.repo=..." unless="herd.repo"/>
+        <fail message="Please specify a target Herd user name with -Dherd.user=..." unless="herd.user"/>
+        <fail message="Please specify a target Herd password with -Dherd.pass=..." unless="herd.pass"/>
+        
+        <ceylon-compile executable="${ceylon.executable}"
+            verbose="${ceylon.verbosity}"
+        out="${herd.repo}"
+        user="${herd.user}"
+        pass="${herd.pass}"
+            encoding="UTF-8">
+            <moduleset refid="modules.source"/>
+        </ceylon-compile>
+        
+        <ceylon-doc executable="${ceylon.executable}"
+            includesourcecode="true"
+            nomtimecheck="true"
+        out="${herd.repo}"
+        user="${herd.user}"
+        pass="${herd.pass}"
+            encoding="UTF-8">
+            <moduleset refid="modules.source"/>
+            <rep url="https://modules.ceylon-lang.org/repo/1/"/>
+        </ceylon-doc>
+        
+        <ceylon-plugin mode="pack"
+            out="${herd.repo}"
+            user="${herd.user}"
+            pass="${herd.pass}">
+            <moduleset refid="modules.source"/>
+        </ceylon-plugin>
+    </target>
+
+    <target name="scripts">
+        <ceylon-plugin mode="pack">
+            <moduleset refid="modules.script"/>
+        </ceylon-plugin>
+    </target>
+
+    <target name="install" depends="publish">
+        <ceylon-plugin mode="install" force="true">
+            <moduleset refid="modules.source"/>
+        </ceylon-plugin>
+    </target>
+    
+    <target name="format" depends="compile"
+            description="formats the code">
+        <ceylon-run module="ceylon.formatter">
+            <reposet refid="reposet.compile.source"/>
+            <arg value="source"/>
+        </ceylon-run>
+    </target>
+</project>
