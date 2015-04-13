@@ -241,7 +241,7 @@ test void testImplementationWrapped() {
 test void testRegisterAntLibrary() {
     AntProject antProject = createAntProjectWithBaseDirectorySet();
     List<AntDefinition> allTopLevelAntDefinitions1 = antProject.allTopLevelAntDefinitions();
-    antProject.loadModuleClasses("ant-contrib.ant-contrib", "1.0b3");
+    antProject.loadModuleClasses("ant-contrib:ant-contrib", "1.0b3");
     registerAntLibrary(antProject, "net/sf/antcontrib/antlib.xml");
     List<AntDefinition> allTopLevelAntDefinitions2 = antProject.allTopLevelAntDefinitions();
     //printAdditionalAntDefinitions(allTopLevelAntDefinitions1, allTopLevelAntDefinitions2);
