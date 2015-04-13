@@ -21,10 +21,12 @@ To build and install `ceylon.build` run following command: `ant clean publish`
 
 To run the tests: `ant test`
 
+
+`ceylon.build` is composed of following modules:
 ### Goal/Task API:
 API to define your own `Goal`s
 
-### Engine:
+### Runner:
 Command line interface launching the engine
 
 ### Engine:
