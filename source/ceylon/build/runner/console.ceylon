@@ -17,11 +17,6 @@ import ceylon.collection {
     HashMap
 }
 
-"Returns `true` if `--console` option is found in `arguments`."
-Boolean interactive([String*] arguments) {
-    return arguments.contains("--console");
-}
-
 "An interactive console."
 Status console(GoalDefinitionsBuilder goals, Writer writer) {
     value definitionValidationResult = goals.validate();
