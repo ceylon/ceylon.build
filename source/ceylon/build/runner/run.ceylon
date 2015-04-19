@@ -15,7 +15,7 @@ import ceylon.collection { HashMap }
 
 shared void run() {
     value writer = consoleWriter;
-    CommandLineOptions options = commandLineOptions();
+    Options options = commandLineOptions(process.arguments);
     compileModule(options);
     Module? mod = loadModule(options.moduleName, options.moduleVersion);
     if (exists mod) {
@@ -23,7 +23,7 @@ shared void run() {
         Integer exitCode;
         switch (goals)
         case (is GoalDefinitionsBuilder) {
-            exitCode = start(goals, writer, [*options.goals]);
+            exitCode = start(goals, writer, options.runtime, [*options.goals]);
         } case (is [InvalidGoalDeclaration+]) {
             reportInvalidDeclarations(goals, writer);
             exitCode = 1;
@@ -35,10 +35,10 @@ shared void run() {
     }
 }
 
-Integer start(GoalDefinitionsBuilder goals, Writer writer, [String*] arguments) {
+Integer start(GoalDefinitionsBuilder goals, Writer writer, RuntimeOptions options, [String*] arguments) {
     Status status;
     value ceylonBuildArguments = arguments;
-    if (interactive(ceylonBuildArguments)) {
+    if (options.consoleMode) {
         status = console(goals, writer);
     } else {
         value result = runEngine {

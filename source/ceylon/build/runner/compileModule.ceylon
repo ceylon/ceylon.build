@@ -15,11 +15,11 @@ Boolean rebuildRequired(String moduleName, String moduleVersion) {
     return true;
 }
 
-void compileModule(CommandLineOptions commandLineOptions) {
+void compileModule(Options commandLineOptions) {
     value rebuild = rebuildRequired(commandLineOptions.moduleName, commandLineOptions.moduleVersion);
     if (rebuild) {
         print("Compiling build script for ``commandLineOptions.moduleName``/``commandLineOptions.moduleVersion``");
-        {String*} compilerOptions = commandLineOptions.buildCompilerOptions();
+        {String*} compilerOptions = commandLineOptions.compilation.buildCompilerOptions();
         CeylonTool tool = CeylonTool();
         value compilerToolLoader = loadJavaModule("com.redhat.ceylon.compiler.java", language.version);
         tool.setToolLoader(compilerToolLoader);
