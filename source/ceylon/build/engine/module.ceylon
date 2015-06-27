@@ -154,6 +154,6 @@ module ceylon.build.engine "1.1.1" {
     
     import ceylon.collection "1.1.1";
     
-    import java.base "7"; // needed for regular expression support
-    import ceylon.interop.java "1.1.1";
+    native("jvm") import java.base "7"; // needed for regular expression support
+    native("jvm") import ceylon.interop.java "1.1.1";
 }
