@@ -22,4 +22,10 @@ object exitCodes {
     
     "Exit code returned when a goal's task failed"
     shared Integer errorOnTaskExecution = 5;
+    
+    "Exit code when compilation option or run option is not known."
+    shared Integer unknownOption = 6;
+    
+    "Exit code when build module is not found and cannot be executed."
+    shared Integer buildModuleNotFound = 7;
 }

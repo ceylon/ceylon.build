@@ -13,6 +13,7 @@ import ceylon.build.engine {
 import ceylon.build.task { Writer }
 import ceylon.collection { HashMap }
 
+suppressWarnings("expressionTypeNothing")
 shared void run() {
     value writer = consoleWriter;
     Options options = commandLineOptions(process.arguments);
@@ -30,8 +31,8 @@ shared void run() {
         }
         process.exit(exitCode);
     } else {
-        process.writeErrorLine("Module '``options.moduleName``/``options.moduleVersion``' not found");
-        process.exit(1);
+        process.writeErrorLine("Build module '``options.moduleName``/``options.moduleVersion``' not found");
+        process.exit(exitCodes.buildModuleNotFound);
     }
 }
 

@@ -56,6 +56,7 @@ class Arguments() {
 	shared {String*} listOptions => concatenate(options.keys, flags);
 }
 
+suppressWarnings("expressionTypeNothing")
 class Options(Arguments arguments) {
 	
 	shared String moduleName = arguments.buildModuleName;
@@ -68,7 +69,7 @@ class Options(Arguments arguments) {
 	for (option in arguments.listOptions) {
 		if (!compilation.knows(option) && !runtime.knows(option)) {
 			process.writeErrorLine("Unknown option '``option``'");
-			process.exit(1);
+			process.exit(exitCodes.unknownOption);
 		}
 	}
 }
