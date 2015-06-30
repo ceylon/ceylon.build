@@ -4,4 +4,7 @@ module ceylon.build.runner "1.1.1" {
     import ceylon.collection "1.1.1";
     native("jvm") import com.redhat.ceylon.compiler.java "1.1.1";
     native("jvm") import org.jboss.modules "1.3.3.Final"; // needed for manual modules loading
+    native("jvm") import java.base "7";
+    native("jvm") import ceylon.interop.java "1.1.1";
+    native("jvm") import com.redhat.ceylon.common "1.1.1";
 }

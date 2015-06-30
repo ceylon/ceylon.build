@@ -9,24 +9,24 @@ Options commandLineOptions(String[] args) {
     return Options(arguments);
 }
 
-Arguments parseProcessArguments(String[] arguments) {
-    value args = Arguments();
-    for (argument in arguments) {
-        if (argument.startsWith("--")) {
-            String option = argument[2...];
+Arguments parseProcessArguments(String[] args) {
+    value arguments = Arguments();
+    for (arg in args) {
+        if (arg.startsWith("--")) {
+            String option = arg[2...];
             if (exists index = option.firstOccurrence('=')) {
-                args.addOption(option[... index-1], option[index+1 ...]);
+                arguments.addOption(option[... index-1], option[index+1 ...]);
             } else {
-                args.setFlag(option);
+                arguments.setFlag(option);
             }
-        } else if (exists index = argument.firstOccurrence("/")) {
-            args.buildModuleName = argument[... index-1];
-            args.buildModuleVersion = argument[index+1 ...];
+        } else if (exists index = arg.firstOccurrence('/')) {
+            arguments.buildModuleName = arg[... index-1];
+            arguments.buildModuleVersion = arg[index+1 ...];
         } else {
-            args.addGoal(argument);
+            arguments.addGoal(arg);
         }
     }
-    return args;
+    return arguments;
 }
 
 class Arguments() {
@@ -34,8 +34,8 @@ class Arguments() {
     value flags = HashSet<String>();
     value _goals = ArrayList<String>();
     
-    shared variable String buildModuleName = "build";
-    shared variable String buildModuleVersion = "1";
+    shared variable String? buildModuleName = null;
+    shared variable String? buildModuleVersion = null;
     
     shared void addOption(String name, String val) {
         if (exists values = options[name]) {
@@ -45,7 +45,7 @@ class Arguments() {
         }
     }
     shared String? firstOption(String name) => options[name]?.first;
-    shared {String*} option(String name) => options[name] else [];
+    shared {String*} allOptions(String name) => options[name] else [];
     
     shared void setFlag(String flag) => flags.add(flag);
     shared Boolean hasFlag(String flag) => flags.contains(flag);
@@ -59,11 +59,27 @@ class Arguments() {
 suppressWarnings("expressionTypeNothing")
 class Options(Arguments arguments) {
     
-    shared String moduleName = arguments.buildModuleName;
-    shared String moduleVersion = arguments.buildModuleVersion;
+    ConfigResolver resolver = ConfigResolver(arguments);
     
-    shared CompilationOptions compilation = CompilationOptions(arguments);
-    shared RuntimeOptions runtime = RuntimeOptions(arguments);
+    variable String? buildModuleName = arguments.buildModuleName;
+    variable String? buildModuleVersion = arguments.buildModuleVersion;
+    if (!(buildModuleName exists)) {
+        String? defaultModule = resolver.option(null, "build.module", "build/1");
+        assert(exists defaultModule);
+        if (exists index = defaultModule.firstOccurrence('/')) {
+            buildModuleName = defaultModule[... index-1];
+            buildModuleVersion = defaultModule[index+1 ...];
+        } else {
+            buildModuleName = defaultModule;
+            buildModuleVersion = "1";
+        }
+    }
+    assert(exists finalModuleName = buildModuleName, exists finalModuleVersion = buildModuleVersion);
+    shared String moduleName = finalModuleName;
+    shared String moduleVersion = finalModuleVersion;
+    
+    shared CompilationOptions compilation = CompilationOptions(resolver, moduleName);
+    shared RuntimeOptions runtime = RuntimeOptions(resolver);
     
     shared {String*} goals => arguments.goals;
     for (option in arguments.listOptions) {
@@ -75,31 +91,30 @@ class Options(Arguments arguments) {
 }
 
 interface OptionsHandler {
-    "Return `true` if the given option is know by current option handler."
+    "Return `true` if the given option is known by current option handler."
     shared formal Boolean knows(String option);
 }
 
-class CompilationOptions(Arguments args) satisfies OptionsHandler {
+class CompilationOptions(ConfigResolver resolver, String moduleName) satisfies OptionsHandler {
     
-    String moduleName = args.buildModuleName;
-    
-    String? cacheRepository = args.firstOption("cacherep");
-    String? currentWorkingDirectory = args.firstOption("cwd");
-    {String*} systemProperties = args.option("define");
-    String? encoding = args.firstOption("encoding");
-    {String*} javacOptions = args.option("javac");
-    String? mavenOverrides = args.firstOption("maven-overrides");
-    Boolean noDefaultRepositories = args.hasFlag("no-default-repositories");
-    Boolean offline = args.hasFlag("offline");
-    {String*} repositories = args.option("rep");
-    {String*} resourceDirectories = args.option("resource");
-    value inputSources = concatenate(args.option("source"), args.option("src"));
-    {String*} sourceDirectories = if (!inputSources.empty) then inputSources else ["build-source"];
-    {String*} supressWarnings = args.option("suppress-warning");
-    String? systemRepository = args.firstOption("sysrep");
-    String? timeout = args.firstOption("timeout");
-    {String*} verbose = args.option("verbose");
-    Boolean allVerbose = args.hasFlag("verbose");
+    ConfigResolverJava x = ConfigResolverJava(null);
+    String? cacheRepository = resolver.option("cacherep", "builder.cache.repo");
+    String? currentWorkingDirectory = resolver.option("cwd", null);
+    {String*} systemProperties = resolver.options("define", null);
+    String? encoding = resolver.option("encoding", "builder.encoding", resolver.option(null, "defaults.encoding"));
+    {String*} javacOptions = resolver.options("javac", "builder.javacoption");
+    String? mavenOverrides = resolver.option("maven-overrides", "builder.mavenoverrides");
+    Boolean noDefaultRepositories = resolver.flag("no-default-repositories", "builder.nodefaultrepositories");
+    Boolean offline = resolver.flag("offline", "builder.offline");
+    {String*} repositories = resolver.options("rep", "builder.user.repo");
+    {String*} resourceDirectories = resolver.options("resource", "builder.resource");
+    value inputSources = concatenate(resolver.options("source", null), resolver.options("src", null));
+    {String*} sourceDirectories = if (!inputSources.empty) then inputSources else resolver.options(null, "builder.source", { "build-source" } );
+    {String*} supressWarnings = resolver.options("suppress-warning", "builder.suppresswarning");
+    String? systemRepository = resolver.option("sysrep", "builder.system.repo");
+    String? timeout = resolver.option("timeout", "builder.timeout", resolver.option(null, "defaults.timeout"));
+    {String*} verbose = resolver.options("verbose", "builder.verbose");
+    Boolean allVerbose = resolver.flag("verbose", null);
     
     value knownOptions = HashSet {
         elements = { "cacherep", "cwd", "define", "encoding", "javac", "maven-overrides", "no-default-repositories",
@@ -150,8 +165,8 @@ class CompilationOptions(Arguments args) satisfies OptionsHandler {
     }
 }
 
-class RuntimeOptions(Arguments arguments) satisfies OptionsHandler {
-    shared Boolean consoleMode = arguments.hasFlag("console");
+class RuntimeOptions(ConfigResolver resolver) satisfies OptionsHandler {
+    shared Boolean consoleMode = resolver.flag("console", null);
     
     shared actual Boolean knows(String option) => option == "console";
 }
