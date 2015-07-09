@@ -95,9 +95,10 @@ test void shouldFindIncludedGoals() {
             `function Container.goalMethod` -> containerValue,
             `function Container.goalWithNameSpecifiedMethod` -> containerValue,
             `function Container.goalMethodWithReturnType` -> containerValue,
-            `function Container.invalidGoalMethod` -> containerValue,
-            `value Container.invalidGoalAttribute` -> containerValue,
-            `value Container.noopGoalAttribute` -> containerValue
+            `function Container.invalidGoalMethod` -> containerValue
+            // TODO add again when type inference of `value x` is fixed, bug ceylon/ceylon-compiler#2160
+            //`value Container.invalidGoalAttribute` -> containerValue,
+            //`value Container.noopGoalAttribute` -> containerValue
         };
     };
 }
