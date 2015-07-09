@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -26,6 +27,7 @@ import org.apache.tools.ant.IntrospectionHelper;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
 import org.apache.tools.ant.ProjectHelperRepository;
+import org.apache.tools.ant.PropertyHelper;
 import org.apache.tools.ant.TypeAdapter;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.helper.ProjectHelper2;
@@ -127,9 +129,39 @@ public class SealedProject {
         project.setProperty(propertyName, propertyValue);
     }
     
+    @SuppressWarnings("unchecked")
     public void unsetProperty(String propertyName) {
-        project.setProperty(propertyName, null);
+        try {
+            PropertyHelper propertyHelper = PropertyHelper.getPropertyHelper(project);
+            Hashtable<String, Object> properties = (Hashtable<String, Object>) getValue(propertyHelper, "properties");
+            properties.remove(propertyName);
+            Hashtable<String, Object> userProperties = (Hashtable<String, Object>) getValue(propertyHelper, "userProperties");
+            userProperties.remove(propertyName);
+            Hashtable<String, Object> inheritedProperties = (Hashtable<String, Object>) getValue(propertyHelper, "inheritedProperties");
+            inheritedProperties.remove(propertyName);
+        } catch (Exception e) {
+            throw new SealedAntBackendException("Cannot access internal fields to unset property.", e);
+        }
     }
+    
+    private Object getValue(Object instance, String fieldName)
+    throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        Field field = getField(instance.getClass(), fieldName);
+        field.setAccessible(true);
+        return field.get(instance);
+    }
+    
+    private Field getField(Class<?> thisClass, String fieldName)
+    throws NoSuchFieldException {
+        if (thisClass == null) {
+           throw new NoSuchFieldException("Invalid field: " + fieldName);
+        }
+        try {
+           return thisClass.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+           return getField(thisClass.getSuperclass(), fieldName);
+        }
+     }
     
     public String getBaseDirectory() {
         return project.getBaseDir().toString();
