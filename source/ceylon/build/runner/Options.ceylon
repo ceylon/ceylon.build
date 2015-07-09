@@ -97,7 +97,6 @@ interface OptionsHandler {
 
 class CompilationOptions(ConfigResolver resolver, String moduleName) satisfies OptionsHandler {
     
-    ConfigResolverJava x = ConfigResolverJava(null);
     String? cacheRepository = resolver.option("cacherep", "builder.cache.repo");
     String? currentWorkingDirectory = resolver.option("cwd", null);
     {String*} systemProperties = resolver.options("define", null);
