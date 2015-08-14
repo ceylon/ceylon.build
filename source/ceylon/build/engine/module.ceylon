@@ -149,11 +149,12 @@
    will result in the execution of goals `"compile"`, `"tests-compile` and `"test"` in this order.
    Even if `"compile"` and `"tests-compile"` are requested twice (once directly, and once per dependency)."""
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
+native("jvm")
 module ceylon.build.engine "1.1.1" {
     shared import ceylon.build.task "1.1.1";
     
     import ceylon.collection "1.1.1";
     
-    native("jvm") import java.base "7"; // needed for regular expression support
-    native("jvm") import ceylon.interop.java "1.1.1";
+    import java.base "7"; // needed for regular expression support
+    import ceylon.interop.java "1.1.1";
 }

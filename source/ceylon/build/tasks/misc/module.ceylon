@@ -11,5 +11,4 @@
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module ceylon.build.tasks.misc "1.1.1" {
     shared import ceylon.build.task "1.1.1";
-    shared native("jvm") import ceylon.file "1.1.1";
 }

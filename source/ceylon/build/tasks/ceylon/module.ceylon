@@ -92,10 +92,11 @@
    ```
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
+native("jvm")
 module ceylon.build.tasks.ceylon "1.1.1" {
     shared import ceylon.build.task "1.1.1";
     import ceylon.build.tasks.commandline "1.1.1";
     import ceylon.collection "1.1.1";
-    native("jvm") import com.redhat.ceylon.compiler.java "1.1.1";
-    native("jvm") import org.jboss.modules "1.3.3.Final";
+    import com.redhat.ceylon.compiler.java "1.1.1";
+    import org.jboss.modules "1.3.3.Final";
 }

@@ -1,3 +1,4 @@
+native("jvm")
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
 module test.ceylon.build.engine "1.1.1" {
     import ceylon.build.engine "1.1.1";
