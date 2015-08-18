@@ -1,3 +1,4 @@
+native("jvm")
 module test.ceylon.build.runner "1.1.1" {
     import ceylon.build.runner "1.1.1";
     shared import ceylon.build.task "1.1.1";
