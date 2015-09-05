@@ -109,6 +109,7 @@
 """
 by ("Henning Burdack")
 license ("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
+native("jvm")
 module ceylon.build.tasks.ant "1.1.1"{
     shared import ceylon.collection "1.1.1";
     import java.base "7";
