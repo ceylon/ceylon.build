@@ -41,6 +41,9 @@ Tasks to compile, run, test, document ceylon modules
 ### Files tasks:
 Tasks to copy / delete files and directories
 
+### Ant tasks:
+Wrapper to use Apache Ant tasks
+
 Usage
 -----
 
