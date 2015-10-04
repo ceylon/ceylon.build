@@ -1,5 +1,6 @@
 "Sample ceylon.build module"
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
+native("jvm")
 module sample.ceylon.build "1.1.1" {
     shared import ceylon.build.task "1.1.1";
     import ceylon.build.engine "1.1.1";

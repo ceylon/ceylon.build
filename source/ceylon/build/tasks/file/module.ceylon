@@ -53,6 +53,7 @@
    ```
    """
 license("[ASL 2.0](http://www.apache.org/licenses/LICENSE-2.0)")
+native("jvm")
 module ceylon.build.tasks.file "1.1.1" {
     shared import ceylon.build.task "1.1.1";
     shared import ceylon.file "1.1.1";

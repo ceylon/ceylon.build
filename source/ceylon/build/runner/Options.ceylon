@@ -19,7 +19,7 @@ Arguments parseProcessArguments(String[] arguments) {
 			} else {
 				args.setFlag(option);
 			}
-		} else if (exists index = argument.firstOccurrence("/")) {
+		} else if (exists index = argument.firstOccurrence('/')) {
 			args.buildModuleName = argument[... index-1];
 			args.buildModuleVersion = argument[index+1 ...];
 		} else {
